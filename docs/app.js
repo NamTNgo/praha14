@@ -1,0 +1,219 @@
+"use strict";
+(function () {
+  var RADIUS = 1000;
+  var KEY = "praha14.address";
+  var app = document.getElementById("app");
+  var data = null;       // {stations, addresses}
+  var state = { address: null, query: "" };
+
+  var TYPES = [
+    { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
+      icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/>' },
+    { id: "plast", name: "Plast a nápojové kartony", core: true, bg: "#fdf1cb", fg: "#a9791a",
+      icon: '<path d="M3 7h18M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-9 0 1 12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-12"/>' },
+    { id: "sklo", name: "Sklo", core: true, bg: "#def3e4", fg: "#2e8f55",
+      icon: '<path d="M9 2h6v4l2 3v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9l2-3Z"/><path d="M7 11h10"/>' },
+    { id: "kovy", name: "Kovy", core: false, bg: "#e6e8ec", fg: "#5b6573",
+      icon: '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/>' },
+    { id: "oleje", name: "Jedlé tuky a oleje", core: false, bg: "#fbe9c8", fg: "#a86a10",
+      icon: '<path d="M12 3s6 6.2 6 10.5a6 6 0 0 1-12 0C6 9.2 12 3 12 3Z"/>' },
+    { id: "elektro", name: "Elektrozařízení", core: false, bg: "#e8e0f5", fg: "#6a4fb0",
+      icon: '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>' }
+  ];
+  var SVG = function (inner, sz, stroke, w) {
+    return '<svg width="' + sz + '" height="' + sz + '" viewBox="0 0 24 24" fill="none" stroke="' + stroke +
+      '" stroke-width="' + (w || 2) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + "</svg>";
+  };
+  var PIN = '<path d="M12 22s7-7.1 7-12A7 7 0 0 0 5 10c0 4.9 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>';
+  var ARROW = '<path d="M7 17 17 7M8 7h9v9"/>';
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function norm(s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim(); }
+  function label(a) { return a[0] + " " + (a[2] ? a[1] + "/" + a[2] : a[1]); }
+
+  function dist(lat1, lon1, lat2, lon2) {
+    var R = 6371000, r = Math.PI / 180;
+    var dLat = (lat2 - lat1) * r, dLon = (lon2 - lon1) * r;
+    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+
+  // ---- uložená adresa (jen v prohlížeči) ----
+  function load() { try { var v = JSON.parse(localStorage.getItem(KEY)); if (v && typeof v.lat === "number") return v; } catch (e) {} return null; }
+  function save(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
+  function clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+
+  // ---- hledání adres ----
+  var index = null;
+  function buildIndex() {
+    index = data.addresses.map(function (a) {
+      return { a: a, street: norm(a[0]), cd: a[1], co: a[2].toLowerCase() };
+    });
+  }
+  function search(q) {
+    var toks = norm(q).split(/\s+/).filter(Boolean);
+    if (!toks.length) return [];
+    var num = null;
+    if (toks.length > 1 && /^\d/.test(toks[toks.length - 1])) num = toks.pop();
+    var street = toks.join(" ");
+    var out = [];
+    for (var i = 0; i < index.length && out.length < 6; i++) {
+      var e = index[i];
+      if (e.street.indexOf(street) !== 0 && !e.street.split(" ").some(function (w, k, arr) { return arr.slice(k).join(" ").indexOf(street) === 0; })) continue;
+      if (num) {
+        var n = num.split("/");
+        var ok = n.length === 2 ? (e.cd.indexOf(n[0]) === 0 && e.co.indexOf(n[1]) === 0)
+                                : (e.co.indexOf(num) === 0 || e.cd.indexOf(num) === 0);
+        if (!ok) continue;
+      }
+      out.push(e.a);
+    }
+    return out;
+  }
+
+  // ---- výpočet výsledků ----
+  function results(addr) {
+    var near = [];
+    data.stations.forEach(function (s) {
+      var d = dist(addr.lat, addr.lon, s.lat, s.lon);
+      if (d <= RADIUS) near.push({ s: s, d: d });
+    });
+    near.sort(function (a, b) { return a.d - b.d; });
+    var byType = {};
+    near.forEach(function (x) {
+      Object.keys(x.s.t).forEach(function (t) { if (!byType[t]) byType[t] = { s: x.s, d: x.d, info: x.s.t[t] }; });
+    });
+    return { near: near, byType: byType };
+  }
+  var DAYS = ["ne", "po", "út", "st", "čt", "pá", "so"];
+  function schedule(info) {
+    var parts = [];
+    if (info.d) parts.push("svoz orientačně: " + info.d.toLowerCase());
+    if (info.n) {
+      var d = new Date(info.n + "T00:00:00"), today = new Date(); today.setHours(0, 0, 0, 0);
+      if (!isNaN(d) && d >= today) parts.push("příště " + DAYS[d.getDay()] + " " + d.getDate() + ". " + (d.getMonth() + 1) + ".");
+    }
+    return parts.join(" · ");
+  }
+  function meters(d) { return Math.round(d / 10) * 10 + " m"; }
+
+  // ---- šablony ----
+  var FOOT = '<div class="foot">Zdroj dat: Golemio (Operátor ICT) · Adresy: ČÚZK (RÚIAN)</div>';
+  var LINKS = '<div class="links">' +
+    '<a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" +
+    '<a class="link" href="https://www.praha14.cz/urad-mestske-casti/hledam-informaci/zivotni-prostredi/odpady/" target="_blank" rel="noopener">Harmonogramy na praha14.cz ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>";
+
+  function viewSearch() {
+    var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
+    var h = '<div class="head"><div class="eyebrow">Praha 14</div><h1>Kam s odpadem?</h1>' +
+      '<div class="sub">Zadejte adresu a uvidíte, kde a kdy v okolí odnést odpad.</div></div><div class="body">' +
+      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#a39d8c", 2.2) +
+      '<input id="q" class="input' + (none ? " bad" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '"></div>';
+    h += '<div id="sres" class="list">' + searchRes(res, none) + "</div></div>" + FOOT;
+    return h;
+  }
+  function searchRes(res, none) {
+    var h = "";
+    if (res.length) {
+      h += '<div class="card sugg" role="list">' + res.map(function (a, i) {
+        return '<button type="button" data-i="' + i + '"><span class="pin">' + SVG(PIN, 16, "#1f4d36", 2.1) + '</span><span><span class="p">' + esc(label(a)) + '</span><span class="s">Praha 14</span></span></button>';
+      }).join("") + "</div>";
+    } else if (none) {
+      h += '<div class="card center"><span class="big-badge" style="background:#fbeadb">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M9 9l4 4m0-4-4 4"/>', 26, "#b5631f") +
+        '</span><div class="t1">Tuhle adresu jsme nenašli</div><p>Zkontrolujte prosím, jestli je ulice a číslo napsané správně, a zkuste to znovu.</p></div>' +
+        '<div class="hint" style="text-align:center">Appka zatím pokrývá jen adresy v Praze 14.</div>';
+    } else {
+      h += '<div class="hint">Našeptávač se spustí po druhém napsaném písmenu.</div>';
+    }
+    return h;
+  }
+
+  function viewResult() {
+    var a = state.address, r = results(a);
+    var h = '<div class="head addr"><div><div class="eyebrow">Vaše adresa</div><div class="addr-name">' + esc(a.label) + '</div></div>' +
+      '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div><div class=\"body\">";
+    if (!r.near.length) {
+      h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#9a9480") +
+        '</span><div class="grow"><div class="t1">V okruhu 1 km jsme nenašli žádné stanoviště tříděného odpadu</div><div class="note">Další stanoviště můžete hledat v mapě KSNKO.</div>' +
+        '<div class="links"><a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+    } else {
+      var n = r.near[0], types = TYPES.filter(function (t) { return n.s.t[t.id]; }).map(function (t) { return t.name.split(" a ")[0].toLowerCase(); });
+      h += '<div class="card row near"><span class="badge" style="background:#e9f0e9">' + SVG(PIN, 19, "#1f4d36", 2.1) + '</span><div><div class="eyebrow">Nejbližší kontejner</div>' +
+        '<div class="big">' + esc(n.s.name) + " · " + meters(n.d) + '</div><div class="t3" style="font-size:12.5px;color:#8a8572">' + esc(types.join(", ")) + "</div></div></div>";
+      h += '<div class="list"><div class="label">V okruhu 1 km od adresy</div>';
+      TYPES.forEach(function (t) {
+        var f = r.byType[t.id];
+        if (f) {
+          var sch = schedule(f.info);
+          h += '<div class="card row"><span class="badge" style="background:' + t.bg + '">' + SVG(t.icon, 18, t.fg) + '</span><div class="grow"><div class="t1">' + t.name +
+            '</div><div class="t2">' + esc(f.s.name) + " · " + meters(f.d) + "</div>" + (sch ? '<div class="t3">' + sch + "</div>" : "") + "</div></div>";
+        } else if (t.core) {
+          h += '<div class="card-dashed row"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#9a9480") +
+            '</span><div class="grow"><div class="t1" style="color:#6b6557">' + t.name + '</div><div class="note" style="margin-top:1px">v okruhu 1 km jsme nic nenašli</div></div></div>';
+        }
+      });
+      h += "</div>";
+    }
+    h += '<div class="card row top"><span class="badge" style="background:#fbe3d4">' +
+      SVG('<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>', 18, "#b8582a") +
+      '</span><div class="grow"><div class="t1">Velkoobjemové kontejnery (VOK a BIO VOK)</div><div class="note">Termíny a místa přistavení najdete v mapě KSNKO a na stránce Odpady městské části Praha 14.</div>' + LINKS + "</div></div>";
+    h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' +
+      SVG('<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>', 18, "#5b5b54") +
+      '</span><div class="grow"><div class="t1">Popelnice (směsný odpad)</div><div class="note" style="margin-top:2px">Svoz popelnic se liší podle domu. Termín zjistíte u správce domu nebo SVJ.</div></div></div>';
+    return h + "</div>" + FOOT;
+  }
+
+  function viewOffline() {
+    return '<div class="full"><span class="big-badge" style="width:64px;height:64px;border-radius:20px;background:#ececea">' +
+      SVG('<path d="M1 9a16 16 0 0 1 22 0"/><path d="M5 12.5a10.8 10.8 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><path d="M12 20h.01"/><path d="M2 2l20 20"/>', 30, "#6b6557") +
+      '</span><h2>Nejste připojeni k internetu</h2><p>Pro zobrazení stanovišť a termínů potřebuje appka internetové připojení. Zkontrolujte prosím Wi-Fi nebo mobilní data.</p>' +
+      '<button type="button" class="btn" id="retry">Zkusit znovu</button></div>';
+  }
+  function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 14</div><h1>Kam s odpadem?</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
+
+  // ---- vykreslení a události ----
+  function render(keepFocus) {
+    var html;
+    if (!data) html = window.__err ? viewOffline() : viewLoading();
+    else html = state.address ? viewResult() : viewSearch();
+    app.innerHTML = html;
+    var q = document.getElementById("q");
+    if (q) {
+      if (keepFocus) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+      q.addEventListener("input", function () {
+        state.query = q.value;
+        var t = q.value.trim(), res = t.length >= 2 ? search(q.value) : [], none = t.length >= 2 && !res.length;
+        q.classList.toggle("bad", none);
+        document.getElementById("sres").innerHTML = searchRes(res, none);
+        bindSugg(res);
+      });
+      bindSugg(state.query.trim().length >= 2 ? search(state.query) : []);
+    }
+    var e = document.getElementById("edit");
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    var r = document.getElementById("retry");
+    if (r) r.addEventListener("click", boot);
+  }
+  function bindSugg(res) {
+    app.querySelectorAll(".sugg button").forEach(function (b) { b.addEventListener("click", function () { pick(res[+b.getAttribute("data-i")]); }); });
+  }
+  function pick(a) {
+    if (!a) return;
+    state.address = { label: label(a), lat: a[3], lon: a[4] };
+    save(state.address);
+    render();
+    window.scrollTo(0, 0);
+  }
+
+  function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
+  function boot() {
+    window.__err = false; data = null; render();
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json")]).then(function (v) {
+      data = { stations: v[0], addresses: v[1] };
+      buildIndex();
+      state.address = load();
+      render();
+    }).catch(function () { window.__err = true; render(); });
+  }
+  boot();
+})();
