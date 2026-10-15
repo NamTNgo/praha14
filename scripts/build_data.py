@@ -150,8 +150,16 @@ def build_addresses():
     c_y = find_col(header, "souřadnice y")
     c_x = find_col(header, "souřadnice x")
     out, seen, bad = [], set(), 0
+    diag = {"total": 0, "momc": {}, "waltari": [], "skipped_nocoord": 0, "header": header}
+    c_cast = c_part
     for row in rows:
-        if len(row) <= max(c_momc, c_y, c_x) or row[c_momc].strip() != MOMC_NAME:
+        if len(row) <= max(c_momc, c_y, c_x):
+            continue
+        diag["total"] += 1
+        diag["momc"][row[c_momc].strip()] = diag["momc"].get(row[c_momc].strip(), 0) + 1
+        if "waltari" in norm(row[c_street]):
+            diag["waltari"].append([row[c_momc], row[c_part], row[c_street], row[c_cd], row[c_co]])
+        if row[c_momc].strip() != MOMC_NAME:
             continue
         if not row[c_y].strip() or not row[c_x].strip():
             continue
@@ -169,6 +177,11 @@ def build_addresses():
             continue
         seen.add(key)
         out.append([street, cd, co, round(lat, 6), round(lon, 6)])
+    try:
+        (OUT / "diag.txt").write_text(json.dumps({**diag, "waltari": diag["waltari"][:15],
+            "momc": {k: v for k, v in diag["momc"].items() if "14" in k or "Praha 9" in k or "Praha 10" in k or k == ""}, "kept": len(out)}, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
     if len(out) < 1000:
         raise RuntimeError(f"Podezřele málo adres ({len(out)}, vynecháno {bad} kvůli souřadnicím), data nepřepisuji.")
     out.sort(key=lambda a: (norm(a[0]), a[1]))
