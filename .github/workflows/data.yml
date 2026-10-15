@@ -20,7 +20,7 @@ jobs:
       - name: Stáhnout data
         env:
           GOLEMIO_API_KEY: ${{ secrets.GOLEMIO_API_KEY }}
-        run: python scripts/build_data.py
+        run: python scripts/build_data.py stations
       - name: Uložit změny
         if: always()
         run: |

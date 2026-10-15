@@ -203,8 +203,13 @@ def main():
     errors = []
     meta_path = OUT / "meta.json"
     meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}
-    for name, fn, key in (("stations.json", build_stations, "stations"),
-                          ("addresses.json", build_addresses, "addresses")):
+    mode = (sys.argv[1] if len(sys.argv) > 1 else "all")
+    jobs = []
+    if mode in ("all", "stations"):
+        jobs.append(("stations.json", build_stations, "stations"))
+    if mode in ("all", "addresses"):
+        jobs.append(("addresses.json", build_addresses, "addresses"))
+    for name, fn, key in jobs:
         try:
             data = fn()
             write(name, data)
@@ -215,7 +220,7 @@ def main():
             errors.append(f"{name}: {type(e).__name__}: {e}")
             print(f"CHYBA {name}: {e}", file=sys.stderr)
     write("meta.json", meta)
-    err_file = OUT / "last_error.txt"
+    err_file = OUT / f"last_error_{mode}.txt"
     if errors:
         err_file.write_text("\n".join(errors)[:3000], encoding="utf-8")
     elif err_file.exists():
