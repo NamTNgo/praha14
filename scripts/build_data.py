@@ -11,6 +11,7 @@ import io
 import json
 import os
 import sys
+import time
 import unicodedata
 import zipfile
 from pathlib import Path
@@ -125,15 +126,19 @@ def build_addresses():
     tried = []
     for d in candidate_dates():
         url = f"https://vdp.cuzk.cz/vymenny_format/csv/{d:%Y%m%d}_OB_{PRAHA_OBEC_KOD}_ADR.csv.zip"
-        try:
-            r = requests.get(url, timeout=300, headers={"User-Agent": "praha14-odpad/1.0"})
-            tried.append(f"{url} -> HTTP {r.status_code}")
-            if r.status_code == 200:
-                blob = r.content
-                print("RÚIAN:", url)
+        for attempt in range(1, 5):
+            try:
+                r = requests.get(url, timeout=300, headers={"User-Agent": "Mozilla/5.0 (praha14-odpad)"})
+                tried.append(f"{url} -> HTTP {r.status_code}")
+                if r.status_code == 200:
+                    blob = r.content
+                    print("RÚIAN:", url)
                 break
-        except Exception as e:  # noqa: BLE001
-            tried.append(f"{url} -> {type(e).__name__}: {e}")
+            except Exception as e:  # noqa: BLE001
+                tried.append(f"{url} (pokus {attempt}) -> {type(e).__name__}")
+                time.sleep(15 * attempt)
+        if blob is not None:
+            break
     if blob is None:
         raise RuntimeError("RÚIAN soubor se nepodařilo stáhnout: " + " | ".join(tried))
     zf = zipfile.ZipFile(io.BytesIO(blob))
