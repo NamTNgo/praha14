@@ -106,15 +106,20 @@ def build_addresses():
     from pyproj import Transformer
     tr = Transformer.from_crs(5514, 4326, always_xy=True)
     blob = None
+    tried = []
     for d in candidate_dates():
         url = f"https://vdp.cuzk.cz/vymenny_format/csv/{d:%Y%m%d}_OB_{PRAHA_OBEC_KOD}_ADR.csv.zip"
-        r = requests.get(url, timeout=300)
-        if r.status_code == 200:
-            blob = r.content
-            print("RÚIAN:", url)
-            break
+        try:
+            r = requests.get(url, timeout=300, headers={"User-Agent": "praha14-odpad/1.0"})
+            tried.append(f"{url} -> HTTP {r.status_code}")
+            if r.status_code == 200:
+                blob = r.content
+                print("RÚIAN:", url)
+                break
+        except Exception as e:  # noqa: BLE001
+            tried.append(f"{url} -> {type(e).__name__}: {e}")
     if blob is None:
-        raise RuntimeError("RÚIAN soubor se nepodařilo stáhnout (zkoušeny poslední 3 měsíce).")
+        raise RuntimeError("RÚIAN soubor se nepodařilo stáhnout: " + " | ".join(tried))
     zf = zipfile.ZipFile(io.BytesIO(blob))
     raw = zf.read(zf.namelist()[0])
     text = raw.decode("cp1250", errors="replace")
@@ -161,6 +166,7 @@ def write(name, data):
 
 def main():
     failed = False
+    errors = []
     meta_path = OUT / "meta.json"
     meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}
     for name, fn, key in (("stations.json", build_stations, "stations"),
@@ -172,8 +178,14 @@ def main():
             print(f"OK {name}: {len(data)}")
         except Exception as e:  # noqa: BLE001
             failed = True
+            errors.append(f"{name}: {type(e).__name__}: {e}")
             print(f"CHYBA {name}: {e}", file=sys.stderr)
     write("meta.json", meta)
+    err_file = OUT / "last_error.txt"
+    if errors:
+        err_file.write_text("\n".join(errors)[:3000], encoding="utf-8")
+    elif err_file.exists():
+        err_file.unlink()
     sys.exit(1 if failed else 0)
 
 
