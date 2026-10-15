@@ -176,7 +176,7 @@ def build_addresses():
         if key in seen or not street or not cd:
             continue
         seen.add(key)
-        out.append([street, cd, co, round(lat, 6), round(lon, 6), mc])
+        out.append([street, cd, co, round(lat, 6), round(lon, 6), mc, row[c_part].strip()])
     if len(out) < 1000:
         raise RuntimeError(f"Podezřele málo adres ({len(out)}, vynecháno {bad} kvůli souřadnicím), data nepřepisuji.")
     out.sort(key=lambda a: (norm(a[0]), a[1]))

@@ -222,10 +222,45 @@
     return head + '<div class="note">Termíny a místa přistavení najdete v mapě KSNKO a na webu městské části Praha ' + mc + "." + "</div>" + links(mc) + "</div></div>";
   }
 
+  // ---- odstávka teplé vody ----
+  function outageFor(addr) {
+    if (!data.outages) return null;
+    var mc = addr.mc || "14", st = addr.street || String(addr.label || "").replace(/\s+\d.*$/, "");
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var hit = data.outages.list.filter(function (o) {
+      if (o.mc !== mc || new Date(o.to + "T00:00:00") < today) return false;
+      return (addr.part && o.parts.indexOf(addr.part) >= 0) || o.streets.indexOf(st) >= 0;
+    }).sort(function (a, b) { return a.from < b.from ? -1 : 1; })[0];
+    return hit || null;
+  }
+  function outageRange(o) {
+    var f = new Date(o.from + "T00:00:00"), t = new Date(o.to + "T00:00:00");
+    return f.getDate() + ". " + (f.getMonth() + 1) + ". – " + t.getDate() + ". " + (t.getMonth() + 1) + ". " + t.getFullYear();
+  }
+  var DROP = '<path d="M12 2.7s6 6.1 6 10.8a6 6 0 0 1-12 0C6 8.8 12 2.7 12 2.7Z"/><path d="M9.5 14.5a2.7 2.7 0 0 0 2.5 2"/>';
+  function outageTop(addr) {
+    var o = outageFor(addr);
+    if (!o) return "";
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var from = new Date(o.from + "T00:00:00"), days = Math.round((from - today) / 86400000);
+    var chip = days <= 0 ? "Právě probíhá" : days === 1 ? "Zítra" : days <= 4 ? "Za " + days + " dny" : "Za " + days + " dní";
+    return '<div class="card row top" style="background:#fff8ec;border-color:#f0d9a8"><span class="badge" style="background:#fbe3d4">' + SVG(DROP, 18, "#b8582a") + '</span><div class="grow">' +
+      '<div class="t1">Odstávka teplé vody <span class="chip">' + chip + '</span></div><div class="t2">' + esc(o.name) + " · " + outageRange(o) + '</div>' +
+      '<div class="note">Dodávku teplé vody přerušuje Pražská teplárenská kvůli plánovaným pracím.</div>' +
+      '<div class="links"><a class="link" href="https://www.ptas.cz/aktuality/" target="_blank" rel="noopener">Podrobnosti u PTAS ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+  }
+  function outageNone(addr) {
+    if (!data.outages || outageFor(addr)) return "";
+    return '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(DROP, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Odstávka teplé vody</div>' +
+      '<div class="note" style="margin-top:2px">Pro vaši lokalitu teď žádná plánovaná odstávka není. Letní odstávky bývají v červenci a srpnu.</div>' +
+      '<div class="links"><a class="link" href="https://udalosti.vecr.cz/udalosti/pte.html" target="_blank" rel="noopener">Aktuální poruchy ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+  }
+
   function viewResult() {
     var a = state.address, r = results(a);
     var h = '<div class="head addr"><div><div class="eyebrow">Vaše adresa</div><div class="addr-name">' + esc(a.label) + '</div></div>' +
       '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div><div class=\"body\">";
+    h += outageTop(a);
     if (!r.near.length) {
       h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652") +
         '</span><div class="grow"><div class="t1">V okruhu 1 km jsme nenašli žádné stanoviště tříděného odpadu</div><div class="note">Další stanoviště můžete hledat v mapě KSNKO.</div>' +
@@ -250,6 +285,7 @@
     }
     h += vokCard(a);
     h += hazardCard(a);
+    h += outageNone(a);
     h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' +
       SVG('<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>', 18, "#5b5b54") +
       '</span><div class="grow"><div class="t1">Popelnice (směsný odpad)</div><div class="note" style="margin-top:2px">Svoz popelnic se liší podle domu. Termín zjistíte u správce domu nebo SVJ.</div></div></div>';
@@ -299,7 +335,7 @@
   }
   function pick(a) {
     if (!a) return;
-    state.address = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14" };
+    state.address = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14", street: a[0], part: a[6] || "" };
     save(state.address);
     render();
     window.scrollTo(0, 0);
@@ -308,8 +344,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5] };
       buildIndex();
       state.address = load();
       render();

@@ -70,3 +70,4 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .hbio { background:#eef5ee; }
 .hbio .eyebrow { color:#1f4d36; }
 .hplaces { margin-top:6px; font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.7; }
+.chip { display:inline-block; font-size:11.5px; font-weight:700; color:#8a4a12; background:#f7e0b8; border-radius:10px; padding:2px 8px; margin-left:6px; vertical-align:1px; }

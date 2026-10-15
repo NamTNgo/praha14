@@ -1,0 +1,13 @@
+{
+  "updated": "2026-10-16",
+  "src": {
+    "14": "https://www.praha14.cz/zivot-na-praze-14/letni-odstavka-teple-vody-v-praze-14/",
+    "9": "https://www.praha9.cz/planovane-letni-odstavky-teple-vody-praha-9"
+  },
+  "list": [
+    { "mc": "14", "name": "Černý Most, Hloubětín, Lehovec", "from": "2026-07-04", "to": "2026-07-10", "parts": ["Černý Most", "Hloubětín", "Lehovec"], "streets": [] },
+    { "mc": "9", "name": "Prosek, Střížkov, Hrdlořezy", "from": "2026-07-04", "to": "2026-07-10", "parts": ["Prosek", "Střížkov", "Hrdlořezy"], "streets": [] },
+    { "mc": "9", "name": "Vysočany – Kolbenova a okolí", "from": "2026-07-04", "to": "2026-07-10", "parts": [], "streets": ["Kolbenova", "Poděbradská"] },
+    { "mc": "9", "name": "Podvinný mlýn a okolí ZŠ Na Balabence", "from": "2026-08-17", "to": "2026-08-20", "parts": [], "streets": ["Podvinný mlýn", "Na Balabence"] }
+  ]
+}
