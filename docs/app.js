@@ -48,6 +48,8 @@
   function buildIndex() {
     index = data.addresses.map(function (a) {
       return { a: a, street: norm(a[0]), cd: a[1], co: a[2].toLowerCase() };
+    }).sort(function (x, y) {
+      return x.street < y.street ? -1 : x.street > y.street ? 1 : (parseInt(x.cd, 10) || 0) - (parseInt(y.cd, 10) || 0);
     });
   }
   function search(q) {
@@ -56,8 +58,8 @@
     var num = null;
     if (toks.length > 1 && /^\d/.test(toks[toks.length - 1])) num = toks.pop();
     var street = toks.join(" ");
-    var out = [];
-    for (var i = 0; i < index.length && out.length < 6; i++) {
+    var out = [], exact = [];
+    for (var i = 0; i < index.length && exact.length + out.length < 40; i++) {
       var e = index[i];
       if (e.street.indexOf(street) !== 0 && !e.street.split(" ").some(function (w, k, arr) { return arr.slice(k).join(" ").indexOf(street) === 0; })) continue;
       if (num) {
@@ -66,9 +68,10 @@
                                 : (e.co.indexOf(num) === 0 || e.cd.indexOf(num) === 0);
         if (!ok) continue;
       }
-      out.push(e.a);
+      var isExact = num && (e.co === num || e.cd === num);
+      (isExact ? exact : out).push(e.a);
     }
-    return out;
+    return exact.concat(out).slice(0, 6);
   }
 
   // ---- výpočet výsledků ----
