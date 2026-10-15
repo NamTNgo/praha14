@@ -65,3 +65,7 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .hname { font-size:15px; font-weight:800; color:var(--ink); margin-top:2px; }
 .hdate { font-size:13.5px; font-weight:600; color:var(--ink); margin-top:3px; }
 .hnote { font-size:12px; color:var(--faint); margin-top:2px; }
+.hvok { background:#fdf3ec; }
+.hvok .eyebrow { color:#a24d20; }
+.hbio { background:#eef5ee; }
+.hbio .eyebrow { color:#1f4d36; }
