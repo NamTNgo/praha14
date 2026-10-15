@@ -102,13 +102,20 @@
 
   // ---- šablony ----
   var FOOT = '<div class="foot">Zdroj dat: Golemio (Operátor ICT) · Adresy: ČÚZK (RÚIAN)</div>';
-  var LINKS = '<div class="links">' +
-    '<a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" +
-    '<a class="link" href="https://www.praha14.cz/urad-mestske-casti/hledam-informaci/zivotni-prostredi/odpady/" target="_blank" rel="noopener">Harmonogramy na praha14.cz ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>";
+  var MC_URL = {
+    "14": ["praha14.cz", "https://www.praha14.cz/urad-mestske-casti/hledam-informaci/zivotni-prostredi/odpady/"],
+    "9": ["praha9.cz", "https://www.praha9.cz/urad-a-samosprava/zivotni-prostredi"]
+  };
+  function links(mc) {
+    var m = MC_URL[mc] || MC_URL["14"];
+    return '<div class="links">' +
+      '<a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" +
+      '<a class="link" href="' + m[1] + '" target="_blank" rel="noopener">Harmonogramy na ' + m[0] + ' ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>";
+  }
 
   function viewSearch() {
     var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
-    var h = '<div class="head"><div class="eyebrow">Praha 14</div><h1>Kam s odpadem?</h1>' +
+    var h = '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Kam s odpadem?</h1>' +
       '<div class="sub">Zadejte adresu a uvidíte, kde a kdy v okolí odnést odpad.</div></div><div class="body">' +
       '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#8a8572", 2.2) +
       '<input id="q" class="input' + (none ? " bad" : "") + (q.trim().length >= 2 ? " has-clear" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '">' +
@@ -120,12 +127,12 @@
     var h = "";
     if (res.length) {
       h += '<div class="card sugg" role="list">' + res.map(function (a, i) {
-        return '<button type="button" data-i="' + i + '"><span class="pin">' + SVG(PIN, 16, "#1f4d36", 2.1) + '</span><span><span class="p">' + esc(label(a)) + '</span><span class="s">Praha 14</span></span></button>';
+        return '<button type="button" data-i="' + i + '"><span class="pin">' + SVG(PIN, 16, "#1f4d36", 2.1) + '</span><span><span class="p">' + esc(label(a)) + '</span><span class="s">Praha ' + (a[5] || "14") + '</span></span></button>';
       }).join("") + "</div>";
     } else if (none) {
       h += '<div class="card center"><span class="big-badge" style="background:#fbeadb">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M9 9l4 4m0-4-4 4"/>', 26, "#b5631f") +
         '</span><div class="t1">Tuhle adresu jsme nenašli</div><p>Zkontrolujte prosím, jestli je ulice a číslo napsané správně, a zkuste to znovu.</p></div>' +
-        '<div class="hint" style="text-align:center">Appka zatím pokrývá jen adresy v Praze 14.</div>';
+        '<div class="hint" style="text-align:center">Appka zatím pokrývá jen adresy v Praze 9 a Praze 14.</div>';
     } else {
       h += '<div class="hint">Našeptávač se spustí po druhém napsaném písmenu.</div>';
     }
@@ -160,7 +167,7 @@
     }
     h += '<div class="card row top"><span class="badge" style="background:#fbe3d4">' +
       SVG('<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>', 18, "#b8582a") +
-      '</span><div class="grow"><div class="t1">Velkoobjemové kontejnery (VOK a BIO VOK)</div><div class="note">Termíny a místa přistavení najdete v mapě KSNKO a na stránce Odpady městské části Praha 14.</div>' + LINKS + "</div></div>";
+      '</span><div class="grow"><div class="t1">Velkoobjemové kontejnery (VOK a BIO VOK)</div><div class="note">Termíny a místa přistavení najdete v mapě KSNKO a na webu městské části Praha ' + (a.mc || "14") + '.</div>' + links(a.mc || "14") + "</div></div>";
     h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' +
       SVG('<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>', 18, "#5b5b54") +
       '</span><div class="grow"><div class="t1">Popelnice (směsný odpad)</div><div class="note" style="margin-top:2px">Svoz popelnic se liší podle domu. Termín zjistíte u správce domu nebo SVJ.</div></div></div>';
@@ -173,7 +180,7 @@
       '</span><h2>Nejste připojeni k internetu</h2><p>Pro zobrazení stanovišť a termínů potřebuje appka internetové připojení. Zkontrolujte prosím Wi-Fi nebo mobilní data.</p>' +
       '<button type="button" class="btn" id="retry">Zkusit znovu</button></div>';
   }
-  function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 14</div><h1>Kam s odpadem?</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
+  function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Kam s odpadem?</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
 
   // ---- vykreslení a události ----
   function render(keepFocus) {
@@ -210,7 +217,7 @@
   }
   function pick(a) {
     if (!a) return;
-    state.address = { label: label(a), lat: a[3], lon: a[4] };
+    state.address = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14" };
     save(state.address);
     render();
     window.scrollTo(0, 0);

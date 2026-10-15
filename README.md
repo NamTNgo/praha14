@@ -1,6 +1,6 @@
-# Kam s odpadem? Praha 14
+# Kam s odpadem? Praha 9 a 14
 
-Webová aplikace pro nové obyvatele Prahy 14: po zadání adresy ukáže nejbližší stanoviště
+Webová aplikace pro nové obyvatele Prahy 9 a Prahy 14: po zadání adresy ukáže nejbližší stanoviště
 tříděného odpadu v okruhu 1 km. Bez účtu, adresa se ukládá jen v prohlížeči.
 
 - `docs/` – statický web (GitHub Pages)
