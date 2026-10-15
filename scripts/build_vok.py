@@ -129,6 +129,18 @@ def hav(a, b):
     x = math.sin((b[0] - a[0]) * p / 2) ** 2 + math.cos(a[0] * p) * math.cos(b[0] * p) * math.sin((b[1] - a[1]) * p / 2) ** 2
     return 12742000 * math.asin(math.sqrt(x))
 
+# Praha 9: BIO VOK, podzim 2026 (místa bez souřadnic, jen text)
+P9_SRC = "https://www.praha9.cz/sites/default/files/downloads/2026/09/P9_VOK_BIO_2026_podzim_0.pdf"
+P9 = [
+    ("2026-10-25", ["Miškovická x Poleradská", "K Lipám x Chrastavská", "Nad Krocínkou x Obvodová"]),
+    ("2026-11-01", ["Před Mosty x Za Mosty", "Kopečná x Nad Šestikopy", "Nad Kundratkou – mezi č. 869/13b a 385/15"]),
+    ("2026-11-08", ["Pokorného x Jahodnická", "Pod Krocínkou proti č. 55", "Hrdlořezská 43"]),
+    ("2026-11-15", ["Miškovická x Poleradská", "Podvinný mlýn 12–14", "Odlehlá 1"]),
+    ("2026-11-22", ["Nad Krocínkou x Obvodová", "Pod Smetankou – u železničního mostu za meandry", "Kopečná x Nad Šestikopy"]),
+    ("2026-11-29", ["K Lipám x Chrastavská", "Nad Kundratkou – mezi č. 869/13b a 385/15", "Pod Krocínkou proti č. 55"]),
+]
+
+
 def label(place):
     n = re.sub(r"/(?=\D)", " x ", place)
     for a, b in (("gen.Janouška", "Generála Janouška"), ("A.Valenty", "Arnošta Valenty"), ("Kpt.Stránského", "Kpt. Stránského"),
@@ -186,6 +198,7 @@ def main():
             out.append({"t": r["type"], "n": label(place),
                         "d": r["date"], "h": r["time"], "lat": round(lat, 5), "lon": round(lon, 5)})
     print("Počet záznamů:", len(out), "| problémy:", miss)
+    (D / "vok9.json").write_text(json.dumps({"src": P9_SRC, "time": "9:00–12:00", "dates": [{"d": d, "p": pl} for d, pl in P9]}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (D / "vok.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
 if __name__ == "__main__":

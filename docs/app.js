@@ -194,6 +194,12 @@
     return '<div class="hbox ' + cls + '"><div class="eyebrow">' + label + '</div><div class="hname">' + esc(x.r.n) + " · " + meters(x.dist) + "</div>" +
       '<div class="hdate">' + HDAYS[d.getDay()] + " " + d.getDate() + ". " + (d.getMonth() + 1) + "." + (x.r.h ? " · " + x.r.h : "") + "</div></div>";
   }
+  function vok9Next() {
+    if (!data.vok9) return null;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var r = data.vok9.dates.filter(function (x) { return new Date(x.d + "T00:00:00") >= today; })[0];
+    return r ? { date: new Date(r.d + "T00:00:00"), p: r.p } : null;
+  }
   function vokCard(addr) {
     var mc = addr.mc || "14", v = mc === "14" && data.vok ? [vokNearest(addr, "vok"), vokNearest(addr, "bio")] : null;
     var head = '<div class="card row top"><span class="badge" style="background:#fbe3d4">' +
@@ -202,6 +208,16 @@
     if (v && (v[0] || v[1])) {
       return head + vokBlock(v[0], "hvok", "Nejbližší VOK") + vokBlock(v[1], "hbio", "Nejbližší BIO VOK") +
         '<div class="note" style="margin-top:8px">Termíny se mohou změnit. Aktuální najdete v mapě KSNKO a na praha14.cz.</div>' + links("14") + "</div></div>";
+    }
+    var n9 = mc === "9" ? vok9Next() : null;
+    if (n9) {
+      var d9 = n9.date;
+      return head + '<div class="note">BIO VOK · podzim 2026 · přistavení po celé Praze 9</div><div class="hbox hvok"><div class="eyebrow">Nejbližší termín</div>' +
+        '<div class="hname">' + HDAYS[d9.getDay()] + " " + d9.getDate() + ". " + (d9.getMonth() + 1) + ". · " + data.vok9.time + "</div>" +
+        '<div class="hplaces">' + n9.p.map(function (x) { return "<div>" + esc(x) + "</div>"; }).join("") + "</div></div>" +
+        '<div class="note" style="margin-top:8px">Další termíny najdete v celém harmonogramu. Místa nejsou řazena podle vzdálenosti od vaší adresy.</div>' +
+        '<div class="links"><a class="link" href="' + data.vok9.src + '" target="_blank" rel="noopener">Celý harmonogram (PDF) ' + SVG(ARROW, 12, "currentColor", 2.4) + '</a>' +
+        '<a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
     }
     return head + '<div class="note">Termíny a místa přistavení najdete v mapě KSNKO a na webu městské části Praha ' + mc + "." + "</div>" + links(mc) + "</div></div>";
   }
@@ -292,8 +308,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4] };
       buildIndex();
       state.address = load();
       render();
