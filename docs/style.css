@@ -29,7 +29,7 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .input:focus { outline:none; border-color:var(--green); }
 .input.bad { border-color:#d99b4e; }
 .sugg { overflow:hidden; padding:4px 0; }
-.sugg button { display:flex; align-items:center; gap:13px; width:100%; text-align:left; font-family:inherit; padding:13px 16px; border:none; border-bottom:1px solid #f0eee6; background:#fff; cursor:pointer; min-height:56px; }
+.sugg button { color:var(--ink); -webkit-appearance:none; appearance:none; display:flex; align-items:center; gap:13px; width:100%; text-align:left; font-family:inherit; padding:13px 16px; border:none; border-bottom:1px solid #f0eee6; background:#fff; cursor:pointer; min-height:56px; }
 .sugg button:last-child { border-bottom:none; }
 .sugg button:hover, .sugg button:focus-visible { background:#faf9f5; outline:none; }
 .pin { flex-shrink:0; width:34px; height:34px; border-radius:10px; background:#eef1ea; display:flex; align-items:center; justify-content:center; }
