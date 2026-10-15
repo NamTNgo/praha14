@@ -1,0 +1,1 @@
+addresses.json: RuntimeError: Souřadnice RÚIAN mimo Prahu, zkontroluj pořadí sloupců X/Y.
