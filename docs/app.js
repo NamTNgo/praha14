@@ -142,8 +142,8 @@
   // ---- mobilní sběr nebezpečného odpadu (jen Praha 14) ----
   var HDAYS = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
   function hazardInfo(addr) {
-    var hz = data.hazard;
-    if (!hz || (addr.mc || "14") !== "14") return null;
+    var hz = data.hazard && data.hazard[addr.mc || "14"];
+    if (!hz) return null;
     var best = null;
     Object.keys(hz.routes).forEach(function (rk) {
       hz.routes[rk].stops.forEach(function (st) {
