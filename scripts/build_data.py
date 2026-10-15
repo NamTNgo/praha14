@@ -102,6 +102,22 @@ def find_col(header, *parts):
     raise RuntimeError(f"V RÚIAN CSV chybí sloupec obsahující {parts}. Hlavička: {header}")
 
 
+_combo = None
+
+
+def to_wgs(tr, a, b):
+    """S-JTSK -> (lat, lon). Pořadí a znaménka sloupců X/Y se určí z prvního platného řádku."""
+    global _combo
+    combos = [_combo] if _combo else [(sa, sb, sw) for sw in (False, True) for sa in (1, -1) for sb in (1, -1)]
+    for sa, sb, sw in combos:
+        u, v = (b * sb, a * sa) if sw else (a * sa, b * sb)
+        lon, lat = tr.transform(u, v)
+        if 49.9 < lat < 50.3 and 14.4 < lon < 14.8:
+            _combo = (sa, sb, sw)
+            return lat, lon
+    return None
+
+
 def build_addresses():
     from pyproj import Transformer
     tr = Transformer.from_crs(5514, 4326, always_xy=True)
@@ -133,18 +149,18 @@ def build_addresses():
     c_znak = find_col(header, "znak")
     c_y = find_col(header, "souřadnice y")
     c_x = find_col(header, "souřadnice x")
-    out, seen = [], set()
+    out, seen, bad = [], set(), 0
     for row in rows:
         if len(row) <= max(c_momc, c_y, c_x) or row[c_momc].strip() != MOMC_NAME:
             continue
         if not row[c_y].strip() or not row[c_x].strip():
             continue
-        y, x = float(row[c_y].replace(",", ".")), float(row[c_x].replace(",", "."))
-        lon, lat = tr.transform(y, x)
-        if not (49.9 < lat < 50.3 and 14.4 < lon < 14.8):
-            lon, lat = tr.transform(x, y)
-            if not (49.9 < lat < 50.3 and 14.4 < lon < 14.8):
-                raise RuntimeError("Souřadnice RÚIAN mimo Prahu, zkontroluj pořadí sloupců X/Y.")
+        a, b = float(row[c_y].replace(",", ".")), float(row[c_x].replace(",", "."))
+        pt = to_wgs(tr, a, b)
+        if pt is None:
+            bad += 1
+            continue
+        lat, lon = pt
         street = row[c_street].strip() or row[c_part].strip()
         cd = row[c_cd].strip()
         co = (row[c_co].strip() + row[c_znak].strip()) if row[c_co].strip() else ""
@@ -154,7 +170,7 @@ def build_addresses():
         seen.add(key)
         out.append([street, cd, co, round(lat, 6), round(lon, 6)])
     if len(out) < 1000:
-        raise RuntimeError(f"Podezřele málo adres ({len(out)}), data nepřepisuji.")
+        raise RuntimeError(f"Podezřele málo adres ({len(out)}, vynecháno {bad} kvůli souřadnicím), data nepřepisuji.")
     out.sort(key=lambda a: (norm(a[0]), a[1]))
     return out
 
