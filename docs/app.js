@@ -172,7 +172,7 @@
     }
     h += '<div class="hnote">trasa ' + x.rk + (x.st.note ? " · " + esc(x.st.note) : "") + "</div></div>";
     if (!x.next || x.last) h += '<div class="note" style="margin-top:8px">' + (x.next ? "Po tomto termínu už v roce " : "V roce ") + "2026" + (x.next ? " další zastávka na této trase není" : " už další zastávka na této trase není") + ". Harmonogram na příští rok zatím nebyl zveřejněn.</div>";
-    h += '<div class="links"><a class="link" href="' + x.src + '" target="_blank" rel="noopener">Celý harmonogram (PDF) ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+    h += '<div class="links"><a class="link" href="' + x.src + '" target="_blank" rel="noopener">' + (/\.pdf$/.test(x.src) ? "Celý harmonogram (PDF) " : "Harmonogram na praha9.cz ") + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
     return h;
   }
 
