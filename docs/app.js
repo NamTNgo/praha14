@@ -110,8 +110,9 @@
     var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
     var h = '<div class="head"><div class="eyebrow">Praha 14</div><h1>Kam s odpadem?</h1>' +
       '<div class="sub">Zadejte adresu a uvidíte, kde a kdy v okolí odnést odpad.</div></div><div class="body">' +
-      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#a39d8c", 2.2) +
-      '<input id="q" class="input' + (none ? " bad" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '"></div>';
+      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#8a8572", 2.2) +
+      '<input id="q" class="input' + (none ? " bad" : "") + (q.trim().length >= 2 ? " has-clear" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '">' +
+      '<button type="button" class="clear-btn" id="clr" aria-label="Vymazat text"' + (q.trim().length >= 2 ? "" : " hidden") + '><span class="clear-dot">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 10, "#fff", 3.2) + "</span></button></div>";
     h += '<div id="sres" class="list">' + searchRes(res, none) + "</div></div>" + FOOT;
     return h;
   }
@@ -136,13 +137,13 @@
     var h = '<div class="head addr"><div><div class="eyebrow">Vaše adresa</div><div class="addr-name">' + esc(a.label) + '</div></div>' +
       '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div><div class=\"body\">";
     if (!r.near.length) {
-      h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#9a9480") +
+      h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652") +
         '</span><div class="grow"><div class="t1">V okruhu 1 km jsme nenašli žádné stanoviště tříděného odpadu</div><div class="note">Další stanoviště můžete hledat v mapě KSNKO.</div>' +
         '<div class="links"><a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
     } else {
       var n = r.near[0], types = TYPES.filter(function (t) { return n.s.t[t.id]; }).map(function (t) { return t.name.split(" a ")[0].toLowerCase(); });
       h += '<div class="card row near"><span class="badge" style="background:#e9f0e9">' + SVG(PIN, 19, "#1f4d36", 2.1) + '</span><div><div class="eyebrow">Nejbližší kontejner</div>' +
-        '<div class="big">' + esc(n.s.name) + " · " + meters(n.d) + '</div><div class="t3" style="font-size:12.5px;color:#8a8572">' + esc(types.join(", ")) + "</div></div></div>";
+        '<div class="big">' + esc(n.s.name) + " · " + meters(n.d) + '</div><div class="t3" style="font-size:12.5px;color:#6b6652">' + esc(types.join(", ")) + "</div></div></div>";
       h += '<div class="list"><div class="label">V okruhu 1 km od adresy</div>';
       TYPES.forEach(function (t) {
         var f = r.byType[t.id];
@@ -151,7 +152,7 @@
           h += '<div class="card row"><span class="badge" style="background:' + t.bg + '">' + SVG(t.icon, 18, t.fg) + '</span><div class="grow"><div class="t1">' + t.name +
             '</div><div class="t2">' + esc(f.s.name) + " · " + meters(f.d) + "</div>" + (sch ? '<div class="t3">' + sch + "</div>" : "") + "</div></div>";
         } else if (t.core) {
-          h += '<div class="card-dashed row"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#9a9480") +
+          h += '<div class="card-dashed row"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652") +
             '</span><div class="grow"><div class="t1" style="color:#6b6557">' + t.name + '</div><div class="note" style="margin-top:1px">v okruhu 1 km jsme nic nenašli</div></div></div>';
         }
       });
@@ -187,10 +188,17 @@
         state.query = q.value;
         var t = q.value.trim(), res = t.length >= 2 ? search(q.value) : [], none = t.length >= 2 && !res.length;
         q.classList.toggle("bad", none);
+        q.classList.toggle("has-clear", t.length >= 2);
+        document.getElementById("clr").hidden = t.length < 2;
         document.getElementById("sres").innerHTML = searchRes(res, none);
         bindSugg(res);
       });
       bindSugg(state.query.trim().length >= 2 ? search(state.query) : []);
+      document.getElementById("clr").addEventListener("click", function () {
+        state.query = ""; q.value = ""; q.classList.remove("bad", "has-clear"); this.hidden = true;
+        document.getElementById("sres").innerHTML = searchRes([], false);
+        q.focus();
+      });
     }
     var e = document.getElementById("edit");
     if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; render(); var i = document.getElementById("q"); if (i) i.focus(); });
