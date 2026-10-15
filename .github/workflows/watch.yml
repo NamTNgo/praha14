@@ -1,0 +1,40 @@
+name: Hlídání stránek MČ
+
+on:
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Zkontrolovat stránky
+        id: check
+        run: python scripts/watch_pages.py
+        continue-on-error: true
+      - name: Uložit stav
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add watch/state.json
+          git diff --cached --quiet || git commit -m "Stav sledovaných stránek"
+          git push || true
+      - name: Vytvořit Issue při změně
+        if: hashFiles('watch/issue.md') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh issue create --title "Změna na stránkách MČ ($(date +%F))" --body-file watch/issue.md
+      - name: Selhání stahování
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "Stránky se nepodařilo stáhnout, viz log kroku Zkontrolovat stránky." >&2
+          exit 1
