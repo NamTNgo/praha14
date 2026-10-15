@@ -139,6 +139,43 @@
     return h;
   }
 
+  // ---- mobilní sběr nebezpečného odpadu (jen Praha 14) ----
+  var HDAYS = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
+  function hazardInfo(addr) {
+    var hz = data.hazard;
+    if (!hz || (addr.mc || "14") !== "14") return null;
+    var best = null;
+    Object.keys(hz.routes).forEach(function (rk) {
+      hz.routes[rk].stops.forEach(function (st) {
+        var d = dist(addr.lat, addr.lon, st.lat, st.lon);
+        if (!best || d < best.d) best = { d: d, st: st, rk: rk };
+      });
+    });
+    if (!best) return null;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var dates = hz.routes[best.rk].dates.map(function (x) { return new Date(x + "T00:00:00"); }).filter(function (x) { return x >= today; });
+    best.next = dates[0] || null;
+    best.last = dates.length <= 1;
+    best.src = hz.src;
+    return best;
+  }
+  function hazardCard(addr) {
+    var x = hazardInfo(addr);
+    if (!x) return "";
+    var h = '<div class="card row top"><span class="badge" style="background:#f7dede">' +
+      SVG('<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/>', 18, "#b03a3a") +
+      '</span><div class="grow"><div class="t1">Sběr nebezpečného odpadu</div><div class="note">Mobilní sběr: vozidlo zastaví na křižovatce, odpad předáte na místě.</div>' +
+      '<div class="hbox"><div class="eyebrow" style="color:#a13333">Nejbližší zastávka</div><div class="hname">' + esc(x.st.name) + " · " + meters(x.d) + "</div>";
+    if (x.next) {
+      var t = x.next.getDay() === 6 ? x.st.sat : x.st.wk;
+      h += '<div class="hdate">' + HDAYS[x.next.getDay()] + " " + x.next.getDate() + ". " + (x.next.getMonth() + 1) + ". · " + t + "</div>";
+    }
+    h += '<div class="hnote">trasa ' + x.rk + (x.st.note ? " · " + esc(x.st.note) : "") + "</div></div>";
+    if (!x.next || x.last) h += '<div class="note" style="margin-top:8px">' + (x.next ? "Po tomto termínu už v roce " : "V roce ") + "2026" + (x.next ? " další zastávka na této trase není" : " už další zastávka na této trase není") + ". Harmonogram na příští rok zatím nebyl zveřejněn.</div>";
+    h += '<div class="links"><a class="link" href="' + x.src + '" target="_blank" rel="noopener">Celý harmonogram (PDF) ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+    return h;
+  }
+
   function viewResult() {
     var a = state.address, r = results(a);
     var h = '<div class="head addr"><div><div class="eyebrow">Vaše adresa</div><div class="addr-name">' + esc(a.label) + '</div></div>' +
@@ -168,6 +205,7 @@
     h += '<div class="card row top"><span class="badge" style="background:#fbe3d4">' +
       SVG('<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>', 18, "#b8582a") +
       '</span><div class="grow"><div class="t1">Velkoobjemové kontejnery (VOK a BIO VOK)</div><div class="note">Termíny a místa přistavení najdete v mapě KSNKO a na webu městské části Praha ' + (a.mc || "14") + '.</div>' + links(a.mc || "14") + "</div></div>";
+    h += hazardCard(a);
     h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' +
       SVG('<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>', 18, "#5b5b54") +
       '</span><div class="grow"><div class="t1">Popelnice (směsný odpad)</div><div class="note" style="margin-top:2px">Svoz popelnic se liší podle domu. Termín zjistíte u správce domu nebo SVJ.</div></div></div>';
@@ -226,8 +264,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json")]).then(function (v) {
-      data = { stations: v[0], addresses: v[1] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2] };
       buildIndex();
       state.address = load();
       render();

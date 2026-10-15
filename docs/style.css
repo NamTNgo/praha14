@@ -60,3 +60,8 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .clear-btn { position:absolute; right:2px; top:50%; transform:translateY(-50%); width:44px; height:44px; border:none; background:none; padding:0; display:flex; align-items:center; justify-content:center; cursor:pointer; }
 .clear-btn[hidden] { display:none; }
 .clear-dot { width:20px; height:20px; border-radius:50%; background:#8a8572; display:flex; align-items:center; justify-content:center; }
+
+.hbox { margin-top:10px; background:#fbf3f3; border-radius:12px; padding:10px 12px; }
+.hname { font-size:15px; font-weight:800; color:var(--ink); margin-top:2px; }
+.hdate { font-size:13.5px; font-weight:600; color:var(--ink); margin-top:3px; }
+.hnote { font-size:12px; color:var(--faint); margin-top:2px; }
