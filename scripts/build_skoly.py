@@ -15,6 +15,38 @@ def norm(s):
     return re.sub(r"[^a-z0-9]", "", s)
 
 
+PF = {"331": "Příspěvková organizace", "112": "Společnost s ručením omezeným", "121": "Akciová společnost",
+      "141": "Obecně prospěšná společnost", "706": "Spolek", "641": "Školská právnická osoba",
+      "721": "Církevní organizace", "722": "Církevní právnická osoba", "801": "Obec", "804": "Kraj",
+      "325": "Organizační složka státu", "111": "Veřejná obchodní společnost", "117": "Nadace", "118": "Nadační fond",
+      "301": "Státní podnik", "661": "Veřejná výzkumná instituce", "736": "Pobočný spolek", "101": "Fyzická osoba podnikající"}
+FREEMAIL = {"gmail.com", "seznam.cz", "email.cz", "centrum.cz", "post.cz", "volny.cz", "atlas.cz", "icloud.com",
+            "outlook.com", "hotmail.com", "yahoo.com", "tiscali.cz", "quick.cz", "iol.cz"}
+
+
+def sector(e):
+    """s = státní/obecní, c = církevní, p = soukromá, None = nezjištěno. Podle zřizovatele (právní forma + název)."""
+    zs = e.get("zrizovatele") or []
+    if not zs:
+        return None, "", ""
+    z = zs[0]
+    pf, name = str(z.get("pravniForma") or ""), (z.get("nazevOsoby") or "").strip()
+    n = norm(name)
+    if pf in ("801", "804", "325", "301", "803") or n.startswith(("mestskacast", "hlavnimesto", "ministerstvo", "ceskarepublika", "obec", "mesto", "kraj", "statnipodnik")):
+        return "s", name, pf
+    if pf.startswith("72") or any(k in n for k in ("cirkev", "dieceze", "arcibiskup", "biskup", "farnost", "kongregace", "sestry", "rimskokatol", "husitsk", "evangelick", "bratrsk", "kapucin", "salezian", "jezuit")):
+        return "c", name, pf
+    return "p", name, pf
+
+
+def web_from_email(emails):
+    for m in emails or []:
+        d = m.split("@")[-1].strip().lower()
+        if d and d not in FREEMAIL and "." in d:
+            return d
+    return ""
+
+
 def kind(name):
     n = norm(name)
     if n.startswith("materskaskola"):
@@ -37,6 +69,7 @@ def main():
         doc = json.loads(r.read().decode("utf-8"))
     ents = doc["list"] if isinstance(doc, dict) else doc
     out, seen = [], set()
+    secs, nosec, pfs = Counter(), [], Counter()
     skipped, unmatched, outside = Counter(), [], 0
     for e in ents:
         title = re.sub(r"\s+", " ", e.get("zkracenyNazev") or e.get("uplnyNazev") or "").strip()
@@ -71,11 +104,41 @@ def main():
                 seen.add(key)
                 ao = ad.get("cisloOrientacni")
                 num = f"{cd}/{ao}{ad.get('dodatekOrientacnihoCisla') or ''}" if ao else cd
-                out.append({"n": title, "t": t, "a": f"{st} {num}".strip(), "mc": mc, "lat": lat, "lon": lon})
+                z, zname, zpf = sector(e)
+                secs[z or "?"] += 1
+                pfs[f"{zpf}|{z}|{zname[:40]}"] += 1
+                if z is None:
+                    nosec.append(title)
+                emails = e.get("emaily") or []
+                cap = next((int(k["nejvyssiPovolenyPocet"]) for k in sz.get("kapacity") or [] if str(k.get("nejvyssiPovolenyPocet") or "").isdigit()), None)
+                rec = {"id": f'{sz.get("izo") or e.get("redIzo")}-{len(out)}', "n": title, "t": t, "a": f"{st} {num}".strip(), "mc": mc, "lat": lat, "lon": lon}
+                if z:
+                    rec["z"] = z
+                if zname:
+                    rec["zn"] = zname
+                if PF.get(zpf):
+                    rec["pf"] = PF[zpf]
+                rd = (e.get("reditel") or {}).get("nazevOsoby")
+                if rd:
+                    rec["rd"] = rd.strip()
+                if emails:
+                    rec["e"] = emails[0].strip()
+                w = web_from_email(emails)
+                if w:
+                    rec["w"] = w
+                if cap:
+                    rec["k"] = cap
+                if str(sz.get("jazyk") or "") == "100":
+                    rec["j"] = "český"
+                out.append(rec)
     out.sort(key=lambda x: (x["t"], norm(x["n"])))
     (DATA / "skoly.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     rep = [f"záznamů: {len(out)}", "podle typu: " + json.dumps(Counter(x["t"] for x in out)),
            "podle MČ: " + json.dumps(Counter(x["mc"] for x in out)),
+           "podle zřizovatele (s/p/c/?): " + json.dumps(secs),
+           "s webem: " + str(sum(1 for x in out if x.get("w"))) + ", s e-mailem: " + str(sum(1 for x in out if x.get("e"))),
+           "právní forma zřizovatele | sektor | název (kontrola třídění):"] + ["  %dx %s" % (c, k) for k, c in pfs.most_common(60)] + [
+           "bez zřizovatele: " + "; ".join(nosec[:20]),
            f"mimo Prahu 9/14 (nespárováno): {outside}", f"Praha 9/14 bez shody adresy: {len(unmatched)}"]
     rep += ["  " + u for u in unmatched[:60]]
     rep += ["přeskočené druhy:"] + [f"  {c}x {k}" for k, c in skipped.most_common(40)]
