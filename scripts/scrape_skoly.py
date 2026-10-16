@@ -255,7 +255,7 @@ def find_webs(skoly):
     """Weby škol, které nelze odvodit z e-mailu (např. @seznam.cz): OpenStreetMap (Overpass) – objekt škola/školka
     do 150 m od adresy a se společným výrazným slovem v názvu."""
     q = '[out:json][timeout:90];nwr["amenity"~"^(school|kindergarten)$"](49.94,14.2,50.18,14.75);out center tags;'
-    req = urllib.request.Request("https://overpass-api.de/api/interpreter", data=("data=" + urllib.parse.quote(q)).encode(), headers={"User-Agent": UA})
+    req = urllib.request.Request("https://overpass-api.de/api/interpreter", data=("data=" + urllib.parse.quote(q)).encode(), headers={"User-Agent": "skoly-praha-bot/1.0 (https://github.com/NamTNgo/praha14)", "Accept": "*/*", "Content-Type": "application/x-www-form-urlencoded"})
     with urllib.request.urlopen(req, timeout=120) as r:
         els = json.loads(r.read().decode("utf-8"))["elements"]
     pts = []
