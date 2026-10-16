@@ -139,16 +139,21 @@ def zapis(text, today):
     return None
 
 
-def skolne(text):
+def skolne(text, mcs=None):
+    """Školné; u webů s více pobočkami ('PRAHA 14 školné … / PRAHA 6 školné …') jen pro naši městskou část."""
     for m in re.finditer(r"(?i)školné", text):
+        pm = re.search(r"(?i)praha\s*(\d{1,2})\s*$", text[max(0, m.start() - 40):m.start()])
+        if pm and mcs and pm.group(1) not in mcs:
+            continue
         seg = text[m.end():m.end() + 220]
-        a = re.search(r"(\d{1,3}(?:[  ]\d{3})+|\d{3,6})\s*(?:,-|Kč)", seg)
-        if a:
-            amt = re.sub(r"[  ]", " ", a.group(1))
-            unit = "měsíc" if re.search(r"(?i)měsíč|měs\.|/\s*měs", seg[:a.end() + 40]) else ("rok" if re.search(r"(?i)ročn|školní rok|/\s*rok", seg[:a.end() + 40]) else "")
+        for a in re.finditer(r"(?<![\d/.,])(\d{1,3}(?:[  ]\d{3})+|\d{3,6})\s*(?:,-|Kč)", seg):
+            amt = re.sub(r"[  ]", " ", a.group(1))
             n = int(amt.replace(" ", ""))
-            if 200 <= n <= 400000:
-                return f"{amt} Kč" + (f" / {unit}" if unit else "")
+            if not 200 <= n <= 400000:
+                continue
+            ctx = seg[:a.end() + 40]
+            unit = "měsíc" if re.search(r"(?i)měsíč|měs\.|/\s*měs", ctx) else ("rok" if re.search(r"(?i)ročn|školní rok|/\s*rok", ctx) else "")
+            return f"{amt} Kč" + (f" / {unit}" if unit else "")
     return None
 
 
@@ -171,7 +176,7 @@ def cenik(text):
     return None
 
 
-def scrape_host(host, today):
+def scrape_host(host, today, mcs=None):
     res, src = {}, {}
     try:
         h, base = None, None
@@ -212,7 +217,7 @@ def scrape_host(host, today):
                 if d:
                     res["pz"], src["pz"] = d, u
             if "sk" not in res:
-                s = skolne(t) or cenik(t)
+                s = skolne(t, mcs) or cenik(t)
                 if s:
                     res["sk"], src["sk"] = s, u
         res["src"] = src
@@ -227,10 +232,14 @@ def main():
     today = date.today()
     skoly = json.loads((DATA / "skoly.json").read_text(encoding="utf-8"))
     hosts = sorted({s["w"] for s in skoly if s.get("w")})
+    mcmap = {}
+    for s in skoly:
+        if s.get("w"):
+            mcmap.setdefault(s["w"], set()).add(s["mc"])
     path = DATA / "skoly_extra.json"
     old = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     with ThreadPoolExecutor(6) as ex:
-        results = list(ex.map(lambda h: (h, scrape_host(h, today)), hosts))
+        results = list(ex.map(lambda h: (h, scrape_host(h, today, mcmap.get(h))), hosts))
     new, ok = {}, 0
     for h, r in results:
         if r:
