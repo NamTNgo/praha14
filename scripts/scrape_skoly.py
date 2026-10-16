@@ -361,6 +361,12 @@ def main():
                 r[k] = [x for x in r[k] if x["d"] >= today.isoformat()]
                 if not r[k]:
                     del r[k]
+    rpath = DATA / "skoly_extra_rucne.json"  # ručně potvrzené hodnoty mají přednost před scraperem
+    if rpath.exists():
+        for h, v in json.loads(rpath.read_text(encoding="utf-8")).items():
+            r = new.setdefault(h, {})
+            r.setdefault("src", {}).update(v.get("src", {}))
+            r.update({k: x for k, x in v.items() if k != "src"})
     path.write_text(json.dumps(new, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     stat = {k: sum(1 for r in new.values() if k in r) for k in ("tel", "dod", "zap", "pz", "sk")}
     (DATA / "skoly_extra_report.txt").write_text(f"webů: {len(hosts)} (z toho {len(webs)} z OpenStreetMap; {osm}), načteno: {ok}\nnalezeno: {json.dumps(stat)}\nbez webu: " + "; ".join(x["n"] for x in skoly if not x.get("w")) + "\n", encoding="utf-8")
