@@ -154,7 +154,7 @@ def skolne(text, mcs=None):
             ctx = seg[:a.end() + 40]
             if re.search(r"(?i)docházk|celodenn", seg):  # tabulka cen podle rozsahu docházky -> rozpětí
                 tab = text[m.end():m.end() + 1500]
-                cut = re.search(r"(?i)prázdnin|školné", tab)
+                cut = next((c for c in re.finditer(r"(?i)prázdnin|školné", tab) if c.start() > 80), None)
                 tab = tab[:cut.start()] if cut else tab
                 vals = [int(re.sub(r"[  .]", "", x)) for x in re.findall(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{4,6})\s*Kč", tab)]
                 vals = [v for v in vals if 1000 <= v <= 400000]
