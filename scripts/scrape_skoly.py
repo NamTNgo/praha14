@@ -10,7 +10,7 @@ from urllib.parse import urljoin, urlparse
 
 DATA = Path(__file__).resolve().parent.parent / "docs" / "data"
 UA = "Mozilla/5.0 (compatible; skoly-praha-bot; +https://github.com/NamTNgo/praha14)"
-KEYS = ("zapis", "otevren", "prijim", "skolne", "cenik", "poplatk", "platb", "kontakt", "dod", "uchazec", "rodic", "pro-zaky", "o-skole")
+KEYS = ("zapis", "otevren", "prijim", "skolne", "cenik", "poplatk", "platb", "faq", "dotaz", "kontakt", "dod", "uchazec", "rodic", "pro-zaky", "o-skole")
 MONTH_RE = r"(ledn[ua]|leden|unor[ua]?|brezn[ua]|brezen|dubn[ua]|duben|kvetn[ua]|kveten|cervn[ua]|cerven|cervenc[ei]|cervenci|srpn[ua]|srpen|zari|rijn[ua]|rijen|listopad[ua]?|prosinc[ei]|prosinec)"
 MONTH_NUM = [("led", 1), ("uno", 2), ("bre", 3), ("dub", 4), ("kve", 5), ("cervenc", 7), ("cerven", 6), ("srp", 8), ("zar", 9), ("rij", 10), ("list", 11), ("pros", 12)]
 
@@ -146,8 +146,8 @@ def skolne(text, mcs=None):
         if pm and mcs and pm.group(1) not in mcs:
             continue
         seg = text[m.end():m.end() + 220]
-        for a in re.finditer(r"(?<![\d/.,])(\d{1,3}(?:[  ]\d{3})+|\d{3,6})\s*(?:,-|Kč)", seg):
-            amt = re.sub(r"[  ]", " ", a.group(1))
+        for a in re.finditer(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{3,6})\s*(?:,-|Kč)", seg):
+            amt = re.sub(r"[  .]", " ", a.group(1))
             n = int(amt.replace(" ", ""))
             if not 200 <= n <= 400000:
                 continue
