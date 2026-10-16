@@ -300,7 +300,7 @@
   var SK_T = { ms: "MŠ", zs: "ZŠ", ss: "SŠ" };
   var SK_FULL = { ms: "Mateřská škola", zs: "Základní škola", ss: "Střední škola" };
   var SK_CHIPS = [["all", "Vše"], ["ms", "Školky"], ["zs", "Základní"], ["ss", "Střední"]];
-  var SK_Z = [["all", "Vše"], ["s", "Státní"], ["p", "Soukromé"], ["c", "Církevní"]];
+  var SK_Z = [["all", "Vše"], ["s", "Veřejné"], ["p", "Soukromé"], ["c", "Církevní"]];
   var SK_M = [["all", "Praha 9 a 14"], ["9", "Praha 9"], ["14", "Praha 14"]];
   var MONTHS_CS = ["leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"];
   var I_LAND = '<path d="M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M3 10l9-6 9 6"/>';
@@ -418,7 +418,7 @@
   function dateList(arr) { return arr.map(function (x) { return fmtDate(x.d) + (x.t ? ", " + x.t.replace(/:00(?=–|$)/g, "").replace(/–/, "–") + " h" : ""); }); }
   function viewSkolaDetail(s) {
     var ex = skExtra(s) || {}, src = ex.src || {};
-    var z = { s: [I_LAND, "Státní (obecní)"], p: [I_CASE, "Soukromá"], c: [I_CROSS, "Církevní"] }[s.z];
+    var z = { s: [I_LAND, "Veřejná"], p: [I_CASE, "Soukromá"], c: [I_CROSS, "Církevní"] }[s.z];
     var gm = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(s.n + ", " + s.a + ", Praha");
     var web = s.w ? ["https://" + s.w, "Web školy"] : ["https://www.google.com/search?q=" + encodeURIComponent(s.n + " Praha " + s.a), "Najít web školy"];
     var h = '<div class="head" style="padding-bottom:6px"><button type="button" class="btn-edit" id="skback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
@@ -430,8 +430,10 @@
       '<a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>";
     var hasTerms = !!(ex.dod || ex.zap || ex.pz);
     if (!ex.tel && !hasTerms) h += '<div class="dinfo warn">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#a9791a", 2.2) + "<span>U této školy nemáme všechny údaje. Chybějící informace zjistíte na webu školy.</span></div>";
-    if (s.z === "c") h += '<div class="dinfo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652", 2.2) + "<span>Církevní škola, výuka podle stejného vzdělávacího programu jako státní školy. Může mít duchovní zaměření.</span></div>";
+    if (s.z === "c") h += '<div class="dinfo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652", 2.2) + "<span>Církevní škola, výuka podle stejného vzdělávacího programu jako veřejné školy. Může mít duchovní zaměření.</span></div>";
     if (s.z === "p" || s.z === "c") h += dcard("Školné a poplatky", drow("Školné", ex.sk), ex.sk ? "Údaj z webu školy, částky se mohou měnit. Aktuální výši ověřte u školy." : "");
+    // Veřejná MŠ školné nemá, ale vybírá úplatu za předškolní vzdělávání; veřejná ZŠ neplatí nic.
+    else if (s.z === "s" && s.t === "ms" && ex.sk) h += dcard("Úplata za předškolní vzdělávání", drow("Měsíční úplata", ex.sk.replace(/\s*\/\s*měsíc$/, "").replace(/\d{4,}/g, function (n) { return n.replace(/\B(?=(\d{3})+$)/g, " "); })), "Údaj z webu školy, výši schvaluje zřizovatel. Předškoláci a děti s odkladem ji neplatí.");
     h += dcard("Kontakt", drow("Telefon", ex.tel, ex.tel ? { href: "tel:" + ex.tel.replace(/\s/g, ""), icon: I_PH } : {}) + drow("E-mail", s.e, s.e ? { href: "mailto:" + s.e, icon: I_MA } : {}));
     var termSrc = src.dod || src.zap || src.pz;
     var termNote = "Termíny jsou zjištěny automaticky z webu školy" + (termSrc ? ' (<a href="' + esc(termSrc) + '" target="_blank" rel="noopener">zdroj</a>)' : "") + ". Před návštěvou si je ověřte u školy.";
