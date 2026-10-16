@@ -2,7 +2,7 @@
 Vstup: docs/data/skoly.json (pole "w" = doména odvozená z e-mailu v rejstříku). Výstup: docs/data/skoly_extra.json (klíč = doména).
 Co se nenajde, se nezobrazí (aplikace ukáže "Neuvedeno"). U každé hodnoty je uložen odkaz na stránku, odkud pochází."""
 import html as htmllib, json, re, sys, time, unicodedata
-import urllib.request
+import urllib.request, urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 from pathlib import Path
@@ -228,9 +228,73 @@ def scrape_host(host, today, mcs=None):
         return None
 
 
+GENERIC = {"materska", "skola", "zakladni", "stredni", "praha", "gymnazium", "skolka", "skolky", "soukroma", "soukrome", "s.r.o.", "obchodni", "akademie", "odborna", "vyssi", "pro", "ceske", "republiky"}
+
+
+def host_of(u):
+    u = (u or "").strip()
+    if not u:
+        return ""
+    if not re.match(r"https?://", u, re.I):
+        u = "http://" + u
+    h = urlparse(u).netloc.lower().split(":")[0]
+    return h[4:] if h.startswith("www.") else h
+
+
+def tokens(name):
+    return {t for t in re.findall(r"[a-z0-9]{4,}", plain(name)) if t not in GENERIC}
+
+
+def hav(lat1, lon1, lat2, lon2):
+    from math import radians, sin, cos, asin, sqrt
+    a = sin(radians(lat2 - lat1) / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(radians(lon2 - lon1) / 2) ** 2
+    return 12742000 * asin(sqrt(a))
+
+
+def find_webs(skoly):
+    """Weby škol, které nelze odvodit z e-mailu (např. @seznam.cz): OpenStreetMap (Overpass) – objekt škola/školka
+    do 150 m od adresy a se společným výrazným slovem v názvu."""
+    q = '[out:json][timeout:90];nwr["amenity"~"^(school|kindergarten)$"](49.94,14.2,50.18,14.75);out center tags;'
+    req = urllib.request.Request("https://overpass-api.de/api/interpreter", data=("data=" + urllib.parse.quote(q)).encode(), headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        els = json.loads(r.read().decode("utf-8"))["elements"]
+    pts = []
+    for e in els:
+        t = e.get("tags", {})
+        w = host_of(t.get("website") or t.get("contact:website") or t.get("url"))
+        c = e.get("center") or e
+        if w and "lat" in c and not any(x in w for x in ("facebook.", "instagram.", "google.", "praha.eu")):
+            pts.append((c["lat"], c["lon"], t.get("name", ""), w))
+    out = {}
+    for s in skoly:
+        if s.get("w"):
+            continue
+        best = None
+        for la, lo, nm, w in pts:
+            d = hav(s["lat"], s["lon"], la, lo)
+            if d > 150:
+                continue
+            ok = bool(tokens(s["n"]) & tokens(nm))
+            if ok and (best is None or d < best[0]):
+                best = (d, w)
+        if best:
+            out[s["id"]] = best[1]
+    return out
+
+
 def main():
     today = date.today()
     skoly = json.loads((DATA / "skoly.json").read_text(encoding="utf-8"))
+    wpath = DATA / "skoly_web.json"
+    webs = json.loads(wpath.read_text(encoding="utf-8")) if wpath.exists() else {}
+    try:
+        webs = find_webs(skoly) or webs
+    except Exception as e:  # noqa: BLE001
+        print("OSM weby:", type(e).__name__, e, file=sys.stderr)
+    wpath.write_text(json.dumps(webs, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    for s in skoly:
+        if not s.get("w") and webs.get(s["id"]):
+            s["w"] = webs[s["id"]]
     hosts = sorted({s["w"] for s in skoly if s.get("w")})
     mcmap = {}
     for s in skoly:
@@ -256,7 +320,7 @@ def main():
                     del r[k]
     path.write_text(json.dumps(new, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     stat = {k: sum(1 for r in new.values() if k in r) for k in ("tel", "dod", "zap", "pz", "sk")}
-    (DATA / "skoly_extra_report.txt").write_text(f"webů: {len(hosts)}, načteno: {ok}\nnalezeno: {json.dumps(stat)}\n", encoding="utf-8")
+    (DATA / "skoly_extra_report.txt").write_text(f"webů: {len(hosts)} (z toho {len(webs)} z OpenStreetMap), načteno: {ok}\nnalezeno: {json.dumps(stat)}\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
