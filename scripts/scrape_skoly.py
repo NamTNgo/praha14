@@ -422,7 +422,7 @@ def main():
             new[h] = old[h]  # web teď nedostupný -> ponech poslední známé
     # hodnota, kterou se tentokrát nepodařilo načíst (výpadek podstránky), se nesmí ztratit
     for h, r in new.items():
-        for k in ("tel", "sk"):
+        for k in ("tel", "sk", "dod", "zap", "pz"):
             if k not in r and k in old.get(h, {}):
                 r[k] = old[h][k]
                 r.setdefault("src", {})[k] = old[h].get("src", {}).get(k)
@@ -433,6 +433,13 @@ def main():
                 r[k] = [x for x in r[k] if x["d"] >= today.isoformat()]
                 if not r[k]:
                     del r[k]
+        z = r.get("zap")
+        if z and z.get("dates"):
+            z["dates"] = [x for x in z["dates"] if x["d"] >= today.isoformat()]
+            if not z["dates"]:
+                del r["zap"]
+        elif z and z.get("month") and z["month"] < today.strftime("%Y-%m"):
+            del r["zap"]
     rpath = DATA / "skoly_extra_rucne.json"  # ručně potvrzené hodnoty mají přednost před scraperem
     if rpath.exists():
         for h, v in json.loads(rpath.read_text(encoding="utf-8")).items():
