@@ -10,7 +10,7 @@ from urllib.parse import urljoin, urlparse
 
 DATA = Path(__file__).resolve().parent.parent / "docs" / "data"
 UA = "Mozilla/5.0 (compatible; skoly-praha-bot; +https://github.com/NamTNgo/praha14)"
-KEYS = ("zapis", "otevren", "prijim", "skolne", "kontakt", "dod", "uchazec", "rodic", "pro-zaky", "o-skole")
+KEYS = ("zapis", "otevren", "prijim", "skolne", "cenik", "poplatk", "platb", "kontakt", "dod", "uchazec", "rodic", "pro-zaky", "o-skole")
 MONTH_RE = r"(ledn[ua]|leden|unor[ua]?|brezn[ua]|brezen|dubn[ua]|duben|kvetn[ua]|kveten|cervn[ua]|cerven|cervenc[ei]|cervenci|srpn[ua]|srpen|zari|rijn[ua]|rijen|listopad[ua]?|prosinc[ei]|prosinec)"
 MONTH_NUM = [("led", 1), ("uno", 2), ("bre", 3), ("dub", 4), ("kve", 5), ("cervenc", 7), ("cerven", 6), ("srp", 8), ("zar", 9), ("rij", 10), ("list", 11), ("pros", 12)]
 
@@ -151,6 +151,25 @@ def skolne(text):
     return None
 
 
+def cenik(text):
+    """Ceník bez slova 'školné' (např. tabulka cen za měsíc): vrátí rozpětí měsíčních cen."""
+    for m in re.finditer(r"(?i)ceník|cenik|poplatky", text):
+        seg = text[m.end():m.end() + 1800]
+        if not re.search(r"(?i)měsíc|měs\.", seg):
+            continue
+        vals = []
+        for a in re.finditer(r"(\d{1,3}(?:[  ]\d{3})+|\d{4,6})\s*(?:,-|Kč)(?!\s*/\s*(?:den|hod|dítě|dne))", seg):
+            n = int(re.sub(r"[  ]", "", a.group(1)))
+            before = seg[max(0, a.start() - 40):a.start()].lower()
+            if 1000 <= n <= 100000 and "stravn" not in before:
+                vals.append(n)
+        if vals:
+            f = lambda n: f"{n:,}".replace(",", " ")
+            lo, hi = min(vals), max(vals)
+            return (f"{f(lo)} Kč" if lo == hi else f"{f(lo)}–{f(hi)} Kč") + " / měsíc"
+    return None
+
+
 def scrape_host(host, today):
     res, src = {}, {}
     try:
@@ -192,7 +211,7 @@ def scrape_host(host, today):
                 if d:
                     res["pz"], src["pz"] = d, u
             if "sk" not in res:
-                s = skolne(t)
+                s = skolne(t) or cenik(t)
                 if s:
                     res["sk"], src["sk"] = s, u
         res["src"] = src
