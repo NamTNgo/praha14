@@ -120,7 +120,7 @@ def labelled(text, label, today, horizon=450):
     """Tabulky 'datum | popis' (např. '10. 11. 2026 Den otevřených dveří'): datum a za ním do 60 znaků štítek."""
     t = plain(text)
     res = []
-    for m in re.finditer(r"(\d{1,2})\.\s?(\d{1,2})\.(?:\s?(20\d{2}))?((?:(?!\d{1,2}\.\s?\d{1,2}\.).){0,60}?)(?:" + label + ")", t):
+    for m in re.finditer(r"(\d{1,2})\.\s?(\d{1,2})\.(?:\s?(20\d{2}))?((?:(?!\d{1,2}\.\s?\d{1,2}\.).){0,25}?)(?:" + label + ")", t):
         x = mkdate(m.group(1), m.group(2), m.group(3), today)
         if x and today <= x <= today + timedelta(days=horizon):
             tm = TIME.search(m.group(4))
