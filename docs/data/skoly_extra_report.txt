@@ -1,3 +1,3 @@
-webů: 70 (z toho 1 z OpenStreetMap; OSM objektů s webem: 387 z 1113), načteno: 64
-nalezeno: {"tel": 47, "dod": 11, "zap": 5, "pz": 7, "sk": 16}
-bez webu: Mateřská škola Kovářská; Mateřská škola Kytka s.r.o.; Mateřská škola Kytlická; Mateřská škola Litvínovská 490; Mateřská škola MONTE KIDS, z.s.; Mateřská škola Novoborská; Mateřská škola Obláček; Mateřská škola Pod Krocínkou; Mateřská škola, Praha 9 - Hloubětín, Štolmířská 602; Mateřská škola, Praha 9 - Lehovec, Chvaletická 917; Mateřská škola SLUNÍČKO; Mateřská škola U Hostavického potoka; Mateřská škola Veltruská
+webů: 82 (z toho 13 z OpenStreetMap; OSM objektů s webem: 387 z 1113), načteno: 75
+nalezeno: {"tel": 60, "dod": 11, "zap": 6, "pz": 7, "sk": 22}
+bez webu: Mateřská škola MONTE KIDS, z.s.
