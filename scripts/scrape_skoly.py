@@ -200,12 +200,14 @@ def scrape_host(host, today, mcs=None):
             return None
         pages = [(base, h)]
         for u in links(h, base, host)[:5]:
-            try:
-                ph, pb = fetch(u)
-                if ph:
-                    pages.append((pb, ph))
-            except Exception:  # noqa: BLE001
-                pass
+            for attempt in (1, 2):
+                try:
+                    ph, pb = fetch(u)
+                    if ph:
+                        pages.append((pb, ph))
+                    break
+                except Exception:  # noqa: BLE001
+                    time.sleep(2)
             time.sleep(0.7)
         for u, ph in pages:
             t = to_text(ph)
@@ -336,6 +338,12 @@ def main():
             new[h] = r
         elif h in old:
             new[h] = old[h]  # web teď nedostupný -> ponech poslední známé
+    # hodnota, kterou se tentokrát nepodařilo načíst (výpadek podstránky), se nesmí ztratit
+    for h, r in new.items():
+        for k in ("tel", "sk"):
+            if k not in r and k in old.get(h, {}):
+                r[k] = old[h][k]
+                r.setdefault("src", {})[k] = old[h].get("src", {}).get(k)
     # prošlé termíny nezobrazovat
     for r in new.values():
         for k in ("dod", "pz"):
