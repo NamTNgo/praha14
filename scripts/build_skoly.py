@@ -40,6 +40,10 @@ def main():
     skipped, unmatched, outside = Counter(), [], 0
     for e in ents:
         title = re.sub(r"\s+", " ", e.get("zkracenyNazev") or e.get("uplnyNazev") or "").strip()
+        full = re.sub(r"\s+", " ", e.get("uplnyNazev") or "").strip()
+        # obecné názvy ("Základní škola") nejdou odlišit -> použij úplný název s ulicí
+        if full and norm(title) in ("materskaskola", "zakladniskola", "gymnazium", "zakladniskolaamaterskaskola", "materskaskolaazakladniskola", "strednicskola"):
+            title = full
         for sz in e.get("skolyAZarizeni") or []:
             t = kind(sz.get("uplnyNazev"))
             if not t:
