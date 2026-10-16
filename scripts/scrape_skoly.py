@@ -139,12 +139,31 @@ def zapis(text, today):
     return None
 
 
+def _fmt(n):
+    return f"{n:,}".replace(",", " ")
+
+
 def skolne(text, mcs=None):
-    """Školné; u webů s více pobočkami ('PRAHA 14 školné … / PRAHA 6 školné …') jen pro naši městskou část."""
+    """Školné; u webů s více pobočkami ('PRAHA 14 školné … / PRAHA 6 školné …') jen pro naši městskou část.
+    Nejdřív se hledá tabulka cen podle rozsahu docházky (-> rozpětí), teprve potom jediná částka."""
+    ms = []
     for m in re.finditer(r"(?i)školné", text):
         pm = re.search(r"(?i)praha\s*(\d{1,2})\s*$", text[max(0, m.start() - 40):m.start()])
         if pm and mcs and pm.group(1) not in mcs:
             continue
+        ms.append(m)
+    for m in ms:  # 1) tabulka
+        seg = text[m.end():m.end() + 400]
+        if not re.search(r"(?i)docházk|celodenn|dopoledn", seg):
+            continue
+        tab = text[m.end():m.end() + 1500]
+        cut = next((c for c in re.finditer(r"(?i)prázdnin|školné", tab) if c.start() > 80), None)
+        tab = tab[:cut.start()] if cut else tab
+        vals = [int(re.sub(r"[  .]", "", x)) for x in re.findall(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{4,6})\s*Kč", tab)]
+        vals = [v for v in vals if 1000 <= v <= 400000]
+        if len(vals) >= 3 and re.search(r"(?i)měsíc|měsíč", text[max(0, m.start() - 20):m.end()] + tab[:300]):
+            return f"{_fmt(min(vals))}–{_fmt(max(vals))} Kč / měsíc"
+    for m in ms:  # 2) jediná částka
         seg = text[m.end():m.end() + 220]
         for a in re.finditer(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{3,6})\s*(?:,-|Kč)", seg):
             amt = re.sub(r"[  .]", " ", a.group(1))
@@ -152,15 +171,6 @@ def skolne(text, mcs=None):
             if not 200 <= n <= 400000:
                 continue
             ctx = seg[:a.end() + 40]
-            if re.search(r"(?i)docházk|celodenn", seg):  # tabulka cen podle rozsahu docházky -> rozpětí
-                tab = text[m.end():m.end() + 1500]
-                cut = next((c for c in re.finditer(r"(?i)prázdnin|školné", tab) if c.start() > 80), None)
-                tab = tab[:cut.start()] if cut else tab
-                vals = [int(re.sub(r"[  .]", "", x)) for x in re.findall(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{4,6})\s*Kč", tab)]
-                vals = [v for v in vals if 1000 <= v <= 400000]
-                if len(vals) >= 3 and re.search(r"(?i)měsíc|měsíč", m.group(0) + seg[:80] + tab[:300]):
-                    f = lambda n: f"{n:,}".replace(",", " ")
-                    return f"{f(min(vals))}–{f(max(vals))} Kč / měsíc"
             unit = "měsíc" if re.search(r"(?i)měsíc|měsíč|měs\.|/\s*měs", ctx) else ("rok" if re.search(r"(?i)ročn|školní rok|/\s*rok", ctx) else "")
             return f"{amt} Kč" + (f" / {unit}" if unit else "")
     return None
