@@ -1,0 +1,106 @@
+záznamů: 113
+podle typu: {"ms": 42, "ss": 47, "zs": 24}
+podle MČ: {"14": 41, "9": 72}
+mimo Prahu 9/14 (nespárováno): 15350
+Praha 9/14 bez shody adresy: 93
+  MŠ BERUŠKA, s.r.o. | K železnici 307/ | Praha 9 Běchovice
+  Obch. akademie Praha, s.r.o. | Vinořská 163/17 | Praha 9 Satalice
+  Gymnázium Čakovice | náměstí Jiřího Berana 500/1 | Praha 9 Čakovice
+  Gymnázium Čakovice | náměstí 25. března 100/2 | Praha 9 Čakovice
+  Gymnázium | Chodovická 2250/36 | Praha 9 Horní Počernice
+  Střední škola SČMSD Praha, s.r.o. | Slavětínská 82/19 | Praha 9 Klánovice
+  SOŠ a SOU, Praha - Čakovice | Ke stadionu 623/9 | Praha 9 Čakovice
+  SŠ mediální grafiky a tisku, s.r.o. | Beranových 695/ | Praha 9 Letňany
+  Mateřská škola a Základní škola | Bártlova 83/1 | Praha 9 Horní Počernice
+  Mateřská škola Sedmikráska | Lišická 1502/ | Praha 9 Újezd nad Lesy
+  1. Mateřská škola Čentická | Čentická 2222/ | Praha 9 Újezd nad Lesy
+  Mateřská škola DUHA | Svatoňovická 587/ | Praha 9 Dolní Počernice
+  Mateřská škola | Šestajovická 252/ | Praha 9 Hloubětín
+  Mateřská škola | Chodovická 1900/34 | Praha 9 Horní Počernice
+  Mateřská škola | Ratibořická 2299/34 | Praha 9 Horní Počernice
+  Mateřská škola "U Rybníčku" | Křovinovo náměstí 115/1 | Praha 9 Horní Počernice
+  MŠ Praha 9 - Satalice | U obory 385/ | Praha 9 Satalice
+  Mateřská škola Letců | Letců 731/6 | Praha 9 Kbely
+  MŠ Klánovice | Medinská 160/57 | Praha 9 Klánovice
+  MŠ Klánovice | V žáčku 219/2 | Praha 9 Klánovice
+  Mateřská škola Rohožník | Žárovická 1653/ | Praha 9 Újezd nad Lesy
+  ZŠ a MŠ Tupolevova | Dobratická 525/ | Praha 9 Letňany
+  ZŠ a MŠ Tupolevova | Dobratická 525/ | Praha 9 Letňany
+  Základní škola a Mateřská škola | Vinořské náměstí 22/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola | Mikulovická 337/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola | Vinořské náměstí 22/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola | Prachovická 340/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola | Spojenců 2170/44 | Praha 9 Horní Počernice
+  Základní škola a Mateřská škola | Spojenců 1408/63 | Praha 9 Horní Počernice
+  Fakultní základní škola | Chodovická 2250/36 | Praha 9 Horní Počernice
+  Základní škola | Stoliňská 822/14 | Praha 9 Horní Počernice
+  Základní škola | Stoliňská 823/16 | Praha 9 Horní Počernice
+  Základní škola | Stoliňská 2440/8 | Praha 9 Horní Počernice
+  Základní škola | Albrechtická 598/2 | Praha 9 Kbely
+  Základní škola | Albrechtická 732/1 | Praha 9 Kbely
+  Základní škola | Albrechtická 825/4 | Praha 9 Kbely
+  Základní škola | Fryčovická 462/ | Praha 9 Letňany
+  Základní škola | Národních hrdinů 70/ | Praha 9 Dolní Počernice
+  Základní škola Praha - Běchovice | Mýtní 73/ | Praha 9 Běchovice
+  Masarykova ZŠ Praha-Klánovice | Smržovská 1/1 | Praha 9 Klánovice
+  Masarykova ZŠ Praha-Klánovice | Slavětínská 200/46 | Praha 9 Klánovice
+  ZŠ a MŠ Dr. Edvarda Beneše | Cukrovarská 115/8 | Praha 9 Čakovice
+  ZŠ a MŠ Dr. Edvarda Beneše | Dyjská 715/3 | Praha 9 Čakovice
+  ZŠ a MŠ Dr. Edvarda Beneše | Jizerská 744/16 | Praha 9 Čakovice
+  ZŠ a MŠ Dr. Edvarda Beneše | Jizerská 816/ | Praha 9 Čakovice
+  ZŠ a MŠ Dr. Edvarda Beneše | náměstí Jiřího Berana 500/1 | Praha 9 Čakovice
+  Základní škola a mateřská škola | Lupenická 20/6 | Praha 9 Koloděje
+  Základní škola a mateřská škola | Lupenická 20/6 | Praha 9 Koloděje
+  Masarykova základní škola | Staroklánovická 230/ | Praha 9 Újezd nad Lesy
+  Masarykova základní škola | Polesná 1690/ | Praha 9 Újezd nad Lesy
+  Základní škola | Ratibořická 1700/28 | Praha 9 Horní Počernice
+  Základní škola | K Cihelně 137/8 | Praha 9 Satalice
+  ZŠ generála Františka Fajtla DFC | Rychnovská 350/ | Praha 9 Letňany
+  ZŠ generála Františka Fajtla DFC | Rychnovská 139/ | Praha 9 Letňany
+  SKOLAEUPRAHA | Lipí 1911/22 | Praha 9 Horní Počernice
+  Střední odborná škola - COP a Gymnázium | Bystrá 2243/ | Praha 9 Horní Počernice
+  Mateřská škola Čakovice II | Tuháňská 8/4 | Praha 9 Miškovice
+  Mateřská škola Čakovice II | Slaviborské náměstí 21/2 | Praha 9 Třeboradice
+  MŠ Čakovice I | Něvská 830/11 | Praha 9 Čakovice
+  Mateřská škola Čakovice III | Schoellerova 936/28 | Praha 9 Čakovice
+přeskočené druhy:
+  5851x L11|Školní jídelna
+  4279x G21|Školní družina
+  3026x L13|Školní jídelna - výdejna
+  798x G22|Školní klub
+  532x F10|Základní umělecká škola
+  379x H22|Domov mládeže
+  269x G11|Dům dětí a mládeže
+  168x E00|Vyšší odborná škola
+  137x J11|Dětský domov
+  105x K20|Speciálně pedagogické centrum
+  72x G40|Zařízení pro další vzdělávání pedagogických pracovníků
+  68x H21|Internát
+  68x L15|Výdejna lesní mateřské školy
+  56x G11|Středisko volného času
+  56x F20|Jazyková škola s právem státní jazykové zkoušky
+  55x L12|Školní jídelna - vývařovna
+  46x K10|Pedagogicko-psychologická poradna
+  36x J21|Středisko výchovné péče
+  28x M30|Školní hospodářství
+  27x J12|Dětský domov se školou
+  24x J13|Výchovný ústav
+  19x M40|Středisko praktického vyučování
+  17x M20|Školní knihovna
+  13x G12|Stanice zájmových činností
+  11x J14|Diagnostický ústav
+  7x M10|Středisko služeb školám
+  7x M50|Plavecká škola
+  5x M79|Jiné účelové zařízení
+  3x H10|Škola v přírodě
+  3x A00|Lesní mateřská škola
+  2x L12|Školní jídelna - vyvařovna
+  1x G11|Centrum volného času
+  1x G11|Středisko volného času - dům dětí a mládeže
+  1x M60|Přípravný stupeň základní školy speciální
+  1x G11|Školské zařízení pro zájmové vzdělávání
+  1x G11|Městský dům dětí a mládeže
+  1x G11|Středisko pro volný čas dětí a mládeže Všenory
+  1x G11|Středisko volného času DRAK
+  1x G11|Dům dětí a mládeže Hlinsko
+  1x G21|Školní družina s p.j.v.
