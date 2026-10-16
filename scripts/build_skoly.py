@@ -108,6 +108,11 @@ def main():
                 ao = ad.get("cisloOrientacni")
                 num = f"{cd}/{ao}{ad.get('dodatekOrientacnihoCisla') or ''}" if ao else cd
                 z, zname, zpf = sector(e)
+                if z == "p" and not zname:
+                    # soukromý subjekt bez zřizovatele v rejstříku: zřizovatelem/provozovatelem je on sám
+                    zname = (e.get("uplnyNazev") or "").strip()
+                    pfe = e.get("pravniForma")
+                    zpf = str(pfe.get("kod") or pfe.get("id") or "") if isinstance(pfe, dict) else str(pfe or "")
                 secs[z or "?"] += 1
                 pfs[f"{zpf}|{z}|{zname[:40]}"] += 1
                 if z is None:
