@@ -25,15 +25,29 @@ def main():
     if isinstance(data, dict):
         lines.append("klíče: " + ", ".join(list(data.keys())[:30]))
     body = data
-    for k in ("položky", "polozky", "@graph", "data", "skoly"):
+    for k in ("list", "položky", "polozky", "@graph", "data", "skoly"):
         if isinstance(data, dict) and k in data:
             body = data[k]; lines.append("seznam v klíči: " + k)
     if isinstance(body, list):
         lines.append(f"počet položek: {len(body)}")
         lines.append("struktura 1. položky:\n" + json.dumps(shape(body[0]), ensure_ascii=False, indent=1)[:6000])
-        hit = [b for b in body if "Praha 14" in json.dumps(b, ensure_ascii=False)[:20000]][:1]
-        if hit:
-            lines.append("ukázka Praha 14:\n" + json.dumps(hit[0], ensure_ascii=False, indent=1)[:9000])
+        from collections import Counter
+        def prague(b):
+            t = json.dumps(b, ensure_ascii=False)
+            return ("Praha 14" in t) or ("Praha 9" in t)
+        hit = [b for b in body if prague(b)]
+        lines.append(f"subjektů s Praha 9/14 kdekoliv: {len(hit)}")
+        c = Counter()
+        for b in hit:
+            for sz in b.get("skolyAZarizeni", []):
+                c[str(sz.get("druh"))] += 1
+        lines.append("druhy (Praha 9/14): " + json.dumps(c.most_common(40), ensure_ascii=False))
+        p14 = [b for b in hit if "Praha 14" in json.dumps(b, ensure_ascii=False) and b.get("skolyAZarizeni")]
+        if p14:
+            e = dict(p14[0]); e.pop("zrizovatele", None); e.pop("statutarniOrgany", None); e.pop("reditel", None)
+            for sz in e.get("skolyAZarizeni", []):
+                sz["obory"] = (sz.get("obory") or [])[:1]
+            lines.append("ukázka Praha 14:\n" + json.dumps(e, ensure_ascii=False, indent=1)[:12000])
     else:
         lines.append(json.dumps(shape(body), ensure_ascii=False, indent=1)[:8000])
     OUT.write_text("\n".join(lines), encoding="utf-8")
