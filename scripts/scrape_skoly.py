@@ -265,6 +265,7 @@ def find_webs(skoly):
         c = e.get("center") or e
         if w and "lat" in c and not any(x in w for x in ("facebook.", "instagram.", "google.", "praha.eu")):
             pts.append((c["lat"], c["lon"], t.get("name", ""), w))
+    find_webs.info = f"OSM objektů s webem: {len(pts)} z {len(els)}"
     out = {}
     for s in skoly:
         if s.get("w"):
@@ -287,10 +288,13 @@ def main():
     skoly = json.loads((DATA / "skoly.json").read_text(encoding="utf-8"))
     wpath = DATA / "skoly_web.json"
     webs = json.loads(wpath.read_text(encoding="utf-8")) if wpath.exists() else {}
+    osm = ""
     try:
         webs = find_webs(skoly) or webs
+        osm = find_webs.info
     except Exception as e:  # noqa: BLE001
-        print("OSM weby:", type(e).__name__, e, file=sys.stderr)
+        osm = f"OSM chyba: {type(e).__name__} {e}"
+        print(osm, file=sys.stderr)
     wpath.write_text(json.dumps(webs, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     for s in skoly:
         if not s.get("w") and webs.get(s["id"]):
@@ -320,7 +324,7 @@ def main():
                     del r[k]
     path.write_text(json.dumps(new, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     stat = {k: sum(1 for r in new.values() if k in r) for k in ("tel", "dod", "zap", "pz", "sk")}
-    (DATA / "skoly_extra_report.txt").write_text(f"webů: {len(hosts)} (z toho {len(webs)} z OpenStreetMap), načteno: {ok}\nnalezeno: {json.dumps(stat)}\n", encoding="utf-8")
+    (DATA / "skoly_extra_report.txt").write_text(f"webů: {len(hosts)} (z toho {len(webs)} z OpenStreetMap; {osm}), načteno: {ok}\nnalezeno: {json.dumps(stat)}\nbez webu: " + "; ".join(x["n"] for x in skoly if not x.get("w")) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
