@@ -126,6 +126,10 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .drow { display:flex; justify-content:space-between; align-items:baseline; gap:14px; padding:10px 0; border-bottom:1px solid #eeebe0; }
 .drow:last-child { border-bottom:none; }
 .drow:has(+ .dnote) { border-bottom:none; }
+.dgrp .drow { border-bottom:none; padding:10px 0 0; }
+.dgrp .drow:first-child { padding-top:10px; }
+.dgrp { border-bottom:1px solid #eeebe0; padding-bottom:10px; }
+.dgrp:last-child { border-bottom:none; }
 .dl { font-size:13.5px; color:#6b6652; flex:none; }
 .dv { font-size:14px; font-weight:700; text-align:right; min-width:0; overflow-wrap:anywhere; }
 .dv .nw { white-space:nowrap; }

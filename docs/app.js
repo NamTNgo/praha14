@@ -451,7 +451,7 @@
       h += '<div class="card-dashed row top" style="flex-direction:column;align-items:stretch;gap:12px"><div style="display:flex;align-items:center;gap:10px"><span class="badge" style="background:#efece2">' + I_CAL.replace('width="14" height="14"', 'width="18" height="18"') + '</span><div><div class="t1" style="color:#6b6557">Termíny zatím nemáme</div><div class="note" style="margin-top:2px">Den otevřených dveří a zápis zjistíte na webu školy.</div></div></div>' +
         '<div><a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
     }
-    var prac = (s.p || []).map(function (p, i) { return drow(i ? "" : "Další pracoviště", p.a + " · Praha " + p.mc); }).join("");
+    var prac = s.p && s.p.length ? '<div class="dgrp">' + s.p.map(function (p, i) { return drow(i ? "" : "Další pracoviště", p.a); }).join("") + "</div>" : "";
     h += dcard("O škole", drow("Zřizovatel", s.zn) + (s.pf ? drow("Právní forma", s.pf) : "") + drow("Ředitel/ka", s.rd) + prac + drow(kapLabel(s), s.k ? s.k + " " + (s.t === "ms" ? "dětí" : "žáků") : null) + (s.j ? drow("Vyučovací jazyk", s.j) : ""));
     h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z"/>', 18, "#6b6652", 2) +
       '</span><div class="grow"><div class="t1" style="color:#6b6557">Hodnocení od rodičů</div><div class="note" style="margin-top:2px">Brzy: hodnotit školu budou moct rodiče z appky.</div></div></div>';
