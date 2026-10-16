@@ -1,2 +1,2 @@
-webů: 69, načteno: 58
-nalezeno: {"tel": 46, "dod": 10, "zap": 5, "pz": 7, "sk": 12}
+webů: 69, načteno: 63
+nalezeno: {"tel": 47, "dod": 11, "zap": 5, "pz": 7, "sk": 16}
