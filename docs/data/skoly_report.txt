@@ -4,17 +4,52 @@ podle MČ: {"9": 72, "14": 41}
 podle zřizovatele (s/p/c/?): {"p": 46, "s": 67}
 s webem: 99, s e-mailem: 113
 právní forma zřizovatele | sektor | název (kontrola třídění):
-  44x |p|
   21x 811|s|Městská část Praha 14
   20x 811|s|Městská část Praha 9
   16x 804|s|Hlavní město Praha
   6x 804|s|HLAVNÍ MĚSTO PRAHA
+  2x 112|p|Střední škola kosmetiky a hotelnictví BE
+  2x 141|p|The English College in Prague - Anglické
+  2x 112|p|Soukromá střední odborná škola a Soukrom
+  2x 112|p|Gymnázium Františka Křižíka a základní š
+  2x 141|p|Základní škola a mateřská škola Basic Pr
+  2x 112|p|Mateřská škola Be Happy s.r.o.
+  2x 112|p|Be Open - základní škola a gymnázium, s.
+  2x 112|p|GAELY - střední škola, s.r.o.
+  1x 112|p|Mateřská škola - Pro Family s.r.o.
+  1x 112|p|Soukromá základní škola UNIVERZUM s.r.o.
+  1x 112|p|Soukromé střední odborné učiliště ATHOZ,
+  1x 141|p|Gymnázium J. Seiferta o.p.s.
+  1x 112|p|Soukromá střední škola výpočetní technik
+  1x 112|p|Soukromá střední odborná škola START, s.
+  1x 112|p|Střední odborná škola  uměleckořemeslná 
+  1x 112|p|Soukromé gymnázium ARCUS PRAHA 9, s.r.o.
+  1x 112|p|Střední škola ARCUS, s.r.o.
   1x 804|s|Liberecký kraj
+  1x 112|p|Odborné učiliště pro žáky s více vadami,
   1x 325|s|Ministerstvo školství, mládeže a tělovýc
   1x 801|s|Obec Bařice - Velké Těšany
+  1x 112|p|Bezpečnostně právní akademie, s.r.o., st
+  1x 112|p|Základní škola Spektrum, s.r.o.
   1x 325|s|Ministerstvo vnitra
+  1x 641|p|Soukromá mateřská škola Jahoda
+  1x 112|p|Střížkov - mateřská škola, s.r.o.
+  1x 112|p|Métis - základní škola s.r.o.
+  1x 112|p|Mateřská škola Školička, s.r.o.
+  1x 112|p|Mateřská škola Kytka s.r.o.
+  1x 112|p|Střední zahradnická škola a Střední odbo
+  1x 112|p|Mateřská škola SmartKids Nademlejnská, s
   1x 141|p|Focus on education, o.p.s.
+  1x 112|p|SmartFox Jahodnice - mateřská škola s.r.
   1x 141|p|Obecně prospěšná společnost Euroinstitut
+  1x 112|p|Mateřská škola Eduart s.r.o.
+  1x 112|p|Základní škola Vela s.r.o.
+  1x 706|p|Mateřská škola MONTE KIDS, z.s.
+  1x 112|p|Základní škola FLOW s.r.o.
+  1x 112|p|Akademie systémové gastronomie - střední
+  1x 112|p|Gymnázium bezpečnostně právní, s.r.o.
+  1x 112|p|Bezpečnostně právní akademie Praha, s.r.
+  1x 112|p|Mateřská škola Little FLOW s.r.o.
 bez zřizovatele: 
 mimo Prahu 9/14 (nespárováno): 15350
 Praha 9/14 bez shody adresy: 93
