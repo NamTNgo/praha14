@@ -105,6 +105,12 @@ def mkdate(d, m, y, today):
         return None
 
 
+STOP_PLAN = r"ukonceni|pololeti|prazdnin|vysvedcen|zahajeni|schuzk|trid.{0,3}schuzk"  # další události v plánu roku
+
+
+FWD_OK = {"od", "do", "v", "ve", "h", "hod", "hodin", "a", "i", "se", "kona", "konaji", "probehne", "probehnou", "probiha", "je", "jsou", "bude", "budou", "dne", "dnech", "dny", "termin", "terminy", "datum", "data", "pro", "na", "do", "rok", "roku", "letos", "nebo", "tj", "cas", "casy", "od-do"}  # spojovací slova mezi štítkem a datem
+
+
 def dates_after(text, pat, today, stop, span=260, horizon=420):
     t = plain(text)
     res = []
@@ -113,7 +119,13 @@ def dates_after(text, pat, today, stop, span=260, horizon=420):
         cut = re.search(stop, seg)
         if cut:
             seg = seg[:cut.start()]
+        first = True
         for dm in DATE.finditer(seg):
+            if first:
+                first = False
+                # mezi štítkem a prvním datem smí stát jen spojovací slova, jinak datum patří k jiné události
+                if any(w not in FWD_OK for w in re.findall(r"[a-z]+", seg[:dm.start()])):
+                    break
             x = mkdate(dm.group(1), dm.group(2), dm.group(3), today)
             if not x or x < today or x > today + timedelta(days=horizon):
                 continue
@@ -161,13 +173,13 @@ ZAP = r"zapis\w*\s+(?:do|k)\s+(?:1\.\s?tridy|1\.\s?rocniku|zakladniho|materske|p
 
 
 def zapis(text, today):
-    d = dates_after(text, ZAP, today, r"otevren|prijimac|skolne", span=300, horizon=450)
+    d = dates_after(text, ZAP, today, r"otevren|prijimac|skolne|" + STOP_PLAN, span=300, horizon=450)
     if d:
         return {"dates": d}
     t = plain(text)
     for m in re.finditer(ZAP, t):
         seg = t[m.end():m.end() + 140]
-        cut = re.search(r"otevren|prijimac|skolne", seg)
+        cut = re.search(r"otevren|prijimac|skolne|" + STOP_PLAN, seg)
         if cut:
             seg = seg[:cut.start()]
         mm = re.search(r"\b" + MONTH_RE + r"\b\s*(20\d{2})?", seg)
@@ -292,7 +304,7 @@ def scrape_host(host, today, mcs=None):
             if "dod" not in res:
                 d = labelled(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri", today, 420)  # tabulka 'datum | popis' má přednost
                 if not d:
-                    d = dates_after(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri|\bdod\b", today, r"zapis|prijimac|skolne")
+                    d = dates_after(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri|\bdod\b", today, r"zapis|prijimac|skolne|" + STOP_PLAN)
                 if d:
                     res["dod"], src["dod"] = d, u
             if "zap" not in res:
@@ -302,7 +314,7 @@ def scrape_host(host, today, mcs=None):
                 if z:
                     res["zap"], src["zap"] = z, u
             if "pz" not in res:
-                d = dates_after(t, r"prijimac\w+\s+(?:zkousk|rizeni|zkousek)", today, r"zapis|otevren|skolne")
+                d = dates_after(t, r"prijimac\w+\s+(?:zkousk|rizeni|zkousek)", today, r"zapis|otevren|skolne|" + STOP_PLAN)
                 if d:
                     res["pz"], src["pz"] = d, u
             if "sk" not in res:
