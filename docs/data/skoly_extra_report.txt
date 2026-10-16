@@ -1,2 +1,2 @@
-webů: 69, načteno: 63
+webů: 69 (z toho 0 z OpenStreetMap), načteno: 62
 nalezeno: {"tel": 47, "dod": 11, "zap": 5, "pz": 7, "sk": 16}
