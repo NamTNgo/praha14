@@ -76,7 +76,7 @@ def rank(hl):
     return len(RANKS)
 
 
-def phone(h, text):
+def phone(h, text, relaxed=False):
     for m in re.finditer(r'href=["\']tel:([^"\']+)', h, re.I):
         d = re.sub(r"\D", "", m.group(1))
         d = d[-9:] if len(d) >= 9 else ""
@@ -85,6 +85,13 @@ def phone(h, text):
     for m in re.finditer(r"(?i)(?:tel|telefon|mobil|ředitelna|sekretariát|kancelář)[^0-9+]{0,25}((?:\+?420)?[  ]?[2-9]\d{2}[  ]?\d{3}[  ]?\d{3})", text):
         d = re.sub(r"\D", "", m.group(1))[-9:]
         return f"+420 {d[:3]} {d[3:6]} {d[6:]}"
+    if relaxed:  # kontaktní stránka: číslo tu často stojí samo, bez slova „telefon“
+        for m in re.finditer(r"(\+420[  ]?[2-9]\d{2}[  ]?\d{3}[  ]?\d{3}|\b[2-9]\d{2}[  ]\d{3}[  ]\d{3}\b)", text):
+            pre = text[max(0, m.start() - 30):m.start()]
+            if re.search(r"(?i)IČ|DIČ|účt|účet|č\.\s?ú|datov|schránk|faktur", pre):
+                continue  # IČO, číslo účtu a datová schránka vypadají podobně
+            d = re.sub(r"\D", "", m.group(1))[-9:]
+            return f"+420 {d[:3]} {d[3:6]} {d[6:]}"
     return None
 
 
@@ -292,7 +299,7 @@ def scrape_host(host, today, mcs=None):
         for u, ph in pages:
             t = to_text(ph)
             if "tel" not in res:
-                p = phone(ph, t)
+                p = phone(ph, t, relaxed="kontakt" in plain(u))
                 if p:
                     res["tel"], src["tel"] = p, u
             if "dod" not in res:
