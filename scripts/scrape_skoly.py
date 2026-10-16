@@ -127,13 +127,16 @@ def dates_after(text, pat, today, stop, span=260, horizon=420):
     return out[:4]
 
 
+GAP_OK = {"od", "do", "v", "h", "hod", "hodin", "a"}  # mezi datem a štítkem smí stát jen údaj o čase
+
+
 def labelled(text, label, today, horizon=450):
     """Tabulky 'datum | popis' (např. '10. 11. 2026 Den otevřených dveří'):
     ke každému výskytu štítku se vezme nejbližší datum před ním (do 60 znaků)."""
     t = plain(text)
     res = []
     for m in re.finditer(label, t):
-        pre = t[max(0, m.start() - 60):m.start()]
+        pre = t[max(0, m.start() - 40):m.start()]
         dm = None
         for dm in DATE.finditer(pre):
             pass  # poslední = nejbližší datum před štítkem
@@ -142,6 +145,9 @@ def labelled(text, label, today, horizon=450):
         x = mkdate(dm.group(1), dm.group(2), dm.group(3), today)
         if not x or x < today or x > today + timedelta(days=horizon):
             continue
+        gap = pre[dm.end():]
+        if any(w not in GAP_OK for w in re.findall(r"[a-z]+", gap)):
+            continue  # mezi datem a štítkem je jiný text: datum patří k něčemu jinému
         tm = TIME.search(pre[dm.end():])
         res.append((x.isoformat(), f"{int(tm.group(1))}:{tm.group(2)}–{int(tm.group(3))}:{tm.group(4)}" if tm else ""))
     out, seen = [], set()
@@ -216,6 +222,8 @@ def skolne(text, mcs=None):
                 continue
             ctx = seg[:a.end() + 40]
             unit = "měsíc" if re.search(r"(?i)měsíc|měsíč|měs\.|/\s*měs", ctx) else ("rok" if re.search(r"(?i)ročn|školní rok|/\s*rok", ctx) else "")
+            if not unit and n < 3000:
+                continue  # bez jednotky a tak nízké: spíš zápisné nebo poplatek, ne školné
             od = "od " if re.search(r"(?i)\bod\s*$", seg[:a.start()]) else ""  # "školné je již od 25.000 Kč"
             return od + f"{amt} Kč" + (f" / {unit}" if unit else "")
     return None
@@ -253,16 +261,27 @@ def scrape_host(host, today, mcs=None):
                 continue
         if not h:
             return None
+        # Procházení do šířky: školné bývá v podmenu, na které z titulky vede jen rozcestník.
         pages = [(base, h)]
-        for u in links(h, base, host)[:7]:
+        queue, seen = [(rank(plain(u)), u) for u in links(h, base, host)], {base}
+        while queue and len(pages) <= 7:
+            queue.sort(key=lambda x: x[0])
+            _, u = queue.pop(0)
+            if u in seen:
+                continue
+            seen.add(u)
+            ph = pb = None
             for attempt in (1, 2):
                 try:
                     ph, pb = fetch(u)
-                    if ph:
-                        pages.append((pb, ph))
                     break
                 except Exception:  # noqa: BLE001
                     time.sleep(2)
+            if ph:
+                pages.append((pb, ph))
+                for v in links(ph, pb, host):
+                    if v not in seen:
+                        queue.append((rank(plain(v)) + 1, v))  # odkazy z podstránek až po těch z titulky
             time.sleep(0.7)
         for u, ph in pages:
             t = to_text(ph)
