@@ -361,7 +361,7 @@
       '<div class="shfoot"><button type="button" class="shreset" id="skreset">Zrušit vše</button><button type="button" class="btn shgo" data-sheetclose="1">Zobrazit ' + n + " " + (n === 1 ? "místo" : n >= 2 && n <= 4 ? "místa" : "míst") + "</button></div></div>";
   }
   function skolaCard(s, d) {
-    return '<button type="button" class="card skcard" data-sk="' + esc(s.id) + '"><div class="skl"><div class="skn">' + typeChip(s.t) + '<span class="sknm">' + esc(s.n) + '</span></div><div class="t2">' + esc(s.a) + (d == null ? "" : " · Praha " + esc(s.mc)) + "</div>" +
+    return '<button type="button" class="card skcard" data-sk="' + esc(s.id) + '"><div class="skl"><div class="skn">' + typeChip(s.t) + '<span class="sknm"><span class="cl">' + esc(s.n) + '</span></span></div><div class="t2">' + esc(s.a) + (d == null ? "" : " · Praha " + esc(s.mc)) + "</div>" +
       (secTag(s.z) ? '<div class="sktag">' + secTag(s.z) + "</div>" : "") + '</div><div class="skr">' + (d == null ? "Praha " + esc(s.mc) : meters(d)) + "</div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
   }
   function skolyBody(a) {

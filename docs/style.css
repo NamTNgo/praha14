@@ -96,7 +96,8 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .skl { flex:1; min-width:0; }
 .skn { display:flex; align-items:flex-start; gap:8px; }
 .skn .tp { margin-top:2px; }
-.sknm { font-size:15px; font-weight:700; line-height:1.3; min-width:0; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; overflow:hidden; text-overflow:ellipsis; }
+.sknm { flex:1; min-width:0; font-size:15px; font-weight:700; line-height:1.3; }
+.sknm .cl { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; overflow:hidden; text-overflow:ellipsis; overflow-wrap:anywhere; }
 .sktag { margin-top:6px; }
 .skr { flex:none; font-size:13px; font-weight:700; color:var(--green); white-space:nowrap; }
 .btn-link { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; font:inherit; font-size:14.5px; font-weight:700; color:var(--green); background:#e9f0e9; border:none; border-radius:16px; padding:15px; min-height:48px; cursor:pointer; }
