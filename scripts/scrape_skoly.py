@@ -296,10 +296,9 @@ def scrape_host(host, today, mcs=None):
                 if d:
                     res["dod"], src["dod"] = d, u
             if "zap" not in res:
-                z = zapis(t, today)
-                if not z:
-                    ld = labelled(t, r"zapis\w*\s+(?:do|k)\s+(?:1\.\s?trid|1\.\s?rocnik|zakladni|materske|ms\b|zs\b)", today)
-                    z = {"dates": ld} if ld else None
+                # tabulka 'datum | popis' má přednost: na stránkách s plánem roku stojí za štítkem další termíny
+                ld = labelled(t, r"zapis\w*\s+(?:do|k)\s+(?:1\.\s?trid|1\.\s?rocnik|zakladni|materske|ms\b|zs\b)", today)
+                z = {"dates": ld} if ld else zapis(t, today)
                 if z:
                     res["zap"], src["zap"] = z, u
             if "pz" not in res:
