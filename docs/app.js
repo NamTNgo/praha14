@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "" };
+  var state = { address: null, query: "", tab: "odpad", skF: "all", skView: "list", skQ: "", skT: "all", skM: "all" };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -259,7 +259,10 @@
   function viewResult() {
     var a = state.address, r = results(a);
     var h = '<div class="head addr"><div><div class="eyebrow">Vaše adresa</div><div class="addr-name">' + esc(a.label) + '</div></div>' +
-      '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div><div class=\"body\">";
+      '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div>";
+    h += tabsHtml();
+    if (state.tab === "skoly") return h + '<div class="body">' + skolyBody(a) + "</div>" + FOOT_SK;
+    h += '<div class="body">';
     h += outageTop(a);
     if (!r.near.length) {
       h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652") +
@@ -292,6 +295,61 @@
     return h + "</div>" + FOOT;
   }
 
+  // ---- školy a školky ----
+  var FOOT_SK = '<div class="foot">Zdroj dat: MŠMT (Rejstřík škol a školských zařízení) · Adresy: ČÚZK (RÚIAN)</div>';
+  var SK_T = { ms: "MŠ", zs: "ZŠ", ss: "SŠ" };
+  var SK_CHIPS = [["all", "Vše"], ["ms", "Školky"], ["zs", "Základní"], ["ss", "Střední"]];
+  function plain(s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function tabsHtml() {
+    return '<div class="tabs" role="tablist">' + [["odpad", "Odpad"], ["skoly", "Školy a školky"]].map(function (t) {
+      return '<button type="button" role="tab" class="tab' + (state.tab === t[0] ? " on" : "") + '" aria-selected="' + (state.tab === t[0]) + '" data-tab="' + t[0] + '">' + t[1] + "</button>";
+    }).join("") + "</div>";
+  }
+  function chipsHtml(list, cur, attr) {
+    return '<div class="chips">' + list.map(function (c) {
+      return '<button type="button" class="chip' + (cur === c[0] ? " on" : "") + '" ' + attr + '="' + c[0] + '">' + c[1] + "</button>";
+    }).join("") + "</div>";
+  }
+  function skolaCard(s, d) {
+    return '<div class="card row top"><span class="tchip t-' + s.t + '">' + SK_T[s.t] + '</span><div class="grow"><div class="t1">' + esc(s.n) +
+      '</div><div class="t2">' + esc(s.a) + " · Praha " + esc(s.mc) + "</div></div>" + (d == null ? "" : '<div class="dist">' + meters(d) + "</div>") + "</div>";
+  }
+  function skolyBody(a) {
+    if (!data.skoly) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Seznam škol se připravuje</div><div class="note" style="margin-top:2px">Data z rejstříku škol se právě doplňují. Zkuste to prosím později.</div></div></div>';
+    var f = state.skF, near = [];
+    data.skoly.forEach(function (s) {
+      if (f !== "all" && s.t !== f) return;
+      var d = dist(a.lat, a.lon, s.lat, s.lon);
+      if (d <= RADIUS) near.push({ s: s, d: d });
+    });
+    near.sort(function (x, y) { return x.d - y.d; });
+    var h = chipsHtml(SK_CHIPS, f, "data-skf") + '<div class="list"><div class="label">V okruhu 1 km od adresy · ' + near.length + "</div>";
+    if (!near.length) h += '<div class="card-dashed row top"><div class="grow"><div class="t1">V okruhu 1 km nic nenajdeme</div><div class="note" style="margin-top:2px">Zkuste jiný typ nebo celý seznam.</div></div></div>';
+    near.forEach(function (x) { h += skolaCard(x.s, x.d); });
+    h += "</div>" + '<button type="button" class="btn-link" id="skfull">Celý seznam Prahy 9 a 14 (' + data.skoly.length + ")" + SVG('<path d="m9 6 6 6-6 6"/>', 14, "currentColor", 2.4) + "</button>";
+    return h;
+  }
+  function skolyFiltered() {
+    var q = plain(state.skQ.trim());
+    return data.skoly.filter(function (s) {
+      return (state.skT === "all" || s.t === state.skT) && (state.skM === "all" || s.mc === state.skM) && (!q || plain(s.n + " " + s.a).indexOf(q) >= 0);
+    });
+  }
+  function skolyListHtml() {
+    var r = skolyFiltered();
+    return '<div class="label">Nalezeno: ' + r.length + "</div>" + (r.length ? r.map(function (s) { return skolaCard(s); }).join("") :
+      '<div class="card-dashed row top"><div class="grow"><div class="t1">Nic jsme nenašli</div><div class="note" style="margin-top:2px">Zkuste jiný název nebo ulici.</div></div></div>');
+  }
+  function viewSkolyFull() {
+    return '<div class="head"><button type="button" class="btn-edit" id="skback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + 'Zpět</button>' +
+      '<h1 style="margin-top:10px">Školy a školky</h1><div class="eyebrow">Praha 9 a 14</div></div><div class="body">' +
+      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#726c5a", 2) +
+      '<input id="skq" class="input" type="search" placeholder="Název nebo ulice" autocomplete="off" value="' + esc(state.skQ) + '"></div>' +
+      chipsHtml(SK_CHIPS, state.skT, "data-skt") +
+      chipsHtml([["all", "Praha 9 a 14"], ["9", "Praha 9"], ["14", "Praha 14"]], state.skM, "data-skm") +
+      '<div class="list" id="sklist">' + skolyListHtml() + "</div></div>" + FOOT_SK;
+  }
+
   function viewOffline() {
     return '<div class="full"><span class="big-badge" style="width:64px;height:64px;border-radius:20px;background:#ececea">' +
       SVG('<path d="M1 9a16 16 0 0 1 22 0"/><path d="M5 12.5a10.8 10.8 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><path d="M12 20h.01"/><path d="M2 2l20 20"/>', 30, "#6b6557") +
@@ -304,7 +362,7 @@
   function render(keepFocus) {
     var html;
     if (!data) html = window.__err ? viewOffline() : viewLoading();
-    else html = state.address ? viewResult() : viewSearch();
+    else html = state.address ? (state.skView === "full" && state.tab === "skoly" && data.skoly ? viewSkolyFull() : viewResult()) : viewSearch();
     app.innerHTML = html;
     var q = document.getElementById("q");
     if (q) {
@@ -325,8 +383,18 @@
         q.focus();
       });
     }
+    app.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { state.tab = b.getAttribute("data-tab"); state.skView = "list"; render(); window.scrollTo(0, 0); }); });
+    app.querySelectorAll("[data-skf]").forEach(function (b) { b.addEventListener("click", function () { state.skF = b.getAttribute("data-skf"); render(); }); });
+    app.querySelectorAll("[data-skt]").forEach(function (b) { b.addEventListener("click", function () { state.skT = b.getAttribute("data-skt"); render(); }); });
+    app.querySelectorAll("[data-skm]").forEach(function (b) { b.addEventListener("click", function () { state.skM = b.getAttribute("data-skm"); render(); }); });
+    var sf = document.getElementById("skfull");
+    if (sf) sf.addEventListener("click", function () { state.skView = "full"; render(); window.scrollTo(0, 0); });
+    var sb = document.getElementById("skback");
+    if (sb) sb.addEventListener("click", function () { state.skView = "list"; render(); window.scrollTo(0, 0); });
+    var sq = document.getElementById("skq");
+    if (sq) sq.addEventListener("input", function () { state.skQ = sq.value; document.getElementById("sklist").innerHTML = skolyListHtml(); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "odpad"; state.skView = "list"; render(); var i = document.getElementById("q"); if (i) i.focus(); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
@@ -344,8 +412,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6] };
       buildIndex();
       state.address = load();
       render();
