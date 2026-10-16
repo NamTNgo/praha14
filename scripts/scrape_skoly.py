@@ -152,7 +152,16 @@ def skolne(text, mcs=None):
             if not 200 <= n <= 400000:
                 continue
             ctx = seg[:a.end() + 40]
-            unit = "měsíc" if re.search(r"(?i)měsíč|měs\.|/\s*měs", ctx) else ("rok" if re.search(r"(?i)ročn|školní rok|/\s*rok", ctx) else "")
+            if re.search(r"(?i)docházk|celodenn", seg):  # tabulka cen podle rozsahu docházky -> rozpětí
+                tab = text[m.end():m.end() + 1500]
+                cut = re.search(r"(?i)prázdnin|školné", tab)
+                tab = tab[:cut.start()] if cut else tab
+                vals = [int(re.sub(r"[  .]", "", x)) for x in re.findall(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{4,6})\s*Kč", tab)]
+                vals = [v for v in vals if 1000 <= v <= 400000]
+                if len(vals) >= 3 and re.search(r"(?i)měsíc|měsíč", m.group(0) + seg[:80] + tab[:300]):
+                    f = lambda n: f"{n:,}".replace(",", " ")
+                    return f"{f(min(vals))}–{f(max(vals))} Kč / měsíc"
+            unit = "měsíc" if re.search(r"(?i)měsíc|měsíč|měs\.|/\s*měs", ctx) else ("rok" if re.search(r"(?i)ročn|školní rok|/\s*rok", ctx) else "")
             return f"{amt} Kč" + (f" / {unit}" if unit else "")
     return None
 
