@@ -324,14 +324,23 @@
   function skMatch(s) {
     return (state.skF === "all" || s.t === state.skF) && (state.skZ === "all" || s.z === state.skZ) && (state.skM === "all" || s.mc === state.skM);
   }
+  // Škola může mít odloučená pracoviště (pole `p`): hlavní adresa je vždy první.
+  function skSites(s) { return [{ a: s.a, mc: s.mc, lat: s.lat, lon: s.lon }].concat(s.p || []); }
   function skNear(a) {
     var r = [];
-    data.skoly.forEach(function (s) { if (!skMatch(s)) return; var d = dist(a.lat, a.lon, s.lat, s.lon); if (d <= RADIUS) r.push({ s: s, d: d }); });
+    data.skoly.forEach(function (s) {
+      if (!skMatch(s)) return;
+      var best = null;
+      skSites(s).forEach(function (p) { var d = dist(a.lat, a.lon, p.lat, p.lon); if (!best || d < best.d) best = { d: d, p: p }; });
+      if (best && best.d <= RADIUS) r.push({ s: s, d: best.d, p: best.p });
+    });
     return r.sort(function (x, y) { return x.d - y.d; });
   }
   function skFull() {
     var q = plain(state.skQ.trim());
-    return data.skoly.filter(function (s) { return skMatch(s) && (!q || plain(s.n + " " + s.a).indexOf(q) >= 0); });
+    return data.skoly.filter(function (s) {
+      return skMatch(s) && (!q || plain(s.n + " " + skSites(s).map(function (p) { return p.a; }).join(" ")).indexOf(q) >= 0);
+    });
   }
   function skCount() { return state.skView === "full" ? skFull().length : skNear(state.address).length; }
 
@@ -366,8 +375,9 @@
       sec("Typ školy", SK_CHIPS, state.skF, "data-skf") + sec("Zřizovatel", SK_Z, state.skZ, "data-skz") + sec("Městská část", SK_M, state.skM, "data-skm") +
       '<div class="shfoot"><button type="button" class="shreset" id="skreset">Zrušit vše</button><button type="button" class="btn shgo" data-sheetclose="1">Zobrazit ' + n + " " + (n === 1 ? "místo" : n >= 2 && n <= 4 ? "místa" : "míst") + "</button></div></div>";
   }
-  function skolaCard(s, d) {
-    return '<button type="button" class="card skcard" data-sk="' + esc(s.id) + '"><div class="skl"><div class="skn">' + typeChip(s.t) + '<span class="sknm"><span class="cl">' + esc(s.n) + '</span></span></div><div class="t2">' + esc(s.a) + (d == null ? "" : " · Praha " + esc(s.mc)) + "</div>" +
+  function skolaCard(s, d, p) {
+    p = p || skSites(s)[0];
+    return '<button type="button" class="card skcard" data-sk="' + esc(s.id) + '"><div class="skl"><div class="skn">' + typeChip(s.t) + '<span class="sknm"><span class="cl">' + esc(s.n) + '</span></span></div><div class="t2">' + esc(p.a) + (d == null ? "" : " · Praha " + esc(p.mc)) + "</div>" +
       (secTag(s.z) ? '<div class="sktag">' + secTag(s.z) + "</div>" : "") + '</div><div class="skr">' + (d == null ? "Praha " + esc(s.mc) : meters(d)) + "</div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
   }
   function skolyBody(a) {
@@ -375,7 +385,7 @@
     var near = skNear(a);
     var h = filterBar() + '<div class="list"><div class="label">V okruhu 1 km od adresy · ' + near.length + "</div>";
     if (!near.length) h += '<div class="card-dashed row top"><div class="grow"><div class="t1">V okruhu 1 km nic nenajdeme</div><div class="note" style="margin-top:2px">Zkuste jiný filtr nebo celý seznam.</div></div></div>';
-    near.forEach(function (x) { h += skolaCard(x.s, x.d); });
+    near.forEach(function (x) { h += skolaCard(x.s, x.d, x.p); });
     h += "</div>" + '<button type="button" class="btn-link" id="skfull">Celý seznam Prahy 9 a 14 (' + data.skoly.length + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     return h;
   }
@@ -441,7 +451,8 @@
       h += '<div class="card-dashed row top" style="flex-direction:column;align-items:stretch;gap:12px"><div style="display:flex;align-items:center;gap:10px"><span class="badge" style="background:#efece2">' + I_CAL.replace('width="14" height="14"', 'width="18" height="18"') + '</span><div><div class="t1" style="color:#6b6557">Termíny zatím nemáme</div><div class="note" style="margin-top:2px">Den otevřených dveří a zápis zjistíte na webu školy.</div></div></div>' +
         '<div><a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
     }
-    h += dcard("O škole", drow("Zřizovatel", s.zn) + (s.pf ? drow("Právní forma", s.pf) : "") + drow("Ředitel/ka", s.rd) + drow(kapLabel(s), s.k ? s.k + " " + (s.t === "ms" ? "dětí" : "žáků") : null) + (s.j ? drow("Vyučovací jazyk", s.j) : ""));
+    var prac = (s.p || []).map(function (p, i) { return drow(i ? "" : "Další pracoviště", p.a + " · Praha " + p.mc); }).join("");
+    h += dcard("O škole", drow("Zřizovatel", s.zn) + (s.pf ? drow("Právní forma", s.pf) : "") + drow("Ředitel/ka", s.rd) + prac + drow(kapLabel(s), s.k ? s.k + " " + (s.t === "ms" ? "dětí" : "žáků") : null) + (s.j ? drow("Vyučovací jazyk", s.j) : ""));
     h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z"/>', 18, "#6b6652", 2) +
       '</span><div class="grow"><div class="t1" style="color:#6b6557">Hodnocení od rodičů</div><div class="note" style="margin-top:2px">Brzy: hodnotit školu budou moct rodiče z appky.</div></div></div>';
     return h + "</div>" + FOOT_SK;

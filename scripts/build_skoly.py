@@ -61,6 +61,26 @@ def kind(name):
     return None
 
 
+def merge_sites(out):
+    """Odloučená pracoviště: rejstřík vede každou adresu zvlášť pod stejným IZO.
+    Jde o jednu školu (stejná kapacita i ředitel), proto jeden záznam s polem adres `p`."""
+    groups, order = {}, []
+    for rec in out:
+        key = (rec["id"].split("-")[0], rec["t"])
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(rec)
+    res = []
+    for key in order:
+        g = groups[key]
+        rec = g[0]
+        if len(g) > 1:
+            rec["p"] = [{"a": x["a"], "mc": x["mc"], "lat": x["lat"], "lon": x["lon"]} for x in g[1:]]
+        res.append(rec)
+    return res
+
+
 def main():
     addrs = json.loads((DATA / "addresses.json").read_text(encoding="utf-8"))
     by3, by2 = {}, {}
@@ -143,6 +163,7 @@ def main():
     # (id obsahuje pořadí, proto se porovnává jen IZO před pomlčkou)
     if any(x["id"].split("-")[0] == "250015773" for x in out):
         out = [x for x in out if x["id"].split("-")[0] != "151014507"]
+    out = merge_sites(out)
     out.sort(key=lambda x: (x["t"], norm(x["n"])))
     (DATA / "skoly.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     rep = [f"záznamů: {len(out)}", "podle typu: " + json.dumps(Counter(x["t"] for x in out)),
