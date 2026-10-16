@@ -422,7 +422,8 @@ def main():
             new[h] = old[h]  # web teď nedostupný -> ponech poslední známé
     # hodnota, kterou se tentokrát nepodařilo načíst (výpadek podstránky), se nesmí ztratit
     for h, r in new.items():
-        for k in ("tel", "sk", "dod", "zap", "pz"):
+        # jen kontakt a školné: termíny se musí pokaždé potvrdit webem, jinak by přežila i chybná hodnota
+        for k in ("tel", "sk"):
             if k not in r and k in old.get(h, {}):
                 r[k] = old[h][k]
                 r.setdefault("src", {})[k] = old[h].get("src", {}).get(k)
