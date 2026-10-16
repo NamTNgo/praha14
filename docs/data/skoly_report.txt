@@ -1,8 +1,8 @@
-záznamů: 113
-podle typu: {"ms": 42, "ss": 47, "zs": 24}
-podle MČ: {"9": 72, "14": 41}
+záznamů: 92
+podle typu: {"ms": 35, "ss": 35, "zs": 22}
+podle MČ: {"9": 58, "14": 34}
 podle zřizovatele (s/p/c/?): {"p": 46, "s": 67}
-s webem: 99, s e-mailem: 113
+s webem: 78, s e-mailem: 92
 právní forma zřizovatele | sektor | název (kontrola třídění):
   21x 811|s|Městská část Praha 14
   20x 811|s|Městská část Praha 9
