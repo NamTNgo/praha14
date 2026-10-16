@@ -1,7 +1,9 @@
 """Škol a školky v Praze 9 a 14 -> docs/data/skoly.json
 Zdroj: MŠMT Rejstřík škol a školských zařízení (JSON-LD). Městská část a souřadnice se určují
 podle adresy místa výuky spárované s docs/data/addresses.json (obvod Prahy v rejstříku MČ neodpovídá)."""
-import json, re, unicodedata, urllib.request
+import json
+import re
+import unicodedata, urllib.request
 from collections import Counter
 from pathlib import Path
 
@@ -28,11 +30,12 @@ def sector(e):
     """s = státní/obecní, c = církevní, p = soukromá, None = nezjištěno. Podle zřizovatele (právní forma + název)."""
     zs = e.get("zrizovatele") or []
     if not zs:
-        return None, "", ""
+        # soukromé subjekty (s.r.o., o.p.s.) v rejstříku zřizovatele často nemají
+        return "p", "", ""
     z = zs[0]
     pf, name = str(z.get("pravniForma") or ""), (z.get("nazevOsoby") or "").strip()
     n = norm(name)
-    if pf in ("801", "804", "325", "301", "803") or n.startswith(("mestskacast", "hlavnimesto", "ministerstvo", "ceskarepublika", "obec", "mesto", "kraj", "statnipodnik")):
+    if pf in ("801", "804", "325", "301", "803") or n.startswith(("mestskacast", "hlavnimesto", "ministerstvo", "ceskarepublika", "mesto", "kraj", "statnipodnik")) or re.match(r"obec\b", name.lower()):
         return "s", name, pf
     if pf.startswith("72") or any(k in n for k in ("cirkev", "dieceze", "arcibiskup", "biskup", "farnost", "kongregace", "sestry", "rimskokatol", "husitsk", "evangelick", "bratrsk", "kapucin", "salezian", "jezuit")):
         return "c", name, pf
