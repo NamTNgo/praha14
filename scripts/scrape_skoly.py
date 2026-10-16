@@ -57,12 +57,23 @@ def links(h, base, host):
             continue
         hl = plain(href + " " + label)
         if any(k in hl for k in KEYS) or re.search(r"praha[\s_-]?(?:9|14)\b(?!\d)", hl):
-            out.append(u.split("#")[0])
+            out.append((rank(hl), u.split("#")[0]))
     seen, res = set(), []
-    for u in out:
+    # Stránek se bere jen pár, proto napřed ty, kde bývá školné a termíny.
+    for _, u in sorted(out, key=lambda x: x[0]):
         if u not in seen:
             seen.add(u); res.append(u)
     return res
+
+
+RANKS = (("skolne", "cenik", "poplatk", "platb"), ("zapis", "otevren", "prijim", "dod"), ("uchazec", "faq", "dotaz", "skolniho"))
+
+
+def rank(hl):
+    for i, keys in enumerate(RANKS):
+        if any(k in hl for k in keys):
+            return i
+    return len(RANKS)
 
 
 def phone(h, text):
@@ -205,7 +216,8 @@ def skolne(text, mcs=None):
                 continue
             ctx = seg[:a.end() + 40]
             unit = "měsíc" if re.search(r"(?i)měsíc|měsíč|měs\.|/\s*měs", ctx) else ("rok" if re.search(r"(?i)ročn|školní rok|/\s*rok", ctx) else "")
-            return f"{amt} Kč" + (f" / {unit}" if unit else "")
+            od = "od " if re.search(r"(?i)\bod\s*$", seg[:a.start()]) else ""  # "školné je již od 25.000 Kč"
+            return od + f"{amt} Kč" + (f" / {unit}" if unit else "")
     return None
 
 
@@ -242,7 +254,7 @@ def scrape_host(host, today, mcs=None):
         if not h:
             return None
         pages = [(base, h)]
-        for u in links(h, base, host)[:5]:
+        for u in links(h, base, host)[:7]:
             for attempt in (1, 2):
                 try:
                     ph, pb = fetch(u)
