@@ -139,6 +139,10 @@ def main():
                 if str(sz.get("jazyk") or "") == "100":
                     rec["j"] = "český"
                 out.append(rec)
+    # Duplicitní záznam téže školy (potvrzeno uživatelem): IZO 151014507 zrušit, zůstává IZO 250015773
+    # (id obsahuje pořadí, proto se porovnává jen IZO před pomlčkou)
+    if any(x["id"].split("-")[0] == "250015773" for x in out):
+        out = [x for x in out if x["id"].split("-")[0] != "151014507"]
     out.sort(key=lambda x: (x["t"], norm(x["n"])))
     (DATA / "skoly.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     rep = [f"záznamů: {len(out)}", "podle typu: " + json.dumps(Counter(x["t"] for x in out)),
