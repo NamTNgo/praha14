@@ -1,23 +1,23 @@
 záznamů: 113
 podle typu: {"ms": 42, "ss": 47, "zs": 24}
-podle MČ: {"14": 41, "9": 72}
+podle MČ: {"9": 72, "14": 41}
 mimo Prahu 9/14 (nespárováno): 15350
 Praha 9/14 bez shody adresy: 93
   MŠ BERUŠKA, s.r.o. | K železnici 307/ | Praha 9 Běchovice
   Obch. akademie Praha, s.r.o. | Vinořská 163/17 | Praha 9 Satalice
   Gymnázium Čakovice | náměstí Jiřího Berana 500/1 | Praha 9 Čakovice
   Gymnázium Čakovice | náměstí 25. března 100/2 | Praha 9 Čakovice
-  Gymnázium | Chodovická 2250/36 | Praha 9 Horní Počernice
+  Gymnázium, Praha 9, Chodovická 2250 | Chodovická 2250/36 | Praha 9 Horní Počernice
   Střední škola SČMSD Praha, s.r.o. | Slavětínská 82/19 | Praha 9 Klánovice
   SOŠ a SOU, Praha - Čakovice | Ke stadionu 623/9 | Praha 9 Čakovice
   SŠ mediální grafiky a tisku, s.r.o. | Beranových 695/ | Praha 9 Letňany
-  Mateřská škola a Základní škola | Bártlova 83/1 | Praha 9 Horní Počernice
+  Mateřská škola a Základní škola, Praha 9, Bártlova 83 | Bártlova 83/1 | Praha 9 Horní Počernice
   Mateřská škola Sedmikráska | Lišická 1502/ | Praha 9 Újezd nad Lesy
   1. Mateřská škola Čentická | Čentická 2222/ | Praha 9 Újezd nad Lesy
   Mateřská škola DUHA | Svatoňovická 587/ | Praha 9 Dolní Počernice
-  Mateřská škola | Šestajovická 252/ | Praha 9 Hloubětín
-  Mateřská škola | Chodovická 1900/34 | Praha 9 Horní Počernice
-  Mateřská škola | Ratibořická 2299/34 | Praha 9 Horní Počernice
+  Mateřská škola, Praha 9 - Hloubětín, Štolmířská 602 | Šestajovická 252/ | Praha 9 Hloubětín
+  Mateřská škola, Praha 9 - Horní Počernice, Chodovická 1900 | Chodovická 1900/34 | Praha 9 Horní Počernice
+  Mateřská škola, Praha 9 - Horní Počernice, Chodovická 1900 | Ratibořická 2299/34 | Praha 9 Horní Počernice
   Mateřská škola "U Rybníčku" | Křovinovo náměstí 115/1 | Praha 9 Horní Počernice
   MŠ Praha 9 - Satalice | U obory 385/ | Praha 9 Satalice
   Mateřská škola Letců | Letců 731/6 | Praha 9 Kbely
@@ -26,21 +26,21 @@ Praha 9/14 bez shody adresy: 93
   Mateřská škola Rohožník | Žárovická 1653/ | Praha 9 Újezd nad Lesy
   ZŠ a MŠ Tupolevova | Dobratická 525/ | Praha 9 Letňany
   ZŠ a MŠ Tupolevova | Dobratická 525/ | Praha 9 Letňany
-  Základní škola a Mateřská škola | Vinořské náměstí 22/ | Praha 9 Vinoř
-  Základní škola a Mateřská škola | Mikulovická 337/ | Praha 9 Vinoř
-  Základní škola a Mateřská škola | Vinořské náměstí 22/ | Praha 9 Vinoř
-  Základní škola a Mateřská škola | Prachovická 340/ | Praha 9 Vinoř
-  Základní škola a Mateřská škola | Spojenců 2170/44 | Praha 9 Horní Počernice
-  Základní škola a Mateřská škola | Spojenců 1408/63 | Praha 9 Horní Počernice
+  Základní škola a Mateřská škola Praha - Vinoř | Vinořské náměstí 22/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola Praha - Vinoř | Mikulovická 337/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola Praha - Vinoř | Vinořské náměstí 22/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola Praha - Vinoř | Prachovická 340/ | Praha 9 Vinoř
+  Základní škola a Mateřská škola, Praha 9 - Horní Počernice, Spojenců 1408 | Spojenců 2170/44 | Praha 9 Horní Počernice
+  Základní škola a Mateřská škola, Praha 9 - Horní Počernice, Spojenců 1408 | Spojenců 1408/63 | Praha 9 Horní Počernice
   Fakultní základní škola | Chodovická 2250/36 | Praha 9 Horní Počernice
-  Základní škola | Stoliňská 822/14 | Praha 9 Horní Počernice
-  Základní škola | Stoliňská 823/16 | Praha 9 Horní Počernice
-  Základní škola | Stoliňská 2440/8 | Praha 9 Horní Počernice
-  Základní škola | Albrechtická 598/2 | Praha 9 Kbely
-  Základní škola | Albrechtická 732/1 | Praha 9 Kbely
-  Základní škola | Albrechtická 825/4 | Praha 9 Kbely
-  Základní škola | Fryčovická 462/ | Praha 9 Letňany
-  Základní škola | Národních hrdinů 70/ | Praha 9 Dolní Počernice
+  Základní škola, Praha 9 - Horní Počernice, Stoliňská 823 | Stoliňská 822/14 | Praha 9 Horní Počernice
+  Základní škola, Praha 9 - Horní Počernice, Stoliňská 823 | Stoliňská 823/16 | Praha 9 Horní Počernice
+  Základní škola, Praha 9 - Horní Počernice, Stoliňská 823 | Stoliňská 2440/8 | Praha 9 Horní Počernice
+  Základní škola Praha - Kbely | Albrechtická 598/2 | Praha 9 Kbely
+  Základní škola Praha - Kbely | Albrechtická 732/1 | Praha 9 Kbely
+  Základní škola Praha - Kbely | Albrechtická 825/4 | Praha 9 Kbely
+  Základní škola Fryčovická | Fryčovická 462/ | Praha 9 Letňany
+  Základní škola, Praha 9 - Dolní Počernice, Národních hrdinů 70 | Národních hrdinů 70/ | Praha 9 Dolní Počernice
   Základní škola Praha - Běchovice | Mýtní 73/ | Praha 9 Běchovice
   Masarykova ZŠ Praha-Klánovice | Smržovská 1/1 | Praha 9 Klánovice
   Masarykova ZŠ Praha-Klánovice | Slavětínská 200/46 | Praha 9 Klánovice
@@ -49,12 +49,12 @@ Praha 9/14 bez shody adresy: 93
   ZŠ a MŠ Dr. Edvarda Beneše | Jizerská 744/16 | Praha 9 Čakovice
   ZŠ a MŠ Dr. Edvarda Beneše | Jizerská 816/ | Praha 9 Čakovice
   ZŠ a MŠ Dr. Edvarda Beneše | náměstí Jiřího Berana 500/1 | Praha 9 Čakovice
-  Základní škola a mateřská škola | Lupenická 20/6 | Praha 9 Koloděje
-  Základní škola a mateřská škola | Lupenická 20/6 | Praha 9 Koloděje
+  Základní škola a mateřská škola Koloděje | Lupenická 20/6 | Praha 9 Koloděje
+  Základní škola a mateřská škola Koloděje | Lupenická 20/6 | Praha 9 Koloděje
   Masarykova základní škola | Staroklánovická 230/ | Praha 9 Újezd nad Lesy
   Masarykova základní škola | Polesná 1690/ | Praha 9 Újezd nad Lesy
-  Základní škola | Ratibořická 1700/28 | Praha 9 Horní Počernice
-  Základní škola | K Cihelně 137/8 | Praha 9 Satalice
+  Základní škola, Praha 9 - Horní Počernice, Ratibořická 1700 | Ratibořická 1700/28 | Praha 9 Horní Počernice
+  Základní škola, Praha 9 - Satalice, K Cihelně 137 | K Cihelně 137/8 | Praha 9 Satalice
   ZŠ generála Františka Fajtla DFC | Rychnovská 350/ | Praha 9 Letňany
   ZŠ generála Františka Fajtla DFC | Rychnovská 139/ | Praha 9 Letňany
   SKOLAEUPRAHA | Lipí 1911/22 | Praha 9 Horní Počernice
