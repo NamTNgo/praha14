@@ -163,6 +163,15 @@ def skolne(text, mcs=None):
         vals = [v for v in vals if 1000 <= v <= 400000]
         if len(vals) >= 3 and re.search(r"(?i)měsíc|měsíč", text[max(0, m.start() - 20):m.end()] + tab[:300]):
             return f"{_fmt(min(vals))}–{_fmt(max(vals))} Kč / měsíc"
+    for m in ms:  # 1b) "27 000 Kč školné za školní rok" – částka stojí před slovem
+        pre = text[max(0, m.start() - 40):m.start()]
+        a = re.search(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{4,6})\s*(?:,-|Kč)\s*$", pre)
+        if a:
+            n = int(re.sub(r"[  .]", "", a.group(1)))
+            if 1000 <= n <= 400000:
+                post = text[m.end():m.end() + 40]
+                unit = "rok" if re.search(r"(?i)školní rok|ročn|/\s*rok", post) else ("měsíc" if re.search(r"(?i)měsíc|měsíč|měs\.", post) else "")
+                return f"{_fmt(n)} Kč" + (f" / {unit}" if unit else "")
     for m in ms:  # 2) jediná částka
         seg = text[m.end():m.end() + 220]
         for a in re.finditer(r"(?<![\d/.,])(\d{1,3}(?:[  .]\d{3})+|\d{3,6})\s*(?:,-|Kč)", seg):
@@ -317,6 +326,7 @@ def main():
     today = date.today()
     skoly = json.loads((DATA / "skoly.json").read_text(encoding="utf-8"))
     wpath = DATA / "skoly_web.json"
+    mpath = DATA / "skoly_web_rucne.json"  # weby doplněné ručně (seznamy MČ, potvrzeno uživatelem)
     webs = json.loads(wpath.read_text(encoding="utf-8")) if wpath.exists() else {}
     osm = ""
     try:
@@ -325,12 +335,14 @@ def main():
     except Exception as e:  # noqa: BLE001
         osm = f"OSM chyba: {type(e).__name__} {e}"
         print(osm, file=sys.stderr)
-    mpath = DATA / "skoly_web_rucne.json"  # weby doplněné ručně (zdroj: seznamy škol na webech městských částí)
     if mpath.exists():
         webs.update(json.loads(mpath.read_text(encoding="utf-8")))
     wpath.write_text(json.dumps(webs, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    manual = json.loads(mpath.read_text(encoding="utf-8")) if mpath.exists() else {}
     for s in skoly:
-        if not s.get("w") and webs.get(s["id"]):
+        if manual.get(s["id"]):
+            s["w"] = manual[s["id"]]  # ruční web má přednost i před webem z e-mailu
+        elif not s.get("w") and webs.get(s["id"]):
             s["w"] = webs[s["id"]]
     hosts = sorted({s["w"] for s in skoly if s.get("w")})
     mcmap = {}
