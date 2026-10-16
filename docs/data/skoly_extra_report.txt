@@ -1,3 +1,3 @@
-webů: 83 (z toho 14 z OpenStreetMap; OSM objektů s webem: 387 z 1113), načteno: 73
-nalezeno: {"tel": 61, "dod": 11, "zap": 6, "pz": 8, "sk": 24}
+webů: 82 (z toho 14 z OpenStreetMap; OSM objektů s webem: 387 z 1113), načteno: 77
+nalezeno: {"tel": 61, "dod": 15, "zap": 10, "pz": 8, "sk": 24}
 bez webu: Mateřská škola MONTE KIDS, z.s.
