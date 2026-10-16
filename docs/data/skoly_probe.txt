@@ -1,0 +1,66 @@
+bytes: 30974256
+typ: dict
+klíče: @context, datumVystupu, list
+{
+ "@context": "http://msmt.cz/",
+ "datumVystupu": "2026-10-16",
+ "list": [
+  {
+   "redIzo": "600000206",
+   "ico": "49625918",
+   "kraj": "Hlavní město Praha",
+   "uplnyNazev": "Mateřská škola sv. Voršily v Praze",
+   "zkracenyNazev": "Mateřská škola sv. Voršily v Praze",
+   "adresa": {
+    "ulice": "Ostrovní",
+    "cisloDomovni": 139,
+    "typCislaDomovniho": "č.p.",
+    "cisloOrientacni": 11,
+    "dodatekOrientacnihoCisla": null,
+    "obec": "Praha",
+    "castObce": "Nové Město",
+    "cisloObvoduPrahy": "Praha 1",
+    "psc": "110 00",
+    "kodRUIAN": 21702101,
+    "okres": "CZ0101",
+    "uzemiDleORP": "CZ01100"
+   },
+   "pravniForma": "641",
+   "typZrizovatele": "6",
+   "emaily": [
+    "reditelka@mssvvorsily.cz"
+   ],
+   "platnostNaDobuNeurcitou": true,
+   "reditel": {
+    "nazevOsoby": "Mgr. Barbora Křivohlavá",
+    "reditelJeStatutar": true,
+    "datumVznikuFunkce": "2026-08-01",
+    "adresa": "Pod Barvířkou 2374/3, Smíchov, 150 00 Praha 5"
+   },
+   "statutarniOrgany": [],
+   "zrizovatele": [
+    {
+     "druhOsoby": "…",
+     "pravniForma": "…",
+     "datumNarozeni": "…",
+     "ico": "…",
+     "nazevOsoby": "…",
+     "adresa": "…"
+    }
+   ],
+   "skolyAZarizeni": [
+    {
+     "izo": "…",
+     "uplnyNazev": "…",
+     "druh": "…",
+     "jazyk": "…",
+     "kapacity": "…",
+     "mistaVyuky": "…",
+     "obory": "…",
+     "datumZapisu": "…",
+     "datumZahajeniCinnosti": "…"
+    }
+   ]
+  }
+ ]
+}
