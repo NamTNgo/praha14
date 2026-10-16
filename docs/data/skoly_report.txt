@@ -1,6 +1,21 @@
 záznamů: 113
 podle typu: {"ms": 42, "ss": 47, "zs": 24}
 podle MČ: {"9": 72, "14": 41}
+podle zřizovatele (s/p/c/?): {"?": 44, "s": 68, "p": 1}
+s webem: 99, s e-mailem: 113
+právní forma zřizovatele | sektor | název (kontrola třídění):
+  44x |None|
+  21x 811|s|Městská část Praha 14
+  20x 811|s|Městská část Praha 9
+  16x 804|s|Hlavní město Praha
+  6x 804|s|HLAVNÍ MĚSTO PRAHA
+  1x 804|s|Liberecký kraj
+  1x 325|s|Ministerstvo školství, mládeže a tělovýc
+  1x 801|s|Obec Bařice - Velké Těšany
+  1x 325|s|Ministerstvo vnitra
+  1x 141|p|Focus on education, o.p.s.
+  1x 141|s|Obecně prospěšná společnost Euroinstitut
+bez zřizovatele: MŠ - Pro Family s.r.o.; Soukromá základní škola UNIVERZUM s.r.o.; Soukromé SOU ATHOZ, spol. s r.o.; SŠ kosmetiky a hotelnictví BEAN, s.r.o.; SŠ kosmetiky a hotelnictví BEAN, s.r.o.; Gymnázium J. Seiferta o.p.s.; The English College-Angl.gymnázium,o.p.s; The English College-Angl.gymnázium,o.p.s; Soukr. SŠ výpočetní techniky s.r.o.; Soukromá SOŠ START s.r.o.; Soukr. SOŠ a Soukr. SOU BEAN, s.r.o.; Soukr. SOŠ a Soukr. SOU BEAN, s.r.o.; SOŠ uměleckořemeslná s.r.o.; Soukromé gymnázium ARCUS s.r.o.; Střední škola ARCUS, s.r.o.; Gymnázium Františka Křižíka a ZŠ, s.r.o.; Gymnázium Františka Křižíka a ZŠ, s.r.o.; OU pro žáky s více vadami, s.r.o.; Bezpečnostně právní akademie, stř. škola; Základní škola Spektrum, s.r.o.
 mimo Prahu 9/14 (nespárováno): 15350
 Praha 9/14 bez shody adresy: 93
   MŠ BERUŠKA, s.r.o. | K železnici 307/ | Praha 9 Běchovice
