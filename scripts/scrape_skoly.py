@@ -55,7 +55,8 @@ def links(h, base, host):
             continue
         if re.search(r"\.(pdf|jpe?g|png|docx?|xlsx?|zip)$", pu.path, re.I):
             continue
-        if any(k in plain(href + " " + label) for k in KEYS):
+        hl = plain(href + " " + label)
+        if any(k in hl for k in KEYS) or re.search(r"praha[\s_-]?(?:9|14)\b(?!\d)", hl):
             out.append(u.split("#")[0])
     seen, res = set(), []
     for u in out:
