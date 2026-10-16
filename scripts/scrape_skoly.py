@@ -10,7 +10,7 @@ from urllib.parse import urljoin, urlparse
 
 DATA = Path(__file__).resolve().parent.parent / "docs" / "data"
 UA = "Mozilla/5.0 (compatible; skoly-praha-bot; +https://github.com/NamTNgo/praha14)"
-KEYS = ("zapis", "otevren", "prijim", "skolne", "cenik", "poplatk", "platb", "faq", "dotaz", "kontakt", "dod", "uchazec", "rodic", "pro-zaky", "o-skole")
+KEYS = ("zapis", "otevren", "prijim", "skolne", "cenik", "poplatk", "platb", "faq", "dotaz", "kontakt", "dod", "uchazec", "rodic", "pro-zaky", "o-skole", "skolniho")
 MONTH_RE = r"(ledn[ua]|leden|unor[ua]?|brezn[ua]|brezen|dubn[ua]|duben|kvetn[ua]|kveten|cervn[ua]|cerven|cervenc[ei]|cervenci|srpn[ua]|srpen|zari|rijn[ua]|rijen|listopad[ua]?|prosinc[ei]|prosinec)"
 MONTH_NUM = [("led", 1), ("uno", 2), ("bre", 3), ("dub", 4), ("kve", 5), ("cervenc", 7), ("cerven", 6), ("srp", 8), ("zar", 9), ("rij", 10), ("list", 11), ("pros", 12)]
 
@@ -109,6 +109,22 @@ def dates_after(text, pat, today, stop, span=260, horizon=420):
             tm = TIME.search(seg[dm.end():dm.end() + 60])
             tt = f"{int(tm.group(1))}:{tm.group(2)}–{int(tm.group(3))}:{tm.group(4)}" if tm else ""
             res.append((x.isoformat(), tt))
+    out, seen = [], set()
+    for x in sorted(res):
+        if x[0] not in seen:
+            seen.add(x[0]); out.append({"d": x[0], **({"t": x[1]} if x[1] else {})})
+    return out[:4]
+
+
+def labelled(text, label, today, horizon=450):
+    """Tabulky 'datum | popis' (např. '10. 11. 2026 Den otevřených dveří'): datum a za ním do 60 znaků štítek."""
+    t = plain(text)
+    res = []
+    for m in re.finditer(r"(\d{1,2})\.\s?(\d{1,2})\.(?:\s?(20\d{2}))?((?:(?!\d{1,2}\.\s?\d{1,2}\.).){0,60}?)(?:" + label + ")", t):
+        x = mkdate(m.group(1), m.group(2), m.group(3), today)
+        if x and today <= x <= today + timedelta(days=horizon):
+            tm = TIME.search(m.group(4))
+            res.append((x.isoformat(), f"{int(tm.group(1))}:{tm.group(2)}–{int(tm.group(3))}:{tm.group(4)}" if tm else ""))
     out, seen = [], set()
     for x in sorted(res):
         if x[0] not in seen:
@@ -236,10 +252,15 @@ def scrape_host(host, today, mcs=None):
                     res["tel"], src["tel"] = p, u
             if "dod" not in res:
                 d = dates_after(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri|\bdod\b", today, r"zapis|prijimac|skolne")
+                if not d:
+                    d = labelled(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri", today, 420)
                 if d:
                     res["dod"], src["dod"] = d, u
             if "zap" not in res:
                 z = zapis(t, today)
+                if not z:
+                    ld = labelled(t, r"zapis\w*\s+(?:do|k)\s+(?:1\.\s?trid|1\.\s?rocnik|zakladni|materske|ms\b|zs\b)", today)
+                    z = {"dates": ld} if ld else None
                 if z:
                     res["zap"], src["zap"] = z, u
             if "pz" not in res:
