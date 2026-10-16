@@ -304,6 +304,9 @@ def main():
     except Exception as e:  # noqa: BLE001
         osm = f"OSM chyba: {type(e).__name__} {e}"
         print(osm, file=sys.stderr)
+    mpath = DATA / "skoly_web_rucne.json"  # weby doplněné ručně (zdroj: seznamy škol na webech městských částí)
+    if mpath.exists():
+        webs.update(json.loads(mpath.read_text(encoding="utf-8")))
     wpath.write_text(json.dumps(webs, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     for s in skoly:
         if not s.get("w") and webs.get(s["id"]):
