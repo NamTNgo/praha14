@@ -117,14 +117,22 @@ def dates_after(text, pat, today, stop, span=260, horizon=420):
 
 
 def labelled(text, label, today, horizon=450):
-    """Tabulky 'datum | popis' (např. '10. 11. 2026 Den otevřených dveří'): datum a za ním do 60 znaků štítek."""
+    """Tabulky 'datum | popis' (např. '10. 11. 2026 Den otevřených dveří'):
+    ke každému výskytu štítku se vezme nejbližší datum před ním (do 60 znaků)."""
     t = plain(text)
     res = []
-    for m in re.finditer(r"(\d{1,2})\.\s?(\d{1,2})\.(?:\s?(20\d{2}))?((?:(?!\d{1,2}\.\s?\d{1,2}\.).){0,25}?)(?:" + label + ")", t):
-        x = mkdate(m.group(1), m.group(2), m.group(3), today)
-        if x and today <= x <= today + timedelta(days=horizon):
-            tm = TIME.search(m.group(4))
-            res.append((x.isoformat(), f"{int(tm.group(1))}:{tm.group(2)}–{int(tm.group(3))}:{tm.group(4)}" if tm else ""))
+    for m in re.finditer(label, t):
+        pre = t[max(0, m.start() - 60):m.start()]
+        dm = None
+        for dm in DATE.finditer(pre):
+            pass  # poslední = nejbližší datum před štítkem
+        if not dm:
+            continue
+        x = mkdate(dm.group(1), dm.group(2), dm.group(3), today)
+        if not x or x < today or x > today + timedelta(days=horizon):
+            continue
+        tm = TIME.search(pre[dm.end():])
+        res.append((x.isoformat(), f"{int(tm.group(1))}:{tm.group(2)}–{int(tm.group(3))}:{tm.group(4)}" if tm else ""))
     out, seen = [], set()
     for x in sorted(res):
         if x[0] not in seen:
