@@ -251,9 +251,9 @@ def scrape_host(host, today, mcs=None):
                 if p:
                     res["tel"], src["tel"] = p, u
             if "dod" not in res:
-                d = dates_after(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri|\bdod\b", today, r"zapis|prijimac|skolne")
+                d = labelled(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri", today, 420)  # tabulka 'datum | popis' má přednost
                 if not d:
-                    d = labelled(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri", today, 420)
+                    d = dates_after(t, r"(?:dny|den|dne|dnech)\s+otevrenych\s+dveri|\bdod\b", today, r"zapis|prijimac|skolne")
                 if d:
                     res["dod"], src["dod"] = d, u
             if "zap" not in res:
