@@ -18,6 +18,9 @@ ARC = "https://services5.arcgis.com/m8NdPSKOX90dAI3V/ArcGIS/rest/services/"
 Q = "/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=3&f=json"
 
 KANDIDATI = [
+    ("rsd geoportal arcgis", "https://geoportal.rsd.cz/arcgis/rest/services?f=pjson", False),
+    ("rsd gis arcgis", "https://gis.rsd.cz/arcgis/rest/services?f=pjson", False),
+    ("ipr arcgis lomítko", "https://app.iprpraha.cz/arcgis/rest/services/?f=pjson", False),
     ("dopravniinfo robots", "https://dopravniinfo.gov.cz/robots.txt", False),
     ("dopravniinfo homepage", "https://dopravniinfo.gov.cz/", False),
     ("dopravniinfo mapa", "https://dopravniinfo.gov.cz/mapa-dopravnich-informaci", False),
