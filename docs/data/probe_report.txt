@@ -1,0 +1,18 @@
+golemio openapi                          CHYBA HTTP Error 404: Not Found
+golemio public openapi                   CHYBA HTTP Error 404: Not Found
+golemio openapi (v2)                     CHYBA HTTP Error 404: Not Found
+golemio trafficrestrictions              CHYBA HTTP Error 404: Not Found
+golemio roadclosures                     CHYBA HTTP Error 404: Not Found
+golemio traffic                          CHYBA HTTP Error 404: Not Found
+arcgis uzavírky aktualizované (meta)     HTTP 200  10504 B
+    {   "currentVersion" : 12,    "id" : 0,    "name" : "Upravit propojení",    "type" : "Feature Layer",    "serviceItemId" : "ac1f8e07cbbe44869895d1087cffa7c5",    "cacheMaxAge" : 30,    "displayField" : "ResidualError",    "description" : "",    "copyrightText" : "",    "defaultVisibility" : true,    "editingInfo" : {     "lastEditDate" : 1791267163126,      "schemaLastEditDate" : 1791267163126,      "dataLastEditDate" : 1791267163126   },    "relationships" : [],    "isDataVersioned" : false,    "hasContingentValuesDefinition" : false,    "supportsAppend" : true,    "suppor
+arcgis uzavírky aktualizované (data)     HTTP 200  214 B
+    {"objectIdFieldName":"OBJECTID","uniqueIdField":{"name":"OBJECTID","isSystemMaintained":true},"globalIdFieldName":"","geometryProperties":{"shapeLengthFieldName":"Shape__Length","units":"esriMeters"},"features":[]}
+arcgis 2025_uzavírky (meta)              HTTP 200  4313 B
+    {   "currentVersion" : 12,    "serviceItemId" : "885f41f2731a43d5888d5152089225da",    "serviceDescription" : "",    "hasVersionedData" : false,    "supportsDisconnectedEditing" : false,    "hasStaticData" : true,    "hasSharedDomains" : false,    "maxRecordCount" : 2000,    "maxIdsCount" : 1000000,    "supportedQueryFormats" : "JSON",    "supportsVCSProjection" : false,    "supportedExportFormats" : "csv,shapefile,sqlite,geoPackage,filegdb,featureCollection,geojson,kml,excel",    "supportedConvertFileFormats" : "JSON,PBF",    "supportedConvertContentFormats" : "LayerEditCollecti
+arcgis 2025_uzavírky (data)              HTTP 200  2660 B
+    {"objectIdFieldName":"ObjectId","uniqueIdField":{"name":"ObjectId","isSystemMaintained":true},"globalIdFieldName":"","geometryProperties":{"shapeLengthFieldName":"Shape__Length","units":"esriMeters"},"geometryType":"esriGeometryPolyline","spatialReference":{"wkid":102100,"latestWkid":3857},"fields":[{"name":"FID","type":"esriFieldTypeSmallInteger","alias":"FID","sqlType":"sqlTypeSmallInt","domain":null,"defaultValue":null},{"name":"Akce","type":"esriFieldTypeString","alias":"Akce","sqlType":"sqlTypeNVarchar","length":4000,"domain":null,"defaultValue":null},{"name":"Začátek","type":"esriFieldTy
+opravujeme.to html                       HTTP 200  11698 B
+        <!doctype html> <html lang="en" class="h-100">  <head>     <!-- Required meta tags -->     <meta charset="utf-8">     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">     <!-- Bootstrap CSS -->     <link rel="stylesheet" href="/static/20260313Mar1773397968/app/css/index.css">     <script defer src="/static/20260313Mar1773397968/js/fontawesome.min.js"></script>     <script defer src="/static/20260313Mar1773397968/js/fa-solid.min.js"></script>     <title> opravujeme.to</title>      <link rel="icon" href="/static/20260313Mar1773397968/img/logo_opravujeme_
+    API ODKAZY: žádné
+opravujeme.to přehled                    CHYBA HTTP Error 404: Not Found
