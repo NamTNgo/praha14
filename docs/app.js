@@ -683,7 +683,7 @@
     } else {
       h += '<div class="list">' + uz.map(function (r) {
         var x = r.x, bg = probiha(x) ? "#f7dede" : "#efece2", fg = probiha(x) ? "#b03a3a" : "#6b6652";
-        return dkarta(I_CONE, bg, fg, esc(x.ul && x.ul.length ? x.ul.join(" a ") : x.n), dtag(x),
+        return dkarta(I_CONE, bg, fg, esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), dtag(x),
           '<div class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : " · Praha " + esc(x.mc)) + "</div>" +
           (x.ul && x.ul.length ? '<div class="t3">' + esc(x.n) + "</div>" : "") +
           (x.p ? '<div class="t3">' + esc(x.p) + "</div>" : ""),
@@ -705,6 +705,7 @@
     h += mimoDosah();
     return h;
   }
+  function vyjmenuj(a) { return a.length < 2 ? a[0] : a.slice(0, -1).join(", ") + " a " + a[a.length - 1]; }
   function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#8a8572", 2.2) + "<div>" + text + "</div></div>"; }
   function genNote() {
     if (!data.doprava || !data.doprava.gen) return "";

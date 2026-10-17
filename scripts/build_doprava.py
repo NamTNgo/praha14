@@ -254,6 +254,17 @@ def cisteni(ulice):
 
 
 # ---------- 2. uzavírky a práce ----------
+def telo_clanku(h):
+    """Text samotného článku, bez menu a bannerů, které jsou na stránce kolem."""
+    for vzorek in (r"(?is)<article\b[^>]*>(.*?)</article>",
+                   r"(?is)<main\b[^>]*>(.*?)</main>",
+                   r'(?is)<div[^>]+class="[^"]*(?:entry-content|node__content|field--name-body|content__text)[^"]*"[^>]*>(.*?)</div>\s*</div>'):
+        m = re.search(vzorek, h)
+        if m and len(text_of(m.group(1))) > 80:
+            return re.sub(r"\s+", " ", text_of(m.group(1))).strip()
+    return re.sub(r"\s+", " ", text_of(h)).strip()
+
+
 def clanky(url, mc, ulice, stran=3):
     """Aktuality odboru dopravy. Teaser často termín neuvádí, proto se otevře i článek.
 
@@ -281,14 +292,13 @@ def clanky(url, mc, ulice, stran=3):
                 continue
             videno.add(clanek)
             try:
-                detail = text_of(fetch(clanek))
+                telo = telo_clanku(fetch(clanek))
             except Exception as e:
                 log("  článek %s nedostupný (%s)" % (clanek, e))
-                detail = text_of(b)
-            # text článku bez navigace: od nadpisu dál
-            k = detail.find(titul[:40])
-            telo = detail[k + len(titul):] if k >= 0 else detail
-            telo = re.sub(r"\s+", " ", telo).strip()
+                telo = re.sub(r"\s+", " ", text_of(b)).strip()
+            k = telo.find(titul[:40])
+            if k >= 0:
+                telo = telo[k + len(titul):].strip(" ·|-")
             # v těle stránky jsou i odkazy na jiné uzavírky, proto nadpis rozhoduje
             ul = ulice_v_textu(titul, ulice) or ulice_v_textu(telo[:300], ulice)
             od, do = rozsah(telo[:900])
