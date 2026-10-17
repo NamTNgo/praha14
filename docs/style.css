@@ -121,6 +121,10 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .dinfo { display:flex; gap:10px; align-items:flex-start; font-size:13.5px; line-height:1.4; color:#4a4638; background:#f3f1e8; border-radius:14px; padding:12px 14px; }
 .dinfo svg { flex:none; margin-top:1px; }
 .dinfo.warn { background:#fff4d6; color:#6b4f0f; }
+.dinfo.ok { background:#eef3ec; color:#2d4433; }
+.spadtag { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:800; color:#1f4d36; background:#dfeadd; border-radius:8px; padding:3px 8px; }
+.ulice { font-size:13.5px; color:#3c4238; line-height:1.75; padding:10px 0 2px; overflow-wrap:anywhere; }
+.ulvic { margin:8px 0 2px; }
 .dcard { padding:14px 16px; }
 .dtitle { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); margin-bottom:4px; }
 .drow { display:flex; justify-content:space-between; align-items:baseline; gap:14px; padding:10px 0; border-bottom:1px solid #eeebe0; }

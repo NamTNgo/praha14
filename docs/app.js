@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skPrev: "list", skSel: null, skQ: "", skSheet: false, skScroll: 0 };
+  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skPrev: "list", skSel: null, skQ: "", skSheet: false, skScroll: 0, spadVse: false };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -312,6 +312,56 @@
 
   function plain(s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
   function skById(id) { return (data.skoly || []).filter(function (s) { return s.id === id; })[0]; }
+
+  // ---- spádové obvody ZŠ (vyhláška hl. m. Prahy, vyhodnocená při buildu) ----
+  function spadUlice(s) { return plain(s).replace(/\s+/g, " ").trim(); }
+  function spadCislo() {
+    var a = state.address;
+    if (!a) return null;
+    if (a.cp) return { cp: parseInt(a.cp, 10), co: String(a.co || "") };
+    var m = /(\d+)(?:\/(\w+))?\s*$/.exec(a.label || "");  // adresa uložená dřív má čísla jen v popisku
+    return m ? { cp: parseInt(m[1], 10), co: m[2] || "" } : null;
+  }
+  function spadSedi(r, n) {
+    var co = plain(n.co), i;
+    if (r.t === "cela") return true;
+    if (r.t === "jen" || r.t === "krome") {
+      var je = r.p.some(function (x) { return x[0] === n.cp && String(x[1]) === co; });
+      return r.t === "jen" ? je : !je;
+    }
+    function v(rs, x) { return rs.some(function (q) { return x >= q[0] && x <= q[1]; }); }
+    i = parseInt(co, 10);
+    if (!isNaN(i)) return v(i % 2 === 0 ? r.cs : r.cl, i);   // orientační číslo má přednost
+    return !isNaN(n.cp) && v(r.cp, n.cp);
+  }
+  function spadIzo() {
+    var a = state.address, n = spadCislo();
+    if (!data.spad || !a || !n) return null;
+    var rs = data.spad.u[spadUlice(a.street)];
+    if (!rs) return null;
+    var hit = rs.filter(function (r) { return r.m === a.mc && spadSedi(r, n); });
+    return hit.length === 1 ? hit[0].i : null;
+  }
+  function izoOf(s) { return String(s.id || "").split("-")[0]; }
+  function jeSpadova(s) { var i = spadIzo(); return s.t === "zs" && !!i && izoOf(s) === i; }
+  function spadCard(s) {
+    if (s.t !== "zs" || !data.spad) return "";
+    var ulice = data.spad.s[izoOf(s)];
+    if (!ulice || !ulice.length) return "";
+    var a = state.address, sedi = jeSpadova(s), n = SPAD_N;
+    var h = '<div class="card dcard"><div class="dtitle">Spádová oblast</div>';
+    if (a && sedi) h += '<div class="dinfo ok">' + SVG('<path d="m5 13 4 4L19 7"/>', 18, "#2f6b43", 2.6) +
+      "<span><b>Uložená adresa sem spadá.</b> " + esc(a.label) + " — děti z této adresy mají při zápisu přednost.</span></div>";
+    else if (a) h += '<div class="dinfo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652", 2.2) +
+      "<span>Uložená adresa (" + esc(a.label) + ") do spádové oblasti této školy nepatří.</span></div>";
+    var vse = state.spadVse, zob = vse ? ulice : ulice.slice(0, n);
+    h += '<div class="ulice">' + zob.map(function (u) { return "<span>" + esc(u) + "</span>"; }).join(" · ") + "</div>";
+    if (ulice.length > n) h += '<button type="button" class="btn-link ulvic" id="spadvic">' +
+      (vse ? "Zobrazit méně" : "Zobrazit všech " + ulice.length + " ulic") + SVG(vse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 14, "currentColor", 2.6) + "</button>";
+    h += '<div class="dnote">Podle ' + esc(data.spad.v) + ", účinné od " + fmtDate(data.spad.od) + ". Zápis vždy potvrdí škola.</div></div>";
+    return h;
+  }
+  var SPAD_N = 8;
   // Škola vedená v rejstříku ve víc částech (MŠ + ZŠ) má u kapacity upřesněný popisek.
   var SK_T = { ms: "MŠ", zs: "ZŠ", ss: "SŠ" };
   function kapLabel(s) {
@@ -378,7 +428,7 @@
   function skolaCard(s, d, p) {
     p = p || skSites(s)[0];
     return '<button type="button" class="card skcard" data-sk="' + esc(s.id) + '"><div class="skl"><div class="skn">' + typeChip(s.t) + '<span class="sknm"><span class="cl">' + esc(s.n) + '</span></span></div><div class="t2">' + esc(p.a) + (d == null ? "" : " · Praha " + esc(p.mc)) + "</div>" +
-      (secTag(s.z) ? '<div class="sktag">' + secTag(s.z) + "</div>" : "") + '</div><div class="skr">' + (d == null ? "Praha " + esc(s.mc) : meters(d)) + "</div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      (jeSpadova(s) ? '<div class="sktag"><span class="spadtag">' + SVG('<path d="m5 13 4 4L19 7"/>', 11, "currentColor", 3) + "Spádová pro tuto adresu</span></div>" : "") + (secTag(s.z) ? '<div class="sktag">' + secTag(s.z) + "</div>" : "") + '</div><div class="skr">' + (d == null ? "Praha " + esc(s.mc) : meters(d)) + "</div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
   }
   function skolyBody(a) {
     if (!data.skoly) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Seznam škol se připravuje</div><div class="note" style="margin-top:2px">Data z rejstříku škol se právě doplňují. Zkuste to prosím později.</div></div></div>';
@@ -434,6 +484,7 @@
     if (s.z === "p" || s.z === "c") h += dcard("Školné a poplatky", drow("Školné", ex.sk), ex.sk ? "Údaj z webu školy, částky se mohou měnit. Aktuální výši ověřte u školy." : "");
     // Veřejná MŠ školné nemá, ale vybírá úplatu za předškolní vzdělávání; veřejná ZŠ neplatí nic.
     else if (s.z === "s" && s.t === "ms" && ex.sk) h += dcard("Úplata za předškolní vzdělávání", drow("Měsíční úplata", ex.sk.replace(/\s*\/\s*měsíc$/, "").replace(/\d{4,}/g, function (n) { return n.replace(/\B(?=(\d{3})+$)/g, " "); })), "Údaj z webu školy, výši schvaluje zřizovatel. Předškoláci a děti s odkladem ji neplatí.");
+    h += spadCard(s);
     h += dcard("Kontakt", drow("Telefon", ex.tel, ex.tel ? { href: "tel:" + ex.tel.replace(/\s/g, ""), icon: I_PH } : {}) + drow("E-mail", s.e, s.e ? { href: "mailto:" + s.e, icon: I_MA } : {}));
     var termSrc = src.dod || src.zap || src.pz;
     var termNote = "Termíny jsou zjištěny automaticky z webu školy" + (termSrc ? ' (<a href="' + esc(termSrc) + '" target="_blank" rel="noopener">zdroj</a>)' : "") + ". Před návštěvou si je ověřte u školy.";
@@ -469,7 +520,7 @@
   function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Kam s odpadem?</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
 
   function openSkola(id) {
-    state.skScroll = window.scrollY; state.skPrev = state.skView; state.skView = "detail"; state.skSel = id; state.skSheet = false;
+    state.skScroll = window.scrollY; state.skPrev = state.skView; state.skView = "detail"; state.skSel = id; state.skSheet = false; state.spadVse = false;
     try { history.pushState({ sk: 1 }, ""); } catch (e) {}
     render(); window.scrollTo(0, 0);
   }
@@ -521,6 +572,8 @@
     var rs = document.getElementById("skreset");
     if (rs) rs.addEventListener("click", function () { state.skF = "all"; state.skZ = "all"; state.skM = "all"; render(); });
     app.querySelectorAll("[data-sk]").forEach(function (b) { b.addEventListener("click", function () { openSkola(b.getAttribute("data-sk")); }); });
+    var sv = document.getElementById("spadvic");
+    if (sv) sv.addEventListener("click", function () { var y = window.scrollY; state.spadVse = !state.spadVse; render(); window.scrollTo(0, y); });
     var sf = document.getElementById("skfull");
     if (sf) sf.addEventListener("click", function () { state.skView = "full"; render(); window.scrollTo(0, 0); });
     var sb = document.getElementById("skback");
@@ -537,7 +590,7 @@
   }
   function pick(a) {
     if (!a) return;
-    state.address = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14", street: a[0], part: a[6] || "" };
+    state.address = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14", street: a[0], cp: a[1], co: a[2] || "", part: a[6] || "" };
     save(state.address);
     render();
     window.scrollTo(0, 0);
@@ -546,8 +599,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       state.address = load();
