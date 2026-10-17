@@ -344,23 +344,37 @@
   }
   function izoOf(s) { return String(s.id || "").split("-")[0]; }
   function jeSpadova(s) { var i = spadIzo(); return s.t === "zs" && !!i && izoOf(s) === i; }
+  function spadSkola() {               // škola, do jejíhož obvodu uložená adresa patří
+    var i = spadIzo();
+    return i ? (data.skoly || []).filter(function (x) { return x.t === "zs" && izoOf(x) === i; })[0] : null;
+  }
   function spadCard(s) {
     if (s.t !== "zs" || !data.spad) return "";
-    var ulice = data.spad.s[izoOf(s)];
-    if (!ulice || !ulice.length) return "";
-    var a = state.address, sedi = jeSpadova(s), n = SPAD_N;
+    var ulice = data.spad.s[izoOf(s)], a = state.address;
     var h = '<div class="card dcard"><div class="dtitle">Spádová oblast</div>';
-    if (a && sedi) h += '<p class="spadstav">' + SVG('<path d="m5 13 4 4L19 7"/>', 17, "#2f6b43", 3.2) +
+    if (!ulice || !ulice.length) {     // obvody má jen škola zřízená městskou částí
+      return h + '<p class="spadstav">' + SVG(I_INFO, 17, "#8a8572", 2.2) +
+        "<b>Tato škola nemá spádový obvod.</b> Přijímá žáky bez ohledu na adresu bydliště.</p>" +
+        '<div class="dnote">Spádové obvody stanovuje ' + esc(data.spad.v) + " jen u škol zřízených městskou částí.</div></div>";
+    }
+    if (a && jeSpadova(s)) h += '<p class="spadstav">' + SVG('<path d="m5 13 4 4L19 7"/>', 17, "#2f6b43", 3.2) +
       "<b>" + esc(a.label) + " sem spadá.</b> Děti z této adresy mají při zápisu přednost.</p>";
-    else if (a) h += '<p class="spadstav mimo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 17, "#8a8572", 2.2) +
-      "<b>" + esc(a.label) + " sem nespadá.</b> Spádová je pro ni jiná škola.</p>";
-    var vse = state.spadVse, zob = vse ? ulice : ulice.slice(0, n);
+    else if (a) {
+      var jina = spadSkola();
+      h += '<p class="spadstav">' + SVG(I_INFO, 17, "#8a8572", 2.2) + "<b>" + esc(a.label) + " sem nespadá.</b> " +
+        (jina ? 'Spádová je <a class="spadlink" href="#" data-sk="' + esc(jina.id) + '">' + esc(zkratka(jina.n)) + SVG(I_CHEV, 13, "currentColor", 2.6) + "</a>"
+              : "Vyhláška tuto adresu neuvádí, ověřte ji na městské části.") + "</p>";
+    }
+    var vse = state.spadVse, zob = vse ? ulice : ulice.slice(0, SPAD_N);
     h += '<div class="ulicelbl">Ulice ve spádové oblasti</div><div class="ulice">' + zob.map(esc).join(" · ") + "</div>";
-    if (ulice.length > n) h += '<button type="button" class="spadvic" id="spadvic">' +
+    if (ulice.length > SPAD_N) h += '<button type="button" class="spadvic" id="spadvic">' +
       (vse ? "Zobrazit méně" : "Zobrazit všech " + ulice.length + " ulic") + SVG(vse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
     h += '<div class="dnote">Podle ' + esc(data.spad.v) + ", účinné od " + fmtDate(data.spad.od) + ". Zápis vždy potvrdí škola.</div></div>";
     return h;
   }
+  var I_INFO = '<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>';
+  // dlouhé názvy z rejstříku se v odkazu zkrátí na to, co rodič pozná
+  function zkratka(n) { return n.replace(/,\s*Praha 9[^,]*/i, "").replace(/,\s*(Dygrýnova|Bří\.|Vybíralova|Chvaletická|Šimanovská|Hloubětínská)[^,]*$/i, "").trim(); }
   var SPAD_N = 8;
   // Škola vedená v rejstříku ve víc částech (MŠ + ZŠ) má u kapacity upřesněný popisek.
   var SK_T = { ms: "MŠ", zs: "ZŠ", ss: "SŠ" };
@@ -583,7 +597,7 @@
     app.querySelectorAll("[data-sheetclose]").forEach(function (b) { b.addEventListener("click", function () { state.skSheet = false; render(); }); });
     var rs = document.getElementById("skreset");
     if (rs) rs.addEventListener("click", function () { state.skF = "all"; state.skZ = "all"; state.skM = "all"; render(); });
-    app.querySelectorAll("[data-sk]").forEach(function (b) { b.addEventListener("click", function () { openSkola(b.getAttribute("data-sk")); }); });
+    app.querySelectorAll("[data-sk]").forEach(function (b) { b.addEventListener("click", function (ev) { ev.preventDefault(); openSkola(b.getAttribute("data-sk")); }); });
     var sv = document.getElementById("spadvic");
     if (sv) sv.addEventListener("click", function () { var y = window.scrollY; state.spadVse = !state.spadVse; render(); window.scrollTo(0, y); });
     var sf = document.getElementById("skfull");
