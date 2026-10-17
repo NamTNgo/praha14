@@ -431,10 +431,16 @@
       sec("Typ školy", SK_CHIPS, state.skF, "data-skf") + sec("Zřizovatel", SK_Z, state.skZ, "data-skz") + sec("Městská část", SK_M, state.skM, "data-skm") +
       '<div class="shfoot"><button type="button" class="shreset" id="skreset">Zrušit vše</button><button type="button" class="btn shgo" data-sheetclose="1">Zobrazit ' + n + " " + (n === 1 ? "místo" : n >= 2 && n <= 4 ? "místa" : "míst") + "</button></div></div>";
   }
+  // Karta školy: 1) typ + městská část (v okolí vzdálenost), 2) název, 3) adresa, 4) štítky
   function skolaCard(s, d, p) {
     p = p || skSites(s)[0];
-    return '<button type="button" class="card skcard" data-sk="' + esc(s.id) + '"><div class="skl"><div class="skn">' + typeChip(s.t) + '<span class="sknm"><span class="cl">' + esc(s.n) + '</span></span></div><div class="t2">' + esc(p.a) + (d == null ? "" : " · Praha " + esc(p.mc)) + "</div>" +
-      (jeSpadova(s) ? '<div class="sktag"><span class="spadtag">' + SVG('<path d="m5 13 4 4L19 7"/>', 11, "currentColor", 3) + "Spádová pro tuto adresu</span></div>" : "") + (secTag(s.z) ? '<div class="sktag">' + secTag(s.z) + "</div>" : "") + '</div><div class="skr">' + (d == null ? "Praha " + esc(s.mc) : meters(d)) + "</div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+    var tags = (jeSpadova(s) ? '<span class="spadtag">' + SVG('<path d="m5 13 4 4L19 7"/>', 11, "currentColor", 3) + "Spádová pro tuto adresu</span>" : "") + secTag(s.z);
+    return '<button type="button" class="card skcard" data-sk="' + esc(s.id) + '"><div class="skl">' +
+      '<div class="skmeta">' + typeChip(s.t) + '<span class="skmisto">' + (d == null ? "Praha " + esc(p.mc) : meters(d)) + "</span></div>" +
+      '<div class="sknm"><span class="cl">' + esc(s.n) + "</span></div>" +
+      '<div class="skadr">' + esc(p.a) + "</div>" +
+      (tags ? '<div class="sktags">' + tags + "</div>" : "") +
+      "</div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
   }
   function skolyBody(a) {
     if (!data.skoly) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Seznam škol se připravuje</div><div class="note" style="margin-top:2px">Data z rejstříku škol se právě doplňují. Zkuste to prosím později.</div></div></div>';
