@@ -388,9 +388,15 @@
   }
   function skFull() {
     var q = plain(state.skQ.trim());
-    return data.skoly.filter(function (s) {
+    var r = data.skoly.filter(function (s) {
       return skMatch(s) && (!q || plain(s.n + " " + skSites(s).map(function (p) { return p.a; }).join(" ")).indexOf(q) >= 0);
     });
+    // Pod filtrem základních škol jde spádová nahoru; jinde by vyskočila z abecedy bez souvislosti.
+    if (state.skF === "zs") {
+      var i = r.findIndex(jeSpadova);
+      if (i > 0) r = [r[i]].concat(r.slice(0, i), r.slice(i + 1));
+    }
+    return r;
   }
   function skCount() { return state.skView === "full" ? skFull().length : skNear(state.address).length; }
 
