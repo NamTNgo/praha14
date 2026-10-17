@@ -350,14 +350,14 @@
     if (!ulice || !ulice.length) return "";
     var a = state.address, sedi = jeSpadova(s), n = SPAD_N;
     var h = '<div class="card dcard"><div class="dtitle">Spádová oblast</div>';
-    if (a && sedi) h += '<div class="dinfo ok">' + SVG('<path d="m5 13 4 4L19 7"/>', 18, "#2f6b43", 2.6) +
-      "<span><b>Uložená adresa sem spadá.</b> " + esc(a.label) + " — děti z této adresy mají při zápisu přednost.</span></div>";
-    else if (a) h += '<div class="dinfo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652", 2.2) +
-      "<span>Uložená adresa (" + esc(a.label) + ") do spádové oblasti této školy nepatří.</span></div>";
+    if (a && sedi) h += '<p class="spadstav">' + SVG('<path d="m5 13 4 4L19 7"/>', 17, "#2f6b43", 3.2) +
+      "<b>" + esc(a.label) + " sem spadá.</b> Děti z této adresy mají při zápisu přednost.</p>";
+    else if (a) h += '<p class="spadstav mimo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 17, "#8a8572", 2.2) +
+      "<b>" + esc(a.label) + " sem nespadá.</b> Spádová je pro ni jiná škola.</p>";
     var vse = state.spadVse, zob = vse ? ulice : ulice.slice(0, n);
-    h += '<div class="ulice">' + zob.map(function (u) { return "<span>" + esc(u) + "</span>"; }).join(" · ") + "</div>";
-    if (ulice.length > n) h += '<button type="button" class="btn-link ulvic" id="spadvic">' +
-      (vse ? "Zobrazit méně" : "Zobrazit všech " + ulice.length + " ulic") + SVG(vse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 14, "currentColor", 2.6) + "</button>";
+    h += '<div class="ulicelbl">Ulice ve spádové oblasti</div><div class="ulice">' + zob.map(esc).join(" · ") + "</div>";
+    if (ulice.length > n) h += '<button type="button" class="spadvic" id="spadvic">' +
+      (vse ? "Zobrazit méně" : "Zobrazit všech " + ulice.length + " ulic") + SVG(vse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
     h += '<div class="dnote">Podle ' + esc(data.spad.v) + ", účinné od " + fmtDate(data.spad.od) + ". Zápis vždy potvrdí škola.</div></div>";
     return h;
   }
