@@ -595,8 +595,10 @@
   function cisteniPro(a) {
     if (!data.doprava || !a || !a.street) return null;
     var u = plain(a.street), d = den0().toISOString().slice(0, 10);
+    // jarní kolo bývá v rozpisu půl roku dopředu; tak daleko je to ještě zpráva, ne upozornění
+    var konec = new Date(den0().getTime() + 60 * 86400000).toISOString().slice(0, 10);
     return (data.doprava.cisteni || []).filter(function (c) {
-      return plain(c.u) === u && c.mc === a.mc && c.d >= d;
+      return plain(c.u) === u && c.mc === a.mc && c.d >= d && c.d <= konec;
     }).sort(function (x, y) { return x.d < y.d ? -1 : 1; })[0] || null;
   }
   function uzavirkyPro(a) {

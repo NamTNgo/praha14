@@ -34,6 +34,7 @@ LOG = []
 
 P9_AKT = "https://www.praha9.cz/urad-a-samosprava/doprava/aktuality-v-doprave-na-uzemi-mc-praha-9"
 P14_AKT = "https://www.praha14.cz/zivot-na-praze-14/dopravni-omezeni-2/"
+P14_HUB = "https://www.praha14.cz/urad-mestske-casti/doprava-v-praze-14/"
 P14_CISTENI = "https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/"
 P9_CISTENI = "https://www.praha9.cz/harmonogram-blokoveho-cisteni-jaro-podzim-2026"
 PID_STOPS = "https://data.pid.cz/stops/json/stops.json"
@@ -101,18 +102,25 @@ def _rok(den, mesic, rok):
     return nej
 
 
-def datumy(t):
-    """Všechna data v textu jako (date, pozice). Bere 1. 2. 2026, 15.10. i 1. února."""
+def datumy(t, rok_hint=None):
+    """Všechna data v textu jako (date, pozice). Bere 1. 2. 2026, 15.10. i 1. února.
+
+    rok_hint použijeme tam, kde je rok uvedený jen u jednoho data v řádku
+    (rozpis čištění: „13.04. a 07.10.2026“ jsou obě z roku 2026).
+    """
+    if rok_hint is None:
+        roky = re.findall(r"\b(20\d{2})\b", t)
+        rok_hint = int(roky[0]) if len(set(roky)) == 1 else None
     out = []
     for m in re.finditer(r"(\d{1,2})\s*\.\s*(\d{1,2})\s*\.(?:\s*(\d{4}))?", t):
-        d = _rok(int(m.group(1)), int(m.group(2)), int(m.group(3)) if m.group(3) else None)
+        d = _rok(int(m.group(1)), int(m.group(2)), int(m.group(3)) if m.group(3) else rok_hint)
         if d:
             out.append((d, m.start()))
     for m in re.finditer(r"(\d{1,2})\s*\.\s*([a-zA-Zěščřžýáíéůúňťď]+)\s*(\d{4})?", t):
         mo = mesic_cislo(m.group(2))
         if not mo:
             continue
-        d = _rok(int(m.group(1)), mo, int(m.group(3)) if m.group(3) else None)
+        d = _rok(int(m.group(1)), mo, int(m.group(3)) if m.group(3) else rok_hint)
         if d:
             out.append((d, m.start()))
     out.sort(key=lambda x: x[1])
@@ -381,7 +389,7 @@ def main():
     vysledek = {"gen": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
     chyby = 0
     for klic, fn in (("cisteni", lambda: cisteni(ulice)),
-                     ("uzavirky", lambda: clanky(P9_AKT, "9", ulice) + clanky(P14_AKT, "14", ulice, 1)),
+                     ("uzavirky", lambda: clanky(P9_AKT, "9", ulice) + clanky(P14_AKT, "14", ulice, 1) + clanky(P14_HUB, "14", ulice, 1)),
                      ("zastavky", zastavky)):
         try:
             vysledek[klic] = fn()
