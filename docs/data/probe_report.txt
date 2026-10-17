@@ -1,7 +1,10 @@
-geoportal dcat katalog                   HTTP 200  398942 B
+dopravniinfo robots                      CHYBA <urlopen error timed out>
+dopravniinfo homepage                    CHYBA <urlopen error timed out>
+dopravniinfo mapa                        CHYBA <urlopen error timed out>
+geoportal dcat katalog                   HTTP 200  396265 B
     { 	"@context": { 		"dcat": "http://www.w3.org/ns/dcat#", 		"dct": "http://purl.org/dc/terms/", 		"foaf": "http://xmlns.com/foaf/0.1/", 		"vcard": "http://www.w3.org/2006/vcard/ns#", 		"ftype": "http://publications.europa.eu/resource/authority/file-type/", 		"lang": "http://publications.europa.eu/resource/authority/language/", 		"skos": "http://www.w3.org/2004/02/skos/core#", 		"access": "http://publications.europa.eu/resource/authority/access-right/", 		"xsd": "http://www.w3.org/2001/XMLSchema#" 	}, 	"@id": "https://opendata.geoportalpraha.cz", 	"@type": "dcat:Catalog", 	"dct:description": nul
     ZMÍNKY: žádné
-geoportal hledání                        HTTP 200  2751 B
+geoportal hledání                        HTTP 200  2767 B
     {"links":[{"rel":"self","type":"application/json","title":"This document as JSON","href":"https://opendata.geoportalpraha.cz/api/search/v1"},{"rel":"data","type":"application/json","title":"Collections","href":"https://opendata.geoportalpraha.cz/api/search/v1/collections"},{"rel":"service-desc","type":"application/vnd.oai.openapi+json;version=3.0","title":"The OpenAPI definition as JSON","href":"https://opendata.geoportalpraha.cz/api/search/definition/?f=json"},{"rel":"service-desc","type":"text/html","title":"The OpenAPI definition as HTML","href":"https://opendata.geoportalpraha.cz/api/searc
     ZMÍNKY: žádné
 gis.praha.eu arcgis                      CHYBA <urlopen error [Errno -2] Name or service not known>
