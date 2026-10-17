@@ -57,6 +57,7 @@ def fetch(url, key=None, binary=False, timeout=30):
     if key:
         h["X-Access-Token"] = key
         h["Accept"] = "application/json"
+    url = urllib.parse.quote(url, safe=":/?#[]@!$&'()*+,;=%~")
     req = urllib.request.Request(url, headers=h)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         raw = r.read()
@@ -288,7 +289,8 @@ def clanky(url, mc, ulice, stran=3):
             k = detail.find(titul[:40])
             telo = detail[k + len(titul):] if k >= 0 else detail
             telo = re.sub(r"\s+", " ", telo).strip()
-            ul = ulice_v_textu(titul + " " + telo[:600], ulice)
+            # v těle stránky jsou i odkazy na jiné uzavírky, proto nadpis rozhoduje
+            ul = ulice_v_textu(titul, ulice) or ulice_v_textu(telo[:300], ulice)
             od, do = rozsah(telo[:900])
             if not ul or (not od and not do):
                 continue
@@ -297,7 +299,7 @@ def clanky(url, mc, ulice, stran=3):
             out.append({
                 "n": titul[:120],
                 "mc": mc,
-                "ul": [u["n"] for u in ul],
+                "ul": [u["n"] for u in ul[:3]],
                 "lat": round(ul[0]["lat"], 6),
                 "lon": round(ul[0]["lon"], 6),
                 "od": od.isoformat() if od else None,
@@ -318,7 +320,8 @@ def zastavky():
             lat, lon = float(g["avgLat"]), float(g["avgLon"])
         except (KeyError, TypeError, ValueError):
             continue
-        if 50.05 < lat < 50.16 and 14.45 < lon < 14.64:   # Praha 9 a 14 s rezervou
+        # 5 km od středu mezi Prahou 9 a 14; aplikace pak filtruje na 1 km od adresy
+        if ((lat - 50.1050) * 111.2) ** 2 + ((lon - 14.5350) * 71.4) ** 2 < 25:
             out.append({"n": g.get("name"), "lat": round(lat, 6), "lon": round(lon, 6)})
     return out
 
