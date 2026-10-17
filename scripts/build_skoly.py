@@ -163,6 +163,9 @@ def main():
     # (id obsahuje pořadí, proto se porovnává jen IZO před pomlčkou)
     if any(x["id"].split("-")[0] == "250015773" for x in out):
         out = [x for x in out if x["id"].split("-")[0] != "151014507"]
+    # Škola mimo Prahu, kterou sem vtáhla shodná adresa bez obce (potvrzeno uživatelem):
+    # MŠ Velké Těšany, okres Kroměříž — "9. května 65" se napasovalo na stejnojmennou ulici v Praze 14
+    out = [x for x in out if x["id"].split("-")[0] != "107609291"]
     out = merge_sites(out)
     out.sort(key=lambda x: (x["t"], norm(x["n"])))
     (DATA / "skoly.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
