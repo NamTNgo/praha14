@@ -1,16 +1,17 @@
 ulic z RÚIAN: 506
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
-  bloků: 20, budoucích záznamů: 65
+  bloků: 20, budoucích záznamů: 30
 čištění P9: 1 PDF na https://www.praha9.cz/harmonogram-blokoveho-cisteni-jaro-podzim-2026
   https://www.praha9.cz/sites/default/files/downloads/2026/02/BLOKOV%C3%89%20%C4%8CI%C5%A0T%C4%9AN%C3%8D%20JARO-PODZIM%202026%20-%20info.pdf -> 7736 znaků textu
   bloků: 19, budoucích záznamů: 0
-cisteni: 42 záznamů
+cisteni: 16 záznamů
 uzavírky P9 strana 1: 12 bloků
 uzavírky P9 strana 2: 12 bloků
 uzavírky P9 strana 3: 5 bloků
 uzavírky P14 strana 1: 7 bloků
-uzavirky: 20 záznamů
+uzavírky P14 strana 1: 15 bloků
+uzavirky: 8 záznamů
 zastavky: 260 záznamů
 výluky PID: 4 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
