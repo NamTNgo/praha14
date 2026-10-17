@@ -1,0 +1,56 @@
+ulic z RÚIAN: 506
+čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
+  https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
+  UKÁZKA:
+    Přechodná úprava se týká těchto lokalit:
+    
+     Blok č.l         stanoviště strojů: Cíglerova x Bratří Venclíků                                 13.04.a 07.10.2026
+    
+                       Bojčenkova
+                       Bouřilova
+                       Bratří Venclíků
+    
+                       Cíglerova                                                     Broumarská - Ocelkova
+                       Paculova
+                       Ronešova
+                       Trytova
+                       Vlčkova
+                       Volkova
+    
+    
+    
+    
+    Technická správa komunikaci hl. m. Prahy, 0.6   zapiš u OR vetleiiůiii MS
+    01^1121,1 I6?3/?4| l700O Pinha7                 v Praze v oddíle b vlwkn 20050
+    •4?625/015nII Iskniq pohru.,                    IC 03447286 | DIČ GZ034A7266
+    mvw.tsk-proho ca                                liniová vdiianhv inivo.413
+    
+     Blok č.2
+     část A             stanoviště strojů: Ocelková x Sklenská              14.04.a 08.10.2026
+                     Aloisovská                                celá
+                     Jednostranná
+                     NN 2398                                   parkoviště u "M" R. Zahrada
+                     NN 2398
+                     Třešňová                                  Za Horou-NN 5159
+                     Švestková                                 Třešňová - Švestková
+                     Za Horou
+    
+    
+      Blok č.2
+      část B              stanoviště strojů: Ocelková x Sklenská                                    14.04.a 08.10.2026
+    
+                     Aloisovská                                                       celá
+                     Jednostranná
+                     NN 2398                                                          parkoviště u "M" R. Zahrada
+čištění P9: stránka nedostupná (HTTP Error 404: Not Found)
+cisteni: 9 záznamů
+uzavírky P9 strana 1: 12 bloků
+uzavírky P9 strana 2: 12 bloků
+uzavírky P9 strana 3: 5 bloků
+uzavírky P14 strana 1: 15 bloků
+uzavirky: 42 záznamů
+zastavky: 485 záznamů
+výluky PID: 5 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+  UKÁZKA:
+    {"priority": "high", "display_type": "general", "text": "Provoz TRAM v úseku Královský letohrádek - Brusnice dočasně přerušen. Více na www.DPP.cz.", "text_en": "No TRAM service in Královský letohrádek - Brusnice section temporarily suspended. More at www.DPP.cz.", "related_stops": [{"id": "U20Z2P", "name": "Královský letohrádek", "platform_code": "B"}], "valid_from": "2026-10-17T23:35:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "657e19e1-3e4b-47e9-9e6a-bbf686be2b2b"}
+pid: 1 záznamů
