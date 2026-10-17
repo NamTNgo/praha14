@@ -18,6 +18,11 @@ ARC = "https://services5.arcgis.com/m8NdPSKOX90dAI3V/ArcGIS/rest/services/"
 Q = "/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=3&f=json"
 
 KANDIDATI = [
+    ("geoportal dcat katalog", "https://opendata.geoportalpraha.cz/api/feed/dcat-ap/2.1.1.json", False),
+    ("geoportal hledání", "https://opendata.geoportalpraha.cz/api/search/v1?q=uzav%C3%ADrky", False),
+    ("gis.praha.eu arcgis", "https://gis.praha.eu/arcgis/rest/services?f=pjson", False),
+    ("ipr arcgis", "https://app.iprpraha.cz/arcgis/rest/services?f=pjson", False),
+    ("golemio v3 infotexts (kontrola klíče)", "https://api.golemio.cz/v3/pid/infotexts", True),
     ("golemio openapi", "https://api.golemio.cz/docs/openapi.json", False),
     ("golemio public openapi", "https://api.golemio.cz/docs/public-openapi.json", False),
     ("golemio openapi (v2)", "https://api.golemio.cz/v2/docs/openapi.json", False),
@@ -51,6 +56,9 @@ def zkus(nazev, url, s_klicem):
             extra = "\n    CESTY: " + ", ".join(cesty)
         except Exception:
             pass
+    if "dcat" in nazev or "arcgis" in nazev or "hledání" in nazev:
+        kusy = re.findall(r"[^\"]{0,80}[Uu]zav[ií]r[^\"]{0,120}", raw)
+        extra = "\n    ZMÍNKY: " + (" | ".join(sorted(set(kusy))[:15]) or "žádné")
     if "opravujeme" in nazev:
         odkazy = sorted(set(re.findall(r'["\'](/?(?:api|data)/[^"\'\\s]{3,80})', raw)))
         extra = "\n    API ODKAZY: " + (", ".join(odkazy[:30]) or "žádné")
