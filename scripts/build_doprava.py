@@ -33,9 +33,9 @@ DNES = dt.date.today()
 LOG = []
 
 P9_AKT = "https://www.praha9.cz/urad-a-samosprava/doprava/aktuality-v-doprave-na-uzemi-mc-praha-9"
-P14_AKT = "https://www.praha14.cz/urad-mestske-casti/doprava-v-praze-14/"
+P14_AKT = "https://www.praha14.cz/zivot-na-praze-14/dopravni-omezeni-2/"
 P14_CISTENI = "https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/"
-P9_CISTENI = "https://www.praha9.cz/zivotni-prostredi/blokove-cisteni"
+P9_CISTENI = "https://www.praha9.cz/harmonogram-blokoveho-cisteni-jaro-podzim-2026"
 PID_STOPS = "https://data.pid.cz/stops/json/stops.json"
 PID_INFO = "https://api.golemio.cz/v3/pid/infotexts"
 
@@ -204,11 +204,15 @@ def najdi_pdf(stranka_url):
 
 
 def cisteni(ulice):
-    """Rozpis blokového čištění: ulice + datum z PDF TSK na webech městských částí."""
+    """Rozpis TSK je po blocích: řádek s termínem, pod ním výčet ulic bloku.
+
+    Datum se proto nehledá na stejném řádku jako ulice (tam skoro nikdy není),
+    ale drží se z posledního řádku s termínem, dokud nezačne další blok.
+    """
     out = []
     for mc, url in (("14", P14_CISTENI), ("9", P9_CISTENI)):
         try:
-            pdfs, h = najdi_pdf(url)
+            pdfs, _ = najdi_pdf(url)
         except Exception as e:
             log("čištění P%s: stránka nedostupná (%s)" % (mc, e))
             continue
@@ -220,27 +224,42 @@ def cisteni(ulice):
                 log("  PDF %s nešlo stáhnout (%s)" % (p, e))
                 continue
             log("  %s -> %d znaků textu" % (p, len(t)))
-            log("  UKÁZKA:\n" + "\n".join("    " + r for r in t.splitlines()[:40]))
+            bloku, nalez = 0, 0
+            terminy = []
             for radek in t.splitlines():
-                if len(radek.strip()) < 6:
+                ds = [d for d, _ in datumy(radek)]
+                if ds and re.search(r"(?i)blok|termin|stanovist", plain(radek)):
+                    terminy = ds          # začíná nový blok
+                    bloku += 1
+                    continue
+                if not terminy:
                     continue
                 ul = ulice_v_textu(radek, ulice)
-                ds = [d for d, _ in datumy(radek)]
-                ds = [d for d in ds if DNES - dt.timedelta(days=7) <= d <= DNES + dt.timedelta(days=120)]
-                if not ul or not ds:
+                if not ul or ds:
                     continue
-                cas = re.search(r"(\d{1,2}[:.]\d{2})\s*[-–—]\s*(\d{1,2}[:.]\d{2})", radek)
-                for u in ul[:1]:
-                    out.append({"u": u["n"], "mc": u["mc"], "d": ds[0].isoformat(),
-                                "od": cas.group(1).replace(".", ":") if cas else None,
-                                "do": cas.group(2).replace(".", ":") if cas else None,
-                                "src": p})
-    return out
+                for d in terminy:
+                    if DNES <= d <= DNES + dt.timedelta(days=200):
+                        out.append({"u": ul[0]["n"], "mc": ul[0]["mc"], "d": d.isoformat(),
+                                    "od": None, "do": None, "src": p})
+                        nalez += 1
+            log("  bloků: %d, budoucích záznamů: %d" % (bloku, nalez))
+    # stejná ulice ve dvou blocích: necháme nejbližší termín
+    nej = {}
+    for c in out:
+        k = (plain(c["u"]), c["mc"])
+        if k not in nej or c["d"] < nej[k]["d"]:
+            nej[k] = c
+    return sorted(nej.values(), key=lambda c: c["d"])
 
 
 # ---------- 2. uzavírky a práce ----------
 def clanky(url, mc, ulice, stran=3):
-    out = []
+    """Aktuality odboru dopravy. Teaser často termín neuvádí, proto se otevře i článek.
+
+    Bereme jen položky, kde najdeme ulici z našeho území i termín — to spolehlivě
+    odfiltruje navigaci a rubriky, které jsou ve výpisu zamíchané mezi články.
+    """
+    out, videno = [], set()
     for i in range(1, stran + 1):
         adr = url if i == 1 else url + ("&" if "?" in url else "?") + "page=%d" % i
         try:
@@ -253,24 +272,38 @@ def clanky(url, mc, ulice, stran=3):
         for b in bloky:
             nadpis = re.search(r"(?is)<h[1-4][^>]*>(.*?)</h[1-4]>", b)
             odkaz = re.search(r'(?is)href="([^"]+)"', b)
-            t = text_of(b)
-            if not nadpis or len(t) < 20:
+            if not nadpis or not odkaz:
                 continue
-            titul = text_of(nadpis.group(1))
-            ul = ulice_v_textu(titul + " " + t, ulice)
-            od, do = rozsah(t)
+            titul = re.sub(r"\s+", " ", text_of(nadpis.group(1))).strip()
+            clanek = urllib.parse.urljoin(adr, odkaz.group(1))
+            if not titul or clanek in videno or not ulice_v_textu(titul + " " + text_of(b), ulice):
+                continue
+            videno.add(clanek)
+            try:
+                detail = text_of(fetch(clanek))
+            except Exception as e:
+                log("  článek %s nedostupný (%s)" % (clanek, e))
+                detail = text_of(b)
+            # text článku bez navigace: od nadpisu dál
+            k = detail.find(titul[:40])
+            telo = detail[k + len(titul):] if k >= 0 else detail
+            telo = re.sub(r"\s+", " ", telo).strip()
+            ul = ulice_v_textu(titul + " " + telo[:600], ulice)
+            od, do = rozsah(telo[:900])
+            if not ul or (not od and not do):
+                continue
             if do and do < DNES:
                 continue
             out.append({
                 "n": titul[:120],
                 "mc": mc,
                 "ul": [u["n"] for u in ul],
-                "lat": ul[0]["lat"] if ul else None,
-                "lon": ul[0]["lon"] if ul else None,
+                "lat": round(ul[0]["lat"], 6),
+                "lon": round(ul[0]["lon"], 6),
                 "od": od.isoformat() if od else None,
                 "do": do.isoformat() if do else None,
-                "p": re.sub(r"\s+", " ", t[len(titul):])[:240].strip(" ·|-"),
-                "u": urllib.parse.urljoin(adr, odkaz.group(1)) if odkaz else adr,
+                "p": telo[:220].strip(" ·|-"),
+                "u": clanek,
             })
     return out
 
@@ -306,13 +339,20 @@ def vyluky(key, nazvy):
         txt = " ".join(str(q.get(k, "")) for k in ("text", "description", "title", "display_text", "content"))
         if not txt.strip():
             continue
-        dotcene = [n for n in nazvy if n and plain(n) in plain(txt)]
+        # zastávky hlásí samo API; text je záloha, když je seznam prázdný
+        dotcene = [s["name"] for s in (q.get("related_stops") or []) if s.get("name") in nazvy]
+        if not dotcene:
+            dotcene = [n for n in nazvy if n and plain(n) in plain(txt)]
         if not dotcene:
             continue
-        out.append({"t": re.sub(r"\s+", " ", text_of(txt))[:300], "st": dotcene[:4],
-                    "od": q.get("valid_from") or q.get("date_from"),
-                    "do": q.get("valid_to") or q.get("date_to"),
-                    "u": q.get("url") or "https://pid.cz/vyluky/"})
+        vid = []
+        for n in dotcene:
+            if n not in vid:
+                vid.append(n)
+        out.append({"t": re.sub(r"\s+", " ", text_of(txt))[:300], "st": vid[:4],
+                    "od": (q.get("valid_from") or "")[:10] or None,
+                    "do": (q.get("valid_to") or "")[:10] or None,
+                    "u": q.get("url") or "https://pid.cz/mimoradnosti/"})
     return out
 
 
