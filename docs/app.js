@@ -688,7 +688,7 @@
         return dkarta(I_CONE, bg, fg, esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), dtag(x),
           '<div class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : " · Praha " + esc(x.mc)) + "</div>" +
           (x.ul && x.ul.length ? '<div class="t3">' + esc(x.n) + "</div>" : "") +
-          (x.p ? '<div class="t3">' + esc(x.p) + "</div>" : ""),
+          (popis(x) ? '<div class="t3">' + esc(zkrat(popis(x), 150)) + "</div>" : ""),
           null, x.u, "Detail na praha" + x.mc + ".cz");
       }).join("") + "</div>";
     }
@@ -706,6 +706,17 @@
     }
     h += mimoDosah();
     return h;
+  }
+  // v článcích bývá za popisem ještě zhotovitel a telefon; do karty se to neplete
+  function zkrat(t, n) { return t.length <= n ? t : t.slice(0, t.lastIndexOf(" ", n)) + "…"; }
+  // úvod článku bývá přepsaný nadpis; pak nemá smysl ho v kartě opakovat
+  function popis(x) {
+    var p = x.p || "";
+    if (!p) return "";
+    var zacatek = plain(p).slice(0, 140);
+    var klic = plain(x.n || "").split(/\s+/).filter(function (w) { return w.length > 4; });
+    var shoda = klic.filter(function (w) { return zacatek.indexOf(w) >= 0; }).length;
+    return klic.length && shoda / klic.length >= 0.6 ? "" : p;
   }
   function vyjmenuj(a) { return a.length < 2 ? a[0] : a.slice(0, -1).join(", ") + " a " + a[a.length - 1]; }
   function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#8a8572", 2.2) + "<div>" + text + "</div></div>"; }
