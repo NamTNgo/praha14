@@ -10,10 +10,9 @@ uzavírky P9 strana 1: 12 bloků
 uzavírky P9 strana 2: 12 bloků
 uzavírky P9 strana 3: 5 bloků
 uzavírky P14 strana 1: 7 bloků
-  článek https://www.praha14.cz/app/uploads/sites/4/2019/09/objízdné-trasy-otočení-pages-14.pdf nedostupný ('ascii' codec can't encode character '\xed' in position 36: ordinal not in range(128))
 uzavirky: 20 záznamů
-zastavky: 485 záznamů
-výluky PID: 5 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+zastavky: 260 záznamů
+výluky PID: 4 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "high", "display_type": "general", "text": "Provoz TRAM v úseku Královský letohrádek - Brusnice dočasně přerušen. Více na www.DPP.cz.", "text_en": "No TRAM service in Královský letohrádek - Brusnice section temporarily suspended. More at www.DPP.cz.", "related_stops": [{"id": "U20Z2P", "name": "Královský letohrádek", "platform_code": "B"}], "valid_from": "2026-10-17T23:35:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "657e19e1-3e4b-47e9-9e6a-bbf686be2b2b"}
-pid: 2 záznamů
+    {"priority": "high", "display_type": "inline", "text": "Havárie inženýrských sítí - přerušen provoz TRAM v obratišti Zvonařka. Více na www.DPP.cz.", "text_en": "Infrastructure network failure - no TRAM service at Zvonařka turning loop. More at www.DPP.cz.", "related_stops": [{"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}, {"id": "U515Z1P", "name": "Olšanské hřbitovy", "platform_code": "A"}, {"id": "U209Z1P", "name": "Jiřího z Poděbrad", "platform_code": "A"}, {"id": "U400Z4P", "name": "Muzeum", "platform_code": "D"}], "valid_from": "2026-10-17T20:55:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "c59e1287-1b58-4be0-8613-69a99b3ebd8b"}
+pid: 1 záznamů
