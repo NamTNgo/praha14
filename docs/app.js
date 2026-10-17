@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skPrev: "list", skSel: null, skQ: "", skSheet: false, skScroll: 0, spadVse: false };
+  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -545,20 +545,25 @@
   }
   function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Kam s odpadem?</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
 
+  // Z detailu se dá otevřít další detail (odkaz na spádovou školu), proto zásobník,
+  // ne jedna předchozí obrazovka – jinak by se zpět vracelo samo na sebe.
   function openSkola(id) {
-    state.skScroll = window.scrollY; state.skPrev = state.skView; state.skView = "detail"; state.skSel = id; state.skSheet = false; state.spadVse = false;
-    try { history.pushState({ sk: 1 }, ""); } catch (e) {}
+    state.skHist.push({ v: state.skView, s: state.skSel, y: window.scrollY });
+    state.skView = "detail"; state.skSel = id; state.skSheet = false; state.spadVse = false;
+    try { history.pushState({ sk: state.skHist.length }, ""); } catch (e) {}
     render(); window.scrollTo(0, 0);
   }
-  function skBack() {
-    if (state.skView === "detail") {
-      if (history.state && history.state.sk) { history.back(); return; }
-      state.skView = state.skPrev || "list"; render(); window.scrollTo(0, state.skScroll || 0);
-    } else { state.skView = "list"; render(); window.scrollTo(0, 0); }
+  function oKrokZpet() {
+    var p = state.skHist.pop() || { v: "list", s: null, y: 0 };
+    state.skView = p.v; state.skSel = p.s; state.skSheet = false; state.spadVse = false;
+    render(); window.scrollTo(0, p.y || 0);
   }
-  window.addEventListener("popstate", function () {
-    if (state.skView === "detail") { state.skView = state.skPrev || "list"; render(); window.scrollTo(0, state.skScroll || 0); }
-  });
+  function skBack() {
+    // přes historii, ať tlačítko v aplikaci a tlačítko zpět v prohlížeči zůstanou v souladu
+    if (state.skHist.length && history.state && history.state.sk) { history.back(); return; }
+    oKrokZpet();
+  }
+  window.addEventListener("popstate", function () { if (state.skHist.length) oKrokZpet(); });
 
   // ---- vykreslení a události ----
   function render(keepFocus) {
@@ -589,7 +594,7 @@
         q.focus();
       });
     }
-    app.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { state.tab = b.getAttribute("data-tab"); state.skView = "list"; render(); window.scrollTo(0, 0); }); });
+    app.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { state.tab = b.getAttribute("data-tab"); state.skView = "list"; state.skHist = []; render(); window.scrollTo(0, 0); }); });
     app.querySelectorAll("[data-skf]").forEach(function (b) { b.addEventListener("click", function () { state.skF = b.getAttribute("data-skf"); render(); }); });
     app.querySelectorAll("[data-skz]").forEach(function (b) { b.addEventListener("click", function () { state.skZ = b.getAttribute("data-skz"); render(); }); });
     app.querySelectorAll("[data-skm]").forEach(function (b) { b.addEventListener("click", function () { state.skM = b.getAttribute("data-skm"); render(); }); });
@@ -607,7 +612,7 @@
     var sq = document.getElementById("skq");
     if (sq) sq.addEventListener("input", function () { state.skQ = sq.value; document.getElementById("sklist").innerHTML = skolyListHtml(); app.querySelectorAll("#sklist [data-sk]").forEach(function (b) { b.addEventListener("click", function () { openSkola(b.getAttribute("data-sk")); }); }); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "odpad"; state.skView = "list"; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "odpad"; state.skView = "list"; state.skHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
