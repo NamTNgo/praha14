@@ -168,3 +168,6 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .warn { display:flex; align-items:center; gap:10px; width:100%; text-align:left; font:inherit; background:#fff3f3; border:1px solid #f2d9d9; border-radius:14px; padding:11px 13px; cursor:pointer; }
 .warn svg { flex:none; }
 .warn .wt { flex-grow:1; font-size:13.5px; font-weight:700; color:#8c3030; line-height:1.35; }
+.lblrow { display:flex; align-items:baseline; justify-content:space-between; padding:0 4px; }
+.lblrow .label { padding:0; }
+.lblcnt { font-size:11.5px; font-weight:700; color:#a39d8c; }

@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false };
+  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -608,12 +608,12 @@
       var dd = x.lat == null ? null : dist(a.lat, a.lon, x.lat, x.lon);
       return { x: x, d: dd };
     }).filter(function (r) {
-      return r.d == null ? r.x.mc === a.mc : r.d <= 1000;
+      return r.x.mc === a.mc;   // celá čtvrť, ne jen okruh
     }).sort(function (p, q) {
       if (probiha(p.x) !== probiha(q.x)) return probiha(p.x) ? -1 : 1;
       if ((p.d == null) !== (q.d == null)) return p.d == null ? 1 : -1;
       return (p.d || 0) - (q.d || 0);
-    }).slice(0, 8);
+    });
   }
   function pidPro(a) {
     if (!data.doprava || !a) return { v: [], z: 0 };
@@ -669,28 +669,34 @@
         SVG(I_OK, 19, "#1f4d36", 2.2) + '</span><div class="grow"><div class="t1">Teď se vás nic netýká</div>' +
         '<div class="note" style="margin-top:3px">V okolí vaší adresy neevidujeme žádné omezení.</div><div class="sled">' +
         sledr(I_SWEEP, "<b>Blokové čištění</b> v " + esc(sklon(a.street || "")) + " — nejbližší týdny nic") +
-        sledr(I_CONE, "<b>Uzavírky a práce</b> do 1 km — nic") +
+        sledr(I_CONE, "<b>Uzavírky a práce</b> v Praze " + esc(a.mc) + " — nic") +
         sledr(I_BUS2, "<b>Výluky PID</b> na " + pi.z + " zastávkách do 1 km — nic") +
         "</div>" + genNote() + "</div></div>";
       h += mimoDosah();
       return h;
     }
     h += cisteniKarta(a);
-    h += '<div class="label">Uzavírky a práce v okolí</div>';
     if (!uz.length) {
+      h += '<div class="label">Uzavírky a práce v Praze ' + esc(a.mc) + "</div>";
       h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
-        '</span><div class="grow"><div class="t1" style="color:#6b6557">V okruhu 1 km nic neevidujeme</div>' +
+        '</span><div class="grow"><div class="t1" style="color:#6b6557">V Praze ' + esc(a.mc) + " teď nic neevidujeme</div>" +
         '<div class="note" style="margin-top:2px">Hlídáme aktuality Prahy 9 a Prahy 14. Krátkodobé havárie se sem nemusí dostat.</div>' +
         genNote() + "</div></div>";
     } else {
-      h += '<div class="list">' + uz.map(function (r) {
+      h += '<div class="lblrow"><div class="label">Uzavírky a práce v Praze ' + esc(a.mc) +
+        '</div><div class="lblcnt">' + (uz.length === 1 ? "1 aktivní" : uz.length + " aktivních") + "</div></div>";
+      var zob = state.dopVse ? uz : uz.slice(0, DOP_N);
+      h += '<div class="list">' + zob.map(function (r) {
         var x = r.x, bg = probiha(x) ? "#f7dede" : "#efece2", fg = probiha(x) ? "#b03a3a" : "#6b6652";
         return dkarta(I_CONE, bg, fg, esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), dtag(x),
-          '<div class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : " · Praha " + esc(x.mc)) + "</div>" +
+          '<div class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
           (x.ul && x.ul.length ? '<div class="t3">' + esc(x.n) + "</div>" : "") +
           (popis(x) ? '<div class="t3">' + esc(zkrat(popis(x), 150)) + "</div>" : ""),
           null, x.u, "Detail na praha" + x.mc + ".cz");
       }).join("") + "</div>";
+      if (uz.length > DOP_N) h += '<button type="button" class="spadvic" id="dopvic">' +
+        (state.dopVse ? "Zobrazit méně" : "Zobrazit všech " + uz.length + " " + sklonCount(uz.length)) +
+        SVG(state.dopVse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
     }
     h += '<div class="label">MHD v okolí</div>';
     if (!pi.v.length) {
@@ -719,6 +725,8 @@
     return klic.length && shoda / klic.length >= 0.6 ? "" : p;
   }
   function vyjmenuj(a) { return a.length < 2 ? a[0] : a.slice(0, -1).join(", ") + " a " + a[a.length - 1]; }
+  var DOP_N = 3;
+  function sklonCount(n) { return n === 1 ? "uzavírka" : (n >= 2 && n <= 4 ? "uzavírky" : "uzavírek"); }
   function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#8a8572", 2.2) + "<div>" + text + "</div></div>"; }
   function genNote() {
     if (!data.doprava || !data.doprava.gen) return "";
@@ -780,6 +788,8 @@
     app.querySelectorAll("[data-sk]").forEach(function (b) { b.addEventListener("click", function (ev) { ev.preventDefault(); openSkola(b.getAttribute("data-sk")); }); });
     var sv = document.getElementById("spadvic");
     if (sv) sv.addEventListener("click", function () { var y = window.scrollY; state.spadVse = !state.spadVse; render(); window.scrollTo(0, y); });
+    var dv = document.getElementById("dopvic");
+    if (dv) dv.addEventListener("click", function () { var y = window.scrollY; state.dopVse = !state.dopVse; render(); window.scrollTo(0, y); });
     var wc = document.getElementById("warncist");
     if (wc) wc.addEventListener("click", function () { state.tab = "doprava"; render(); window.scrollTo(0, 0); });
     var sf = document.getElementById("skfull");
