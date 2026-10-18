@@ -4,7 +4,8 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false };
+  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
+    dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkQ: "" };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -260,9 +261,9 @@
     var a = state.address, r = results(a);
     var h = '<div class="head addr"><div><div class="eyebrow">Vaše adresa</div><div class="addr-name">' + esc(a.label) + '</div></div>' +
       '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div>";
-    h += tabsHtml();
     if (state.tab === "skoly") return h + '<div class="body">' + skolyBody(a) + "</div>" + FOOT_SK;
     if (state.tab === "doprava") return h + '<div class="body">' + dopravaBody(a) + "</div>" + FOOT_DO;
+    if (state.tab === "doktori") return h + '<div class="body">' + doktoriBody(a) + "</div>" + FOOT_DK;
     h += '<div class="body">';
     h += cisteniPruh(a);
     h += outageTop(a);
@@ -565,7 +566,10 @@
     if (state.skHist.length && history.state && history.state.sk) { history.back(); return; }
     oKrokZpet();
   }
-  window.addEventListener("popstate", function () { if (state.skHist.length) oKrokZpet(); });
+  window.addEventListener("popstate", function () {
+    if (state.tab === "doktori" && state.dkHist.length) dkKrokZpet();
+    else if (state.skHist.length) oKrokZpet();
+  });
 
   // ---- doprava: blokové čištění, uzavírky a práce, výluky PID ----
   var FOOT_DO = '<div class="foot">Zdroj dat: PID (Golemio) · praha9.cz · praha14.cz · TSK (rozpisy blokového čištění)</div>';
@@ -748,6 +752,108 @@
       " blokové čištění v " + esc(sklon(c.u)) + " — přeparkujte</div>" + SVG(I_CHEV, 16, "#8c3030", 2.4) + "</button>";
   }
 
+  // ---- lékaři (NRPZS) ----
+  var FOOT_DK = '<div class="foot">Zdroj dat: ÚZIS ČR – Národní registr poskytovatelů zdravotních služeb (NRPZS) · Adresy: ČÚZK (RÚIAN)</div>';
+  var DK_T = { prak: "Praktik", det: "Dětský", zub: "Zubař", gyn: "Gynekolog", spec: "Specialista" };
+  var DK_CHIPS = [["all", "Vše"], ["prak", "Praktik"], ["det", "Dětský"], ["zub", "Zubař"], ["gyn", "Gynekolog"], ["spec", "Specialisté"]];
+  function dkById(id) { return (data.doktori || []).filter(function (s) { return s.id === id; })[0]; }
+  function dkMatch(s) { return state.dkF === "all" || s.o === state.dkF; }
+  function dkNear(a) {
+    return (data.doktori || []).filter(dkMatch).map(function (s) { return { s: s, d: dist(a.lat, a.lon, s.lat, s.lon) }; })
+      .filter(function (x) { return x.d <= RADIUS; }).sort(function (x, y) { return x.d - y.d; });
+  }
+  function dkFull() {
+    var q = plain(state.dkQ.trim());
+    return (data.doktori || []).filter(function (s) {
+      return dkMatch(s) && (!q || plain(s.n + " " + s.a + " " + (s.obory || []).join(" ")).indexOf(q) >= 0);
+    });
+  }
+  function dkChip(o) { return '<span class="tp tp-dok-' + o + '">' + DK_T[o] + "</span>"; }
+  // Karta lékaře: 1) obor + MČ/vzdálenost, 2) název, 3) adresa
+  function doktorCard(s, d) {
+    return '<button type="button" class="card skcard" data-dk="' + esc(s.id) + '"><div class="skl">' +
+      '<div class="skmeta">' + dkChip(s.o) + '<span class="skmisto">' + (d == null ? "Praha " + esc(s.mc) : meters(d)) + "</span></div>" +
+      '<div class="sknm"><span class="cl">' + esc(s.n) + "</span></div>" +
+      '<div class="skadr">' + esc(s.a) + "</div></div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+  }
+  // Posuvná filtrační lišta – jeden řádek, obory se doscrollují (varianta A).
+  function dkFilterBar() {
+    return '<div class="chipscroll"><div class="chiprow">' + DK_CHIPS.map(function (c) {
+      return '<button type="button" class="chip' + (state.dkF === c[0] ? " on" : "") + '" data-dkf="' + c[0] + '">' + c[1] + "</button>";
+    }).join("") + '</div><div class="chipfade"></div></div>';
+  }
+  function dkListHtml() {
+    var r = dkFull();
+    if (!r.length) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Nic jsme nenašli</div><div class="note" style="margin-top:2px">Zkuste jiný obor, jméno nebo ulici.</div></div></div>';
+    return r.map(function (s) { return doktorCard(s, null); }).join("");
+  }
+  var DK_NEAR = 10;   // lékařů je v okolí klidně přes sto, seznam v okolí proto krátíme
+  function doktoriBody(a) {
+    if (!data.doktori) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Seznam lékařů se připravuje</div><div class="note" style="margin-top:2px">Data z NRPZS se právě doplňují. Zkuste to prosím později.</div></div></div>';
+    var near = dkNear(a), vic = near.length > DK_NEAR;
+    var h = dkFilterBar() + '<div class="list"><div class="label">' +
+      (vic ? "Nejbližší z " + near.length + " v okruhu 1 km" : "V okruhu 1 km od adresy · " + near.length) + "</div>";
+    if (!near.length) h += '<div class="card-dashed row top"><div class="grow"><div class="t1">V okruhu 1 km nic nenajdeme</div><div class="note" style="margin-top:2px">Zkuste jiný obor nebo celý seznam.</div></div></div>';
+    near.slice(0, DK_NEAR).forEach(function (x) { h += doktorCard(x.s, x.d); });
+    h += "</div>" + '<button type="button" class="btn-link" id="dkfull">Celý seznam Prahy 9 a 14 (' + data.doktori.length + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
+    return h;
+  }
+  function viewDoktoriFull() {
+    return '<div class="head"><button type="button" class="btn-edit" id="dkback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
+      '<h1 style="margin-top:10px">Lékaři</h1><div class="eyebrow">Praha 9 a 14</div></div><div class="body" style="padding-bottom:28px">' +
+      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#726c5a", 2) +
+      '<input id="dkq" class="input" type="search" placeholder="Jméno lékaře, obor nebo ulice" autocomplete="off" value="' + esc(state.dkQ) + '"></div>' +
+      dkFilterBar() + '<div class="list" id="dklist">' + dkListHtml() + "</div></div>" + FOOT_DK;
+  }
+  function viewDoktorDetail(s) {
+    var d = dist(state.address.lat, state.address.lon, s.lat, s.lon);
+    var kont = drow("Telefon", s.tel || null, s.tel ? { href: "tel:" + s.tel.replace(/\s/g, ""), icon: I_PH } : null) +
+      drow("E-mail", s.e || null, s.e ? { href: "mailto:" + s.e, icon: I_MA } : null) +
+      drow("Web", s.w || null, s.w ? { href: "https://" + s.w, ext: true } : null);
+    var obory = (s.obory || []).join(", ") || s.on || "Neuvedeno";
+    return '<div class="head"><button type="button" class="btn-edit" id="dkback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
+      '<div class="body" style="gap:12px;padding-bottom:28px"><div class="dbadges"><span class="tp tp-dok-' + s.o + ' lg">' + DK_T[s.o] + "</span></div>" +
+      '<h1 style="margin:4px 0 0;font-size:23px">' + esc(s.n) + "</h1>" +
+      '<div class="skadr" style="font-size:15px">' + esc(s.a) + ", Praha " + esc(s.mc) + " · " + meters(d) + "</div>" +
+      dcard("Kontakt", kont) +
+      dcard("Obor a zařízení", drow("Obory", obory) + drow("Druh zařízení", s.dr || null), "Zdroj: ÚZIS ČR – NRPZS, aktualizace měsíčně.") +
+      "</div>" + FOOT_DK;
+  }
+  function openDoktor(id) {
+    state.dkHist.push({ v: state.dkView, s: state.dkSel, y: window.scrollY });
+    state.dkView = "detail"; state.dkSel = id;
+    try { history.pushState({ dk: state.dkHist.length }, ""); } catch (e) {}
+    render(); window.scrollTo(0, 0);
+  }
+  function dkKrokZpet() {
+    var p = state.dkHist.pop() || { v: "list", s: null, y: 0 };
+    state.dkView = p.v; state.dkSel = p.s; render(); window.scrollTo(0, p.y || 0);
+  }
+  function dkBack() {
+    if (state.dkHist.length && history.state && history.state.dk) { history.back(); return; }
+    dkKrokZpet();
+  }
+
+  // ---- spodní navigace ----
+  var NAV = [["doprava", "Doprava", BI_DOPRAVA], ["odpad", "Odpad", BI_ODPAD], ["doktori", "Doktoři", BI_LEKARI], ["skoly", "Školy", BI_SKOLY]];
+  var BI_ODPAD = '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>';
+  var BI_SKOLY = '<path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.5 3 6 3s6-2 6-3v-5"/>';
+  var BI_DOPRAVA = '<path d="M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/>';
+  var BI_LEKARI = '<path d="M11 2a2 2 0 0 0-2 2v2a3 3 0 0 0 6 0V4a2 2 0 0 0-2-2"/><path d="M12 9v3a4 4 0 0 1-8 0v-1"/><path d="M12 9v4a4 4 0 0 0 8 0v-1"/><circle cx="20" cy="11" r="2"/><circle cx="4" cy="11" r="2"/>';
+  function bottomNav() {
+    return '<nav class="bnav" role="tablist">' + NAV.map(function (t) {
+      var on = state.tab === t[0];
+      return '<button type="button" class="' + (on ? "on" : "") + '" data-nav="' + t[0] + '" aria-selected="' + on + '">' +
+        SVG(t[2], 24, "currentColor", on ? 2.2 : 2) + "<span>" + t[1] + "</span></button>";
+    }).join("") + "</nav>";
+  }
+  function naSekci() {
+    return data && state.address && !window.__err &&
+      (state.tab === "odpad" || state.tab === "doprava" ||
+       (state.tab === "skoly" && state.skView === "list") ||
+       (state.tab === "doktori" && state.dkView === "list"));
+  }
+
   // ---- vykreslení a události ----
   function render(keepFocus) {
     var html;
@@ -755,8 +861,11 @@
     else if (!state.address) html = viewSearch();
     else if (state.tab === "skoly" && data.skoly && state.skView === "detail" && skById(state.skSel)) html = viewSkolaDetail(skById(state.skSel));
     else if (state.tab === "skoly" && data.skoly && state.skView === "full") html = viewSkolyFull();
+    else if (state.tab === "doktori" && data.doktori && state.dkView === "detail" && dkById(state.dkSel)) html = viewDoktorDetail(dkById(state.dkSel));
+    else if (state.tab === "doktori" && data.doktori && state.dkView === "full") html = viewDoktoriFull();
     else html = viewResult();
     if (data && state.address && state.tab === "skoly" && state.skSheet && state.skView !== "detail") html += sheetHtml();
+    if (naSekci()) html += bottomNav();
     app.innerHTML = html;
     var q = document.getElementById("q");
     if (q) {
@@ -798,8 +907,17 @@
     if (sb) sb.addEventListener("click", function () { skBack(); });
     var sq = document.getElementById("skq");
     if (sq) sq.addEventListener("input", function () { state.skQ = sq.value; document.getElementById("sklist").innerHTML = skolyListHtml(); app.querySelectorAll("#sklist [data-sk]").forEach(function (b) { b.addEventListener("click", function () { openSkola(b.getAttribute("data-sk")); }); }); });
+    app.querySelectorAll("[data-nav]").forEach(function (b) { b.addEventListener("click", function () { state.tab = b.getAttribute("data-nav"); state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; render(); window.scrollTo(0, 0); }); });
+    app.querySelectorAll("[data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); });
+    app.querySelectorAll("[data-dkf]").forEach(function (b) { b.addEventListener("click", function () { state.dkF = b.getAttribute("data-dkf"); render(); }); });
+    var df = document.getElementById("dkfull");
+    if (df) df.addEventListener("click", function () { state.dkView = "full"; render(); window.scrollTo(0, 0); });
+    var db = document.getElementById("dkback");
+    if (db) db.addEventListener("click", function () { dkBack(); });
+    var dq = document.getElementById("dkq");
+    if (dq) dq.addEventListener("input", function () { state.dkQ = dq.value; document.getElementById("dklist").innerHTML = dkListHtml(); app.querySelectorAll("#dklist [data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); }); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "odpad"; state.skView = "list"; state.skHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "odpad"; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
@@ -817,8 +935,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       state.address = load();
