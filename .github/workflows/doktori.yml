@@ -1,20 +1,27 @@
-name: Sonda NRPZS
+name: Lékaři (NRPZS)
+
 on:
+  schedule:
+    - cron: "30 3 5 * *"   # jednou měsíčně, NRPZS se aktualizuje měsíčně
   workflow_dispatch: {}
+
 permissions:
   contents: write
+
 jobs:
-  probe:
+  update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python scripts/probe_doktori.py
-      - if: always()
+      - name: Stáhnout lékaře z NRPZS
+        run: python scripts/build_doktori.py
+      - name: Uložit změny
+        if: always()
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
           git add docs/data
-          git diff --cached --quiet || git commit -m "Sonda NRPZS" && git push
+          git diff --cached --quiet || git commit -m "Aktualizace lékařů (NRPZS)" && git push
