@@ -787,7 +787,7 @@
     if (!r.length) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Nic jsme nenašli</div><div class="note" style="margin-top:2px">Zkuste jiný obor, jméno nebo ulici.</div></div></div>';
     return r.map(function (s) { return doktorCard(s, null); }).join("");
   }
-  var DK_NEAR = 10;   // lékařů je v okolí klidně přes sto, seznam v okolí proto krátíme
+  var DK_NEAR = 5;    // v okolí je lékařů klidně přes sto, seznam v okolí proto krátíme
   function doktoriBody(a) {
     if (!data.doktori) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Seznam lékařů se připravuje</div><div class="note" style="margin-top:2px">Data z NRPZS se právě doplňují. Zkuste to prosím později.</div></div></div>';
     var near = dkNear(a), vic = near.length > DK_NEAR;
@@ -835,11 +835,11 @@
   }
 
   // ---- spodní navigace ----
-  var NAV = [["doprava", "Doprava", BI_DOPRAVA], ["odpad", "Odpad", BI_ODPAD], ["doktori", "Doktoři", BI_LEKARI], ["skoly", "Školy", BI_SKOLY]];
   var BI_ODPAD = '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>';
   var BI_SKOLY = '<path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.5 3 6 3s6-2 6-3v-5"/>';
   var BI_DOPRAVA = '<path d="M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/>';
   var BI_LEKARI = '<path d="M11 2a2 2 0 0 0-2 2v2a3 3 0 0 0 6 0V4a2 2 0 0 0-2-2"/><path d="M12 9v3a4 4 0 0 1-8 0v-1"/><path d="M12 9v4a4 4 0 0 0 8 0v-1"/><circle cx="20" cy="11" r="2"/><circle cx="4" cy="11" r="2"/>';
+  var NAV = [["doprava", "Doprava", BI_DOPRAVA], ["odpad", "Odpad", BI_ODPAD], ["doktori", "Doktoři", BI_LEKARI], ["skoly", "Školy", BI_SKOLY]];
   function bottomNav() {
     return '<nav class="bnav" role="tablist">' + NAV.map(function (t) {
       var on = state.tab === t[0];
