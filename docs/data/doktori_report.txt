@@ -1,0 +1,21 @@
+adresních klíčů z RÚIAN: 7530
+staženo 28400119 B
+
+lékařů v Praze 9 a 14: 343
+podle MČ: Praha 14=103, Praha 9=240
+podle kategorie: prak=52, det=12, zub=80, gyn=23, spec=176
+nespárováno s našimi adresami: 29075 | vyřazeno nelékařských: 11602
+
+UKÁZKY:
+  [prak] CLINICUM a.s. — Sokolovská 810/304, Praha 9 — alergologie a klinická imunologie, anesteziologie a intenziv
+  [prak] CODUM s.r.o., fyzioterapie, praktický lé — Českomoravská 2510/19, Praha 9 — Fyzioterapeut, všeobecné praktické lékařství
+  [prak] Dopravní podnik hl. m. Prahy a.s., Prakt — Letňanská 65/24, Praha 9 — všeobecné praktické lékařství
+  [prak] Dr. KRAUS International s.r.o. — Učňovská 100/1, Praha 9 — všeobecné praktické lékařství
+  [prak] EK PRAKTIK, s.r.o. — Lovosická 440/40, Praha 9 — všeobecné praktické lékařství
+  [prak] EUC PLS s.r.o. — Českobrodská 1329, Praha 14 — všeobecné praktické lékařství
+  [prak] GeneCare II s.r.o. — Lovosická 440/40, Praha 9 — všeobecné praktické lékařství
+  [prak] GPJD s.r.o. — Lovosická 440/40, Praha 9 — všeobecné praktické lékařství
+  [prak] Hodis s.r.o. — Nemocniční 758/6, Praha 9 — všeobecné praktické lékařství
+  [prak] Kalamedic s.r.o. — Lovosická 440/40, Praha 9 — všeobecné praktické lékařství
+  [prak] LACERTA MED s.r.o. — Lovosická 440/40, Praha 9 — všeobecné praktické lékařství
+  [prak] Lakimedo s.r.o. — Sokolovská 178/247, Praha 9 — všeobecné praktické lékařství
