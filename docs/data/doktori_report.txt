@@ -1,11 +1,76 @@
 adresních klíčů z RÚIAN: 7530
 staženo 28400119 B
 ověřuji 139 webů (blocklist: 1)…
-webů vyřazeno (mrtvé/přesměrované/blocklist): 22 z 140
-  etoile.cz, eucpls.cz, gynekologie-harfa.cz, programhplus.cz, psychiatriepapezova-cz.webnode.cz, r-med.eu, www.adamek.medikus.cz, www.cestrova.webnode.cz, www.freseniusmedicalcare.cz/cs, www.gynekolog.cz/Slapnickova, www.hela-cz.cz, www.naturdent-ortodoncie.cz, www.novodent.cz, www.orl-bludovsky.cz, www.ortopedickaordinace.cz
-ověřuji kontakty z 118 webů…
+webů vyřazeno (mrtvé/přesměrované/blocklist): 21 z 140
+  etoile.cz, eucpls.cz, gynekologie-harfa.cz, programhplus.cz, psychiatriepapezova-cz.webnode.cz, www.adamek.medikus.cz, www.cestrova.webnode.cz, www.freseniusmedicalcare.cz/cs, www.gynekolog.cz/Slapnickova, www.hela-cz.cz, www.naturdent-ortodoncie.cz, www.novodent.cz, www.orl-bludovsky.cz, www.ortopedickaordinace.cz, www.ortopedie-fyzioterapie.cz
+ověřuji kontakty z 119 webů…
 z webů doplněno/opraveno: 62 telefonů, 33 e-mailů
-ručních přepisů kontaktů: 2
+ordinační hodiny z webů: 67 lékařů (64 webů z 119)
+  ✓ adriagyn.cz  Po 8:00 – 12:00, 12:30 – 16:00 | Út 7:00 – 12:00, 12:30 – 15:00 | St 8:00 – 12:00, 12:30 – 14:00 | Čt 9:00 – 13:00, 13:30 – 18:00 | Pá 8:00 – 12:00
+  ✓ babyastramedico.cz  Po 7:00 – 9:00, 9:00 – 10:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO | Út 11:30 – 12:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 12:30 – 15:00 · Objednaní: neonatologická poradna a kojenci, 15:00 – 18:00 · Objednaní: preventivní prohlídky, ECHO, EKG | St 8:00 – 9:00, 9:00 – 10:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 11:00 – 11:30 · Objednaní: neonatologická poradna, 12:30 – 13:30 · Objednaní: kojenecká poradna, 13:45 – 15:00 · Objednaní: preventivní prohlídky, ECHO, EKG, spiromerie | Čt 9:00 – 10:00, 10:00 – 11:00 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 11:00 – 12:00 · Objednaní: Kojenecká poradna, 13:00 – 15:00 · Objednaní: Preventivní prohlídky | Pá 7:30 – 8:30 · Objednaní: odběry, předoperační vyšetření, očkování, 8:30 – 10:00 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 10:00 – 12:00 · Kojenecká poradna a neonatologie
+  ✓ cop-plus.cz  Po 7:30 – 16:00 | Út 7:30 – 16:00 | St 7:30 – 18:00 | Čt 7:30 – 16:00 | Pá 7:00 – 15:30
+  ✓ keepsmileklinika.cz  Po 9:00 – 16:00 | Út 8:00 – 16:00, 13:00 – 14:00 · Polední pauza | St 9:00 – 15:00 | Pá 9:00 – 14:00 · Pouze objednaní pacienti
+  ✓ meandrie.cz  Po 7:00 – 12:00 | Út 7:00 – 14:00 | St 7:00 – 13:00 | Čt 8:00 – 15:00 | Pá 7:00 – 12:00
+  ✓ mudrhola.cz  Po 7:30 – 14:30 | Út 7:30 – 15:00 | St 7:30 – 14:00 | Čt 7:30 – 14:00 | Pá 7:30 – 13:30
+  ✓ mybestcare.cz  Po 8:00 – 18:00 | Út 8:00 – 18:00 | St 8:00 – 18:00 | Čt 8:00 – 18:00 | Pá 8:00 – 18:00
+  ✓ ocniklinikahp.cz  Po 8:00 – 15:30 | Út 8:00 – 15:30 | St 8:00 – 15:30 | Čt 8:00 – 15:30 | Pá 8:00 – 13:30
+  ✓ pediatr-praha9.cz  Po 8:00 – 12:00, 13:00 – 15:00 · Poradna | Út 8:00 – 12:00, 13:00 – 16:00 · Objednaní | St 8:00 – 12:00, 13:00 – 15:30 · Preventivní prohlídky | Čt 8:00 – 12:00, 13:00 – 16:30 · Poradna | Pá 8:00 – 12:00, 13:00 – 15:30 · Preventivní prohlídky
+  ✓ pertlickova.cz  Po 7:30 – 11:00 · Ambulance, 11:00 – 14:30 · Pouze pro objednané | Út 7:30 – 11:00 · Ambulance, 11:00 – 12:00 · Pouze pro objednané | St 7:30 – 11:00 · Ambulance, 11:00 – 12:00 · Pouze pro objednané | Čt 7:30 – 11:00 · Ambulance, 11:00 – 18:00 · Pouze pro objednané | Pá 7:30 – 11:00 · Ambulance, 11:00 – 12:00 · Pouze pro objednané
+  ✓ plicni-ordinace.cz  Po 8:00 – 15:00 | Út 8:00 – 17:00 | St 10:00 – 15:00 | Čt 8:00 – 15:00 | Pá 8:00 – 13:00
+  ✓ r-med.eu  Po 9:00 – 12:00 | Út 14:00 – 16:00 | St 15:00 – 17:00 | Čt 15:00 – 17:00 | Pá 13:00 – 15:00
+  ✓ vivadent.cz  Po 9:00 – 16:00 | Út 9:00 – 16:00 | St 9:00 – 16:00 | Čt 9:00 – 16:00 | Pá 9:00 – 16:00
+  ✓ www.alafia-rhb.cz  Po 7:00 – 11:00, 11:30 – 15:30 | Út 7:00 – 11:00, 11:30 – 15:30 | St 7:00 – 11:00, 11:30 – 15:30 | Čt 7:00 – 11:00, 11:30 – 15:30
+  ✓ www.artmedi.cz  Po 7:00 – 16:00 | Út 7:00 – 16:00 | St 7:00 – 18:00 | Čt 7:00 – 16:00 | Pá 7:00 – 13:00
+  ✓ www.artstom.cz  Po 8:00 – 21:00 | Út 8:00 – 21:00 | St 8:00 – 21:00 | Čt 8:00 – 21:00 | Pá 8:00 – 21:00 | So 9:00 – 19:00 · Svátek: * | Ne 9:00 – 19:00 · Svátek: *
+  ✓ www.babacare.cz  Po 7:30 – 14:30 · MUDr.Veronika (Janečková) Reznerová | Út 7:00 – 16:30 · MUDr. Stanislav Martan | St 7:30 – 14:00 · MUDr. Pavel Drbohlav | Čt 13:30 – 18:30 · MUDr. Sabina Šašurová / / MUDr. Stanislav Martan | Pá 9:00 – 10:30 · Zvané výkony
+  ✓ www.csdc.cz  Po 8:00 – 20:00 | Út 8:00 – 20:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 20:00
+  ✓ www.dental-pro.info  Po 8:00 – 12:00, 12:30 – 15:30 | Út 8:00 – 12:00, 12:30 – 15:30 | St 8:00 – 12:00, 12:30 – 15:30 | Čt 8:00 – 12:00, 12:30 – 15:30 | Pá 8:00 – 12:00, 12:30 – 15:30 | So zavřeno | Ne zavřeno
+  ✓ www.dentalpartners.cz  Po 8:00 – 20:00 | Út 8:00 – 20:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 15:00
+  ✓ www.detskalekarka.org  Po 8:00 – 9:00 | Út 8:00 – 9:00 | St 8:00 – 9:00 | Čt 8:00 – 9:00 | Pá 8:00 – 9:00
+  ✓ www.detskylekar.org  Po 8:00 – 10:00 · Pro nemocné, 10:00 – 18:00 · Objednaní pacienti | Út 8:00 – 10:00 · Pro nemocné, 10:00 – 13:00 · Objednaní pacienti | St 7:00 – 8:00 · Obtížné odběry, 8:00 – 10:00 · Pro nemocné, 10:00 – 17:00 · Objednaní pacienti | Čt 8:00 – 10:00 · Pro nemocné, 10:00 – 13:00 · Objednaní pacienti | Pá 8:00 – 10:00 · Pro nemocné, 10:00 – 13:00 · Objednaní pacienti
+  ✓ www.diblikova.cz  Po 8:15 – 12:30, 13:00 – 18:15 | Út 8:00 – 14:00 | St 8:15 – 12:30, 13:00 – 16:15, 16:15 – 17:15 · Administrativa | Čt 8:15 – 12:30, 13:00 – 16:15, 16:15 – 17:15 · Administrativa | Pá 7:00 – 13:00
+  ✓ www.euclaboratore.cz  Po 8:00 – 17:00 | Út 8:00 – 17:00 | St 8:00 – 17:00 | Čt 8:00 – 17:00 | Pá 8:00 – 17:00
+  ✓ www.ghcgenetics.cz  Po 7:00 – 17:00 | Út 7:00 – 17:00 | St 7:00 – 17:00 | Čt 7:00 – 17:00 | Pá 7:00 – 17:00
+  ✓ www.gymuno.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 15:00
+  ✓ www.gyna.cz  Po 12:00 – 16:00 | Út 8:00 – 13:00 | St 14:00 – 18:00 | Čt 8:00 – 13:00
+  ✓ www.gynclin.cz  Po 7:00 – 19:30 | Út 7:30 – 19:30 | St 7:30 – 19:30 | Čt 7:30 – 19:30 | Pá 7:30 – 16:00
+  ✓ www.hodis.eu  Po 13:00 – 18:00 | Út 7:00 – 10:00, 10:00 – 12:00 | St 13:00 – 18:00 | Čt 7:00 – 10:00, 10:00 – 12:00 | Pá 13:00 – 18:00
+  ✓ www.hrubesova.cz  Po 8:00 – 11:00 · Objednaní nemocní, 11:30 – 14:00 · Prevence, očkování | Út 8:00 – 11:00 · Prevence/očkování, 11:30 – 14:30 · Objednaní nemocní, 14:30 – 16:00 · Prevence, očkování | St 7:40 – 8:00 · Prevence/očkování, 8:00 – 11:00 · Objednaní nemocní, 11:30 – 14:00 · Prevence, očkování | Čt 8:00 – 11:00 · Objednaní nemocní, 11:30 – 14:00 · Prevence, očkování | Pá 7:30 – 8:00 · Prevence/očkování, 8:00 – 10:30 · Objednaní nemocní, 10:30 – 12:00 · Prevence, očkování
+  ✓ www.immunia.org  Po 7:00 – 15:30 | Út 7:00 – 15:30 | St 7:00 – 15:30 | Čt 7:00 – 15:30 | Pá 7:00 – 15:00
+  ✓ www.iscare.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 19:00 | So 7:00 – 12:00
+  ✓ www.kardioambulance.cz  Po 8:00 – 16:00 | Út 8:00 – 18:00 | St 7:30 – 16:00 | Čt 7:00 – 18:00 | Pá 7:00 – 14:00
+  ✓ www.kardiopraha.eu  Po 7:00 – 12:30, 13:00 – 16:00 | Út 12:00 – 18:00 | St 7:00 – 13:00 | Čt 7:00 – 12:30, 13:00 – 16:00 | Pá 7:00 – 13:00
+  ✓ www.koznicernymost.cz  Po 8:30 – 15:00 | Út 8:30 – 12:15 | St 8:30 – 11:30 · Nadále, 13:00 – 18:30 · Nadále | Čt 8:30 – 11:45 | Pá 8:00 – 11:15
+  ✓ www.lakimedo.cz  Po 8:00 – 14:30 | Út 8:00 – 14:30 | St 8:00 – 14:00 | Čt 12:00 – 18:00 | Pá 8:00 – 13:00
+  ✓ www.lexum.cz  Po 8:00 – 17:00 | Út 8:00 – 17:00 | St 8:00 – 17:00 | Čt 8:00 – 17:00 | Pá 8:00 – 14:30
+  ✓ www.magicsmile.cz  Po 8:00 – 20:00 | Út 8:00 – 20:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 20:00 | So 8:00 – 14:00
+  ✓ www.mammacentrum.cz  Po 7:15 – 15:15 | Út 7:15 – 15:15 | St 7:15 – 15:15 | Čt 7:15 – 15:45 | Pá 7:15 – 13:45
+  ✓ www.mamologie-braborec.cz  Po 7:00 – 11:30 · 11.30 - 13 jen objednaní 16 - 18 | Út 7:00 – 11:30 · 11.30 - 13 jen objednaní | Pá 8:00 – 11:30 · 11.30 - 13 jen objednaní
+  ✓ www.manamedical.cz  Po 8:30 – 10:00 · Objednání, 10:00 – 12:00 · Neobjednání, 12:00 – 14:30 · Objednání | Út 8:00 – 10:00 · Neobjednání, 10:00 – 13:30 · Objednání | St 8:00 – 10:00 · Objednání, 10:00 – 13:00 · Neobjednání, 13:00 – 13:30 · Objednání | Čt 11:30 – 12:00 · Objednání, 12:00 – 14:00 · Neobjednání, 14:00 – 18:30 · Objednání | Pá 7:30 – 10:00 · Objednání, 10:00 – 12:00 · Neobjednání, 12:00 – 12:30 · Objednané kontroly, 7:30 – 8:00
+  ✓ www.medianna.cz  Po 9:00 – 17:00 | Út 8:00 – 17:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 16:00
+  ✓ www.medibaby.cz  Po 7:30 – 11:00 | Út 7:30 – 11:00 | St 17:30 – 19:30 | Čt 7:30 – 10:00 | Pá 8:00 – 11:00
+  ✓ www.medicaljt.cz  Po 8:00 – 16:00 | Út 8:00 – 16:00 | St 8:00 – 16:00 | Čt 8:00 – 16:00 | Pá 8:00 – 16:00
+  ✓ www.medicdent.cz  Po 8:00 – 12:30, 13:00 – 18:00 | Út 8:00 – 12:30, 13:00 – 18:00 | St 8:00 – 12:30, 13:00 – 18:00 | Čt 8:00 – 12:30, 13:00 – 18:00 | Pá 7:00 – 10:00, 11:00 – 15:00
+  ✓ www.medickral.cz  Po 7:00 – 12:00, 13:00 – 16:00 | Út 7:00 – 12:00, 13:00 – 16:00 | St 7:00 – 12:00, 13:00 – 14:00 | Čt 7:00 – 12:00, 13:00 – 15:00 | Pá 7:00 – 12:00, 13:00 – 14:00
+  ✓ www.medidental.cz  Po 8:00 – 16:00 | St 8:00 – 17:30 | Pá 8:00 – 14:00
+  ✓ www.mnnp.cz  Po 10:00 – 12:00 | Út 10:00 – 12:00 | St 10:00 – 12:00 | Čt 10:00 – 12:00 | Pá 10:00 – 12:00
+  ✓ www.moldent.cz  Po 7:30 – 16:00 | Út 7:30 – 16:00 | St 11:00 – 18:00 | Čt 7:00 – 15:00 | Pá 7:30 – 13:00
+  ✓ www.nuklearnimedicina.cz  Po 7:00 – 15:30 | Út 7:00 – 15:30 | St 7:00 – 15:30 | Čt 7:00 – 15:30 | Pá 7:00 – 15:30
+  ✓ www.orlbetka.cz  Po 8:00 – 16:00 | Út zavřeno | St 7:00 – 14:00 | Čt 8:00 – 14:00 | Pá 8:00 – 13:00
+  ✓ www.orlkyje.cz  Po 8:00 – 12:00, 12:30 – 14:30 | Út 7:00 – 12:00, 12:30 – 13:30 | St 8:00 – 12:00, 12:30 – 14:30 | Čt 7:00 – 12:00, 12:30 – 13:30 | Pá 8:00 – 14:00 | So zavřeno | Ne zavřeno
+  ✓ www.ortopedia.cz  Po 7:30 – 13:30, 14:00 – 17:00 · Rázová vlna, 17:00 – 20:00 · MUDr. Štefan | Út 7:30 – 12:00, 13:00 – 16:00 · MUDr. Wagenknecht, 16:00 – 19:00 · Rázová vlna | St 7:30 – 14:00, 16:00 – 19:00 · MUDr. Koutek | Čt 7:30 – 13:30, 14:00 – 16:00 · Rázová vlna, 16:00 – 20:00 · MUDr. Štefan | Pá 7:30 – 13:30 · MUDr. Dočkal, 14:00 – 16:00 · Rázová vlna
+  ✓ www.polcare.cz  Po 9:00 – 13:00 | Út 13:00 – 15:00 | St 8:00 – 10:00 | Čt 8:00 – 10:00 | Pá 8:00 – 10:00, 8:30 – 10:00 · Odběry krve : po ; stř, čt, pá, 7:30 – 10:00 · Odběry krve : po ; stř, čt, pá
+  ✓ www.praktikvysocany.cz  Po 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Út 12:00 – 18:00 | St 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Čt 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Pá 7:00 – 8:00, 8:00 – 11:30
+  ✓ www.probeamed.cz  Po 7:30 – 14:00 | Út 7:30 – 14:00 | St 7:30 – 14:00 | Čt 12:00 – 18:00 | Pá 7:30 – 12:00
+  ✓ www.psychiatriepapezova.cz  Po 9:00 – 20:00 | Út 8:30 – 18:30 | St 9:00 – 16:00 | Čt 9:00 – 17:00 | Pá 8:00 – 16:00
+  ✓ www.salictum.cz  Po 12:00 – 18:00 | Út 7:30 – 14:00 | St 7:30 – 14:00 | Čt 7:30 – 14:00 | Pá 7:30 – 12:30 | So zavřeno | Ne zavřeno
+  ✓ www.smilecentrum.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 16:00
+  ✓ www.stomteam.cz  Po 7:30 – 19:00 | Út 7:30 – 19:00 | St 7:30 – 19:00 | Čt 7:30 – 16:00 | Pá 7:30 – 14:00
+  ✓ www.synlab.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 19:00
+  ✓ www.videntevinohrady.cz  Po 8:00 – 16:00 | Út 8:00 – 13:30 | St 8:00 – 12:00 | Čt 8:00 – 16:00
+  ✓ www.zubni.cz  Po 9:00 – 12:00, 13:00 – 16:00 | Út 9:00 – 12:00, 13:00 – 16:00 | St 9:00 – 12:00, 13:00 – 16:00 | Čt 9:00 – 12:00, 13:00 – 16:00
+  ✓ www.zuby-smrcek.cz  Po 7:30 – 20:00 | Út 7:30 – 20:00 | St 7:30 – 20:00 | Čt 7:30 – 20:00 | Pá 7:30 – 15:00
+ručních přepisů kontaktů: 5
 
 lékařů v Praze 9 a 14: 343
 podle MČ: Praha 14=103, Praha 9=240
