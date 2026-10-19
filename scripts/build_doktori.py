@@ -47,7 +47,7 @@ def _domena(h):
 
 EMAIL_RE = re.compile(r"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}", re.I)
 TEL_RE = re.compile(r"(?:\+?420[\s ]?)?(\d{3}[\s ]?\d{3}[\s ]?\d{3})")
-KONTAKT_CESTY = ("", "/kontakt", "/kontakt/", "/kontakty/", "/contact/", "/o-nas/")
+KONTAKT_CESTY = ("", "/kontakt", "/kontakt/", "/kontakty/", "/contact/")
 
 
 def _stahni_text(url):
@@ -72,7 +72,7 @@ def kontakt_z_webu(w):
     (ať nechytneme hosting/webmastera) a první rozumné české číslo."""
     host = (w or "").split("/")[0]
     dom = _domena(host)
-    maily, tely = [], []
+    maily, tely, nacteno = [], [], False
     for scheme in ("https://", "http://"):
         for cesta in KONTAKT_CESTY:
             try:
@@ -81,14 +81,17 @@ def kontakt_z_webu(w):
                 continue
             if not html:
                 continue
+            nacteno = True
             maily += [m.lower() for m in re.findall(r"mailto:([^\"'?>\s]+)", html, re.I)]
             maily += [m.lower() for m in EMAIL_RE.findall(html)]
             tely += re.findall(r"tel:\+?([0-9\s ]{6,})", html)
             tely += TEL_RE.findall(html)
-            if maily or tely:
+            # hledáme dál, dokud nemáme telefon i e-mail na vlastní doméně
+            has_mail = any(m.split("@")[-1].endswith(dom) for m in maily)
+            if tely and has_mail:
                 break
-        if maily or tely:
-            break
+        if nacteno:
+            break   # když první scheme načetl stránky, nestřídej na http
     mail = next((m for m in maily if m.split("@")[-1].endswith(dom)), "")
     tel = ""
     for t in tely:
