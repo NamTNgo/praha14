@@ -116,28 +116,32 @@ def parse_vok(layout):
     return out
 
 
-# ---- parsování BIO: datum (d.m.) na řádku, místa jsou okolní řádky bez času ----
+# ---- parsování BIO: hlavička „Ne 25. října 2026 – 9.00-12.00 hod", pod ní místa ----
+MESICE = {"ledna": 1, "unora": 2, "brezna": 3, "dubna": 4, "kvetna": 5, "cervna": 6,
+          "cervence": 7, "srpna": 8, "zari": 9, "rijna": 10, "listopadu": 11, "prosince": 12}
+
+
 def parse_bio(layout):
-    rok = rok_z_textu(layout)
-    out, cur = [], None
-    dre = re.compile(r"\b(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})?")
+    hdr = re.compile(r"(\d{1,2})\.\s*([A-Za-zěščřžýáíéúůóťďňĚŠČŘŽÝÁÍÉÚŮÓŤĎŇ]+)\s*(\d{4})"
+                     r"\s*[–-]\s*(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})")
+    out, cur, cas = [], None, "9:00–12:00"
     for ln in layout.splitlines():
         s = ln.strip()
         if not s:
+            cur = None
             continue
-        m = dre.search(s)
-        if m and len(s) < 40:   # řádek s datem
-            d, mo = int(m.group(1)), int(m.group(2))
-            yr = int(m.group(3)) if m.group(3) else (rok if mo >= 9 else rok + 1)
-            try:
-                cur = "%04d-%02d-%02d" % (yr, mo, d)
-            except ValueError:
+        m = hdr.search(s)
+        if m:
+            mo = MESICE.get(norm(m.group(2)))
+            if mo:
+                cur = "%04d-%02d-%02d" % (int(m.group(3)), mo, int(m.group(1)))
+                cas = "%d:%s–%d:%s" % (int(m.group(4)), m.group(5), int(m.group(6)), m.group(7))
+            else:
                 cur = None
-            zbytek = dre.sub("", s).strip(" .–-")
-            if cur and len(zbytek) > 3 and not re.search(r"harmonogram|bioodpad|datum|den\b", norm(zbytek)):
-                out.append((cur, zbytek, "9:00–12:00"))
-        elif cur and len(s) > 3 and not re.search(r"\d{1,2}[:.]\d{2}", s) and not re.search(r"harmonogram|bioodpad|služb|praž", norm(s)):
-            out.append((cur, s, "9:00–12:00"))
+            continue
+        # řádek s místem (ne nadpis, ne informační text)
+        if cur and not re.search(r"bioodpad|sber|pristaven|pridelen|hod\b|harmonogram|sluzb|praz", norm(s)):
+            out.append((cur, s, cas))
     return out
 
 
