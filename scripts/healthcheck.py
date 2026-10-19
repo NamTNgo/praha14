@@ -162,6 +162,23 @@ def main():
                 problemy.append((c["popis"], "data jsou %.0f h stará (limit %.0f h) – aktualizace neběží"
                                  % (v, c["vek_h"]), c["reseni"]))
 
+    # podíl zahozených webů lékařů – skokový nárůst = výpadek sítě při buildu
+    # nebo padlý velký poskytovatel (viz scripts/build_doktori.py)
+    rep = DATA / "doktori_report.txt"
+    if rep.exists():
+        import re
+        m = re.search(r"web\w* vyřazeno[^:]*:\s*(\d+)\s*z\s*(\d+)", rep.read_text(encoding="utf-8"))
+        if m:
+            vyr, celk = int(m.group(1)), int(m.group(2))
+            if celk and vyr / celk > 0.40:
+                problemy.append((
+                    "Weby lékařů – podezřele mnoho zahozených",
+                    "při poslední aktualizaci vyřazeno %d z %d webů (%.0f %%)" % (vyr, celk, 100 * vyr / celk),
+                    "Buď při buildu vypadla síť (dočasné – příští měsíční běh to srovná, "
+                    "nebo spusť workflow Lékaři ručně), nebo spadl velký poskytovatel webů. "
+                    "Zkontroluj `docs/data/doktori_report.txt` (seznam vyřazených) a ověř pár "
+                    "odkazů ručně, než usoudíš, že je chyba v datech."))
+
     # přímý test NDIC proxy
     ok, zprava = ndic_zivy()
     if ok is False:
