@@ -848,6 +848,22 @@
       '<input id="dkq" class="input" type="search" placeholder="Jméno lékaře, obor nebo ulice" autocomplete="off" value="' + esc(state.dkQ) + '"></div>' +
       dkFilterBar() + '<div class="list" id="dklist">' + dkListHtml() + "</div></div>" + FOOT_DK;
   }
+  // ordinační hodiny převzaté z webu ordinace; dnešní den zvýrazněný
+  var DNY_ZKR = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
+  function hodinyCard(s) {
+    var h = s.hod;
+    if (!h || !h.r || !h.r.length) return "";
+    var dnes = DNY_ZKR[new Date().getDay()];
+    var rows = h.r.map(function (r) {
+      var t = r[0] === dnes;
+      return '<div class="drow hrow' + (t ? " today" : "") + '"><span class="dl">' + esc(r[0]) +
+        (t ? ' <span class="dtag hdnes">dnes</span>' : "") + '</span><span class="dv hv">' +
+        (r[1] || []).map(esc).join("<br>") + "</span></div>";
+    }).join("");
+    var zdroj = h.u ? '<a href="' + esc(h.u) + '" target="_blank" rel="noopener">webu ordinace</a>' : "webu ordinace";
+    return dcard("Ordinační hodiny", rows, (h.h ? "Sloupce: " + esc(h.h) + ". " : "") +
+      "Převzato z " + zdroj + ". Kvůli dovoleným a zástupům se hodiny mění, před návštěvou je radši ověřte.");
+  }
   function viewDoktorDetail(s) {
     var d = dist(state.address.lat, state.address.lon, s.lat, s.lon);
     var kont = drow("Telefon", s.tel || null, s.tel ? { href: "tel:" + s.tel.replace(/\s/g, ""), icon: I_PH } : null) +
@@ -859,6 +875,7 @@
       '<h1 style="margin:4px 0 0;font-size:23px">' + esc(s.n) + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + esc(s.a) + ", Praha " + esc(s.mc) + " · " + meters(d) + "</div>" +
       dcard("Kontakt", kont) +
+      hodinyCard(s) +
       dcard("Obor a zařízení", drow("Obory", obory) + drow("Druh zařízení", s.dr || null), "Zdroj: ÚZIS ČR – NRPZS, aktualizace měsíčně.") +
       "</div>" + FOOT_DK;
   }

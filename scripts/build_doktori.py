@@ -141,6 +141,204 @@ def doplnit_kontakty(out):
     log("z webů doplněno/opraveno: %d telefonů, %d e-mailů" % (pt, pe))
 
 
+# ---------------------------------------------------------------- ordinační hodiny
+DNY = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"]
+_DEN_PLNE = {"pondeli": 0, "utery": 1, "streda": 2, "ctvrtek": 3, "patek": 4, "sobota": 5, "nedele": 6}
+_DEN_ZKR = {"po": 0, "ut": 1, "st": 2, "ct": 3, "pa": 4, "so": 5, "ne": 6}
+_DEN_TOK = r"(pondeli|utery|streda|ctvrtek|patek|sobota|nedele|po|ut|st|ct|pa|so|ne)\b\.?"
+_DEN_RE = re.compile(r"^[\s•·*\-–]*" + _DEN_TOK + r"(?:\s*[-–—]\s*" + _DEN_TOK + r")?\s*:?\s*", re.I)
+_CAS_RE = re.compile(r"\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(?:hod\.?)?\s*(?:[-–—]|do)\s*([01]?\d|2[0-3])[:.]([0-5]\d)\b")
+_ZAVRENO = re.compile(r"zavreno|neordinuj|neordinace|dovolen", re.I)
+
+
+def _bez_diakr(s):
+    return "".join(c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn").lower()
+
+
+def _html_na_radky(html):
+    import html as htmlmod
+    h = re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>", " ", html)
+    h = re.sub(r"(?i)</t[dh]\s*>", "\t", h)
+    h = re.sub(r"(?i)<br\s*/?>|</(p|div|li|tr|h\d|section|article|table|ul|ol|dt|dd)\s*>", "\n", h)
+    h = htmlmod.unescape(re.sub(r"<[^>]+>", " ", h)).replace("\xa0", " ")
+    radky = []
+    for r in h.split("\n"):
+        bunky = [re.sub(r"\s+", " ", b).strip() for b in r.split("\t")]
+        if len(bunky) > 1 and not bunky[-1]:
+            bunky.pop()   # text za posledním </td> – prázdné buňky uvnitř řádku ale nechat
+        while bunky and not bunky[0]:
+            bunky.pop(0)
+        if bunky:
+            radky.append(bunky)
+    return radky   # každý řádek = seznam buněk (u textu jen jedna)
+
+
+def _casy(text):
+    """[('8:00 – 11:00', zbytek textu bez časů)]"""
+    out = []
+    for m in _CAS_RE.finditer(text):
+        a, b = int(m.group(1)) * 60 + int(m.group(2)), int(m.group(3)) * 60 + int(m.group(4))
+        if a < b:
+            out.append("%d:%s – %d:%s" % (int(m.group(1)), m.group(2), int(m.group(3)), m.group(4)))
+    zbytek = _CAS_RE.sub(" ", text)
+    return out, zbytek
+
+
+def _stitek(s):
+    s = re.sub(r"\bhod(in)?\.?(?=\s|$)", " ", s or "", flags=re.I)
+    s = re.sub(r"\s+", " ", s).strip(" ,;:-–—|/()")
+    if not s or len(s) > 60 or not re.search(r"[A-Za-zÀ-ž]{3}", s):
+        return ""
+    return s[0].upper() + s[1:]
+
+
+def _radky_casu(text, stitek=""):
+    casy, zbytek = _casy(text)
+    st = stitek or _stitek(zbytek)
+    return [c + (" · " + st if st else "") for c in casy]
+
+
+def _den_z_radku(bunka):
+    """(seznam indexů dnů, zbytek textu) nebo None."""
+    m = _DEN_RE.match(_bez_diakr(bunka))
+    if not m:
+        return None
+    a, b = m.group(1).lower(), (m.group(2) or "").lower()
+    plne = a in _DEN_PLNE
+    # zkratky (Po, St…) jen když je na řádku čas – „Po předchozím objednání“ není pondělí
+    if not plne and not _CAS_RE.search(bunka) and len(bunka.strip(" .:")) > 3:
+        return None
+    ia = _DEN_PLNE.get(a, _DEN_ZKR.get(a))
+    ib = _DEN_PLNE.get(b, _DEN_ZKR.get(b)) if b else ia
+    if ib < ia:
+        return None
+    return list(range(ia, ib + 1)), bunka[m.end():]
+
+
+def hodiny_z_textu(radky):
+    """Najde blok dnů s časy. Zvládá tabulku (dny v řádcích, sloupce s hlavičkou)
+    i seznam (den na vlastním řádku, pod ním časy)."""
+    bloky, blok, hlavicka, posl_den, mezera = [], None, None, None, 0
+    for i, bunky in enumerate(radky):
+        d = _den_z_radku(bunky[0])
+        if d:
+            dny, zbytek = d
+            if blok is None or any(x in blok for x in dny):
+                if blok:
+                    bloky.append(blok)
+                blok = {}
+                # hlavička tabulky = předchozí vícesloupcový řádek bez dnů a časů
+                prev = radky[i - 1] if i else []
+                hlavicka = prev if len(prev) > 1 and not _casy("\t".join(prev))[0] else None
+            lines = []
+            if len(bunky) > 1:
+                for j, b in enumerate(bunky[1:], start=1):
+                    st = ""
+                    if hlavicka:
+                        k = j - (len(bunky) - len(hlavicka))   # hlavička bývá bez prvního sloupce
+                        st = _stitek(hlavicka[k]) if 0 <= k < len(hlavicka) else ""
+                    lines += _radky_casu(b, st)
+            else:
+                lines += _radky_casu(zbytek)
+            if not lines and _ZAVRENO.search(_bez_diakr(" ".join(bunky))):
+                lines = ["zavřeno"]
+            for x in dny:
+                blok[x] = list(lines)
+            posl_den, mezera = dny, 0
+            continue
+        if blok is None:
+            continue
+        text = " ".join(bunky)
+        casy = _radky_casu(text)
+        if casy and posl_den is not None and mezera == 0:
+            for x in posl_den:
+                blok[x] += [c for c in casy if c not in blok[x]]
+            continue
+        if posl_den is not None and mezera == 0 and _ZAVRENO.search(_bez_diakr(text)):
+            for x in posl_den:
+                blok[x] = blok[x] or ["zavřeno"]
+            continue
+        mezera += 1
+        if mezera > 2:   # blok skončil
+            bloky.append(blok)
+            blok, posl_den = None, None
+    if blok:
+        bloky.append(blok)
+    dobre = [b for b in bloky if sum(1 for v in b.values() if v and v != ["zavřeno"]) >= 3]
+    if not dobre:
+        return None
+    b = dobre[0]
+    return [[DNY[k], b[k]] for k in sorted(b) if b[k]]
+
+
+def hodiny_z_webu(w):
+    host = (w or "").split("/")[0]
+    base = None
+    kandidati = []
+    for scheme in ("https://", "http://"):
+        try:
+            html = _stahni_text(scheme + host + "/")
+        except Exception:
+            continue
+        if html:
+            base = scheme + host
+            kandidati.append((base + "/", html))
+            break
+    if not base:
+        return None
+    # odkazy na stránku s hodinami / kontaktem
+    odkazy = []
+    for href, txt in re.findall(r'<a[^>]+href=["\']([^"\'#]+)["\'][^>]*>(.*?)</a>', kandidati[0][1], re.I | re.S):
+        t = _bez_diakr(href + " " + re.sub(r"<[^>]+>", " ", txt))
+        if "hodin" in t or "ordinac" in t or "kontakt" in t:
+            u = urllib.parse.urljoin(base + "/", href)
+            if _domena(urllib.parse.urlparse(u).hostname or "") == _domena(host) and u not in odkazy:
+                odkazy.append(u)
+    odkazy.sort(key=lambda u: 0 if "hodin" in _bez_diakr(u) else 1)
+    for c in ("/ordinacni-hodiny/", "/kontakt/", "/kontakt"):
+        if base + c not in odkazy:
+            odkazy.append(base + c)
+    for url, html in kandidati:
+        r = hodiny_z_textu(_html_na_radky(html))
+        if r:
+            return {"r": r, "u": url}
+    for url in odkazy[:6]:
+        try:
+            html = _stahni_text(url)
+        except Exception:
+            continue
+        r = hodiny_z_textu(_html_na_radky(html or ""))
+        if r:
+            return {"r": r, "u": url}
+    return None
+
+
+def doplnit_hodiny(out):
+    weby = sorted({r["w"] for r in out if r.get("w")})
+    if not weby:
+        return
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
+        hod = dict(zip(weby, ex.map(lambda w: _bezpecne(hodiny_z_webu, w), weby)))
+    n = 0
+    for r in out:
+        h = hod.get(r.get("w"))
+        if h:
+            r["hod"] = h
+            n += 1
+    log("ordinační hodiny z webů: %d lékařů (%d webů z %d)" % (n, sum(1 for v in hod.values() if v), len(weby)))
+    for w, h in sorted(hod.items()):
+        if h:
+            log("  ✓ %s  %s" % (w, " | ".join(d + " " + ", ".join(t) for d, t in h["r"]))[:200])
+
+
+def _bezpecne(f, *a):
+    try:
+        return f(*a)
+    except Exception as e:
+        log("  ! %s: %s" % (a[0], e))
+        return None
+
+
 def sjednotit_telefony(out):
     """Telefony z registru (+420266610451) do stejného tvaru jako z webu (266 610 451)."""
     for r in out:
@@ -159,8 +357,11 @@ def rucni_prepisy(out):
     n = 0
     for r in out:
         for k, v in (prep.get(r["id"]) or {}).items():
-            if k in ("tel", "e", "w"):
-                r[k] = v
+            if k in ("tel", "e", "w", "hod"):
+                if k == "hod" and not v:
+                    r.pop("hod", None)
+                else:
+                    r[k] = v
                 n += 1
     log("ručních přepisů kontaktů: %d" % n)
 
@@ -343,6 +544,7 @@ def main():
 
     proper_weby(out)
     doplnit_kontakty(out)
+    doplnit_hodiny(out)
     sjednotit_telefony(out)
     rucni_prepisy(out)
 
