@@ -1,20 +1,27 @@
-name: Sonda VOK14
+name: VOK Praha 14
+
 on:
+  schedule:
+    - cron: "50 3 * * 1"   # týdně v pondělí
   workflow_dispatch: {}
+
 permissions:
   contents: write
+
 jobs:
-  probe:
+  update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: python scripts/probe_vok14.py
-      - if: always()
+      - name: Aktualizovat VOK Praha 14
+        run: python scripts/scrape_vok14.py
+      - name: Uložit změny
+        if: always()
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
           git add docs/data
-          git diff --cached --quiet || git commit -m "Sonda VOK14" && git push
+          git diff --cached --quiet || git commit -m "Aktualizace VOK Praha 14" && git push
