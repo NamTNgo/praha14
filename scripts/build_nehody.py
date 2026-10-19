@@ -18,6 +18,12 @@ from build_doprava import DATA, LOG, datex, nacti_body, nacti_ulice
 
 
 def main():
+    # dokud nejsou přístupové údaje, soubor vůbec nevzniká: jinak by každý běh
+    # commitoval jen nové razítko času a repozitář by zaplavil prázdnými změnami
+    if not os.environ.get("NDIC_URL"):
+        print("Chybí NDIC_URL, nehody se zatím nestahují.")
+        return
+
     nehody = []
     chyba = None
     try:
