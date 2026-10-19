@@ -1,47 +1,53 @@
-// Cloudflare Worker: ověřená proxy k rozhraní NDIC (ŘSD).
+// Cloudflare Worker: proxy k NDIC (ŘSD) s mezipamětí v R2.
 //
-// ŘSD nepouští na své rozhraní cloudové IP (GitHub Actions z něj dostane jen
-// timeout), ale na IP Cloudflare edge ano. Tenhle Worker proto stojí mezi
-// GitHub Actions a ŘSD: od ŘSD stáhne XML (s přihlášením, které zná jen on)
-// a přepošle ho našemu workflow, které se u Workeru ověří sdíleným tokenem.
+// ŘSD nepouští cloudové IP a živé stažení 45 MB přes vzdálenou Cloudflare edge
+// (kam padá GitHub Actions) končí na 522. Proto Worker stahuje ŘSD na POZADÍ
+// (cron / waitUntil, kde je delší časový limit) do R2, a GitHubu pak servíruje
+// jen hotovou kopii z R2 — to je rychlé a globální.
 //
-// Worker jen přeposílá tělo (nic neparsuje), takže se vejde do free tieru.
-//
-// Tajné hodnoty (Settings -> Variables -> Encrypt), NE do kódu:
-//   NDIC_USER   – jméno z odběru mobilitydata.rsd.cz
-//   NDIC_PASS   – heslo z odběru
-//   PROXY_TOKEN – náhodný řetězec; stejný dáš do GitHub secretu NDIC_TOKEN
+// R2 binding (Settings -> Bindings):  NDIC_BUCKET  -> bucket ndic-data
+// Cron trigger (Settings -> Triggers): */30 * * * *
+// Secrets (Settings -> Variables, Encrypt): NDIC_USER, NDIC_PASS, PROXY_TOKEN
 
 const UPSTREAM = "https://mobilitydata.rsd.cz/Resources/Dynamic/CommonTIDatex/";
+const KEY = "latest.xml";
+
+async function refresh(env) {
+  const r = await fetch(UPSTREAM, {
+    headers: {
+      Authorization: "Basic " + btoa(env.NDIC_USER + ":" + env.NDIC_PASS),
+      Accept: "application/xml, text/xml, */*",
+    },
+  });
+  if (!r.ok) throw new Error("upstream " + r.status);
+  await env.NDIC_BUCKET.put(KEY, r.body, {
+    httpMetadata: { contentType: "application/xml; charset=utf-8" },
+  });
+}
 
 export default {
-  async fetch(request, env) {
-    // pustíme jen volání s naším tokenem – ať proxy nestahuje kdokoli
+  // GitHub Actions čte hotovou kopii z R2
+  async fetch(request, env, ctx) {
     if (request.headers.get("Authorization") !== "Bearer " + env.PROXY_TOKEN) {
       return new Response("Forbidden\n", { status: 403 });
     }
-    try {
-      const upstream = await fetch(UPSTREAM, {
-        headers: {
-          Authorization: "Basic " + btoa(env.NDIC_USER + ":" + env.NDIC_PASS),
-          Accept: "application/xml, text/xml, */*",
-          "Accept-Encoding": "gzip",
-        },
-      });
-      if (!upstream.ok) {
-        // 401 apod. předáme dál, ať workflow pozná špatné přihlášení
-        return new Response("Upstream " + upstream.status + "\n", { status: upstream.status });
-      }
-      // Celé tělo stáhneme do paměti (~45 MB, limit Workeru je 128 MB) a teprve
-      // pak ho vrátíme. Streamování po částech přes vzdálenou edge padalo uprostřed
-      // na 522; takhle se případný pád stane čistou chybou, kterou workflow zopakuje.
-      const buf = await upstream.arrayBuffer();
-      return new Response(buf, {
-        status: 200,
-        headers: { "Content-Type": "application/xml; charset=utf-8" },
-      });
-    } catch (e) {
-      return new Response("Upstream error: " + e + "\n", { status: 502 });
+    // ruční naplnění: /refresh stáhne ŘSD na pozadí (z edge, odkud se volá)
+    if (new URL(request.url).pathname === "/refresh") {
+      ctx.waitUntil(refresh(env).catch(() => {}));
+      return new Response("refreshing\n", { status: 202 });
     }
+    const obj = await env.NDIC_BUCKET.get(KEY);
+    if (!obj) return new Response("No data yet\n", { status: 503 });
+    return new Response(obj.body, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/xml; charset=utf-8",
+        "X-Ndic-Updated": obj.uploaded ? obj.uploaded.toISOString() : "",
+      },
+    });
+  },
+  // cron: pravidelné stažení ŘSD do R2 na pozadí
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(refresh(env));
   },
 };

@@ -1,30 +1,37 @@
-# NDIC proxy (Cloudflare Worker)
+# NDIC proxy (Cloudflare Worker + R2)
 
-ŘSD nepouští na rozhraní NDIC cloudové IP, takže GitHub Actions z něj dostane jen
-timeout. Z IP Cloudflare edge to jde (ověřeno: endpoint vrátil `401` za 63 ms).
-Tenhle Worker proto stojí mezi GitHub Actions a ŘSD a přeposílá XML.
+ŘSD nepouští na rozhraní NDIC cloudové IP a živé stažení 45 MB přes vzdálenou
+Cloudflare edge (kam padá GitHub Actions) končí na HTTP 522. Proto Worker stahuje
+ŘSD **na pozadí do R2** a GitHubu servíruje jen hotovou kopii.
 
-## Nastavení (jednorázově, ~5 minut)
+```
+GitHub Actions ──Bearer token──▶ Worker ──čte──▶ R2 (latest.xml)
+                                   ▲
+                      cron 30 min / /refresh
+                                   │
+                                stáhne ŘSD (Basic auth)
+```
 
-1. Založ si **free účet** na https://dash.cloudflare.com (Workers & Pages).
-2. **Create application → Create Worker**, pojmenuj třeba `ndic-proxy`, Deploy.
-3. **Edit code**, smaž vzor a vlož obsah `ndic-proxy.js`. Deploy.
-4. **Settings → Variables and Secrets** → přidej tři (typ *Secret / Encrypt*):
-   - `NDIC_USER` – jméno z odběru mobilitydata.rsd.cz
-   - `NDIC_PASS` – heslo z odběru
-   - `PROXY_TOKEN` – náhodný řetězec (např. `dhMvrNc4TP_kTFDziY-WG6qWQ3_L-YjR`,
-     ale klidně vygeneruj vlastní)
-5. Opiš si URL Workeru, vypadá jako `https://ndic-proxy.<tvůj-subdoména>.workers.dev`.
+## Nastavení
 
-## Do GitHubu (Settings → Secrets and variables → Actions)
+1. **Zapni R2**: dash.cloudflare.com → R2 → Enable (Cloudflare vyžaduje kartu,
+   u našeho provozu se nic neúčtuje).
+2. **Bucket**: vytvoř bucket `ndic-data` (nebo nech Clauda přes nástroj).
+3. **Worker → Edit code**: vlož `ndic-proxy.js`, Deploy.
+4. **Worker → Settings → Bindings → Add → R2 bucket**:
+   - Variable name: `NDIC_BUCKET`
+   - Bucket: `ndic-data`
+5. **Worker → Settings → Triggers → Cron Triggers → Add**: `*/30 * * * *`
+6. **Worker → Settings → Variables (Secret/Encrypt)**: `NDIC_USER`, `NDIC_PASS`,
+   `PROXY_TOKEN` (pokud tam z dřívějška nejsou).
 
-- `NDIC_URL` → URL Workeru z kroku 5
-- `NDIC_TOKEN` → stejná hodnota jako `PROXY_TOKEN`
+## GitHub secrets (Settings → Secrets and variables → Actions)
 
-Staré `NDIC_USER` / `NDIC_PASS` v GitHub secrets už nejsou potřeba (žijí jen ve
-Workeru), můžeš je smazat.
+- `NDIC_URL` = `https://ndic-proxy.<subdoména>.workers.dev`
+- `NDIC_TOKEN` = stejná hodnota jako `PROXY_TOKEN`
 
-## Ověření
+## První naplnění / test
 
-V repu **Actions → „Nehody (NDIC)" → Run workflow**. V `docs/data/nehody_report.txt`
-má být „staženo … B" místo timeoutu.
+R2 se naplní buď při nejbližším cronu, nebo hned přes `GET /refresh`
+(s hlavičkou `Authorization: Bearer <token>`) z pražské IP. Pak má
+`GET /` vracet XML (status 200) místo `503 No data yet`.
