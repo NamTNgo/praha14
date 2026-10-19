@@ -55,16 +55,17 @@ def hav(a, b):
 
 
 # ---- hledání článků a PDF ----
-def odkazy(html):
-    return re.findall(r'href="([^"]+)"[^>]*>([^<]{3,120})', html)
-
-
-def najdi_clanek(html, must_all, must_any):
-    for href, titul in odkazy(html):
-        t = norm(titul)
-        if all(k in t for k in must_all) and (not must_any or any(k in t for k in must_any)):
-            return urllib.parse.urljoin(BASE, href)
-    return None
+def najdi_clanek(html, slug_keys):
+    """Najde odkaz na článek podle slugu v URL; z víc ročníků vezme ten nejnovější."""
+    kand = []
+    for href in re.findall(r'href="([^"]+)"', html):
+        h = href.lower()
+        if all(k in h for k in slug_keys):
+            roky = re.findall(r"20\d{2}", h)
+            kand.append((max(int(r) for r in roky) if roky else 0, urllib.parse.urljoin(BASE, href)))
+    if not kand:
+        return None
+    return sorted(kand, reverse=True)[0][1]
 
 
 def pdf_z_clanku(url):
@@ -194,8 +195,8 @@ def main():
     by = nacti_index()
     geocode = geokoder(by)
     zp = fetch(ZP)
-    vok_clanek = najdi_clanek(zp, ["harmonogram", "velkoobjemov"], ["zarijprosinec", "velkoobjemovyodpad", "kontejneru"])
-    bio_clanek = najdi_clanek(zp, ["harmonogram", "bioodpad"], [])
+    vok_clanek = najdi_clanek(zp, ["harmonogram", "velkoobjemovy-odpad"]) or najdi_clanek(zp, ["harmonogram", "velkoobjemov"])
+    bio_clanek = najdi_clanek(zp, ["harmonogram", "bioodpad"]) or najdi_clanek(zp, ["harmonogram", "bio-odpad"])
     log("VOK článek:", vok_clanek)
     log("BIO článek:", bio_clanek)
 
