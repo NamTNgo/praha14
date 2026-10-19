@@ -21,7 +21,7 @@ ordinační hodiny z webů: 67 lékařů (64 webů z 119)
   ✓ vivadent.cz  Po 9:00 – 16:00 | Út 9:00 – 16:00 | St 9:00 – 16:00 | Čt 9:00 – 16:00 | Pá 9:00 – 16:00
   ✓ www.alafia-rhb.cz  Po 7:00 – 11:00, 11:30 – 15:30 | Út 7:00 – 11:00, 11:30 – 15:30 | St 7:00 – 11:00, 11:30 – 15:30 | Čt 7:00 – 11:00, 11:30 – 15:30
   ✓ www.artmedi.cz  Po 7:00 – 16:00 | Út 7:00 – 16:00 | St 7:00 – 18:00 | Čt 7:00 – 16:00 | Pá 7:00 – 13:00
-  ✓ www.artstom.cz  Po 8:00 – 21:00 | Út 8:00 – 21:00 | St 8:00 – 21:00 | Čt 8:00 – 21:00 | Pá 8:00 – 21:00 | So 9:00 – 19:00 · Svátek: * | Ne 9:00 – 19:00 · Svátek: *
+  ✓ www.artstom.cz  Po 8:00 – 21:00 | Út 8:00 – 21:00 | St 8:00 – 21:00 | Čt 8:00 – 21:00 | Pá 8:00 – 21:00 | So 9:00 – 19:00 | Ne 9:00 – 19:00
   ✓ www.babacare.cz  Po 7:30 – 14:30 · MUDr.Veronika (Janečková) Reznerová | Út 7:00 – 16:30 · MUDr. Stanislav Martan | St 7:30 – 14:00 · MUDr. Pavel Drbohlav | Čt 13:30 – 18:30 · MUDr. Sabina Šašurová / / MUDr. Stanislav Martan | Pá 9:00 – 10:30 · Zvané výkony
   ✓ www.csdc.cz  Po 8:00 – 20:00 | Út 8:00 – 20:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 20:00
   ✓ www.dental-pro.info  Po 8:00 – 12:00, 12:30 – 15:30 | Út 8:00 – 12:00, 12:30 – 15:30 | St 8:00 – 12:00, 12:30 – 15:30 | Čt 8:00 – 12:00, 12:30 – 15:30 | Pá 8:00 – 12:00, 12:30 – 15:30 | So zavřeno | Ne zavřeno
@@ -45,8 +45,8 @@ ordinační hodiny z webů: 67 lékařů (64 webů z 119)
   ✓ www.lexum.cz  Po 8:00 – 17:00 | Út 8:00 – 17:00 | St 8:00 – 17:00 | Čt 8:00 – 17:00 | Pá 8:00 – 14:30
   ✓ www.magicsmile.cz  Po 8:00 – 20:00 | Út 8:00 – 20:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 20:00 | So 8:00 – 14:00
   ✓ www.mammacentrum.cz  Po 7:15 – 15:15 | Út 7:15 – 15:15 | St 7:15 – 15:15 | Čt 7:15 – 15:45 | Pá 7:15 – 13:45
-  ✓ www.mamologie-braborec.cz  Po 7:00 – 11:30 · 11.30 - 13 jen objednaní 16 - 18 | Út 7:00 – 11:30 · 11.30 - 13 jen objednaní | Pá 8:00 – 11:30 · 11.30 - 13 jen objednaní
-  ✓ www.manamedical.cz  Po 8:30 – 10:00 · Objednání, 10:00 – 12:00 · Neobjednání, 12:00 – 14:30 · Objednání | Út 8:00 – 10:00 · Neobjednání, 10:00 – 13:30 · Objednání | St 8:00 – 10:00 · Objednání, 10:00 – 13:00 · Neobjednání, 13:00 – 13:30 · Objednání | Čt 11:30 – 12:00 · Objednání, 12:00 – 14:00 · Neobjednání, 14:00 – 18:30 · Objednání | Pá 7:30 – 10:00 · Objednání, 10:00 – 12:00 · Neobjednání, 12:00 – 12:30 · Objednané kontroly, 7:30 – 8:00
+  ✓ www.mamologie-braborec.cz  Po 7:00 – 11:30 | Út 7:00 – 11:30 | Pá 8:00 – 11:30
+  ✓ www.manamedical.cz  Po 8:30 – 10:00 · Objednání, 10:00 – 12:00 · Neobjednání, 12:00 – 14:30 · Objednání | Út 8:00 – 10:00 · Neobjednání, 10:00 – 13:30 · Objednání | St 8:00 – 10:00 · Objednání, 10:00 – 13:00 · Neobjednání, 13:00 – 13:30 · Objednání | Čt 11:30 – 12:00 · Objednání, 12:00 – 14:00 · Neobjednání, 14:00 – 18:30 · Objednání | Pá 7:30 – 10:00 · Objednání, 10:00 – 12:00 · Neobjednání, 12:00 – 12:30 · Objednané kontroly
   ✓ www.medianna.cz  Po 9:00 – 17:00 | Út 8:00 – 17:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 16:00
   ✓ www.medibaby.cz  Po 7:30 – 11:00 | Út 7:30 – 11:00 | St 17:30 – 19:30 | Čt 7:30 – 10:00 | Pá 8:00 – 11:00
   ✓ www.medicaljt.cz  Po 8:00 – 16:00 | Út 8:00 – 16:00 | St 8:00 – 16:00 | Čt 8:00 – 16:00 | Pá 8:00 – 16:00
@@ -59,7 +59,7 @@ ordinační hodiny z webů: 67 lékařů (64 webů z 119)
   ✓ www.orlbetka.cz  Po 8:00 – 16:00 | Út zavřeno | St 7:00 – 14:00 | Čt 8:00 – 14:00 | Pá 8:00 – 13:00
   ✓ www.orlkyje.cz  Po 8:00 – 12:00, 12:30 – 14:30 | Út 7:00 – 12:00, 12:30 – 13:30 | St 8:00 – 12:00, 12:30 – 14:30 | Čt 7:00 – 12:00, 12:30 – 13:30 | Pá 8:00 – 14:00 | So zavřeno | Ne zavřeno
   ✓ www.ortopedia.cz  Po 7:30 – 13:30, 14:00 – 17:00 · Rázová vlna, 17:00 – 20:00 · MUDr. Štefan | Út 7:30 – 12:00, 13:00 – 16:00 · MUDr. Wagenknecht, 16:00 – 19:00 · Rázová vlna | St 7:30 – 14:00, 16:00 – 19:00 · MUDr. Koutek | Čt 7:30 – 13:30, 14:00 – 16:00 · Rázová vlna, 16:00 – 20:00 · MUDr. Štefan | Pá 7:30 – 13:30 · MUDr. Dočkal, 14:00 – 16:00 · Rázová vlna
-  ✓ www.polcare.cz  Po 9:00 – 13:00 | Út 13:00 – 15:00 | St 8:00 – 10:00 | Čt 8:00 – 10:00 | Pá 8:00 – 10:00, 8:30 – 10:00 · Odběry krve : po ; stř, čt, pá, 7:30 – 10:00 · Odběry krve : po ; stř, čt, pá
+  ✓ www.polcare.cz  Po 9:00 – 13:00 | Út 13:00 – 15:00 | St 8:00 – 10:00 | Čt 8:00 – 10:00 | Pá 8:00 – 10:00
   ✓ www.praktikvysocany.cz  Po 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Út 12:00 – 18:00 | St 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Čt 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Pá 7:00 – 8:00, 8:00 – 11:30
   ✓ www.probeamed.cz  Po 7:30 – 14:00 | Út 7:30 – 14:00 | St 7:30 – 14:00 | Čt 12:00 – 18:00 | Pá 7:30 – 12:00
   ✓ www.psychiatriepapezova.cz  Po 9:00 – 20:00 | Út 8:30 – 18:30 | St 9:00 – 16:00 | Čt 9:00 – 17:00 | Pá 8:00 – 16:00
