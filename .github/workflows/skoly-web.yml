@@ -24,4 +24,11 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
           git add docs/data
-          git diff --cached --quiet || git commit -m "Aktualizace údajů z webů škol" && git push
+          git diff --cached --quiet && exit 0
+          git commit -m "Aktualizace údajů z webů škol"
+          # nehody commitují každých 10 min – před pushem srovnat s main
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash origin main && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
