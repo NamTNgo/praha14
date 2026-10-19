@@ -626,11 +626,11 @@
       return (p.d || 0) - (q.d || 0);
     });
   }
-  // nehody bereme jednou denně; co je starší než dva dny, je skoro jistě odklizené
+  // nehody mají vlastní soubor, obnovovaný každou půlhodinu
   function nehodyPro(a) {
-    if (!data.doprava || !data.doprava.ndic || !a) return [];
+    if (!data.nehody || !data.nehody.ndic || !a) return [];
     var d = den0().toISOString().slice(0, 10);
-    return (data.doprava.nehody || []).filter(function (x) {
+    return (data.nehody.nehody || []).filter(function (x) {
       if (x.mc !== a.mc && x.mc2 !== a.mc) return false;
       if (x.do && x.do < d) return false;
       return !(!x.do && x.od && dnu(x.od) < -2);
@@ -727,8 +727,8 @@
     var neh = nehodyPro(a);
     if (neh.length) {
       h += '<div class="label">Nehody a mimořádné události</div>';
-      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci stahujeme jednou denně, ' +
-        genCas() + " — nehoda už může být odklizená.</div>";
+      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každou půlhodinu, ' +
+        nehCas() + " — nehoda už přesto může být odklizená.</div>";
       h += '<div class="list">' + neh.map(function (r) {
         var x = r.x;
         return dkarta(I_CRASH, "#fdeedd", "#a2600f",
@@ -774,11 +774,14 @@
       : "Hlídáme aktuality Prahy 9 a Prahy 14.";
   }
   function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#8a8572", 2.2) + "<div>" + text + "</div></div>"; }
-  function genCas() {
-    if (!data.doprava || !data.doprava.gen) return "naposledy dnes";
-    var d = new Date(data.doprava.gen), dn = Math.round((den0() - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
-    return "naposledy " + (dn <= 0 ? "dnes" : dn === 1 ? "včera" : "před " + dn + " dny") +
-      " v " + d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2);
+  // u nehod je zajímavé, jak je to čerstvé v minutách, ne ve dnech
+  function nehCas() {
+    if (!data.nehody || !data.nehody.gen) return "stav z poslední kontroly";
+    var min = Math.round((Date.now() - new Date(data.nehody.gen)) / 60000);
+    if (min < 2) return "právě teď";
+    if (min < 90) return "před " + min + " minutami";
+    var h = Math.round(min / 60);
+    return h <= 1 ? "před hodinou" : "před " + h + " hodinami";
   }
   function genNote() {
     if (!data.doprava || !data.doprava.gen) return "";
@@ -983,8 +986,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       state.address = load();

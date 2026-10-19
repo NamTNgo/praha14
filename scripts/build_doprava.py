@@ -649,18 +649,16 @@ def main():
     chyby = 0
 
     # NDIC zvlášť: když rozhraní selže, uzavírky z aktualit MČ se stejně sestaví
-    z_ndic, nehody = [], []
+    # nehody tahá zvlášť scripts/build_nehody.py každou půlhodinu do nehody.json
+    z_ndic = []
     try:
-        z_ndic, nehody = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_USER"),
-                               os.environ.get("NDIC_PASS"), ulice, nacti_body())
+        z_ndic, _ = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_USER"),
+                          os.environ.get("NDIC_PASS"), ulice, nacti_body())
         vysledek["ndic"] = bool(os.environ.get("NDIC_URL"))
     except Exception as e:
         chyby += 1
         log("DATEX SELHALO: %s" % e)
-        # stará nehoda je horší než žádná: po výpadku sekci radši schováme
         vysledek["ndic"] = False
-        nehody = []
-    vysledek["nehody"] = nehody
 
     for klic, fn in (("cisteni", lambda: cisteni(ulice)),
                      ("uzavirky", lambda: slouc(z_ndic, aktuality(ulice, bool(z_ndic)))),

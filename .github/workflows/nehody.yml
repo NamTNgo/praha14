@@ -1,0 +1,43 @@
+name: Nehody (NDIC)
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # nehody stárnou rychle, proto každou půlhodinu
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# dva běhy přes sebe by si přepisovaly commit; raději ať druhý počká
+concurrency:
+  group: nehody
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Stáhnout nehody
+        env:
+          NDIC_URL: ${{ secrets.NDIC_URL }}
+          NDIC_USER: ${{ secrets.NDIC_USER }}
+          NDIC_PASS: ${{ secrets.NDIC_PASS }}
+        run: python scripts/build_nehody.py
+      - name: Uložit změny
+        if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add docs/data/nehody.json docs/data/nehody_report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m "Aktualizace nehod"
+          # denní úloha mohla mezitím commitnout dopravu; rebase, ať push projde
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1
