@@ -132,6 +132,30 @@ def doplnit_kontakty(out):
     log("z webů doplněno/opraveno: %d telefonů, %d e-mailů" % (pt, pe))
 
 
+def sjednotit_telefony(out):
+    """Telefony z registru (+420266610451) do stejného tvaru jako z webu (266 610 451)."""
+    for r in out:
+        t = _norm_tel(r.get("tel", ""))
+        if t:
+            r["tel"] = t
+
+
+def rucni_prepisy(out):
+    """Ruční opravy z scripts/doktori_rucne.json – mají poslední slovo."""
+    p = Path(__file__).resolve().parent / "doktori_rucne.json"
+    try:
+        prep = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return
+    n = 0
+    for r in out:
+        for k, v in (prep.get(r["id"]) or {}).items():
+            if k in ("tel", "e", "w"):
+                r[k] = v
+                n += 1
+    log("ručních přepisů kontaktů: %d" % n)
+
+
 def web_zije(w):
     """True = web žije na své doméně. False = mrtvý nebo přesměrovaný jinam.
 
@@ -310,6 +334,8 @@ def main():
 
     proper_weby(out)
     doplnit_kontakty(out)
+    sjednotit_telefony(out)
+    rucni_prepisy(out)
 
     (DATA / "doktori.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 

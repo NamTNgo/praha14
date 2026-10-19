@@ -1,0 +1,7 @@
+{
+  "_poznamka": "Ruční přepisy kontaktů lékařů, mají přednost před registrem i webem. Klíč = id z doktori.json, hodnoty tel/e/w (prázdný řetězec údaj smaže).",
+  "d-116371": {
+    "w": "detskylekar-jandova.cz",
+    "e": "mudrjandovadana@seznam.cz"
+  }
+}
