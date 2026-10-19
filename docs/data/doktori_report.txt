@@ -1,10 +1,11 @@
 adresních klíčů z RÚIAN: 7530
 staženo 28400119 B
 ověřuji 139 webů (blocklist: 1)…
-webů vyřazeno (mrtvé/přesměrované/blocklist): 21 z 140
-  etoile.cz, eucpls.cz, gynekologie-harfa.cz, programhplus.cz, psychiatriepapezova-cz.webnode.cz, www.adamek.medikus.cz, www.cestrova.webnode.cz, www.freseniusmedicalcare.cz/cs, www.gynekolog.cz/Slapnickova, www.hela-cz.cz, www.naturdent-ortodoncie.cz, www.novodent.cz, www.orl-bludovsky.cz, www.ortopedickaordinace.cz, www.ortopedie-fyzioterapie.cz
-ověřuji kontakty z 119 webů…
-z webů doplněno/opraveno: 62 telefonů, 27 e-mailů
+webů vyřazeno (mrtvé/přesměrované/blocklist): 22 z 140
+  etoile.cz, eucpls.cz, gynekologie-harfa.cz, programhplus.cz, psychiatriepapezova-cz.webnode.cz, www.adamek.medikus.cz, www.cestrova.webnode.cz, www.freseniusmedicalcare.cz/cs, www.gynekolog.cz/Slapnickova, www.hela-cz.cz, www.naturdent-ortodoncie.cz, www.neuroaxon.cz, www.novodent.cz, www.orl-bludovsky.cz, www.ortopedickaordinace.cz
+ověřuji kontakty z 118 webů…
+z webů doplněno/opraveno: 61 telefonů, 26 e-mailů
+ručních přepisů kontaktů: 2
 
 lékařů v Praze 9 a 14: 343
 podle MČ: Praha 14=103, Praha 9=240
