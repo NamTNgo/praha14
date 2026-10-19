@@ -177,10 +177,10 @@
     return h;
   }
 
-  // ---- VOK a BIO VOK (jen Praha 14) ----
-  function vokNearest(addr, typ) {
+  // ---- VOK a BIO VOK (Praha 14 i Praha 9 – nejbližší kontejner k adrese) ----
+  function vokNearest(addr, typ, list) {
     var today = new Date(), best = null; today.setHours(0, 0, 0, 0);
-    (data.vok || []).forEach(function (r) {
+    (list || []).forEach(function (r) {
       if (r.t !== typ) return;
       var d = new Date(r.d + "T00:00:00");
       if (isNaN(d) || d < today) return;
@@ -195,32 +195,24 @@
     return '<div class="hbox ' + cls + '"><div class="eyebrow">' + label + '</div><div class="hname">' + esc(x.r.n) + " · " + meters(x.dist) + "</div>" +
       '<div class="hdate">' + HDAYS[d.getDay()] + " " + d.getDate() + ". " + (d.getMonth() + 1) + "." + (x.r.h ? " · " + x.r.h : "") + "</div></div>";
   }
-  function vok9Next() {
-    if (!data.vok9) return null;
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    var r = data.vok9.dates.filter(function (x) { return new Date(x.d + "T00:00:00") >= today; })[0];
-    return r ? { date: new Date(r.d + "T00:00:00"), p: r.p } : null;
-  }
   function vokCard(addr) {
-    var mc = addr.mc || "14", v = mc === "14" && data.vok ? [vokNearest(addr, "vok"), vokNearest(addr, "bio")] : null;
+    var mc = addr.mc || "14";
+    var list = mc === "9" ? (data.vok9 && data.vok9.mista) : data.vok;
+    var v = list ? [vokNearest(addr, "vok", list), vokNearest(addr, "bio", list)] : null;
     var head = '<div class="card row top"><span class="badge" style="background:#fbe3d4">' +
       SVG('<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>', 18, "#b8582a") +
       '</span><div class="grow"><div class="t1">Velkoobjemové kontejnery (VOK a BIO VOK)</div>';
     if (v && (v[0] || v[1])) {
+      var zdroj = mc === "9" && data.vok9 ? vok9Links(data.vok9.src) : links("14");
       return head + vokBlock(v[0], "hvok", "Nejbližší VOK") + vokBlock(v[1], "hbio", "Nejbližší BIO VOK") +
-        '<div class="note" style="margin-top:8px">Termíny se mohou změnit. Aktuální najdete v mapě KSNKO a na praha14.cz.</div>' + links("14") + "</div></div>";
-    }
-    var n9 = mc === "9" ? vok9Next() : null;
-    if (n9) {
-      var d9 = n9.date;
-      return head + '<div class="note">BIO VOK · podzim 2026 · přistavení po celé Praze 9</div><div class="hbox hvok"><div class="eyebrow">Nejbližší termín</div>' +
-        '<div class="hname">' + HDAYS[d9.getDay()] + " " + d9.getDate() + ". " + (d9.getMonth() + 1) + ". · " + data.vok9.time + "</div>" +
-        '<div class="hplaces">' + n9.p.map(function (x) { return "<div>" + esc(x) + "</div>"; }).join("") + "</div></div>" +
-        '<div class="note" style="margin-top:8px">Další termíny najdete v celém harmonogramu. Místa nejsou řazena podle vzdálenosti od vaší adresy.</div>' +
-        '<div class="links"><a class="link" href="' + data.vok9.src + '" target="_blank" rel="noopener">Celý harmonogram (PDF) ' + SVG(ARROW, 12, "currentColor", 2.4) + '</a>' +
-        '<a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+        '<div class="note" style="margin-top:8px">Nejbližší kontejner k vaší adrese. Termíny se mohou změnit, ověřte je v mapě KSNKO nebo na webu městské části.</div>' + zdroj + "</div></div>";
     }
     return head + '<div class="note">Termíny a místa přistavení najdete v mapě KSNKO a na webu městské části Praha ' + mc + "." + "</div>" + links(mc) + "</div></div>";
+  }
+  function vok9Links(src) {
+    return '<div class="links"><a class="link" href="' + esc(src.vok) + '" target="_blank" rel="noopener">Harmonogram VOK (PDF) ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" +
+      '<a class="link" href="' + esc(src.bio) + '" target="_blank" rel="noopener">Harmonogram BIO VOK (PDF) ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" +
+      '<a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>";
   }
 
   // ---- odstávka teplé vody ----

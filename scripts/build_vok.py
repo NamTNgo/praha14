@@ -129,16 +129,73 @@ def hav(a, b):
     x = math.sin((b[0] - a[0]) * p / 2) ** 2 + math.cos(a[0] * p) * math.cos(b[0] * p) * math.sin((b[1] - a[1]) * p / 2) ** 2
     return 12742000 * math.asin(math.sqrt(x))
 
-# Praha 9: BIO VOK, podzim 2026 (místa bez souřadnic, jen text)
-P9_SRC = "https://www.praha9.cz/sites/default/files/downloads/2026/09/P9_VOK_BIO_2026_podzim_0.pdf"
-P9 = [
-    ("2026-10-25", ["Miškovická x Poleradská", "K Lipám x Chrastavská", "Nad Krocínkou x Obvodová"]),
-    ("2026-11-01", ["Před Mosty x Za Mosty", "Kopečná x Nad Šestikopy", "Nad Kundratkou – mezi č. 869/13b a 385/15"]),
-    ("2026-11-08", ["Pokorného x Jahodnická", "Pod Krocínkou proti č. 55", "Hrdlořezská 43"]),
-    ("2026-11-15", ["Miškovická x Poleradská", "Podvinný mlýn 12–14", "Odlehlá 1"]),
-    ("2026-11-22", ["Nad Krocínkou x Obvodová", "Pod Smetankou – u železničního mostu za meandry", "Kopečná x Nad Šestikopy"]),
-    ("2026-11-29", ["K Lipám x Chrastavská", "Nad Kundratkou – mezi č. 869/13b a 385/15", "Pod Krocínkou proti č. 55"]),
-]
+# Praha 9: klasické VOK (podzim 2026 – zima 2027). Přepis z harmonogramu VOK.
+VOK9_SRC = "https://www.praha9.cz/sites/default/files/downloads/2026/08/VOK_2026_09-12_2026_01-02_2027.pdf"
+VOK_P9 = """
+2026-10-19|Vysočanská 85/546|15:00–19:00
+2026-10-24|Granitova x Saarinenova|8:00–12:00
+2026-10-24|Bílinská x Litvínovská|9:00–13:00
+2026-10-26|Novoborská x Českolipská|15:00–19:00
+2026-10-27|Teplická x Litoměřická|13:00–17:00
+2026-10-27|Pod Strojírnami|14:00–18:00
+2026-10-27|Jablonecká x Šluknovská|15:00–19:00
+2026-10-31|Lihovarská u č. 11|8:00–12:00
+2026-10-31|Pod Harfou x Kabešova|9:00–13:00
+2026-11-02|Vysočanská 113/243|15:00–19:00
+2026-11-03|Kovanecká x Podvinný mlýn|13:00–17:00
+2026-11-03|náměstí Na Balabence|14:00–18:00
+2026-11-03|Na Břehu x Mlékárenská|15:00–19:00
+2026-11-07|Pod Krocínkou proti č. 55|8:00–12:00
+2026-11-07|Hrdlořezská u č.p. 64/43|9:00–13:00
+2026-11-09|Kovářská x U Školičky|15:00–19:00
+2026-11-10|Kytlická|13:00–17:00
+2026-11-10|Stoupající|14:00–18:00
+2026-11-10|Jablonecká u č.p. 715/9|15:00–19:00
+2026-11-14|Prouzova|8:00–12:00
+2026-11-14|Svatošových x Smržových|9:00–13:00
+2026-11-16|Matějkova x Čihákova|15:00–19:00
+2026-11-21|Pešlova x Paříkova|8:00–12:00
+2026-11-21|Vysočanská 39/573|9:00–13:00
+2026-11-23|Prosecká 131|15:00–19:00
+2026-11-24|Měšická x Novoborská|13:00–17:00
+2026-11-24|Rumburská x Litvínovská|14:00–18:00
+2026-11-24|Novoborská x Českolipská|15:00–19:00
+2026-11-28|U Elektry x Modrého|8:00–12:00
+2026-11-28|Kopečná x Nad Šestikopy|9:00–13:00
+2026-11-30|Novoborská x Varnsdorfská|15:00–19:00
+2026-12-01|Ctěnická x Měšická|13:00–17:00
+2026-12-01|Pod Strojírnami|14:00–18:00
+2026-12-01|Bílinská x Litvínovská|15:00–19:00
+2026-12-05|Poděbradská x Podkovářská|8:00–12:00
+2026-12-05|Vysočanská 85/546|9:00–13:00
+2026-12-07|Makedonská u č. 1|15:00–19:00
+2026-12-08|Veltruská x Litvínovská|13:00–17:00
+2026-12-08|Pískovcová|14:00–18:00
+2026-12-08|Lihovarská u č. 11|15:00–19:00
+2026-12-12|Na Břehu x Mlékárenská|8:00–12:00
+2026-12-12|K Lipám x Chrastavská|9:00–13:00
+2026-12-14|Měšická x Novoborská|15:00–19:00
+2026-12-15|Jablonecká x Šluknovská|15:00–19:00
+"""
+
+# Praha 9: BIO VOK, podzim 2026 (čas vždy 9:00–12:00)
+BIO9_SRC = "https://www.praha9.cz/sites/default/files/downloads/2026/09/P9_VOK_BIO_2026_podzim_0.pdf"
+BIO_P9 = """
+2026-10-25|Miškovická x Poleradská|9:00–12:00
+2026-10-25|K Lipám x Chrastavská|9:00–12:00
+2026-10-25|Nad Krocínkou x Obvodová|9:00–12:00
+2026-11-01|Před Mosty x Za Mosty|9:00–12:00
+2026-11-01|Kopečná x Nad Šestikopy|9:00–12:00
+2026-11-08|Pokorného x Jahodnická|9:00–12:00
+2026-11-08|Pod Krocínkou proti č. 55|9:00–12:00
+2026-11-08|Hrdlořezská 43|9:00–12:00
+2026-11-15|Miškovická x Poleradská|9:00–12:00
+2026-11-15|Odlehlá 1|9:00–12:00
+2026-11-22|Nad Krocínkou x Obvodová|9:00–12:00
+2026-11-22|Kopečná x Nad Šestikopy|9:00–12:00
+2026-11-29|K Lipám x Chrastavská|9:00–12:00
+2026-11-29|Pod Krocínkou proti č. 55|9:00–12:00
+"""
 
 
 def label(place):
@@ -165,6 +222,8 @@ def main():
         """vrátí seznam (lat, lon) bodů pro jednu část místa"""
         p = re.sub(r"\bu obch\. střediska|\bu separace|\b(u|proti|naproti)\s+(?=č\. ?p\.)", " ", p)
         p = re.sub(r"č\. ?p\.", " ", p)
+        # "u č. 11", "proti č. 55" (bez „p") – orientační bod, ne adresa: necháme jen ulici
+        p = re.sub(r"\b(u|proti|naproti)?\s*č\.\s*\d+[\w/]*", " ", p)
         p = re.sub(r"\s+", " ", p).strip()
         m = re.match(r"^(.*?)\s+(\d+)(?:/(\d+))?$", p)
         cd = co = None
@@ -179,27 +238,37 @@ def main():
                 return [(a[3], a[4]) for a in hit]
         return [(a[3], a[4]) for a in pts]
 
-    out, miss = [], []
-    for typ, src, text in (("vok", "hmp", VOK_HMP), ("vok", "mc", VOK_MC), ("bio", "hmp", BIO_HMP), ("bio", "mc", BIO_MC)):
-        for r in rows(text, typ, src):
-            place = r["place"]
-            parts = re.split(r"\s+x\s+|/(?=\D)", place)
-            pts = [part(p) for p in parts]
-            pts_ok = [p for p in pts if p]
-            if not pts_ok:
-                miss.append(place); continue
-            if len(pts_ok) >= 2:
-                b = min(((hav(p, q), p, q) for p in pts_ok[0] for q in pts_ok[1]), key=lambda t: t[0])
-                lat, lon = (b[1][0] + b[2][0]) / 2, (b[1][1] + b[2][1]) / 2
-            else:
-                lat = sum(p[0] for p in pts_ok[0]) / len(pts_ok[0]); lon = sum(p[1] for p in pts_ok[0]) / len(pts_ok[0])
-            if len(pts_ok) < len(parts):
-                miss.append(f"{place} (použita jen část)")
-            out.append({"t": r["type"], "n": label(place),
-                        "d": r["date"], "h": r["time"], "lat": round(lat, 5), "lon": round(lon, 5)})
-    print("Počet záznamů:", len(out), "| problémy:", miss)
-    (D / "vok9.json").write_text(json.dumps({"src": P9_SRC, "time": "9:00–12:00", "dates": [{"d": d, "p": pl} for d, pl in P9]}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    def geocode(place):
+        """místo -> (lat, lon) nebo None; u křižovatek vezme nejbližší dvojici bodů a střed."""
+        parts = re.split(r"\s+x\s+|/(?=\D)", place)
+        pts = [part(p) for p in parts]
+        pts_ok = [p for p in pts if p]
+        if not pts_ok:
+            return None, False
+        if len(pts_ok) >= 2:
+            b = min(((hav(p, q), p, q) for p in pts_ok[0] for q in pts_ok[1]), key=lambda t: t[0])
+            return ((b[1][0] + b[2][0]) / 2, (b[1][1] + b[2][1]) / 2), len(pts_ok) < len(parts)
+        return (sum(p[0] for p in pts_ok[0]) / len(pts_ok[0]), sum(p[1] for p in pts_ok[0]) / len(pts_ok[0])), len(pts_ok) < len(parts)
+
+    def build(bloky):
+        res, miss = [], []
+        for typ, src, text in bloky:
+            for r in rows(text, typ, src):
+                ll, castecne = geocode(r["place"])
+                if not ll:
+                    miss.append(r["place"]); continue
+                if castecne:
+                    miss.append(r["place"] + " (jen část)")
+                res.append({"t": r["type"], "n": label(r["place"]), "d": r["date"], "h": r["time"],
+                            "lat": round(ll[0], 5), "lon": round(ll[1], 5)})
+        return res, miss
+
+    out, miss = build((("vok", "hmp", VOK_HMP), ("vok", "mc", VOK_MC), ("bio", "hmp", BIO_HMP), ("bio", "mc", BIO_MC)))
+    out9, miss9 = build((("vok", "p9", VOK_P9), ("bio", "p9", BIO_P9)))
+    print("Praha 14:", len(out), "| problémy:", miss)
+    print("Praha 9:", len(out9), "| problémy:", miss9)
     (D / "vok.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    (D / "vok9.json").write_text(json.dumps({"src": {"vok": VOK9_SRC, "bio": BIO9_SRC}, "mista": out9}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
 if __name__ == "__main__":
     sys.exit(main())
