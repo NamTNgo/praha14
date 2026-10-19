@@ -431,9 +431,22 @@ def datex(url, user, pwd, ulice, body):
     if not (url and user and pwd):
         log("DATEX: chybí NDIC_URL/NDIC_USER/NDIC_PASS, přeskočeno")
         return [], []
-    raw = fetch(url, binary=True, timeout=120, auth=(user, pwd),
-                accept="application/xml, text/xml, */*")
-    log("DATEX: %d B po rozbalení, začátek: %s" % (len(raw), raw[:120]))
+    # Snímek je velký (celá ČR, ~45 MB) a server bývá pomalý; delší limit a jeden
+    # opravný pokus. Žádáme gzip, ať je přenos co nejmenší.
+    raw = None
+    for pokus in (1, 2):
+        try:
+            t = dt.datetime.now()
+            raw = fetch(url, binary=True, timeout=300, auth=(user, pwd),
+                        accept="application/xml, text/xml, */*")
+            log("DATEX: staženo %d B za %.0f s (pokus %d)"
+                % (len(raw), (dt.datetime.now() - t).total_seconds(), pokus))
+            break
+        except Exception as e:
+            log("DATEX: pokus %d selhal: %s" % (pokus, e))
+            if pokus == 2:
+                raise
+    log("DATEX: začátek: %s" % raw[:120])
     koren = ET.fromstring(raw)
     zaznamy = [e for e in koren.iter() if lok(e.tag) == "situationrecord"]
     log("DATEX: %d situationRecordů" % len(zaznamy))
