@@ -1,6 +1,171 @@
+=== vok === https://www.praha9.cz/sites/default/files/downloads/2026/08/VOK_2026_09-12_2026_01-02_2027.pdf
+                Harmonogram VOK - září-prosinec 2026, leden-únor 2027
+
+                                     září
+den   datum    počet VOK       čas                          stanoviště
+                           13.00-17.00 Kopečná x Nad Šestikopy
+Út     1.9.        3       14.00-18.00 Lihovarská u č. 11
+                           15.00-19.00 Vysočanská 113/243
+                            8.00-12.00 Kovanecká x Povinný mlýn
+So     5.9.        2
+                            9.00-13.00 Měšická x Novoborská
+Po     7.9.        1       15.00-19.00 Bílinská x Litvínovská
+                           13.00-17.00 Jablonecká x Šluknovská
+Út     8.9.        3       14.00-18.00 Prouzova
+                           15.00-19.00 Makedonská u č. 1
+                            8.00-12.00 Celniční x Pokorného
+So    12.9.        2
+                            9.00-13.00 Hrdlořezská u č.p. 64/43
+Po    14.9.        1       15.00-19.00 Ctěnická x Měšická
+                           13.00-17.00 Veltruská x Litvínovská
+Út    15.9.        3       14.00-18.00 Kovářská x U Školičky
+                           15.00-19.00 Vysočanské náměstí x Prokopka
+                            8.00-12.00 Před Mosty x Za Mosty
+So    19.9.        2
+                            9.00-13.00 Nad Krocínkou x Obvodová
+Po    21.9.        1       15.00-19.00 nám. Na Balabence (boční vstup ZŠ)
+                           13.00-17.00 Stoupající - parkoviště u hřbitova
+Út    22.9.        3       14.00-18.00 Pešlova x Paříkova
+                           15.00-19.00 Rumburská x Litvínovská
+                            8.00-12.00 Pískovcová
+So    26.9.        2
+                            9.00-13.00 Pod Krocínkou proti č. 55
+Po    28.9.        1       15.00-19.00 Teplická x Litoměřická (roh proti domům)
+                           13.00-17.00 K Lipám x Chrastavská
+Út    29.9.        3       14.00-18.00 Prosecká 131
+                           15.00-19.00 Poděbradská x Podkovářská
+                  27
+
+                                     říjen
+den   datum    počet VOK       čas                          stanoviště
+                            8.00-12.00 Kytlická (proti zdravotnímu středisku)
+So    3.10.        2
+                            9.00-13.00 Vysočanská 39/573
+Po    5.10.        1       15.00-19.00 Novoborská x Varnsdorfská
+                           13.00-17.00 Jablonecká u č.p. 715/9
+Út    6.10.        3       14.00-18.00 Drahobejlova - u st.m. Českomoravská
+                           15.00-19.00 Zakšínská x Zásadská
+                            8.00-12.00 Habartická - parkoviště u objektu 496-503
+So    10.10.       2
+                            9.00-13.00 Matějkova x Čihákova (u bývalé KB)
+Po    12.10.       1       15.00-19.00 Měšická x Novoborská
+                           13.00-17.00 Nad Krocínkou x Obvodová
+Út    13.10.       3       14.00-18.00 Děčínská - horní parkoviště
+                           15.00-19.00 Skloněná u č. 8
+                            8.00-12.00 Pokorného x Jahodnická
+So    17.10.       2
+                            9.00-13.00 Moravcových x Strnadových
+Po    19.10.       1       15.00-19.00 Vysočanská 85/546
+                            8.00-12.00 Granitova x Saarinenova
+So    24.10.       2
+                            9.00-13.00 Bílinská x Litvínovská
+Po    26.10.       1       15.00-19.00 Novoborská x Českolipská
+                           13.00-17.00 Teplická x Litoměřická (roh proti domům)
+Út    27.10.       3       14.00-18.00 Pod Strojírnami
+                           15.00-19.00 Jablonecká x Šluknovská
+                            8.00-12.00 Lihovarská u č. 11
+So    31.10.       2
+                            9.00-13.00 Pod Harfou x Kabešova
+                  23
+                Harmonogram VOK - září-prosinec 2026, leden-únor 2027
 
 
-VOK článek: None
-BIO článek: None
-vok: článek nenalezen
-bio: článek nenalezen
+                                     listopad
+den   datum    počet VOK       čas                           stanoviště
+Po     2.11.       1       15.00-19.00 Vysočanská 113/243
+                           13.00-17.00 Kovanecká x Podvinný mlýn
+Út    3.11.        3       14.00-18.00 nám. Na Balabence (boční vstup ZŠ)
+                           15.00-19.00 Na Břehu x Mlékárenská
+                            8.00-12.00 Pod Krocínkou proti č. 55
+So    7.11.        2
+                            9.00-13.00 Hrdlořezská u č.p. 64/43
+Po    9.11.        1       15.00-19.00 Kovářská x U Školičky
+                           13.00-17.00 Kytlická - proti zdravotnímu středisku
+Út    10.11.       3       14.00-18.00 Stoupající - parkoviště u hřbitova
+                           15.00-19.00 Jablonecká u č.p. 715/9
+                            8.00-12.00 Prouzova
+So    14.11.       2
+                            9.00-13.00 Svatošových x Smržových
+Po    16.11.       1       15.00-19.00 Matějkova x Čihákova (u bývalé KB)
+                            8.00-12.00 Pešlova x Paříkova
+So    21.11.       2
+                            9.00-13.00 Vysočanská 39/573
+Po    23.11.       1       15.00-19.00 Prosecká 131
+                           13.00-17.00 Měšická x Novoborská
+Út    24.11.       3       14.00-18.00 Rumburská x Litvínovská
+                           15.00-19.00 Novoborská x Českolipská
+                            8.00-12.00 U Elektry x Modrého
+So    28.11.       2
+                            9.00-13.00 Kopečná x Nad Šestikopy
+Po    30.11.      1        15.00-19.00 Novoborská x Varnsdorfská
+                  22
+
+                                  prosinec
+den   datum    počet VOK       čas                          stanoviště
+                           13.00-17.00 Ctěnická x Měšická
+Út    1.12.        3       14.00-18.00 Pod Strojírnami
+                           15.00-19.00 Bílinská x Litvínovská
+                            8.00-12.00 Poděbradská x Podkovářská
+So    5.12.        2
+                            9.00-13.00 Vysočanská 85/546
+Po    7.12.        1       15.00-19.00 Makedonská u č. 1
+                           13.00-17.00 Veltruská x Litvínovská
+Út    8.12.        3       14.00-18.00 Pískovcová
+                           15.00-19.00 Lihovarská u č. 11
+                            8.00-12.00 Na Břehu x Mlékárenská
+So    12.12.       2
+                            9.00-13.00 K Lipám x Chrastavská
+Po    14.12.       1       15.00-19.00 Měšická x Novoborská
+Út    15.12.       1       15:00-19:00 Jablonecká x Šluknovská
+                  13
+
+                             leden a únor 2027
+den   datum    počet VOK       čas                          stanoviště
+                       SLUŽBA SE NEPOSKYTUJE!
+
+
+=== bio === https://www.praha9.cz/sites/default/files/downloads/2026/09/P9_VOK_BIO_2026_podzim_0.pdf
+                          Sběr BIOODPADU
+             do přistavených velkoobjemových kontejnerů
+                             podzim 2026
+                           od MHMP přiděleno 18 VOK
+
+
+
+
+Ne 25. října 2026 – 9.00-12.00 hod
+Miškovická x Poleradská
+K Lipám x Chrastavská
+Nad Krocínkou x Obvodová
+
+Ne 1. listopadu 2026 – 9:00-12:00 hod
+Před Mosty x Za Mosty
+Kopečná x Nad Šestikopy
+Nad Kundratkou – mezi č. 869/13b a 385/15
+
+Ne 8. listopadu 2026 – 9.00-12.00 hod
+Pokorného x Jahodnická
+Pod Krocínkou proti č. 55
+Hrdlořezská 43
+
+Ne 15. listopadu 2026 – 9:00-12:00 hod
+Miškovická x Poleradská
+Podvinný mlýn 12-14
+Odlehlá 1
+
+Ne 22. listopadu 2026 – 9.00-12.00 hod
+Nad Krocínkou x Obvodová
+Pod Smetankou – u železničního mostu za meandry
+Kopečná x Nad Šestikopy
+
+Ne 29. listopadu 2026 – 9.00-12.00 hod
+K Lipám x Chrastavská
+Nad Kundratkou – mezi č. 869/13b a 385/15
+Pod Krocínkou proti č. 55
+
+
+VOK článek: https://www.praha9.cz/harmonogram-pristavovani-kontejneru-na-velkoobjemovy-odpad-zari-prosinec-2026-informace-k-lednu-a
+BIO článek: https://www.praha9.cz/harmonogram-pristavovani-velkoobjemovych-kontejneru-na-bioodpad-podzim-2026
+vok: 85 stanovišť, 83 geokódováno, 2 bez souřadnic
+bio: 0 stanovišť, 0 geokódováno, 0 bez souřadnic
+BIO: ponechána předchozí data (14 míst)
