@@ -47,6 +47,10 @@ def _domena(h):
 
 EMAIL_RE = re.compile(r"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}", re.I)
 TEL_RE = re.compile(r"(?:\+?420[\s ]?)?(\d{3}[\s ]?\d{3}[\s ]?\d{3})")
+# bezplatné pošty – malé ordinace je používají běžně, webmaster/agentura ne
+FREEMAIL = {"seznam.cz", "email.cz", "post.cz", "centrum.cz", "atlas.cz", "volny.cz",
+            "tiscali.cz", "quick.cz", "iol.cz", "gmail.com", "googlemail.com",
+            "icloud.com", "me.com", "outlook.com", "hotmail.com", "yahoo.com", "outlook.cz"}
 KONTAKT_CESTY = ("", "/kontakt", "/kontakt/", "/kontakty/", "/contact/")
 
 
@@ -92,9 +96,10 @@ def kontakt_z_webu(w):
         if nacteno:
             break   # když první scheme načetl stránky, nestřídej na http
     mail = next((m for m in maily if m.split("@")[-1].endswith(dom)), "")
+    mail_free = next((m for m in maily if m.split("@")[-1] in FREEMAIL), "")
     tel_odkaz = next((t for t in map(_norm_tel, tel_odkazy) if t), "")
     tel_volny = next((t for t in map(_norm_tel, tel_text) if t), "")
-    return tel_odkaz, tel_volny, mail
+    return tel_odkaz, tel_volny, mail, mail_free
 
 
 def doplnit_kontakty(out):
@@ -115,12 +120,16 @@ def doplnit_kontakty(out):
     for r in out:
         if not r.get("w"):
             continue
-        tel_odkaz, tel_volny, mail = kont.get(r["w"], ("", "", ""))
+        tel_odkaz, tel_volny, mail, mail_free = kont.get(r["w"], ("", "", "", ""))
         dom = _domena(r["w"].split("/")[0])
         # e-mail: doplnit chybějící, nebo přepsat registrový z CIZÍ domény
         reg_cizi = r.get("e") and not r["e"].lower().split("@")[-1].endswith(dom)
         if mail and (not r.get("e") or reg_cizi):
             r["e"] = mail
+            pe += 1
+        elif mail_free and not r.get("e"):
+            # e-mail na bezplatné poště jen doplní prázdné (menší jistota než vlastní doména)
+            r["e"] = mail_free
             pe += 1
         # telefon: tel: odkaz přepíše registr; volné číslo jen doplní chybějící
         if tel_odkaz and _norm_tel(r.get("tel", "")) != tel_odkaz:
