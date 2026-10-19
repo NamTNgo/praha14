@@ -5,12 +5,19 @@
 // (cron / waitUntil, kde je delší časový limit) do R2, a GitHubu pak servíruje
 // jen hotovou kopii z R2 — to je rychlé a globální.
 //
+// Protože GitHub Actions cron je u 10min intervalu nespolehlivý, cron Workeru
+// (ten jede spolehlivě) po naplnění R2 rovnou spustí i parsování na GitHubu přes
+// API (workflow_dispatch). GitHub plánovač tím pádem neřešíme.
+//
 // R2 binding (Settings -> Bindings):  NDIC_BUCKET  -> bucket ndic-data
-// Cron trigger (Settings -> Triggers): */30 * * * *
-// Secrets (Settings -> Variables, Encrypt): NDIC_USER, NDIC_PASS, PROXY_TOKEN
+// Cron trigger (Settings -> Triggers): */10 * * * *
+// Secrets (Settings -> Variables, Encrypt): NDIC_USER, NDIC_PASS, PROXY_TOKEN,
+//   GH_TOKEN (fine-grained PAT na NamTNgo/praha14, oprávnění Actions: Read+Write)
 
 const UPSTREAM = "https://mobilitydata.rsd.cz/Resources/Dynamic/CommonTIDatex/";
 const KEY = "latest.xml";
+const GH_REPO = "NamTNgo/praha14";
+const GH_WORKFLOW = "nehody.yml";
 
 async function refresh(env) {
   const r = await fetch(UPSTREAM, {
@@ -53,8 +60,25 @@ export default {
       },
     });
   },
-  // cron: pravidelné stažení ŘSD do R2 na pozadí
+  // cron: stáhne ŘSD do R2 a hned spustí parsování na GitHubu (spolehlivý plánovač)
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(refresh(env));
+    ctx.waitUntil((async () => {
+      await refresh(env);
+      await spustGithub(env);
+    })());
   },
 };
+
+async function spustGithub(env) {
+  if (!env.GH_TOKEN) return;
+  await fetch("https://api.github.com/repos/" + GH_REPO + "/actions/workflows/" + GH_WORKFLOW + "/dispatches", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + env.GH_TOKEN,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "ndic-proxy",
+    },
+    body: JSON.stringify({ ref: "main" }),
+  });
+}

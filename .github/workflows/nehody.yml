@@ -1,8 +1,10 @@
 name: Nehody (NDIC)
 
 on:
+  # Spouští cron Cloudflare Workeru po naplnění R2 (GitHub plánovač je u 10min
+  # intervalu nespolehlivý). Záložní denní běh, kdyby Worker vypadl.
   schedule:
-    - cron: "*/10 * * * *"   # nehody stárnou rychle, proto každých 10 minut
+    - cron: "17 5 * * *"
   workflow_dispatch: {}
 
 permissions:

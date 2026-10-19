@@ -23,7 +23,10 @@ GitHub Actions ──Bearer token──▶ Worker ──čte──▶ R2 (latest
    - Bucket: `ndic-data`
 5. **Worker → Settings → Triggers → Cron Triggers → Add**: `*/10 * * * *`
 6. **Worker → Settings → Variables (Secret/Encrypt)**: `NDIC_USER`, `NDIC_PASS`,
-   `PROXY_TOKEN` (pokud tam z dřívějška nejsou).
+   `PROXY_TOKEN` (pokud tam z dřívějška nejsou) a `GH_TOKEN` (fine-grained GitHub
+   PAT na `NamTNgo/praha14`, oprávnění **Actions: Read and write**). Worker jím po
+   naplnění R2 spouští parsování nehod na GitHubu – GitHub cron je u 10min
+   intervalu nespolehlivý.
 
 ## GitHub secrets (Settings → Secrets and variables → Actions)
 
