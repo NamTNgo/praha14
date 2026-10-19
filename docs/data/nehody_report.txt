@@ -1,1 +1,3 @@
-nehody SELHALY: <urlopen error timed out>
+DATEX: pokus 1 selhal: <urlopen error [Errno 110] Connection timed out>
+DATEX: pokus 2 selhal: <urlopen error [Errno 110] Connection timed out>
+nehody SELHALY: <urlopen error [Errno 110] Connection timed out>
