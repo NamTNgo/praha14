@@ -108,7 +108,11 @@ def ndic_zivy():
     url, tok = os.environ.get("NDIC_URL"), os.environ.get("NDIC_TOKEN")
     if not (url and tok):
         return None, "přeskočeno (chybí NDIC_URL/NDIC_TOKEN)"
-    req = urllib.request.Request(url, method="HEAD", headers={"Authorization": "Bearer " + tok})
+    # vlastní User-Agent je nutný: Cloudflare jinak výchozí Python-urllib odmítne 403
+    req = urllib.request.Request(url, method="HEAD", headers={
+        "Authorization": "Bearer " + tok,
+        "User-Agent": "Mozilla/5.0 (compatible; praha14-healthcheck)",
+    })
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             upd = r.headers.get("X-Ndic-Updated")
