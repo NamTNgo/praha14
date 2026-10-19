@@ -24,8 +24,7 @@ jobs:
       - name: Stáhnout nehody
         env:
           NDIC_URL: ${{ secrets.NDIC_URL }}
-          NDIC_USER: ${{ secrets.NDIC_USER }}
-          NDIC_PASS: ${{ secrets.NDIC_PASS }}
+          NDIC_TOKEN: ${{ secrets.NDIC_TOKEN }}
         run: python scripts/build_nehody.py
       - name: Uložit změny
         if: always()

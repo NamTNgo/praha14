@@ -14,7 +14,7 @@ import json
 import os
 import sys
 
-from build_doprava import DATA, LOG, datex, nacti_body, nacti_ulice
+from build_doprava import DATA, LOG, datex, nacti_ulice
 
 
 def main():
@@ -27,8 +27,8 @@ def main():
     nehody = []
     chyba = None
     try:
-        _, nehody = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_USER"),
-                          os.environ.get("NDIC_PASS"), nacti_ulice(), nacti_body())
+        _, nehody = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_TOKEN"),
+                          nacti_ulice())
     except Exception as e:
         chyba = e
         LOG.append("nehody SELHALY: %s" % e)

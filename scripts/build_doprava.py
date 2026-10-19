@@ -65,13 +65,16 @@ def plain(s):
     return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower()
 
 
-def fetch(url, key=None, binary=False, timeout=30, auth=None, accept=None):
+def fetch(url, key=None, binary=False, timeout=30, auth=None, accept=None, bearer=None):
     h = {"User-Agent": UA, "Accept-Language": "cs"}
     if key:
         h["X-Access-Token"] = key
         h["Accept"] = "application/json"
     if accept:
         h["Accept"] = accept
+    if bearer:
+        h["Authorization"] = "Bearer " + bearer
+        h["Accept-Encoding"] = "gzip"
     if auth:
         import base64
         h["Authorization"] = "Basic " + base64.b64encode(
@@ -297,8 +300,6 @@ def cisteni(ulice):
 # Podmínky ŘSD: zdroj se uvádí v tomto přesném znění a jen u nezměněných dat.
 NDIC_ZDROJ = "Zdrojem digitalizovaných informací o silničním provozu je NDIC"
 NDIC_WEB = "https://www.dopravniinfo.cz/"
-# Širší okno kolem Prahy 9 a 14; přesnou městskou část pak určí nejbližší adresa.
-BBOX = (50.04, 50.18, 14.40, 14.67)
 # xsi:type situationRecordu -> co z toho ukážeme uživateli a do které sekce to
 # patří. „prace“ jsou uzavírky a omezení, „nehoda“ jsou mimořádné události;
 # počasí a kolony neukazujeme vůbec.
@@ -318,8 +319,39 @@ D_TYPY = [
 ]
 
 
+# Části Prahy 9 a 14, které jednoznačně patří jedné městské části. Sdílené
+# (Hloubětín, Libeň, Malešice) schválně vynecháváme – ty rozhodne číslo „Praha 9/14“.
+CASTI_9 = ("vysocany", "prosek", "strizkov", "hrdlorezy")
+CASTI_14 = ("kyje", "hostavice", "cerny most", "dolni pocernice")
 def lok(tag):
     return tag.rsplit("}", 1)[-1].lower()
+
+
+PRAHA9 = re.compile(r"praha\s*9\b")
+PRAHA14 = re.compile(r"praha\s*14\b")
+
+
+def _cast(casti, t):
+    # název části jen jako celé slovo – jinak „kyje“ chytí „Kyjevská“ a „Vysočany“
+    # u Chomutova se tváří jako Vysočany v Praze
+    return any(re.search(r"\b" + re.escape(c) + r"\b", t) for c in casti)
+
+
+def mc_z_textu(txt):
+    """Městská část z popisu události. ŘSD píše spolehlivě „Praha 9“, „Praha-Kyje“.
+
+    Část se uznává jen ve spojení s „Praha“ – holý název obce (Vysočany, Radeč…)
+    existuje i jinde v ČR. Vrací '9', '14', nebo None když to z textu nejde určit.
+    """
+    t = plain(txt)
+    praha = "praha" in t
+    je14 = bool(PRAHA14.search(t)) or (praha and _cast(CASTI_14, t))
+    je9 = bool(PRAHA9.search(t)) or (praha and _cast(CASTI_9, t))
+    if je14 and not je9:
+        return "14"
+    if je9 and not je14:
+        return "9"
+    return None
 
 
 def ndic_typ(el):
@@ -391,53 +423,29 @@ def ndic_jmeno(el):
     return out[:4]
 
 
-def nacti_body():
-    """Adresní body s městskou částí – jimi určujeme, kam uzavírka z DATEXu patří."""
-    adr = json.loads((DATA / "addresses.json").read_text(encoding="utf-8"))
-    return [(a[3], a[4], a[5]) for a in adr]
 
+def datex(url, token, ulice, body=None):
+    """Z proxy NDIC vrátí (práce a uzavírky, nehody) jen pro Prahu 9 a 14.
 
-def mc_podle_bodu(lat, lon, body, limit=1500, okoli=1200):
-    """Městská část podle adres v okolí bodu, ne podle jedné nejbližší.
+    Data tahá přes Cloudflare Worker (pevná IP, na kterou ŘSD nepouští jen cloud):
+    Worker přidá přihlášení k ŘSD a vrátí XML, my se ověřujeme jeho tokenem.
 
-    Hlavní tahy (Kbelská, Českobrodská) tvoří hranici mezi devítkou a čtrnáctkou
-    a jedna nejbližší adresa by o nich rozhodovala náhodně – navíc podle toho,
-    která strana je hustěji zastavěná. Proto se počítají všechny adresy do
-    okoli metrů, a když je druhá městská část zastoupená aspoň sedminou, vrátíme
-    obě: uzavírka na hranici se týká lidí po obou stranách.
+    Umístění do městské části řídí hlavně text události – ŘSD v něm spolehlivě
+    uvádí „Praha 9/14“. Souřadnice samy nestačí: geometrie dlouhých silnic a
+    objízdných tras zasahuje přes hranici a tahala by sem i Prahu 3, 8 nebo Dubeč.
+
+    Nehody držíme zvlášť: obnovují se po půlhodině a stárnou rychle, zatímco
+    uzavírka trvá týdny; v aplikaci mají vlastní sekci s časem poslední kontroly.
     """
-    nejblizsi, hlasy = None, {}
-    for blat, blon, mc in body:
-        d = ((lat - blat) * 111200) ** 2 + ((lon - blon) * 71400) ** 2
-        if nejblizsi is None or d < nejblizsi:
-            nejblizsi = d
-        if d <= okoli ** 2:
-            hlasy[mc] = hlasy.get(mc, 0) + 1
-    if nejblizsi is None or nejblizsi > limit ** 2 or not hlasy:
-        return None, None
-    poradi = sorted(hlasy.items(), key=lambda x: -x[1])
-    celkem = sum(hlasy.values())
-    druha = poradi[1][0] if len(poradi) > 1 and poradi[1][1] >= celkem * 0.15 else None
-    return poradi[0][0], druha
-
-
-def datex(url, user, pwd, ulice, body):
-    """Z rozhraní NDIC vrátí (práce a uzavírky, nehody) na našem území.
-
-    Nehody držíme zvlášť: data bereme jednou denně, takže zatímco uzavírka trvá
-    týdny, nehoda bývá v době zobrazení dávno odklizená. V aplikaci proto mají
-    vlastní sekci a čas poslední kontroly u sebe.
-    """
-    if not (url and user and pwd):
-        log("DATEX: chybí NDIC_URL/NDIC_USER/NDIC_PASS, přeskočeno")
+    if not (url and token):
+        log("DATEX: chybí NDIC_URL/NDIC_TOKEN, přeskočeno")
         return [], []
-    # Snímek je velký (celá ČR, ~45 MB) a server bývá pomalý; delší limit a jeden
-    # opravný pokus. Žádáme gzip, ať je přenos co nejmenší.
+    # Snímek je velký (celá ČR, ~45 MB); delší limit a jeden opravný pokus.
     raw = None
     for pokus in (1, 2):
         try:
             t = dt.datetime.now()
-            raw = fetch(url, binary=True, timeout=300, auth=(user, pwd),
+            raw = fetch(url, binary=True, timeout=300, bearer=token,
                         accept="application/xml, text/xml, */*")
             log("DATEX: staženo %d B za %.0f s (pokus %d)"
                 % (len(raw), (dt.datetime.now() - t).total_seconds(), pokus))
@@ -446,52 +454,61 @@ def datex(url, user, pwd, ulice, body):
             log("DATEX: pokus %d selhal: %s" % (pokus, e))
             if pokus == 2:
                 raise
-    log("DATEX: začátek: %s" % raw[:120])
     koren = ET.fromstring(raw)
-    zaznamy = [e for e in koren.iter() if lok(e.tag) == "situationrecord"]
-    log("DATEX: %d situationRecordů" % len(zaznamy))
-    if zaznamy:
-        log("  UKÁZKA: " + ET.tostring(zaznamy[0], encoding="unicode")[:1200])
-    out, nehody, mimo, bez, jine = [], [], 0, 0, {}
-    for z in zaznamy:
-        popis, kat, surovy = ndic_typ(z)
-        if not popis:
-            jine[surovy] = jine.get(surovy, 0) + 1
+
+    out, nehody = [], []
+    videno = {}          # id situace -> nejlepší záznam (nejdelší popis)
+    poc = {"rec": 0, "mimo_text": 0, "mimo_sour": 0, "bez": 0, "stare": 0, "jine": {}}
+    for sit in koren.iter():
+        if lok(sit.tag) != "situation":
             continue
-        lat, lon = ndic_souradnice(z)
-        if lat is None or lon is None:
-            bez += 1
-            continue
-        if not (BBOX[0] <= lat <= BBOX[1] and BBOX[2] <= lon <= BBOX[3]):
-            mimo += 1
-            continue
-        mc, mc2 = mc_podle_bodu(lat, lon, body)
-        if not mc:
-            mimo += 1
-            continue
-        od, do = ndic_datum(z)
-        if do and do < DNES.isoformat():
-            continue
-        txt = ndic_text(z)
-        # ulice pojmenujeme stejně jako u aktualit MČ, ať karty vypadají jednotně
-        ul = [u["n"] for u in ulice_v_textu(" ".join(ndic_jmeno(z)) + " " + txt, ulice)[:3]]
-        zaznam = {
-            "n": popis,
-            "mc": mc,
-            "ul": ul or ndic_jmeno(z)[:2],
-            "lat": round(lat, 6),
-            "lon": round(lon, 6),
-            "od": od,
-            "do": do,
-            "p": txt[:300],
-            "u": NDIC_WEB,
-            "z": "ndic",
-        }
-        if mc2:
-            zaznam["mc2"] = mc2
-        (nehody if kat == "nehoda" else out).append(zaznam)
-    log("DATEX: %d prací a uzavírek, %d nehod, %d mimo území, %d bez souřadnic, jiné druhy: %s"
-        % (len(out), len(nehody), mimo, bez, sorted(jine.items(), key=lambda x: -x[1])[:12]))
+        sid = sit.attrib.get("id") or sit.attrib.get("{http://datex2.eu/schema/2/2_0}id")
+        for z in sit.iter():
+            if lok(z.tag) != "situationrecord":
+                continue
+            poc["rec"] += 1
+            popis, kat, surovy = ndic_typ(z)
+            if not popis:
+                poc["jine"][surovy] = poc["jine"].get(surovy, 0) + 1
+                continue
+            od, do = ndic_datum(z)
+            if do and do < DNES.isoformat():
+                poc["stare"] += 1
+                continue
+            txt = ndic_text(z)
+            # Část určuje text (spolehlivé „Praha 9/14“). Souřadnice samy neberem:
+            # geometrie dlouhých silnic a objížděk sahá přes hranici a tahala by
+            # sem Prahu 3, 8, Dubeč i stejnojmenné obce odjinud z ČR.
+            mc = mc_z_textu(txt)
+            if mc is None:
+                poc["mimo_text"] += 1
+                continue
+            lat, lon = ndic_souradnice(z)
+            ul = [u["n"] for u in ulice_v_textu(" ".join(ndic_jmeno(z)) + " " + txt, ulice)[:3]]
+            zaznam = {
+                "n": popis, "mc": mc, "ul": ul or ndic_jmeno(z)[:2],
+                "lat": round(lat, 6) if lat is not None else None,
+                "lon": round(lon, 6) if lon is not None else None,
+                "od": od, "do": do, "p": txt[:300], "u": NDIC_WEB, "z": "ndic",
+                "kat": kat,
+            }
+            # jedna událost (situace) má často víc záznamů (omezení + práce);
+            # necháme ten s nejbohatším popisem, ať karta není dvakrát
+            klic = sid or id(z)
+            stav = videno.get(klic)
+            if stav is None or len(txt) > stav["_len"]:
+                zaznam["_len"] = len(txt)
+                videno[klic] = zaznam
+    for z in videno.values():
+        kat = z.pop("kat")
+        z.pop("_len", None)
+        (nehody if kat == "nehoda" else out).append(z)
+    log("DATEX: %d situačních záznamů -> %d prací/uzavírek + %d nehod pro P9/14; "
+        "zahozeno: %d jiná část, %d mimo souřadnice, %d bez souřadnic, %d prošlé"
+        % (poc["rec"], len(out), len(nehody), poc["mimo_text"], poc["mimo_sour"],
+           poc["bez"], poc["stare"]))
+    if poc["jine"]:
+        log("  jiné druhy událostí: %s" % sorted(poc["jine"].items(), key=lambda x: -x[1])[:12])
     return out, nehody
 
 
@@ -665,8 +682,8 @@ def main():
     # nehody tahá zvlášť scripts/build_nehody.py každou půlhodinu do nehody.json
     z_ndic = []
     try:
-        z_ndic, _ = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_USER"),
-                          os.environ.get("NDIC_PASS"), ulice, nacti_body())
+        z_ndic, _ = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_TOKEN"),
+                          ulice)
         vysledek["ndic"] = bool(os.environ.get("NDIC_URL"))
     except Exception as e:
         chyby += 1
