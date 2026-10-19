@@ -72,7 +72,7 @@ def kontakt_z_webu(w):
     (ať nechytneme hosting/webmastera) a první rozumné české číslo."""
     host = (w or "").split("/")[0]
     dom = _domena(host)
-    maily, tely, nacteno = [], [], False
+    maily, tel_odkazy, tel_text, nacteno = [], [], [], False
     for scheme in ("https://", "http://"):
         for cesta in KONTAKT_CESTY:
             try:
@@ -84,41 +84,52 @@ def kontakt_z_webu(w):
             nacteno = True
             maily += [m.lower() for m in re.findall(r"mailto:([^\"'?>\s]+)", html, re.I)]
             maily += [m.lower() for m in EMAIL_RE.findall(html)]
-            tely += re.findall(r"tel:\+?([0-9\s ]{6,})", html)
-            tely += TEL_RE.findall(html)
-            # hledáme dál, dokud nemáme telefon i e-mail na vlastní doméně
+            tel_odkazy += re.findall(r"tel:\+?([0-9\s ]{6,})", html)   # strukturované = jisté
+            tel_text += TEL_RE.findall(html)                                # z textu = méně jisté
             has_mail = any(m.split("@")[-1].endswith(dom) for m in maily)
-            if tely and has_mail:
+            if tel_odkazy and has_mail:
                 break
         if nacteno:
             break   # když první scheme načetl stránky, nestřídej na http
     mail = next((m for m in maily if m.split("@")[-1].endswith(dom)), "")
-    tel = ""
-    for t in tely:
-        tel = _norm_tel(t)
-        if tel:
-            break
-    return tel, mail
+    tel_odkaz = next((t for t in map(_norm_tel, tel_odkazy) if t), "")
+    tel_volny = next((t for t in map(_norm_tel, tel_text) if t), "")
+    return tel_odkaz, tel_volny, mail
 
 
 def doplnit_kontakty(out):
-    """Chybějící telefon/e-mail doplní z webu ordinace (registr je často nemá)."""
-    weby = sorted({r["w"] for r in out if r.get("w") and (not r.get("tel") or not r.get("e"))})
+    """Doplní (a u cizích/osobních i opraví) telefon a e-mail z webu ordinace.
+
+    Registr NRPZS kontakty často nemá, nebo má osobní/staré (např. mail na
+    icloud.com místo ordinačního). Web ordinace je pro veřejný kontakt
+    autoritativnější: e-mail na vlastní doméně a telefon z odkazu `tel:` proto
+    přepíšou i vyplněný registrový údaj, pokud je ten zjevně cizí.
+    """
+    weby = sorted({r["w"] for r in out if r.get("w")})
     if not weby:
         return
-    log("doplňuji kontakty z %d webů…" % len(weby))
+    log("ověřuji kontakty z %d webů…" % len(weby))
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
         kont = dict(zip(weby, ex.map(kontakt_z_webu, weby)))
     pt = pe = 0
     for r in out:
-        tel, mail = kont.get(r.get("w"), ("", ""))
-        if not r.get("tel") and tel:
-            r["tel"] = tel
-            pt += 1
-        if not r.get("e") and mail:
+        if not r.get("w"):
+            continue
+        tel_odkaz, tel_volny, mail = kont.get(r["w"], ("", "", ""))
+        dom = _domena(r["w"].split("/")[0])
+        # e-mail: doplnit chybějící, nebo přepsat registrový z CIZÍ domény
+        reg_cizi = r.get("e") and not r["e"].lower().split("@")[-1].endswith(dom)
+        if mail and (not r.get("e") or reg_cizi):
             r["e"] = mail
             pe += 1
-    log("z webů doplněno: %d telefonů, %d e-mailů" % (pt, pe))
+        # telefon: tel: odkaz přepíše registr; volné číslo jen doplní chybějící
+        if tel_odkaz and _norm_tel(r.get("tel", "")) != tel_odkaz:
+            r["tel"] = tel_odkaz
+            pt += 1
+        elif tel_volny and not r.get("tel"):
+            r["tel"] = tel_volny
+            pt += 1
+    log("z webů doplněno/opraveno: %d telefonů, %d e-mailů" % (pt, pe))
 
 
 def web_zije(w):
