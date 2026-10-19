@@ -7,7 +7,7 @@ Cloudflare edge (kam padá GitHub Actions) končí na HTTP 522. Proto Worker sta
 ```
 GitHub Actions ──Bearer token──▶ Worker ──čte──▶ R2 (latest.xml)
                                    ▲
-                      cron 30 min / /refresh
+                      cron 10 min / /refresh
                                    │
                                 stáhne ŘSD (Basic auth)
 ```
@@ -21,7 +21,7 @@ GitHub Actions ──Bearer token──▶ Worker ──čte──▶ R2 (latest
 4. **Worker → Settings → Bindings → Add → R2 bucket**:
    - Variable name: `NDIC_BUCKET`
    - Bucket: `ndic-data`
-5. **Worker → Settings → Triggers → Cron Triggers → Add**: `*/30 * * * *`
+5. **Worker → Settings → Triggers → Cron Triggers → Add**: `*/10 * * * *`
 6. **Worker → Settings → Variables (Secret/Encrypt)**: `NDIC_USER`, `NDIC_PASS`,
    `PROXY_TOKEN` (pokud tam z dřívějška nejsou).
 

@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "odpad", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
+  var state = { address: null, query: "", tab: "doprava", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
     dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkQ: "" };
 
   var TYPES = [
@@ -618,7 +618,7 @@
       return (p.d || 0) - (q.d || 0);
     });
   }
-  // nehody mají vlastní soubor, obnovovaný každou půlhodinu
+  // nehody mají vlastní soubor, obnovovaný každých 10 minut
   function nehodyPro(a) {
     if (!data.nehody || !data.nehody.ndic || !a) return [];
     var d = den0().toISOString().slice(0, 10);
@@ -696,7 +696,7 @@
       h += '<div class="label">Uzavírky a práce v Praze ' + esc(a.mc) + "</div>";
       h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
         '</span><div class="grow"><div class="t1" style="color:#6b6557">V Praze ' + esc(a.mc) + " teď nic neevidujeme</div>" +
-        '<div class="note" style="margin-top:2px">' + hlidame() + ' Krátkodobé havárie se sem nemusí dostat.</div>' +
+        '<div class="note" style="margin-top:2px">' + hlidame() + ' Úplně čerstvé události se sem můžou dostat s malým zpožděním.</div>' +
         genNote() + "</div></div>";
     } else {
       h += '<div class="lblrow"><div class="label">Uzavírky a práce v Praze ' + esc(a.mc) +
@@ -719,7 +719,7 @@
     var neh = nehodyPro(a);
     if (neh.length) {
       h += '<div class="label">Nehody a mimořádné události</div>';
-      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každou půlhodinu, ' +
+      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každých 10 minut, ' +
         nehCas() + " — nehoda už přesto může být odklizená.</div>";
       h += '<div class="list">' + neh.map(function (r) {
         var x = r.x;
@@ -783,9 +783,9 @@
   }
   function mimoDosah() {
     return '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
-      '</span><div class="grow"><div class="t1" style="color:#6b6557">Co sem nedosáhneme</div>' +
-      '<div class="note" style="margin-top:2px">Havárie, nehody a krátkodobé zásahy se do našich zdrojů dostanou se zpožděním nebo vůbec. Při cestě se radši podívejte do mapy.</div>' +
-      '<div class="links"><a class="link" href="https://www.dopravniinfo.cz/" target="_blank" rel="noopener">Dopravní info ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+      '</span><div class="grow"><div class="t1" style="color:#6b6557">Ještě než vyrazíte</div>' +
+      '<div class="note" style="margin-top:2px">Oficiální evidenci ŘSD i aktuality městských částí kontrolujeme průběžně, ale ne v reálném čase — úplně čerstvá nehoda nebo krátká uzavírka se sem může dostat s odstupem. Aktuální stav ukáže živá mapa.</div>' +
+      '<div class="links"><a class="link" href="https://www.dopravniinfo.cz/" target="_blank" rel="noopener">Živá dopravní mapa ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
   }
   function cisteniPruh(a) {
     var c = cisteniPro(a);
@@ -960,7 +960,7 @@
     var dq = document.getElementById("dkq");
     if (dq) dq.addEventListener("input", function () { state.dkQ = dq.value; document.getElementById("dklist").innerHTML = dkListHtml(); app.querySelectorAll("#dklist [data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); }); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "odpad"; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "doprava"; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
@@ -971,6 +971,7 @@
     if (!a) return;
     state.address = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14", street: a[0], cp: a[1], co: a[2] || "", part: a[6] || "" };
     save(state.address);
+    state.tab = "doprava";   // po zadání adresy ukázat nejdřív dopravu (první záložka)
     render();
     window.scrollTo(0, 0);
   }

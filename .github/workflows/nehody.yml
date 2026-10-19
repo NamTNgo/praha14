@@ -2,7 +2,7 @@ name: Nehody (NDIC)
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # nehody stárnou rychle, proto každou půlhodinu
+    - cron: "*/10 * * * *"   # nehody stárnou rychle, proto každých 10 minut
   workflow_dispatch: {}
 
 permissions:
