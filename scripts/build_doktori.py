@@ -9,12 +9,16 @@ NRPZS má u pražských záznamů jen správní obvod (Praha 9 = i Kbely, Letňa
 adresy z RÚIAN (docs/data/addresses.json) – stejně jako u dopravních uzavírek.
 Co se nespáruje, do naší oblasti nepatří a vypadne.
 """
+import concurrent.futures
 import csv
 import io
 import json
 import re
+import socket
 import sys
 import unicodedata
+import urllib.error
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
@@ -22,11 +26,66 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "docs" / "data"
 URL = "https://datanzis.uzis.gov.cz/data/NR-01-NRPZS/NR-01-06/Otevrena-data-NR-01-06-nrpzs-mista-poskytovani-zdravotnich-sluzeb.csv"
 UA = "Mozilla/5.0 (compatible; praha14-bot; +https://github.com/NamTNgo/praha14)"
+# na ověřování webů bereme běžný prohlížečový UA – weby lékařů občas „bota“ blokují
+BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 LOG = []
 
 
 def log(*a):
     LOG.append(" ".join(str(x) for x in a))
+
+
+def _domena(h):
+    """Registrovatelná doména (poslední dvě části), bez www."""
+    h = (h or "").lower().strip()
+    if h.startswith("www."):
+        h = h[4:]
+    casti = [x for x in h.split(".") if x]
+    return ".".join(casti[-2:]) if len(casti) >= 2 else h
+
+
+def web_zije(w):
+    """True = web žije na své doméně. False = mrtvý nebo přesměrovaný jinam.
+
+    Prošlé/prodané domény (etoile.cz -> zonky.cz) se poznají podle přesměrování
+    na cizí doménu; mrtvé podle chyby. Pomalý web ani bot-blokaci nezahazujeme.
+    """
+    host = (w or "").split("/")[0]
+    cil = _domena(host)
+    if not cil or "." not in cil:
+        return False
+    for scheme in ("https://", "http://"):
+        try:
+            req = urllib.request.Request(scheme + w, headers={"User-Agent": BROWSER_UA})
+            with urllib.request.urlopen(req, timeout=12) as r:
+                fin = urllib.parse.urlparse(r.geturl()).hostname or ""
+                return _domena(fin) == cil
+        except urllib.error.HTTPError as e:
+            # 404/410/5xx = nefunkční; 401/403/429 = blokace bota, web ale žije
+            return not (e.code in (404, 410) or 500 <= e.code < 600)
+        except (socket.timeout, TimeoutError):
+            return True
+        except Exception:
+            continue   # zkus http; když i to spadne, bereme jako mrtvý
+    return False
+
+
+def proper_weby(out):
+    """U každého lékaře ověří web a mrtvé/přesměrované odkazy zahodí."""
+    weby = sorted({r["w"] for r in out if r.get("w")})
+    if not weby:
+        return
+    log("ověřuji %d webů…" % len(weby))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as ex:
+        stav = dict(zip(weby, ex.map(web_zije, weby)))
+    mrtve = [w for w in weby if not stav.get(w)]
+    for r in out:
+        if r.get("w") and not stav.get(r["w"], True):
+            r["w"] = ""
+    log("webů vyřazeno (mrtvé/přesměrované): %d z %d" % (len(mrtve), len(weby)))
+    if mrtve:
+        log("  např.: " + ", ".join(mrtve[:12]))
 
 
 def plain(s):
@@ -143,6 +202,8 @@ def main():
         r["on"] = r["obory"][0] if r["obory"] else ""
         out.append(r)
     out.sort(key=lambda r: (PRIORITA.index(r["o"]), plain(r["n"])))
+
+    proper_weby(out)
 
     (DATA / "doktori.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
