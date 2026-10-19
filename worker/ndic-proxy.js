@@ -20,7 +20,9 @@ async function refresh(env) {
     },
   });
   if (!r.ok) throw new Error("upstream " + r.status);
-  await env.NDIC_BUCKET.put(KEY, r.body, {
+  // R2.put chce známou délku; stream z fetche ji nemá, proto napřed do paměti
+  const buf = await r.arrayBuffer();
+  await env.NDIC_BUCKET.put(KEY, buf, {
     httpMetadata: { contentType: "application/xml; charset=utf-8" },
   });
 }
