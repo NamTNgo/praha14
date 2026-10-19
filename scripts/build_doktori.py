@@ -45,6 +45,79 @@ def _domena(h):
     return ".".join(casti[-2:]) if len(casti) >= 2 else h
 
 
+EMAIL_RE = re.compile(r"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}", re.I)
+TEL_RE = re.compile(r"(?:\+?420[\s ]?)?(\d{3}[\s ]?\d{3}[\s ]?\d{3})")
+KONTAKT_CESTY = ("", "/kontakt", "/kontakt/", "/kontakty/", "/contact/", "/o-nas/")
+
+
+def _stahni_text(url):
+    req = urllib.request.Request(url, headers={"User-Agent": BROWSER_UA})
+    with urllib.request.urlopen(req, timeout=12) as r:
+        if not (r.headers.get_content_type() or "").startswith("text"):
+            return ""
+        return r.read(700000).decode("utf-8", "replace")
+
+
+def _norm_tel(s):
+    d = re.sub(r"\D", "", s or "")
+    if len(d) == 12 and d.startswith("420"):
+        d = d[3:]
+    if len(d) != 9:
+        return ""
+    return d[:3] + " " + d[3:6] + " " + d[6:]
+
+
+def kontakt_z_webu(w):
+    """Z webu ordinace vytáhne telefon a e-mail. Bere jen e-mail na vlastní doméně
+    (ať nechytneme hosting/webmastera) a první rozumné české číslo."""
+    host = (w or "").split("/")[0]
+    dom = _domena(host)
+    maily, tely = [], []
+    for scheme in ("https://", "http://"):
+        for cesta in KONTAKT_CESTY:
+            try:
+                html = _stahni_text(scheme + host + cesta)
+            except Exception:
+                continue
+            if not html:
+                continue
+            maily += [m.lower() for m in re.findall(r"mailto:([^\"'?>\s]+)", html, re.I)]
+            maily += [m.lower() for m in EMAIL_RE.findall(html)]
+            tely += re.findall(r"tel:\+?([0-9\s ]{6,})", html)
+            tely += TEL_RE.findall(html)
+            if maily or tely:
+                break
+        if maily or tely:
+            break
+    mail = next((m for m in maily if m.split("@")[-1].endswith(dom)), "")
+    tel = ""
+    for t in tely:
+        tel = _norm_tel(t)
+        if tel:
+            break
+    return tel, mail
+
+
+def doplnit_kontakty(out):
+    """Chybějící telefon/e-mail doplní z webu ordinace (registr je často nemá)."""
+    weby = sorted({r["w"] for r in out if r.get("w") and (not r.get("tel") or not r.get("e"))})
+    if not weby:
+        return
+    log("doplňuji kontakty z %d webů…" % len(weby))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
+        kont = dict(zip(weby, ex.map(kontakt_z_webu, weby)))
+    pt = pe = 0
+    for r in out:
+        tel, mail = kont.get(r.get("w"), ("", ""))
+        if not r.get("tel") and tel:
+            r["tel"] = tel
+            pt += 1
+        if not r.get("e") and mail:
+            r["e"] = mail
+            pe += 1
+    log("z webů doplněno: %d telefonů, %d e-mailů" % (pt, pe))
+
+
 def web_zije(w):
     """True = web žije na své doméně. False = mrtvý nebo přesměrovaný jinam.
 
@@ -222,6 +295,7 @@ def main():
     out.sort(key=lambda r: (PRIORITA.index(r["o"]), plain(r["n"])))
 
     proper_weby(out)
+    doplnit_kontakty(out)
 
     (DATA / "doktori.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
