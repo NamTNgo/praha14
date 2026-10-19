@@ -71,21 +71,39 @@ def web_zije(w):
     return False
 
 
+def nacti_blocklist():
+    """Ruční seznam domén, které se nikdy nemají ukazovat jako web lékaře.
+
+    Pro případy, co automatika nechytí – hlavně geo/JS přesměrování prošlých
+    domén (etoile.cz -> zonky.cz jen z české IP). Stačí doplnit doménu.
+    """
+    p = Path(__file__).resolve().parent / "doktori_web_blocklist.json"
+    try:
+        return {_domena(x) for x in json.loads(p.read_text(encoding="utf-8"))}
+    except Exception:
+        return set()
+
+
 def proper_weby(out):
-    """U každého lékaře ověří web a mrtvé/přesměrované odkazy zahodí."""
+    """U každého lékaře ověří web a mrtvé/přesměrované/blokované odkazy zahodí."""
+    block = nacti_blocklist()
     weby = sorted({r["w"] for r in out if r.get("w")})
     if not weby:
         return
-    log("ověřuji %d webů…" % len(weby))
+    # blocklist řešíme hned (bez sítě); zbytek ověříme živě
+    k_overeni = [w for w in weby if _domena(w.split("/")[0]) not in block]
+    log("ověřuji %d webů (blocklist: %d)…" % (len(k_overeni), len(weby) - len(k_overeni)))
     with concurrent.futures.ThreadPoolExecutor(max_workers=12) as ex:
-        stav = dict(zip(weby, ex.map(web_zije, weby)))
-    mrtve = [w for w in weby if not stav.get(w)]
+        stav = dict(zip(k_overeni, ex.map(web_zije, k_overeni)))
+    def ok(w):
+        return _domena(w.split("/")[0]) not in block and stav.get(w, True)
+    mrtve = [w for w in weby if not ok(w)]
     for r in out:
-        if r.get("w") and not stav.get(r["w"], True):
+        if r.get("w") and not ok(r["w"]):
             r["w"] = ""
-    log("webů vyřazeno (mrtvé/přesměrované): %d z %d" % (len(mrtve), len(weby)))
+    log("webů vyřazeno (mrtvé/přesměrované/blocklist): %d z %d" % (len(mrtve), len(weby)))
     if mrtve:
-        log("  např.: " + ", ".join(mrtve[:12]))
+        log("  " + ", ".join(mrtve[:15]))
 
 
 def plain(s):
