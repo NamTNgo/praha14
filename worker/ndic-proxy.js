@@ -20,22 +20,28 @@ export default {
     if (request.headers.get("Authorization") !== "Bearer " + env.PROXY_TOKEN) {
       return new Response("Forbidden\n", { status: 403 });
     }
-    let upstream;
     try {
-      upstream = await fetch(UPSTREAM, {
+      const upstream = await fetch(UPSTREAM, {
         headers: {
           Authorization: "Basic " + btoa(env.NDIC_USER + ":" + env.NDIC_PASS),
           Accept: "application/xml, text/xml, */*",
           "Accept-Encoding": "gzip",
         },
       });
+      if (!upstream.ok) {
+        // 401 apod. předáme dál, ať workflow pozná špatné přihlášení
+        return new Response("Upstream " + upstream.status + "\n", { status: upstream.status });
+      }
+      // Celé tělo stáhneme do paměti (~45 MB, limit Workeru je 128 MB) a teprve
+      // pak ho vrátíme. Streamování po částech přes vzdálenou edge padalo uprostřed
+      // na 522; takhle se případný pád stane čistou chybou, kterou workflow zopakuje.
+      const buf = await upstream.arrayBuffer();
+      return new Response(buf, {
+        status: 200,
+        headers: { "Content-Type": "application/xml; charset=utf-8" },
+      });
     } catch (e) {
       return new Response("Upstream error: " + e + "\n", { status: 502 });
     }
-    // tělo streamujeme beze změny; stavový kód ŘSD předáme dál, ať workflow pozná 401
-    return new Response(upstream.body, {
-      status: upstream.status,
-      headers: { "Content-Type": "application/xml; charset=utf-8" },
-    });
   },
 };
