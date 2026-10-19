@@ -167,5 +167,4 @@ Pod Krocínkou proti č. 55
 VOK článek: https://www.praha9.cz/harmonogram-pristavovani-kontejneru-na-velkoobjemovy-odpad-zari-prosinec-2026-informace-k-lednu-a
 BIO článek: https://www.praha9.cz/harmonogram-pristavovani-velkoobjemovych-kontejneru-na-bioodpad-podzim-2026
 vok: 85 stanovišť, 83 geokódováno, 2 bez souřadnic
-bio: 0 stanovišť, 0 geokódováno, 0 bez souřadnic
-BIO: ponechána předchozí data (14 míst)
+bio: 18 stanovišť, 17 geokódováno, 1 bez souřadnic
