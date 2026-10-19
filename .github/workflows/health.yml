@@ -41,4 +41,5 @@ jobs:
         if: hashFiles('watch/health_issue.md') != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh issue create --title "Hlídač dat: problém ($(date +%F\ %H:%M))" --body-file watch/health_issue.md
+        run: |
+          gh issue create --title "Hlidac dat: problem $(date +%F)" --body-file watch/health_issue.md
