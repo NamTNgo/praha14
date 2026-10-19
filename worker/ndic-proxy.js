@@ -31,10 +31,15 @@ export default {
     if (request.headers.get("Authorization") !== "Bearer " + env.PROXY_TOKEN) {
       return new Response("Forbidden\n", { status: 403 });
     }
-    // ruční naplnění: /refresh stáhne ŘSD na pozadí (z edge, odkud se volá)
+    // ruční naplnění: /refresh stáhne ŘSD rovnou a nahlásí výsledek (volá se z Prahy)
     if (new URL(request.url).pathname === "/refresh") {
-      ctx.waitUntil(refresh(env).catch(() => {}));
-      return new Response("refreshing\n", { status: 202 });
+      if (!env.NDIC_BUCKET) return new Response("chybí binding NDIC_BUCKET\n", { status: 500 });
+      try {
+        await refresh(env);
+        return new Response("ok\n");
+      } catch (e) {
+        return new Response("refresh error: " + e + "\n", { status: 500 });
+      }
     }
     const obj = await env.NDIC_BUCKET.get(KEY);
     if (!obj) return new Response("No data yet\n", { status: 503 });
