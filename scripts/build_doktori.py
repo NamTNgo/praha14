@@ -186,8 +186,10 @@ def _casy(text):
 
 def _stitek(s):
     s = re.sub(r"\bhod(in)?\.?(?=\s|$)", " ", s or "", flags=re.I)
-    s = re.sub(r"\s+", " ", s).strip(" ,;:-–—|/()")
-    if not s or len(s) > 60 or not re.search(r"[A-Za-zÀ-ž]{3}", s):
+    s = re.sub(r"\s+", " ", s).strip(" ,;-–—|/()*")
+    # „Svátek:“ = nadpis pro další řádek; čísla v popisku = rozbité časy
+    if not s or s.endswith(":") or re.search(r"\d", s) or len(s) > 60 \
+            or not re.search(r"[A-Za-zÀ-ž]{3}", s):
         return ""
     return s[0].upper() + s[1:]
 
@@ -250,7 +252,10 @@ def hodiny_z_textu(radky):
             continue
         text = " ".join(bunky)
         casy = _radky_casu(text)
-        if casy and posl_den is not None and mezera == 0:
+        # řádek vyjmenovávající víc dnů („Odběry: po, stř, pá 7:30–10:00“) už k dni nepatří
+        vic_dnu = len(re.findall(r"\b(po|ut|st|str|ct|pa|so|ne|pondeli|utery|streda|ctvrtek|patek)\b",
+                                 _bez_diakr(text))) >= 2
+        if casy and posl_den is not None and mezera == 0 and not vic_dnu:
             for x in posl_den:
                 blok[x] += [c for c in casy if c not in blok[x]]
             continue
