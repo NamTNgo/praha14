@@ -1,0 +1,44 @@
+name: Hlídač dat (NDIC + čerstvost)
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"   # á 3 hodiny
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: health
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Zkontrolovat zdraví dat
+        env:
+          NDIC_URL: ${{ secrets.NDIC_URL }}
+          NDIC_TOKEN: ${{ secrets.NDIC_TOKEN }}
+        run: python scripts/watch_health.py
+      - name: Uložit stav
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add watch/health.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Stav hlídače dat"
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push && break
+            sleep 5
+          done
+      - name: Založit Issue při problému
+        if: hashFiles('watch/health_issue.md') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh issue create --title "Hlídač dat: problém ($(date +%F\ %H:%M))" --body-file watch/health_issue.md
