@@ -299,18 +299,22 @@ NDIC_ZDROJ = "Zdrojem digitalizovaných informací o silničním provozu je NDIC
 NDIC_WEB = "https://www.dopravniinfo.cz/"
 # Širší okno kolem Prahy 9 a 14; přesnou městskou část pak určí nejbližší adresa.
 BBOX = (50.04, 50.18, 14.40, 14.67)
-# xsi:type situationRecordu -> co z toho ukážeme uživateli. Bereme uzavírky,
-# práce a omezení provozu; nehody, počasí a kolony do „uzavírek a prací“ nepatří.
+# xsi:type situationRecordu -> co z toho ukážeme uživateli a do které sekce to
+# patří. „prace“ jsou uzavírky a omezení, „nehoda“ jsou mimořádné události;
+# počasí a kolony neukazujeme vůbec.
 D_TYPY = [
-    ("constructionworks", "Stavební práce"),
-    ("maintenanceworks", "Údržbové práce"),
-    ("roadworks", "Práce na komunikaci"),
-    ("roadorcarriagewayorlanemanagement", "Omezení provozu"),
-    ("generalnetworkmanagement", "Dopravní opatření"),
-    ("winterdrivingmanagement", "Zimní opatření"),
-    ("roadsidework", "Práce u komunikace"),
-    ("generalobstruction", "Překážka na komunikaci"),
-    ("transitinformation", "Dopravní informace"),
+    ("constructionworks", "Stavební práce", "prace"),
+    ("maintenanceworks", "Údržbové práce", "prace"),
+    ("roadworks", "Práce na komunikaci", "prace"),
+    ("roadorcarriagewayorlanemanagement", "Omezení provozu", "prace"),
+    ("generalnetworkmanagement", "Dopravní opatření", "prace"),
+    ("winterdrivingmanagement", "Zimní opatření", "prace"),
+    ("roadsidework", "Práce u komunikace", "prace"),
+    ("generalobstruction", "Překážka na komunikaci", "prace"),
+    ("transitinformation", "Dopravní informace", "prace"),
+    ("accident", "Nehoda", "nehoda"),
+    ("vehicleobstruction", "Porucha vozidla", "nehoda"),
+    ("animalpresenceobstruction", "Zvíře na komunikaci", "nehoda"),
 ]
 
 
@@ -323,11 +327,11 @@ def ndic_typ(el):
     for k, v in el.attrib.items():
         if lok(k) == "type":
             t = v.rsplit(":", 1)[-1].lower()
-            for vzorek, popis in D_TYPY:
+            for vzorek, popis, kat in D_TYPY:
                 if vzorek in t:
-                    return popis, t
-            return None, t
-    return None, ""
+                    return popis, kat, t
+            return None, None, t
+    return None, None, ""
 
 
 def ndic_text(el):
@@ -418,10 +422,15 @@ def mc_podle_bodu(lat, lon, body, limit=1500, okoli=1200):
 
 
 def datex(url, user, pwd, ulice, body):
-    """Uzavírky a omezení z distribučního rozhraní NDIC, omezené na naše území."""
+    """Z rozhraní NDIC vrátí (práce a uzavírky, nehody) na našem území.
+
+    Nehody držíme zvlášť: data bereme jednou denně, takže zatímco uzavírka trvá
+    týdny, nehoda bývá v době zobrazení dávno odklizená. V aplikaci proto mají
+    vlastní sekci a čas poslední kontroly u sebe.
+    """
     if not (url and user and pwd):
         log("DATEX: chybí NDIC_URL/NDIC_USER/NDIC_PASS, přeskočeno")
-        return []
+        return [], []
     raw = fetch(url, binary=True, timeout=120, auth=(user, pwd),
                 accept="application/xml, text/xml, */*")
     log("DATEX: %d B po rozbalení, začátek: %s" % (len(raw), raw[:120]))
@@ -430,9 +439,9 @@ def datex(url, user, pwd, ulice, body):
     log("DATEX: %d situationRecordů" % len(zaznamy))
     if zaznamy:
         log("  UKÁZKA: " + ET.tostring(zaznamy[0], encoding="unicode")[:1200])
-    out, mimo, bez, jine = [], 0, 0, {}
+    out, nehody, mimo, bez, jine = [], [], 0, 0, {}
     for z in zaznamy:
-        popis, surovy = ndic_typ(z)
+        popis, kat, surovy = ndic_typ(z)
         if not popis:
             jine[surovy] = jine.get(surovy, 0) + 1
             continue
@@ -467,10 +476,10 @@ def datex(url, user, pwd, ulice, body):
         }
         if mc2:
             zaznam["mc2"] = mc2
-        out.append(zaznam)
-    log("DATEX: %d na našem území, %d mimo, %d bez souřadnic, jiné druhy: %s"
-        % (len(out), mimo, bez, sorted(jine.items(), key=lambda x: -x[1])[:12]))
-    return out
+        (nehody if kat == "nehoda" else out).append(zaznam)
+    log("DATEX: %d prací a uzavírek, %d nehod, %d mimo území, %d bez souřadnic, jiné druhy: %s"
+        % (len(out), len(nehody), mimo, bez, sorted(jine.items(), key=lambda x: -x[1])[:12]))
+    return out, nehody
 
 
 def slouc(ndic, mc_zpravy):
@@ -640,14 +649,18 @@ def main():
     chyby = 0
 
     # NDIC zvlášť: když rozhraní selže, uzavírky z aktualit MČ se stejně sestaví
-    z_ndic = []
+    z_ndic, nehody = [], []
     try:
-        z_ndic = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_USER"),
-                       os.environ.get("NDIC_PASS"), ulice, nacti_body())
+        z_ndic, nehody = datex(os.environ.get("NDIC_URL"), os.environ.get("NDIC_USER"),
+                               os.environ.get("NDIC_PASS"), ulice, nacti_body())
+        vysledek["ndic"] = bool(os.environ.get("NDIC_URL"))
     except Exception as e:
         chyby += 1
         log("DATEX SELHALO: %s" % e)
-    vysledek["ndic"] = bool(z_ndic)
+        # stará nehoda je horší než žádná: po výpadku sekci radši schováme
+        vysledek["ndic"] = False
+        nehody = []
+    vysledek["nehody"] = nehody
 
     for klic, fn in (("cisteni", lambda: cisteni(ulice)),
                      ("uzavirky", lambda: slouc(z_ndic, aktuality(ulice, bool(z_ndic)))),

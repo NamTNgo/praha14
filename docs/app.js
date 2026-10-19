@@ -583,6 +583,9 @@
   var I_BUS2 = '<path d="M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/>' +
     '<circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/><path d="M6 21h2M16 21h2"/>';
   var I_OK = '<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.6 2.6L16 9.5"/>';
+  var I_CRASH = '<path d="M3 16.5V13a1 1 0 0 1 .2-.6l1.9-2.6a1 1 0 0 1 .8-.4h5.4a1 1 0 0 1 .7.3l2.6 2.5"/>' +
+    '<path d="M3.2 12.8h10.9"/><circle cx="6.2" cy="16.6" r="1.6"/><circle cx="12.4" cy="16.6" r="1.6"/>' +
+    '<path d="m17.6 11.3 1.5-1.6-2.4-.5 1.6-1.8-2.5-.2"/><path d="m18.4 15.2 2.2.3-1.3 1.7 2.3.6"/>';
 
   function den0() { var d = new Date(); d.setHours(0, 0, 0, 0); return d; }
   function dnu(iso) { return Math.round((new Date(iso + "T00:00:00") - den0()) / 86400000); }
@@ -622,6 +625,18 @@
       if ((p.d == null) !== (q.d == null)) return p.d == null ? 1 : -1;
       return (p.d || 0) - (q.d || 0);
     });
+  }
+  // nehody bereme jednou denně; co je starší než dva dny, je skoro jistě odklizené
+  function nehodyPro(a) {
+    if (!data.doprava || !data.doprava.ndic || !a) return [];
+    var d = den0().toISOString().slice(0, 10);
+    return (data.doprava.nehody || []).filter(function (x) {
+      if (x.mc !== a.mc && x.mc2 !== a.mc) return false;
+      if (x.do && x.do < d) return false;
+      return !(!x.do && x.od && dnu(x.od) < -2);
+    }).map(function (x) {
+      return { x: x, d: x.lat == null ? null : dist(a.lat, a.lon, x.lat, x.lon) };
+    }).sort(function (p, q) { return (p.d == null ? 1e9 : p.d) - (q.d == null ? 1e9 : q.d); }).slice(0, 3);
   }
   function pidPro(a) {
     if (!data.doprava || !a) return { v: [], z: 0 };
@@ -672,12 +687,13 @@
         '</span><div class="grow"><div class="t1">Dopravní omezení se připravují</div>' +
         '<div class="note" style="margin-top:2px">Data se právě doplňují. Zkuste to prosím později.</div></div></div>';
     }
-    if (!c && !uz.length && !pi.v.length) {
+    if (!c && !uz.length && !pi.v.length && !nehodyPro(a).length) {
       h += '<div class="card row top" style="background:#f4f8f3;border-color:#dfe8dd"><span class="badge" style="background:#e9f0e9">' +
         SVG(I_OK, 19, "#1f4d36", 2.2) + '</span><div class="grow"><div class="t1">Teď se vás nic netýká</div>' +
         '<div class="note" style="margin-top:3px">V okolí vaší adresy neevidujeme žádné omezení.</div><div class="sled">' +
         sledr(I_SWEEP, "<b>Blokové čištění</b> v " + esc(sklon(a.street || "")) + " — nejbližší týdny nic") +
         sledr(I_CONE, "<b>Uzavírky a práce</b> v Praze " + esc(a.mc) + " — nic") +
+        (data.doprava.ndic ? sledr(I_CRASH, "<b>Nehody</b> v Praze " + esc(a.mc) + " — nic") : "") +
         sledr(I_BUS2, "<b>Výluky PID</b> na " + pi.z + " zastávkách do 1 km — nic") +
         "</div>" + genNote() + "</div></div>";
       h += mimoDosah();
@@ -707,6 +723,20 @@
       if (uz.length > DOP_N) h += '<button type="button" class="spadvic" id="dopvic">' +
         (state.dopVse ? "Zobrazit méně" : "Zobrazit všech " + uz.length + " " + sklonCount(uz.length)) +
         SVG(state.dopVse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
+    }
+    var neh = nehodyPro(a);
+    if (neh.length) {
+      h += '<div class="label">Nehody a mimořádné události</div>';
+      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci stahujeme jednou denně, ' +
+        genCas() + " — nehoda už může být odklizená.</div>";
+      h += '<div class="list">' + neh.map(function (r) {
+        var x = r.x;
+        return dkarta(I_CRASH, "#fdeedd", "#a2600f",
+          esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), null,
+          '<div class="t2">' + esc(x.n) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
+          (x.p ? '<div class="t3">' + esc(zkrat(x.p, 150)) + "</div>" : ""),
+          "Evidence dopravních informací (NDIC)", x.u, "Mapa dopravních informací");
+      }).join("") + "</div>";
     }
     h += '<div class="label">MHD v okolí</div>';
     if (!pi.v.length) {
@@ -744,6 +774,12 @@
       : "Hlídáme aktuality Prahy 9 a Prahy 14.";
   }
   function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#8a8572", 2.2) + "<div>" + text + "</div></div>"; }
+  function genCas() {
+    if (!data.doprava || !data.doprava.gen) return "naposledy dnes";
+    var d = new Date(data.doprava.gen), dn = Math.round((den0() - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+    return "naposledy " + (dn <= 0 ? "dnes" : dn === 1 ? "včera" : "před " + dn + " dny") +
+      " v " + d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2);
+  }
   function genNote() {
     if (!data.doprava || !data.doprava.gen) return "";
     var d = new Date(data.doprava.gen), dn = Math.round((den0() - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
