@@ -20,6 +20,9 @@ jobs:
       - name: Stáhnout dopravní omezení
         env:
           GOLEMIO_API_KEY: ${{ secrets.GOLEMIO_API_KEY }}
+          NDIC_URL: ${{ secrets.NDIC_URL }}
+          NDIC_USER: ${{ secrets.NDIC_USER }}
+          NDIC_PASS: ${{ secrets.NDIC_PASS }}
         run: python scripts/build_doprava.py
       - name: Uložit změny
         if: always()

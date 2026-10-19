@@ -572,7 +572,10 @@
   });
 
   // ---- doprava: blokové čištění, uzavírky a práce, výluky PID ----
-  var FOOT_DO = '<div class="foot">Zdroj dat: PID (Golemio) · praha9.cz · praha14.cz · TSK (rozpisy blokového čištění)</div>';
+  // Znění zdroje NDIC je dané podmínkami ŘSD, neměnit.
+  var NDIC_ZDROJ = "Zdrojem digitalizovaných informací o silničním provozu je NDIC";
+  var FOOT_DO = '<div class="foot">' + NDIC_ZDROJ +
+    ' · Zdroj dat: PID (Golemio) · praha9.cz · praha14.cz · TSK (rozpisy blokového čištění)</div>';
   var I_SWEEP = '<path d="M2.5 14V8a1 1 0 0 1 1-1h6.5a1 1 0 0 1 1 1v6"/>' +
     '<path d="M12.6 14v-3.4a1 1 0 0 1 .3-.7l1.2-1.2a1 1 0 0 1 .7-.3h1.9a1 1 0 0 1 .8.4l1.6 2.2a1 1 0 0 1 .2.6V14"/>' +
     '<circle cx="6" cy="16.3" r="1.6"/><path d="M13.2 16.1h8.3"/><path d="M15 16.1v2.4M17.4 16.1v2.4M19.8 16.1v2.4"/>';
@@ -612,7 +615,8 @@
       var dd = x.lat == null ? null : dist(a.lat, a.lon, x.lat, x.lon);
       return { x: x, d: dd };
     }).filter(function (r) {
-      return r.x.mc === a.mc;   // celá čtvrť, ne jen okruh
+      // celá čtvrť, ne jen okruh; mc2 má uzavírka na hranici obou městských částí
+      return r.x.mc === a.mc || r.x.mc2 === a.mc;
     }).sort(function (p, q) {
       if (probiha(p.x) !== probiha(q.x)) return probiha(p.x) ? -1 : 1;
       if ((p.d == null) !== (q.d == null)) return p.d == null ? 1 : -1;
@@ -684,7 +688,7 @@
       h += '<div class="label">Uzavírky a práce v Praze ' + esc(a.mc) + "</div>";
       h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
         '</span><div class="grow"><div class="t1" style="color:#6b6557">V Praze ' + esc(a.mc) + " teď nic neevidujeme</div>" +
-        '<div class="note" style="margin-top:2px">Hlídáme aktuality Prahy 9 a Prahy 14. Krátkodobé havárie se sem nemusí dostat.</div>' +
+        '<div class="note" style="margin-top:2px">' + hlidame() + ' Krátkodobé havárie se sem nemusí dostat.</div>' +
         genNote() + "</div></div>";
     } else {
       h += '<div class="lblrow"><div class="label">Uzavírky a práce v Praze ' + esc(a.mc) +
@@ -692,11 +696,13 @@
       var zob = state.dopVse ? uz : uz.slice(0, DOP_N);
       h += '<div class="list">' + zob.map(function (r) {
         var x = r.x, bg = probiha(x) ? "#f7dede" : "#efece2", fg = probiha(x) ? "#b03a3a" : "#6b6652";
+        var ndic = x.z === "ndic";
         return dkarta(I_CONE, bg, fg, esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), dtag(x),
           '<div class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
           (x.ul && x.ul.length ? '<div class="t3">' + esc(x.n) + "</div>" : "") +
           (popis(x) ? '<div class="t3">' + esc(zkrat(popis(x), 150)) + "</div>" : ""),
-          null, x.u, "Detail na praha" + x.mc + ".cz");
+          ndic ? "Evidence dopravních informací (NDIC)" : null, x.u,
+          ndic ? "Mapa dopravních informací" : "Detail na praha" + x.mc + ".cz");
       }).join("") + "</div>";
       if (uz.length > DOP_N) h += '<button type="button" class="spadvic" id="dopvic">' +
         (state.dopVse ? "Zobrazit méně" : "Zobrazit všech " + uz.length + " " + sklonCount(uz.length)) +
@@ -731,6 +737,12 @@
   function vyjmenuj(a) { return a.length < 2 ? a[0] : a.slice(0, -1).join(", ") + " a " + a[a.length - 1]; }
   var DOP_N = 3;
   function sklonCount(n) { return n === 1 ? "uzavírka" : (n >= 2 && n <= 4 ? "uzavírky" : "uzavírek"); }
+  // dokud NDIC nejede, nehlásíme ho jako sledovaný zdroj
+  function hlidame() {
+    return data.doprava && data.doprava.ndic
+      ? "Hlídáme celostátní evidenci dopravních informací a aktuality Prahy 9 a Prahy 14."
+      : "Hlídáme aktuality Prahy 9 a Prahy 14.";
+  }
   function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#8a8572", 2.2) + "<div>" + text + "</div></div>"; }
   function genNote() {
     if (!data.doprava || !data.doprava.gen) return "";
