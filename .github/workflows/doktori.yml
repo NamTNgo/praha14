@@ -16,6 +16,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Prohlížeč pro weby skládané skriptem (Wix, Webnode)
+        continue-on-error: true
+        run: |
+          pip install -q playwright
+          python -m playwright install --with-deps chromium
       - name: Stáhnout lékaře z NRPZS
         run: python scripts/build_doktori.py
       - name: Uložit změny

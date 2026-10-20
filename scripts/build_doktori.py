@@ -506,6 +506,21 @@ def _hodiny_ze_stranky(html):
     return hodiny_z_jsonld(html) or hodiny_z_textu(_html_na_radky(html or ""))
 
 
+# pobočky jinde (Barrandov, Karlovo nám., Ostrava-Bartovice…) – jejich hodiny k místu v Praze 9/14 nepatří
+_CIZI_MISTA = re.compile(r"(?:^|[/_.\-])(?:barrandov|karlov|bartovic|vinohrad|smichov|zizkov|dejvic|branik|modran|chodov|haje|stodulk|zlicin|"
+                         r"letnan|kbel|liben|karlin|nusle|krc(?![a-z])|pankrac|michle|strasnic|vrsovic|holesovic|bubenec|brevnov|"
+                         r"repy|petrin|budejovick|andel|florenc|radlic|mecholup|uhrinev|kladno|brno|ostrav|plzen|olomouc|"
+                         r"jilove|beroun|benesov|mlada-boleslav|liberec|pardubic|hradec|ceske-budejovic|jihlav|zlin)")
+_NASE_MISTA = re.compile(r"praha-?9|praha-?14|prosek|vysocan|hloubetin|cerny-?most|kyje|hostavic|lehovec|"
+                         r"bechovic|dolni-pocernic|horni-pocernic")
+
+
+def _cizi_pobocka(url):
+    """URL podstránky jmenuje jiné místo než Prahu 9/14 → hodiny jsou jiné pobočky."""
+    cesta = _bez_diakr(urllib.parse.unquote(urllib.parse.urlparse(url).path)).replace(" ", "-")
+    return bool(_CIZI_MISTA.search(cesta)) and not _NASE_MISTA.search(cesta)
+
+
 def hodiny_z_webu(w):
     host = (w or "").split("/")[0]
     base = None
@@ -534,6 +549,7 @@ def hodiny_z_webu(w):
     for c in ("/ordinacni-hodiny/", "/kontakt/", "/kontakt"):
         if base + c not in odkazy:
             odkazy.append(base + c)
+    odkazy = [u for u in odkazy if not _cizi_pobocka(u)]
     for url, html in kandidati:
         r = _hodiny_ze_stranky(html)
         if r:
@@ -577,6 +593,100 @@ def doplnit_hodiny(out):
     for w, h in sorted(hod.items()):
         if h:
             log("  ✓ %s  %s" % (w, " | ".join(d + " " + ", ".join(t) for d, t in h["r"]))[:200])
+
+
+def _vykresli_web(ctx, w):
+    """Web vykreslený v prohlížeči: {url: text} + odkazy tel:/mailto:. Pro weby, které
+    obsah skládají skriptem (Wix, Webnode, SPA) a obyčejné stažení HTML je prázdné."""
+    host = w.split("/")[0].split(":")[0]
+    p = ctx.new_page()
+    stranky, tel, mail = {}, [], []
+    try:
+        p.goto("https://" + w, wait_until="domcontentloaded", timeout=30000)
+        p.wait_for_timeout(2500)
+        start = p.url
+        if _domena(urllib.parse.urlparse(start).hostname or "") != _domena(host):
+            return {}, [], []   # přesměrováno na cizí web
+        stranky[start] = p.inner_text("body")
+        odkazy = p.eval_on_selector_all("a", "els => els.map(a => [a.href, (a.innerText||'') + ' ' + (a.getAttribute('href')||'')])")
+        vid = []
+        for href, t in odkazy:
+            u = (href or "").split("#")[0]
+            t = _bez_diakr(t)
+            if (u.startswith("http") and u != start and u not in vid and not _cizi_pobocka(u)
+                    and ("hodin" in t or "ordinac" in t or "kontakt" in t)
+                    and _domena(urllib.parse.urlparse(u).hostname or "") == _domena(host)):
+                vid.append(u)
+        vid.sort(key=lambda u: 0 if "hodin" in _bez_diakr(u) else 1)
+        for u in vid[:6]:
+            try:
+                p.goto(u, wait_until="domcontentloaded", timeout=25000)
+                p.wait_for_timeout(1500)
+                stranky[u] = p.inner_text("body")
+                odkazy += p.eval_on_selector_all("a", "els => els.map(a => [a.href, ''])")
+            except Exception:
+                pass
+        for href, _ in odkazy:
+            h = urllib.parse.unquote(href or "")
+            if h.lower().startswith("tel:"):
+                tel.append(h[4:])
+            elif h.lower().startswith("mailto:"):
+                mail.append(h[7:].split("?")[0].lower())
+    except Exception as e:
+        log("  ! prohlížeč %s: %s" % (w, str(e)[:80]))
+    finally:
+        p.close()
+    return stranky, tel, mail
+
+
+def doplnit_z_prohlizece(out):
+    """Co se z obyčejného HTML nepodařilo (hodiny, telefon, e-mail), zkusí z webu vykresleného
+    v Chromiu. Jen doplňuje prázdné údaje, nic nepřepisuje."""
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        log("prohlížeč (playwright) není k dispozici – přeskakuji vykreslené weby")
+        return
+    weby = sorted({r["w"] for r in out if r.get("w") and not (r.get("hod") and r.get("tel") and r.get("e"))})
+    log("vykresluji v prohlížeči %d webů s chybějícími údaji…" % len(weby))
+    vysl = {}
+    with sync_playwright() as pw:
+        b = pw.chromium.launch()
+        ctx = b.new_context(locale="cs-CZ", user_agent=BROWSER_UA, ignore_https_errors=True)
+        for w in weby:
+            vysl[w] = _vykresli_web(ctx, w)
+        b.close()
+    nh = nt = ne = 0
+    for r in out:
+        if r.get("w") not in vysl:
+            continue
+        stranky, tel, mail = vysl[r["w"]]
+        if not stranky:
+            continue
+        dom = _domena(r["w"].split("/")[0])
+        if not r.get("hod"):
+            for u, t in stranky.items():
+                radky = [[c.strip() for c in l.split("\t") if c.strip()] for l in t.split("\n")]
+                h = hodiny_z_textu([x for x in radky if x])
+                if h:
+                    r["hod"] = {"r": h, "u": u}
+                    nh += 1
+                    break
+        text = _odkryj_maily("\n".join(stranky.values()))
+        if not r.get("e"):
+            maily = mail + [m.lower() for m in EMAIL_RE.findall(text)]
+            m = next((m for m in maily if m.split("@")[-1].endswith(dom)), "") or \
+                next((m for m in maily if m.split("@")[-1] in FREEMAIL), "")
+            if m:
+                r["e"] = m
+                ne += 1
+        if not r.get("tel"):
+            t = next((t for t in map(_norm_tel, tel) if t and tel_platny(t)), "") or \
+                next((t for t in (_norm_tel(m.group(2) or m.group(3)) for m in TEL_KONTEXT.finditer(text)) if t and tel_platny(t)), "")
+            if t:
+                r["tel"] = t
+                nt += 1
+    log("z vykreslených webů doplněno: %d hodin, %d telefonů, %d e-mailů" % (nh, nt, ne))
 
 
 def _bezpecne(f, *a):
@@ -820,6 +930,7 @@ def main():
     rucni_prepisy(out, ("w",))   # opravené weby ať se procházejí už při hledání kontaktů a hodin
     doplnit_kontakty(out)
     doplnit_hodiny(out)
+    doplnit_z_prohlizece(out)
     sjednotit_telefony(out)
     rucni_prepisy(out)
 
