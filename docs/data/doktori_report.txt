@@ -1,13 +1,13 @@
 adresních klíčů z RÚIAN: 7530
 staženo 28400119 B
 ověřuji 139 webů (blocklist: 1)…
-webů vyřazeno (mrtvé/přesměrované/blocklist): 21 z 140
-  etoile.cz, eucpls.cz, gynekologie-harfa.cz, programhplus.cz, psychiatriepapezova-cz.webnode.cz, www.adamek.medikus.cz, www.cestrova.webnode.cz, www.freseniusmedicalcare.cz/cs, www.gynekolog.cz/Slapnickova, www.hela-cz.cz, www.naturdent-ortodoncie.cz, www.novodent.cz, www.orl-bludovsky.cz, www.ortopedickaordinace.cz, www.ortopedie-fyzioterapie.cz
+webů vyřazeno (mrtvé/přesměrované/blocklist): 23 z 140
+  etoile.cz, eucpls.cz, gynekologie-harfa.cz, programhplus.cz, psychiatriepapezova-cz.webnode.cz, www.adamek.medikus.cz, www.alafia-rhb.cz, www.bohnice.cz, www.cestrova.webnode.cz, www.freseniusmedicalcare.cz/cs, www.gynekolog.cz/Slapnickova, www.hela-cz.cz, www.naturdent-ortodoncie.cz, www.novodent.cz, www.orl-bludovsky.cz
 ručních přepisů kontaktů: 2
-ověřuji kontakty z 120 webů…
-z webů doplněno/opraveno: 61 telefonů, 33 e-mailů
-ordinační hodiny z webů: 80 lékařů (72 webů z 120)
-  bez hodin: detskylekar-jandova.cz, docsites.cgmlife.com/nushart, mojeambulance.cz, mudr-ivana-richterova-detska-neurologie.webnode.cz, mudrtrousilova.webnode.cz, ockovani-zahranici.cz, ocni-ziskalova.mypage.cz, pfcc.cz, pg2.cz, web.quick.cz/zubni, www.alergojarov.cz, www.androregena.cz, www.bbraun.cz, www.bohnice.cz, www.clpa-mediterra.cz, www.dajkova.cz, www.dcpaprsek.org, www.detskalekarka.org, www.drkraus.com, www.endokrinologiecernymost.cz, www.endokrinologieprosek.cz, www.familydentalcare.cz, www.genvia.cz, www.gyn-point.cz, www.gynekolog.cz/karhan, www.keltiamed.cz, www.kukura-suissa.cz, www.lamm.cz, www.lecbabolesti.cz, www.likvor.cz, www.magicsmile.cz, www.mediclinic.cz, www.natur-dent.cz, www.neuroaxon.cz, www.okrehabilitace.cz, www.olejar.cz, www.plastika-svitak.eu, www.podit.cz, www.poliklinikamodrany.cz, www.poliklinikaprosek.cz, www.rehafit.cz, www.remipa.cz, www.taudent.com, www.usni.cz, www.vidia-diagnostika.cz, www.zdenekpoledna.cz, www.zubar-rajskazahrada.cz, www.zubnilekar-praha9.cz
+ověřuji kontakty z 118 webů…
+z webů doplněno/opraveno: 56 telefonů, 33 e-mailů
+ordinační hodiny z webů: 78 lékařů (70 webů z 118)
+  bez hodin: detskylekar-jandova.cz, docsites.cgmlife.com/nushart, mojeambulance.cz, mudr-ivana-richterova-detska-neurologie.webnode.cz, mudrtrousilova.webnode.cz, ockovani-zahranici.cz, ocni-ziskalova.mypage.cz, pfcc.cz, pg2.cz, web.quick.cz/zubni, www.alergojarov.cz, www.androregena.cz, www.bbraun.cz, www.clpa-mediterra.cz, www.dajkova.cz, www.dcpaprsek.org, www.detskalekarka.org, www.drkraus.com, www.endokrinologiecernymost.cz, www.endokrinologieprosek.cz, www.familydentalcare.cz, www.genvia.cz, www.gyn-point.cz, www.gynekolog.cz/karhan, www.hrubesova.cz, www.keltiamed.cz, www.kukura-suissa.cz, www.lamm.cz, www.lecbabolesti.cz, www.likvor.cz, www.magicsmile.cz, www.mediclinic.cz, www.natur-dent.cz, www.neuroaxon.cz, www.okrehabilitace.cz, www.olejar.cz, www.plastika-svitak.eu, www.podit.cz, www.poliklinikamodrany.cz, www.poliklinikaprosek.cz, www.rehafit.cz, www.remipa.cz, www.taudent.com, www.usni.cz, www.vidia-diagnostika.cz, www.zdenekpoledna.cz, www.zubar-rajskazahrada.cz, www.zubnilekar-praha9.cz
   ✓ adriagyn.cz  Po 8:00 – 12:00, 12:30 – 16:00 | Út 7:00 – 12:00, 12:30 – 15:00 | St 8:00 – 12:00, 12:30 – 14:00 | Čt 9:00 – 13:00, 13:30 – 18:00 | Pá 8:00 – 12:00
   ✓ babyastramedico.cz  Po 7:00 – 9:00, 9:00 – 10:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 12:00 – 13:00, 13:45 – 15:00 · Objednaní - preventivní prohlídky, EKG, ECHO | Út 11:30 – 12:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 12:30 – 15:00 · Objednaní: neonatologická poradna a kojenci, 15:00 – 18:00 · Objednaní: preventivní prohlídky, ECHO, EKG | St 8:00 – 9:00, 9:00 – 10:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 11:00 – 11:30 · Objednaní: neonatologická poradna, 12:30 – 13:30 · Objednaní: kojenecká poradna, 13:45 – 15:00 · Objednaní: preventivní prohlídky, ECHO, EKG, spiromerie | Čt 9:00 – 10:00, 10:00 – 11:00 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 11:00 – 12:00 · Objednaní: Kojenecká poradna, 13:00 – 15:00 · Objednaní: Preventivní prohlídky | Pá 7:30 – 8:30 · Objednaní: odběry, předoperační vyšetření, očkování, 8:30 – 10:00 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 10:00 – 12:00 · Kojenecká poradna a neonatologie
   ✓ belkagynda.webnode.cz  Út 8:00 – 11:00 · Dr. Šťastná | St 8:00 – 11:00 · Dr. Šťastná | Čt 8:00 – 11:00 · Dr. Evža, 14:00 – 16:00 · Dr. Evža | Pá 8:00 – 11:00 · Dr. Evža
@@ -25,7 +25,6 @@ ordinační hodiny z webů: 80 lékařů (72 webů z 120)
   ✓ r-med.eu  Po 9:00 – 15:00 | Út 9:00 – 15:00 | St 9:00 – 15:00 | Čt 9:00 – 15:00 | Pá 9:00 – 15:00
   ✓ rtgparnik.cz  Po 8:00 – 16:00 | Út 8:00 – 16:00 | St 8:00 – 16:00 | Čt 8:00 – 16:00 | Pá 8:00 – 12:45
   ✓ vivadent.cz  Po 9:00 – 16:00 | Út 9:00 – 16:00 | St 9:00 – 16:00 | Čt 9:00 – 16:00 | Pá 9:00 – 16:00
-  ✓ www.alafia-rhb.cz  Po 7:00 – 11:00, 11:30 – 15:30 | Út 7:00 – 11:00, 11:30 – 15:30 | St 7:00 – 11:00, 11:30 – 15:30 | Čt 7:00 – 11:00, 11:30 – 15:30 | Pá 7:00 – 11:00, 11:30 – 15:30
   ✓ www.artmedi.cz  Po 7:00 – 16:00 | Út 7:00 – 16:00 | St 7:00 – 18:00 | Čt 7:00 – 16:00 | Pá 7:00 – 13:00
   ✓ www.artstom.cz  Po 8:00 – 21:00 | Út 8:00 – 21:00 | St 8:00 – 21:00 | Čt 8:00 – 21:00 | Pá 8:00 – 21:00
   ✓ www.babacare.cz  Po 7:30 – 14:30 · MUDr.Veronika (Janečková) Reznerová | Út 7:00 – 16:30 · MUDr. Stanislav Martan | St 7:30 – 14:00 · MUDr. Pavel Drbohlav | Čt 13:30 – 18:30 · MUDr. Sabina Šašurová / / MUDr. Stanislav Martan | Pá 9:00 – 10:30 · Zvané výkony
@@ -40,7 +39,6 @@ ordinační hodiny z webů: 80 lékařů (72 webů z 120)
   ✓ www.gyna.cz  Po 12:00 – 16:00 | Út 8:00 – 13:00 | St 14:00 – 18:00 | Čt 8:00 – 13:00
   ✓ www.gynclin.cz  Po 7:00 – 19:30 | Út 7:30 – 19:30 | St 7:30 – 19:30 | Čt 7:30 – 19:30 | Pá 7:30 – 16:00
   ✓ www.hodis.eu  Po 13:00 – 18:00 | Út 7:00 – 10:00, 10:00 – 12:00 | St 13:00 – 18:00 | Čt 7:00 – 10:00, 10:00 – 12:00 | Pá 13:00 – 18:00
-  ✓ www.hrubesova.cz  Po 8:00 – 11:00 · Objednaní nemocní, 11:30 – 14:00 · Prevence, očkování | Út 8:00 – 11:00 · Prevence/očkování, 11:30 – 14:30 · Objednaní nemocní, 14:30 – 16:00 · Prevence, očkování | St 7:40 – 8:00 · Prevence/očkování, 8:00 – 11:00 · Objednaní nemocní, 11:30 – 14:00 · Prevence, očkování | Čt 8:00 – 11:00 · Objednaní nemocní, 11:30 – 14:00 · Prevence, očkování | Pá 7:30 – 8:00 · Prevence/očkování, 8:00 – 10:30 · Objednaní nemocní, 10:30 – 12:00 · Prevence, očkování
   ✓ www.immunia.org  Po 7:00 – 15:30 | Út 7:00 – 15:30 | St 7:00 – 15:30 | Čt 7:00 – 15:30 | Pá 7:00 – 15:00
   ✓ www.iscare.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 19:00 | So 7:00 – 12:00
   ✓ www.kardioambulance.cz  Po 8:00 – 16:00 | Út 8:00 – 18:00 | St 7:30 – 16:00 | Čt 7:00 – 18:00 | Pá 7:00 – 14:00
