@@ -239,3 +239,43 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .akhero { width:100%; max-height:260px; border-radius:18px; object-fit:cover; display:block; background:#ecebe4; }
 .akpop { font-size:15px; line-height:1.55; white-space:pre-line; overflow-wrap:anywhere; }
 .akcal { display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; border-radius:16px; padding:15px; min-height:48px; margin:0; }
+/* Akce: proužek dní a kalendář */
+.akprouzek { display:flex; flex-direction:column; gap:8px; margin-bottom:-4px; }
+.akprhl { display:flex; justify-content:space-between; align-items:center; padding:0 0 0 4px; }
+.akprhl b { font-size:15px; font-weight:800; }
+.akkalbtn { min-height:40px; padding:0 14px; border:none; cursor:pointer; font-family:inherit; }
+.akdny { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin:0 -20px; padding:2px 20px; -webkit-overflow-scrolling:touch; }
+.akdny::-webkit-scrollbar { display:none; }
+.akdb { flex:none; width:46px; font:inherit; color:var(--ink); background:#fff; border:1.5px solid #ece8da; border-radius:14px; padding:7px 0 6px; text-align:center; cursor:pointer; }
+.akdb span { display:block; font-size:11px; font-weight:700; color:#6b6652; }
+.akdb b { display:block; font-size:17px; font-weight:800; margin-top:1px; }
+.akdb i { display:block; width:5px; height:5px; border-radius:3px; background:#2f8a57; margin:4px auto 0; }
+.akdb.dnes { border-color:var(--green); }
+.akdb.prazdny b, .akdb.prazdny span { color:#a7a191; }
+.akdb.prazdny i { background:transparent; }
+.akdb.on { background:var(--green); border-color:var(--green); color:#fff; }
+.akdb.on span { color:#dfeadd; }
+.akdb.on i { background:#fff; }
+.akdaysel { justify-content:space-between; align-items:center; }
+.akdaysel > span { display:flex; align-items:baseline; gap:8px; }
+.aklink { font:inherit; font-size:13.5px; font-weight:700; color:var(--green); background:none; border:none; padding:10px 0 10px 10px; cursor:pointer; }
+.akkal { display:flex; flex-direction:column; gap:12px; padding-bottom:24px; }
+.akkalhl, .akkalm { display:flex; justify-content:space-between; align-items:center; }
+.akkalhl b { font-size:19px; font-weight:800; }
+.akkalm b { font-size:16px; font-weight:800; }
+.akkalnav { width:44px; height:44px; border:none; border-radius:22px; background:#e9f0e9; color:var(--green); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.akkalnav:disabled { background:none; color:#c4bfb0; cursor:default; }
+.akkgrid { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); row-gap:2px; }
+.akkdn { text-align:center; font-size:11.5px; font-weight:700; color:#6b6652; padding-bottom:4px; }
+.akkd { font:inherit; border:none; background:none; border-radius:14px; height:46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:15.5px; font-weight:600; color:#8a8572; cursor:pointer; }
+.akkd i { width:5px; height:5px; border-radius:3px; background:transparent; }
+.akkd.ma { color:var(--ink); font-weight:800; }
+.akkd.ma i { background:#2f8a57; }
+.akkd.dnes { box-shadow:inset 0 0 0 1.5px var(--green); }
+.akkd.on { background:var(--green); color:#fff; }
+.akkd.on i { background:#fff; }
+.akkd:disabled { color:#cdc8ba; cursor:default; }
+.akkleg { display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:#6b6652; }
+.akkleg i { width:6px; height:6px; border-radius:3px; background:#2f8a57; }
+.akkalok { margin:0; border-radius:16px; padding:15px; min-height:52px; font-size:15px; }
+.akkalok:disabled { opacity:.5; }

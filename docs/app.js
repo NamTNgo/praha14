@@ -6,7 +6,7 @@
   var data = null;       // {stations, addresses}
   var state = { address: null, query: "", tab: "doprava", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
     dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkQ: "",
-    akView: "list", akHist: [], akSel: null, akF: "tyden", akK: "all", akDenVse: {} };
+    akView: "list", akHist: [], akSel: null, akF: "vse", akK: "all", akDenVse: {}, akDay: null, akKal: false, akKalM: null, akKalSel: null };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -908,7 +908,11 @@
     zdr: ["Zdraví", "#dfeadd", "#1f4d36"], sous: ["Sousedské", "#efe9dc", "#5c4a1f"]
   };
   var AK_KPOR = ["deti", "kult", "vys", "sen", "vzd", "sport", "zdr", "sous"];
-  var AK_CAS = [["dny", "Dnes a zítra"], ["vikend", "Víkend"], ["tyden", "Tento týden"], ["vse", "Vše"]];
+  var AK_CAS = [["vse", "Vše"], ["dny", "Dnes a zítra"], ["tyden", "Tento týden"], ["vikend", "Víkend"]];
+  var MES_NOM = ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
+  var VE_DNI = ["v neděli", "v pondělí", "v úterý", "ve středu", "ve čtvrtek", "v pátek", "v sobotu"];
+  var DNY_ZK = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
+  var I_CALG = '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>';
   var AK_SRC = { p9: ["Kalendář akcí MČ Praha 9", "Prahy 9", "https://www.praha9.cz/o-praze-9/kalendar-akci"],
     p14: ["Kalendář akcí MČ Praha 14", "Prahy 14", "https://www.praha14.cz/zivot-na-praze-14/akce/"],
     mkp: ["Městská knihovna v Praze", "knihovny", "https://www.mlp.cz/akce/vsechny-akce"] };
@@ -1042,19 +1046,70 @@
       return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? "on" : "") + '" data-akf="' + c[0] + '">' + c[1] + "</button>";
     }).join("") + "</div>";
     var chips = [["all", "Vše"]].concat(AK_KPOR.filter(function (k) { return pritomne[k]; }).map(function (k) { return [k, AK_K[k][0]]; }));
-    return seg + '<div class="chipscroll"><div class="chiprow">' + chips.map(function (c) {
+    return seg + (state.akF === "vse" ? akProuzek(ted) : "") + '<div class="chipscroll"><div class="chiprow">' + chips.map(function (c) {
       return '<button type="button" class="chip' + (state.akK === c[0] ? " on" : "") + '" data-akk="' + c[0] + '">' + c[1] + "</button>";
     }).join("") + '</div><div class="chipfade"></div></div>';
   }
+  // dny, ve kterých se něco koná (podle zvolené kategorie): iso -> počet
+  function akDnyAkci(ted) {
+    var m = {};
+    akVOkne("vse", state.akK, ted).forEach(function (a) {
+      var s = akD(a.od), k = akIso(s < akDen(ted) ? akDen(ted) : akDen(s));
+      m[k] = (m[k] || 0) + 1;
+    });
+    return m;
+  }
+  // proužek dní pod filtrem Vše (Apple Store / Outlook) + tlačítko do měsíčního kalendáře
+  function akProuzek(ted) {
+    var dnes = akDen(ted), m = akDnyAkci(ted), konec = new Date(dnes);
+    konec.setDate(konec.getDate() + 27);
+    if (state.akDay && akD(state.akDay) > konec) konec = akD(state.akDay);
+    var mesic = state.akDay ? akD(state.akDay) : dnes, h = "";
+    for (var d = new Date(dnes); d <= konec; d.setDate(d.getDate() + 1)) {
+      var iso = akIso(d), on = state.akDay === iso, je = !!m[iso], dn = +d === +dnes;
+      h += '<button type="button" class="akdb' + (on ? " on" : "") + (dn ? " dnes" : "") + (je ? "" : " prazdny") + '" data-akday="' + iso + '" aria-pressed="' + on + '" aria-label="' +
+        DNY_CELE[d.getDay()] + " " + akDatumTxt(d) + (je ? ", " + m[iso] + " " + (m[iso] === 1 ? "akce" : m[iso] < 5 ? "akce" : "akcí") : ", nic se nekoná") + '">' +
+        "<span>" + (dn && !on ? "Dnes" : DNY_ZK[d.getDay()]) + "</span><b>" + d.getDate() + "</b><i></i></button>";
+    }
+    return '<div class="akprouzek"><div class="akprhl"><b>' + MES_NOM[mesic.getMonth()] + " " + mesic.getFullYear() + "</b>" +
+      '<button type="button" class="btn-ext akkalbtn" id="akkal" aria-label="Vybrat den v kalendáři">' + SVG(I_CALG, 18, "currentColor", 2.2) + "Kalendář</button></div>" +
+      '<div class="akdny">' + h + "</div></div>";
+  }
+  function akKalendar() {
+    var ted = new Date(), dnes = akDen(ted), m = akDnyAkci(ted);
+    var klice = Object.keys(m).sort(), posl = klice.length ? akD(klice[klice.length - 1]) : dnes;
+    var mes = state.akKalM ? akD(state.akKalM) : new Date(dnes.getFullYear(), dnes.getMonth(), 1);
+    var prvni = new Date(dnes.getFullYear(), dnes.getMonth(), 1), maxM = new Date(posl.getFullYear(), posl.getMonth(), 1);
+    var sel = state.akKalSel || state.akDay, h = "";
+    ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"].forEach(function (x) { h += '<span class="akkdn">' + x + "</span>"; });
+    var off = (mes.getDay() + 6) % 7;
+    for (var i = 0; i < off; i++) h += "<span></span>";
+    for (var d = new Date(mes); d.getMonth() === mes.getMonth(); d.setDate(d.getDate() + 1)) {
+      var iso = akIso(d), minule = d < dnes;
+      h += '<button type="button" class="akkd' + (sel === iso ? " on" : "") + (+d === +dnes ? " dnes" : "") + (m[iso] ? " ma" : "") + '"' +
+        (minule ? " disabled" : ' data-akkalday="' + iso + '"') + ' aria-label="' + d.getDate() + ". " + MES_GEN[d.getMonth()] + '">' + d.getDate() + "<i></i></button>";
+    }
+    var n = sel ? (m[sel] || 0) : 0, sd = sel ? akD(sel) : null;
+    return '<div class="sheet-bg" data-akkalclose></div><div class="sheet akkal" role="dialog" aria-label="Vyberte den">' +
+      '<div class="akkalhl"><b>Vyberte den</b><button type="button" class="shx" data-akkalclose aria-label="Zavřít">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 20, "currentColor", 2.4) + "</button></div>" +
+      '<div class="akkalm"><button type="button" class="akkalnav" data-akkalm="-1"' + (mes <= prvni ? " disabled" : "") + ' aria-label="Předchozí měsíc">' + SVG('<path d="m15 6-6 6 6 6"/>', 18, "currentColor", 2.4) + "</button>" +
+      "<b>" + MES_NOM[mes.getMonth()] + " " + mes.getFullYear() + "</b>" +
+      '<button type="button" class="akkalnav" data-akkalm="1"' + (mes >= maxM ? " disabled" : "") + ' aria-label="Další měsíc">' + SVG('<path d="m9 6 6 6-6 6"/>', 18, "currentColor", 2.4) + "</button></div>" +
+      '<div class="akkgrid">' + h + "</div>" +
+      '<div class="akkleg"><i></i>V tento den se něco koná</div>' +
+      '<button type="button" class="btn akkalok" id="akkalok"' + (sel ? "" : " disabled") + ">" +
+      (sel ? "Zobrazit akce " + VE_DNI[sd.getDay()] + " " + akDatumTxt(sd) + " (" + n + ")" : "Vyberte den") + "</button></div>";
+  }
   function akPrazdno(ted) {
     var kdy = { dny: "Dnes a zítra", vikend: "O víkendu", tyden: "Tento týden", vse: "V nejbližších týdnech" }[state.akF];
+    if (state.akDay) { var dd = akD(state.akDay); kdy = VE_DNI[dd.getDay()].charAt(0).toUpperCase() + VE_DNI[dd.getDay()].slice(1) + " " + akDatumTxt(dd); }
     var co = state.akK === "all" ? "" : " v kategorii " + AK_K[state.akK][0].toLowerCase();
-    var dalsi = akVOkne("vse", state.akK, ted), nej = dalsi[0];
+    var dalsi = akVOkne("vse", state.akK, ted).filter(function (a) { return !state.akDay || a.od.slice(0, 10) > state.akDay; }), nej = dalsi[0];
     var vsech = state.akK === "all" ? 0 : akVOkne(state.akF, "all", ted).length;
     var h = '<div class="card-dashed akempty">' + SVG('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', 28, "#6b6652", 2) +
       '<div class="t1">' + kdy + co + " nic nemáme</div>";
     if (nej) h += '<div class="note">Nejbližší je ' + DNY_CELE[akD(nej.od).getDay()] + " " + akDatumTxt(akD(nej.od)) + ".</div>";
-    h += '<div class="dlinks">' + (nej && state.akF !== "vse" ? '<button type="button" class="btn akbtn" data-akf="vse">Zobrazit nejbližší</button>' : "") +
+    h += '<div class="dlinks">' + (nej && (state.akF !== "vse" || state.akDay) ? '<button type="button" class="btn akbtn" data-akday="' + akIso(akDen(akD(nej.od) < akDen(ted) ? ted : akD(nej.od))) + '">Zobrazit nejbližší</button>' : "") +
       (vsech ? '<button type="button" class="btn-ext akbtn2" data-akk="all">Všechny akce (' + vsech + ")</button>" : "") + "</div></div>";
     return h;
   }
@@ -1070,6 +1125,9 @@
         " · nejblíž " + esc(n.t) + (d ? ", " + d : "") + "</div></div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
     }
     var list = akVOkne(state.akF, state.akK, ted);
+    if (state.akF === "vse" && state.akDay) list = list.filter(function (a) {
+      var s = akD(a.od); return akIso(s < akDen(ted) ? akDen(ted) : akDen(s)) === state.akDay;
+    });
     if (!list.length) return h + akPrazdno(ted);
     var dny = {}, poradi = [];
     list.forEach(function (a) {
@@ -1078,8 +1136,9 @@
       dny[k].push(a);
     });
     poradi.forEach(function (k) {
-      var d = akD(k), vse = dny[k], ukaz = state.akDenVse[k] ? vse : vse.slice(0, AK_DEN_MAX);
-      h += '<div class="list">' + akDenNadpis(d, ted) + ukaz.map(akKarta).join("");
+      var d = akD(k), vse = dny[k], ukaz = state.akDenVse[k] || state.akDay ? vse : vse.slice(0, AK_DEN_MAX);
+      h += '<div class="list">' + (state.akDay ? '<div class="akday akdaysel"><span><b>' + DNY_CELE[d.getDay()].charAt(0).toUpperCase() + DNY_CELE[d.getDay()].slice(1) + " " + akDatumTxt(d) + "</b><span>" +
+        vse.length + " " + (vse.length < 5 ? "akce" : "akcí") + '</span></span><button type="button" class="aklink" data-akday="">Všechny dny</button></div>' : akDenNadpis(d, ted)) + ukaz.map(akKarta).join("");
       if (vse.length > ukaz.length) h += '<button type="button" class="btn-link" data-akden="' + k + '">Dalších ' + (vse.length - ukaz.length) + " " + (vse.length - ukaz.length < 5 ? "akce" : "akcí") + " " + ["v neděli", "v pondělí", "v úterý", "ve středu", "ve čtvrtek", "v pátek", "v sobotu"][d.getDay()] + "</button>";
       h += "</div>";
     });
@@ -1185,6 +1244,7 @@
     else if (state.tab === "akce" && data.akce && state.akView === "bezi") html = viewAkceBezi();
     else html = viewResult();
     if (data && state.address && state.tab === "skoly" && state.skSheet && state.skView !== "detail") html += sheetHtml();
+    if (data && state.address && state.tab === "akce" && state.akView === "list" && state.akKal) html += akKalendar();
     if (naSekci()) html += bottomNav();
     app.innerHTML = html;
     var q = document.getElementById("q");
@@ -1237,7 +1297,19 @@
     var dq = document.getElementById("dkq");
     if (dq) dq.addEventListener("input", function () { state.dkQ = dq.value; document.getElementById("dklist").innerHTML = dkListHtml(); app.querySelectorAll("#dklist [data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); }); });
     app.querySelectorAll("[data-ak]").forEach(function (b) { b.addEventListener("click", function () { openAkce("detail", b.getAttribute("data-ak")); }); });
-    app.querySelectorAll("[data-akf]").forEach(function (b) { b.addEventListener("click", function () { state.akF = b.getAttribute("data-akf"); state.akDenVse = {}; render(); }); });
+    app.querySelectorAll("[data-akf]").forEach(function (b) { b.addEventListener("click", function () { state.akF = b.getAttribute("data-akf"); state.akDenVse = {}; state.akDay = null; render(); }); });
+    app.querySelectorAll("[data-akday]").forEach(function (b) { b.addEventListener("click", function () {
+      var v = b.getAttribute("data-akday") || null; state.akF = "vse"; state.akDay = state.akDay === v ? null : v; render();
+    }); });
+    var akk = document.getElementById("akkal");
+    if (akk) akk.addEventListener("click", function () { var d = state.akDay ? akD(state.akDay) : new Date(); state.akKalM = akIso(new Date(d.getFullYear(), d.getMonth(), 1)); state.akKalSel = state.akDay; state.akKal = true; render(); });
+    app.querySelectorAll("[data-akkalclose]").forEach(function (b) { b.addEventListener("click", function () { state.akKal = false; render(); }); });
+    app.querySelectorAll("[data-akkalm]").forEach(function (b) { b.addEventListener("click", function () { var d = akD(state.akKalM); state.akKalM = akIso(new Date(d.getFullYear(), d.getMonth() + +b.getAttribute("data-akkalm"), 1)); render(); }); });
+    app.querySelectorAll("[data-akkalday]").forEach(function (b) { b.addEventListener("click", function () { state.akKalSel = b.getAttribute("data-akkalday"); render(); }); });
+    var akok = document.getElementById("akkalok");
+    if (akok) akok.addEventListener("click", function () { state.akDay = state.akKalSel; state.akF = "vse"; state.akKal = false; render(); window.scrollTo(0, 0); });
+    var akdon = app.querySelector(".akdb.on");
+    if (akdon && akdon.scrollIntoView) akdon.parentNode.scrollLeft = akdon.offsetLeft - akdon.parentNode.offsetLeft - 120;
     app.querySelectorAll("[data-akk]").forEach(function (b) { b.addEventListener("click", function () { state.akK = b.getAttribute("data-akk"); render(); }); });
     app.querySelectorAll("[data-akden]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY; state.akDenVse[b.getAttribute("data-akden")] = true; render(); window.scrollTo(0, y); }); });
     var akb = document.getElementById("akbezi");
