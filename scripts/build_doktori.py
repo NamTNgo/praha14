@@ -314,11 +314,81 @@ def _nadpis_bloku(radky, i):
         if len(r) != 1 or _casy(r[0])[0] or _den_z_radku(r[0]) or len(r[0]) > 40:
             break
         casti.insert(0, r[0])
+        if not r[0][:1].islower():
+            break   # druhý řádek přibírat jen u pokračování („… pro zdravé / a kojence“)
     t = re.sub(r"(?i)^ordina\S*\s+hodiny\s*", "", " ".join(casti)).strip()
     st = _stitek(t)
     if st and len(st) <= 30 and not _NADPIS_NE.search(_bez_diakr(st)):
         return st
     return ""
+
+
+_SCHEMA_DNY = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6,
+               "mo": 0, "tu": 1, "we": 2, "th": 3, "fr": 4, "sa": 5, "su": 6}
+
+
+def _cas_hm(t):
+    m = re.match(r"(\d{1,2}):(\d{2})", t or "")
+    return (int(m.group(1)), m.group(2)) if m else None
+
+
+def _zacatek(c):
+    h, mi = c.split(" ")[0].split(":")
+    return int(h) * 60 + int(mi)
+
+
+def hodiny_z_jsonld(html):
+    """schema.org openingHoursSpecification / openingHours ze <script type=application/ld+json>."""
+    dny = {}
+
+    def pridej(den, od, do, popis=""):
+        a, b = _cas_hm(od), _cas_hm(do)
+        if den is None or not a or not b or a[0] * 60 + int(a[1]) >= b[0] * 60 + int(b[1]):
+            return
+        st = _stitek(re.sub(r"(?i)^ordina\S*\s+hodiny\s*", "", popis or ""))
+        c = "%d:%s – %d:%s" % (a[0], a[1], b[0], b[1]) + (" · " + st if st else "")
+        if c not in dny.setdefault(den, []):
+            dny[den].append(c)
+
+    def projdi(o):
+        if isinstance(o, list):
+            for x in o:
+                projdi(x)
+        elif isinstance(o, dict):
+            for k, v in o.items():
+                if k == "openingHoursSpecification":
+                    for sp in (v if isinstance(v, list) else [v]):
+                        if not isinstance(sp, dict):
+                            continue
+                        dd = sp.get("dayOfWeek")
+                        for d in (dd if isinstance(dd, list) else [dd]):
+                            den = _SCHEMA_DNY.get(str(d or "").rstrip("/").split("/")[-1].lower())
+                            pridej(den, sp.get("opens"), sp.get("closes"), sp.get("description") or sp.get("name") or "")
+                elif k == "openingHours":
+                    for t in (v if isinstance(v, list) else [v]):
+                        m = re.match(r"\s*([A-Za-z]{2})(?:\s*-\s*([A-Za-z]{2}))?\s+(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})", str(t))
+                        if m:
+                            a = _SCHEMA_DNY.get(m.group(1).lower())
+                            b = _SCHEMA_DNY.get((m.group(2) or m.group(1)).lower())
+                            if a is not None and b is not None:
+                                for d in range(a, b + 1):
+                                    pridej(d, m.group(3), m.group(4))
+                else:
+                    projdi(v)
+
+    for blok in re.findall(r'(?is)<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html or ""):
+        try:
+            projdi(json.loads(blok, strict=False))
+        except Exception:
+            continue
+    if sum(1 for v in dny.values() if v) < 3:
+        return None
+    return [[DNY[k], sorted(dny[k], key=_zacatek)] for k in sorted(dny)]
+
+
+def _hodiny_ze_stranky(html):
+    """Strukturovaná data (schema.org) mají přednost před čtením textu."""
+    return hodiny_z_jsonld(html) or hodiny_z_textu(_html_na_radky(html or ""))
 
 
 def hodiny_z_webu(w):
@@ -349,7 +419,7 @@ def hodiny_z_webu(w):
         if base + c not in odkazy:
             odkazy.append(base + c)
     for url, html in kandidati:
-        r = hodiny_z_textu(_html_na_radky(html))
+        r = _hodiny_ze_stranky(html)
         if r:
             return {"r": r, "u": url}
     for url in odkazy[:6]:
@@ -357,7 +427,7 @@ def hodiny_z_webu(w):
             html = _stahni_text(url)
         except Exception:
             continue
-        r = hodiny_z_textu(_html_na_radky(html or ""))
+        r = _hodiny_ze_stranky(html)
         if r:
             return {"r": r, "u": url}
     return None
@@ -376,6 +446,7 @@ def doplnit_hodiny(out):
             r["hod"] = h
             n += 1
     log("ordinační hodiny z webů: %d lékařů (%d webů z %d)" % (n, sum(1 for v in hod.values() if v), len(weby)))
+    log("  bez hodin: " + ", ".join(w for w, h in sorted(hod.items()) if not h))
     for w, h in sorted(hod.items()):
         if h:
             log("  ✓ %s  %s" % (w, " | ".join(d + " " + ", ".join(t) for d, t in h["r"]))[:200])
