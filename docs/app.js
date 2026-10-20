@@ -867,13 +867,16 @@
   function viewDoktorDetail(s) {
     var d = dist(state.address.lat, state.address.lon, s.lat, s.lon);
     var kont = drow("Telefon", s.tel || null, s.tel ? { href: "tel:" + s.tel.replace(/\s/g, ""), icon: I_PH } : null) +
-      drow("E-mail", s.e || null, s.e ? { href: "mailto:" + s.e, icon: I_MA } : null) +
-      drow("Web", s.w || null, s.w ? { href: "https://" + s.w, ext: true } : null);
+      drow("E-mail", s.e || null, s.e ? { href: "mailto:" + s.e, icon: I_MA } : null);
+    var gm = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(s.n + ", " + s.a + ", Praha");
+    var web = s.w ? ["https://" + s.w, "Web ordinace"] : ["https://www.google.com/search?q=" + encodeURIComponent(s.n + " Praha " + s.a), "Najít web ordinace"];
     var obory = (s.obory || []).join(", ") || s.on || "Neuvedeno";
     return '<div class="head"><button type="button" class="btn-edit" id="dkback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
       '<div class="body" style="gap:12px;padding-bottom:28px"><div class="dbadges"><span class="tp tp-dok-' + s.o + ' lg">' + DK_T[s.o] + "</span></div>" +
       '<h1 style="margin:4px 0 0;font-size:23px">' + esc(s.n) + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + esc(s.a) + ", Praha " + esc(s.mc) + " · " + meters(d) + "</div>" +
+      '<div class="dlinks"><a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
+      '<a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
       dcard("Kontakt", kont) +
       hodinyCard(s) +
       dcard("Obor a zařízení", drow("Obory", obory) + drow("Druh zařízení", s.dr || null), "Zdroj: ÚZIS ČR – NRPZS, aktualizace měsíčně.") +
