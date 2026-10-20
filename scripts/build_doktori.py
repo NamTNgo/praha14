@@ -221,14 +221,16 @@ def hodiny_z_textu(radky):
     """Najde blok dnů s časy. Zvládá tabulku (dny v řádcích, sloupce s hlavičkou)
     i seznam (den na vlastním řádku, pod ním časy)."""
     bloky, blok, hlavicka, posl_den, mezera = [], None, None, None, 0
+    meta = None   # {"start", "end", "nadpis"} k aktuálnímu bloku
     for i, bunky in enumerate(radky):
         d = _den_z_radku(bunky[0])
         if d:
             dny, zbytek = d
             if blok is None or any(x in blok for x in dny):
                 if blok:
-                    bloky.append(blok)
+                    bloky.append((blok, meta))
                 blok = {}
+                meta = {"start": i, "end": i, "nadpis": _nadpis_bloku(radky, i)}
                 # hlavička tabulky = předchozí vícesloupcový řádek bez dnů a časů
                 prev = radky[i - 1] if i else []
                 hlavicka = prev if len(prev) > 1 and not _casy("\t".join(prev))[0] else None
@@ -246,7 +248,7 @@ def hodiny_z_textu(radky):
                 lines = ["zavřeno"]
             for x in dny:
                 blok[x] = list(lines)
-            posl_den, mezera = dny, 0
+            posl_den, mezera, meta["end"] = dny, 0, i
             continue
         if blok is None:
             continue
@@ -258,6 +260,7 @@ def hodiny_z_textu(radky):
         if casy and posl_den is not None and mezera == 0 and not vic_dnu:
             for x in posl_den:
                 blok[x] += [c for c in casy if c not in blok[x]]
+            meta["end"] = i
             continue
         if posl_den is not None and mezera == 0 and _ZAVRENO.search(_bez_diakr(text)):
             for x in posl_den:
@@ -265,15 +268,54 @@ def hodiny_z_textu(radky):
             continue
         mezera += 1
         if mezera > 2:   # blok skončil
-            bloky.append(blok)
+            bloky.append((blok, meta))
             blok, posl_den = None, None
     if blok:
-        bloky.append(blok)
-    dobre = [b for b in bloky if sum(1 for v in b.values() if v and v != ["zavřeno"]) >= 3]
+        bloky.append((blok, meta))
+    dobre = [(b, m) for b, m in bloky if sum(1 for v in b.values() if v and v != ["zavřeno"]) >= 3]
     if not dobre:
         return None
-    b = dobre[0]
-    return [[DNY[k], b[k]] for k in sorted(b) if b[k]]
+    # Hodiny rozdělené do sousedních bloků s nadpisy (Odběry | Pro nemocné | Pro objednané)
+    # spojíme do jednoho rozpisu; nadpis se stane popiskem časů.
+    skupina = [dobre[0]]
+    for b, m in dobre[1:]:
+        pb, pm = skupina[-1]
+        if m["start"] - pm["end"] <= 4 and m["nadpis"] and pm["nadpis"] and m["nadpis"] != pm["nadpis"]:
+            skupina.append((b, m))
+        else:
+            break
+    if len(skupina) == 1:
+        b = skupina[0][0]
+        return [[DNY[k], b[k]] for k in sorted(b) if b[k]]
+    spojeno = {}
+    for b, m in skupina:
+        for k, casy in b.items():
+            for c in casy:
+                if c == "zavřeno":
+                    continue
+                spojeno.setdefault(k, []).append(c if " · " in c else c + " · " + m["nadpis"])
+    def zacatek(c):
+        h, mi = c.split(" ")[0].split(":")
+        return int(h) * 60 + int(mi)
+    return [[DNY[k], sorted(spojeno[k], key=zacatek)] for k in sorted(spojeno)]
+
+
+_NADPIS_NE = re.compile(r"hodin|letn|prazdnin|dovolen|zimn|svat|zmen|kontakt|adres", re.I)
+
+
+def _nadpis_bloku(radky, i):
+    """Krátký nadpis těsně nad blokem dnů („Pro nemocné“), jinak ""."""
+    for j in (i - 1, i - 2):
+        if j < 0:
+            break
+        r = radky[j]
+        if len(r) != 1 or _casy(r[0])[0] or _den_z_radku(r[0]):
+            continue
+        st = _stitek(r[0])
+        if st and len(st) <= 30 and not _NADPIS_NE.search(_bez_diakr(st)):
+            return st
+        return ""
+    return ""
 
 
 def hodiny_z_webu(w):
