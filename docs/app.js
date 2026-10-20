@@ -1061,18 +1061,21 @@
   }
   // proužek dní pod filtrem Vše (Apple Store / Outlook) + tlačítko do měsíčního kalendáře
   function akProuzek(ted) {
-    var dnes = akDen(ted), m = akDnyAkci(ted), konec = new Date(dnes);
+    // proužek vede vždy od dneška do posledního dne s akcí (nejméně 4 týdny),
+    // takže se chová stejně, ať je vybraný den blízko, nebo daleko
+    var dnes = akDen(ted), m = akDnyAkci(ted), konec = new Date(dnes), klice = Object.keys(m).sort();
     konec.setDate(konec.getDate() + 27);
-    if (state.akDay && akD(state.akDay) > konec) konec = akD(state.akDay);
+    if (klice.length && akD(klice[klice.length - 1]) > konec) konec = akD(klice[klice.length - 1]);
     var mesic = state.akDay ? akD(state.akDay) : dnes, h = "";
     for (var d = new Date(dnes); d <= konec; d.setDate(d.getDate() + 1)) {
       var iso = akIso(d), on = state.akDay === iso, je = !!m[iso], dn = +d === +dnes;
-      h += '<button type="button" class="akdb' + (on ? " on" : "") + (dn ? " dnes" : "") + (je ? "" : " prazdny") + '" data-akday="' + iso + '" aria-pressed="' + on + '" aria-label="' +
+      h += '<button type="button" data-m="' + MES_NOM[d.getMonth()] + " " + d.getFullYear() + '" class="akdb' + (on ? " on" : "") + (dn ? " dnes" : "") + (je ? "" : " prazdny") + '" data-akday="' + iso + '" aria-pressed="' + on + '" aria-label="' +
         DNY_CELE[d.getDay()] + " " + akDatumTxt(d) + (je ? ", " + m[iso] + " " + (m[iso] === 1 ? "akce" : m[iso] < 5 ? "akce" : "akcí") : ", nic se nekoná") + '">' +
         "<span>" + (dn && !on ? "Dnes" : DNY_ZK[d.getDay()]) + "</span><b>" + d.getDate() + "</b><i></i></button>";
     }
-    return '<div class="akprouzek"><div class="akprhl"><b>' + MES_NOM[mesic.getMonth()] + " " + mesic.getFullYear() + "</b>" +
-      '<button type="button" class="btn-ext akkalbtn" id="akkal" aria-label="Vybrat den v kalendáři">' + SVG(I_CALG, 18, "currentColor", 2.2) + "Kalendář</button></div>" +
+    return '<div class="akprouzek"><div class="akprhl"><b id="akmes">' + MES_NOM[mesic.getMonth()] + " " + mesic.getFullYear() + "</b>" +
+      '<span class="akprbtn"><button type="button" class="aktxt" id="akdnes"' + (state.akDay && state.akDay !== akIso(dnes) ? "" : " hidden") + ">Dnes</button>" +
+      '<button type="button" class="btn-ext akkalbtn" id="akkal" aria-label="Vybrat den v kalendáři">' + SVG(I_CALG, 18, "currentColor", 2.2) + "Kalendář</button></span></div>" +
       '<div class="akdny">' + h + "</div></div>";
   }
   function akKalendar() {
@@ -1091,7 +1094,9 @@
     }
     var n = sel ? (m[sel] || 0) : 0, sd = sel ? akD(sel) : null;
     return '<div class="sheet-bg" data-akkalclose></div><div class="sheet akkal" role="dialog" aria-label="Vyberte den">' +
-      '<div class="akkalhl"><b>Vyberte den</b><button type="button" class="shx" data-akkalclose aria-label="Zavřít">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 20, "currentColor", 2.4) + "</button></div>" +
+      '<div class="akkalhl"><b>Vyberte den</b><span class="akprbtn">' +
+      ((mes.getFullYear() !== dnes.getFullYear() || mes.getMonth() !== dnes.getMonth() || (sel && sel !== akIso(dnes))) ? '<button type="button" class="aktxt" id="akkaldnes">Dnes</button>' : "") +
+      '<button type="button" class="shx" data-akkalclose aria-label="Zavřít">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 20, "currentColor", 2.4) + "</button></span></div>" +
       '<div class="akkalm"><button type="button" class="akkalnav" data-akkalm="-1"' + (mes <= prvni ? " disabled" : "") + ' aria-label="Předchozí měsíc">' + SVG('<path d="m15 6-6 6 6 6"/>', 18, "currentColor", 2.4) + "</button>" +
       "<b>" + MES_NOM[mes.getMonth()] + " " + mes.getFullYear() + "</b>" +
       '<button type="button" class="akkalnav" data-akkalm="1"' + (mes >= maxM ? " disabled" : "") + ' aria-label="Další měsíc">' + SVG('<path d="m9 6 6 6-6 6"/>', 18, "currentColor", 2.4) + "</button></div>" +
@@ -1297,19 +1302,43 @@
     var dq = document.getElementById("dkq");
     if (dq) dq.addEventListener("input", function () { state.dkQ = dq.value; document.getElementById("dklist").innerHTML = dkListHtml(); app.querySelectorAll("#dklist [data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); }); });
     app.querySelectorAll("[data-ak]").forEach(function (b) { b.addEventListener("click", function () { openAkce("detail", b.getAttribute("data-ak")); }); });
-    app.querySelectorAll("[data-akf]").forEach(function (b) { b.addEventListener("click", function () { state.akF = b.getAttribute("data-akf"); state.akDenVse = {}; state.akDay = null; render(); }); });
+    app.querySelectorAll("[data-akf]").forEach(function (b) { b.addEventListener("click", function () { state.akF = b.getAttribute("data-akf"); state.akDenVse = {}; state.akDay = null; state.akScroll = 0; render(); }); });
     app.querySelectorAll("[data-akday]").forEach(function (b) { b.addEventListener("click", function () {
-      var v = b.getAttribute("data-akday") || null; state.akF = "vse"; state.akDay = state.akDay === v ? null : v; render();
+      var v = b.getAttribute("data-akday") || null; state.akF = "vse"; state.akDay = state.akDay === v ? null : v;
+      if (!b.classList.contains("akdb")) state.akCenter = true;   // „Zobrazit nejbližší“ může skočit daleko
+      render();
     }); });
     var akk = document.getElementById("akkal");
     if (akk) akk.addEventListener("click", function () { var d = state.akDay ? akD(state.akDay) : new Date(); state.akKalM = akIso(new Date(d.getFullYear(), d.getMonth(), 1)); state.akKalSel = state.akDay; state.akKal = true; render(); });
     app.querySelectorAll("[data-akkalclose]").forEach(function (b) { b.addEventListener("click", function () { state.akKal = false; render(); }); });
     app.querySelectorAll("[data-akkalm]").forEach(function (b) { b.addEventListener("click", function () { var d = akD(state.akKalM); state.akKalM = akIso(new Date(d.getFullYear(), d.getMonth() + +b.getAttribute("data-akkalm"), 1)); render(); }); });
     app.querySelectorAll("[data-akkalday]").forEach(function (b) { b.addEventListener("click", function () { state.akKalSel = b.getAttribute("data-akkalday"); render(); }); });
+    var akdn = document.getElementById("akdnes");
+    if (akdn) akdn.addEventListener("click", function () { state.akDay = null; state.akScroll = 0; render(); });
+    var akkdn = document.getElementById("akkaldnes");
+    if (akkdn) akkdn.addEventListener("click", function () { var t = new Date(); state.akKalM = akIso(new Date(t.getFullYear(), t.getMonth(), 1)); state.akKalSel = akIso(t); render(); });
     var akok = document.getElementById("akkalok");
-    if (akok) akok.addEventListener("click", function () { state.akDay = state.akKalSel; state.akF = "vse"; state.akKal = false; render(); window.scrollTo(0, 0); });
-    var akdon = app.querySelector(".akdb.on");
-    if (akdon && akdon.scrollIntoView) akdon.parentNode.scrollLeft = akdon.offsetLeft - akdon.parentNode.offsetLeft - 120;
+    if (akok) akok.addEventListener("click", function () { state.akDay = state.akKalSel; state.akF = "vse"; state.akKal = false; state.akCenter = true; render(); window.scrollTo(0, 0); });
+    var akpr = app.querySelector(".akdny");
+    if (akpr) {
+      // měsíc v nadpisu se mění podle toho, kam je proužek odscrollovaný
+      var akMes = function () {
+        // měsíc podle dne uprostřed viditelné části proužku
+        var r = akpr.getBoundingClientRect(), hr = r.left + Math.min(r.width, window.innerWidth) / 2, el = null;
+        akpr.querySelectorAll(".akdb").forEach(function (b) { if (!el && b.getBoundingClientRect().right > hr) el = b; });
+        var t = document.getElementById("akmes");
+        if (el && t) t.textContent = el.getAttribute("data-m");
+        // „Dnes“ jen když dnešek z proužku zmizel nebo je vybraný jiný den
+        var dn = document.getElementById("akdnes");
+        if (dn) dn.hidden = !(akpr.scrollLeft > 40 || (state.akDay && state.akDay !== akIso(new Date())));
+      };
+      var akdon = akpr.querySelector(".akdb.on");
+      // po výběru v kalendáři vycentrovat vybraný den; klepnutí v proužku s ním nehýbe
+      akpr.scrollLeft = state.akCenter && akdon ? akdon.offsetLeft - akpr.offsetLeft - (akpr.clientWidth - akdon.offsetWidth) / 2 : (state.akScroll || 0);
+      if (state.akCenter) { state.akCenter = false; state.akScroll = akpr.scrollLeft; }
+      akpr.addEventListener("scroll", function () { state.akScroll = akpr.scrollLeft; akMes(); }, { passive: true });
+      akMes();
+    }
     app.querySelectorAll("[data-akk]").forEach(function (b) { b.addEventListener("click", function () { state.akK = b.getAttribute("data-akk"); render(); }); });
     app.querySelectorAll("[data-akden]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY; state.akDenVse[b.getAttribute("data-akden")] = true; render(); window.scrollTo(0, y); }); });
     var akb = document.getElementById("akbezi");
