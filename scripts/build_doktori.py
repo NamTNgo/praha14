@@ -68,6 +68,17 @@ def _odkryj_maily(h):
     return re.sub(r"(@[a-z0-9.-]+?)\s*(?:\(,\)|\(\.\)|\[dot\]|\(dot\)| tečka )\s*", r"\1.", h, flags=re.I)
 
 
+TEL_KONTEXT = re.compile(r"(?:tel(?:efon)?\.?|mobil|mob\.|objedn\w*|volejte|kontakt\w*|recepce|☎|📞)[^\d+]{0,20}(\+?420[\s ]?)?(\d{3}[\s ]?\d{3}[\s ]?\d{3})"
+                         r"|\+420[\s ]?(\d{3}[\s ]?\d{3}[\s ]?\d{3})", re.I)
+
+
+def _tel_z_textu(html):
+    """Telefon z viditelného textu, jen když u něj stojí „tel.“, „telefon“… nebo +420
+    (čísla ze skriptů a stylů typu 255 255 255 nejsou telefony)."""
+    t = " ".join(" ".join(r) for r in _html_na_radky(html))
+    return [m.group(2) or m.group(3) for m in TEL_KONTEXT.finditer(t)]
+
+
 def tel_platny(t):
     """České číslo: 9 číslic, nezačíná 0 ani 1 a nejsou to samé stejné číslice (999 999 999)."""
     d = re.sub(r"\D", "", t or "")
@@ -104,7 +115,7 @@ def kontakt_z_webu(w):
             maily += [m.lower() for m in re.findall(r"mailto:([^\"'?>\s]+)", html, re.I)]
             maily += [m.lower() for m in EMAIL_RE.findall(html)]
             tel_odkazy += re.findall(r"tel:\+?([0-9\s ]{6,})", html)   # strukturované = jisté
-            tel_text += TEL_RE.findall(html)                                # z textu = méně jisté
+            tel_text += _tel_z_textu(html)                                  # z textu = méně jisté
             has_mail = any(m.split("@")[-1].endswith(dom) for m in maily)
             if tel_odkazy and has_mail:
                 break
