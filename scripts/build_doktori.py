@@ -883,7 +883,8 @@ def main():
     rdr = csv.DictReader(io.StringIO(raw.decode("utf-8-sig", "replace")), delimiter=",")
 
     mista = {}
-    nespar = skip_nelekar = 0
+    nespar = skip_nelekar = mimo = 0
+    log("sloupce registru: " + ", ".join(k for k in (rdr.fieldnames or []) if k.startswith("ZZ_")))
     for row in rdr:
         obor = (row.get("ZZ_obor_pece") or "").strip()
         if plain(obor) in NELEKAR:
@@ -894,6 +895,18 @@ def main():
             nespar += 1
             continue
         mc, lat, lon = m
+        # stejná ulice a číslo existují i mimo Prahu (Teplická 270 v Jílovém u Děčína) –
+        # obec z registru musí být Praha a GPS registru nesmí ležet daleko od naší adresy
+        obec = next((v for k, v in row.items() if k and k.lower() in ("zz_obec", "zz_obec_nazev", "zz_mesto")), None)
+        if obec is not None and obec.strip() and not plain(obec).startswith("praha"):
+            mimo += 1
+            continue
+        glat, glon = gps(row.get("ZZ_GPS"))
+        if glat and glat < glon:            # pořadí v POINT() – v Česku je šířka ~50, délka ~15
+            glat, glon = glon, glat
+        if glat and lat and (abs(glat - lat) > 0.03 or abs(glon - lon) > 0.045):
+            mimo += 1
+            continue
         if lat is None:
             lat, lon = gps(row.get("ZZ_GPS"))
 
@@ -942,7 +955,7 @@ def main():
     log("\nlékařů v Praze 9 a 14: %d" % len(out))
     log("podle MČ: " + ", ".join("Praha %s=%d" % (k, v) for k, v in sorted(mc.items())))
     log("podle kategorie: " + ", ".join("%s=%d" % (k, kat[k]) for k in PRIORITA))
-    log("nespárováno s našimi adresami: %d | vyřazeno nelékařských: %d" % (nespar, skip_nelekar))
+    log("nespárováno s našimi adresami: %d | vyřazeno nelékařských: %d | stejná adresa mimo Prahu: %d" % (nespar, skip_nelekar, mimo))
     log("\nUKÁZKY:")
     for r in out[:12]:
         log("  [%s] %s — %s, Praha %s — %s" % (r["o"], r["n"][:40], r["a"], r["mc"], ", ".join(r["obory"])[:60]))
