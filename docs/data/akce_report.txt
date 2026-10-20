@@ -1,19 +1,20 @@
-p9: 7 akcí
+p9: 8 akcí
 p14: 18 akcí
 mkp: 79 akcí
 
-celkem 101 akcí; kategorie: {'sport': 3, 'vzd': 15, 'vys': 7, 'deti': 46, 'zdr': 1, 'sen': 17, 'kult': 11, 'sous': 1}
-s fotkou: 97, se souřadnicemi: 94, zdarma: 82, zrušeno: 0
-  [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro Veřejnost 2026 |  |  📷
+celkem 102 akcí; kategorie: {'sport': 3, 'vzd': 16, 'vys': 7, 'deti': 46, 'zdr': 1, 'sen': 17, 'kult': 11, 'sous': 1}
+s fotkou: 98, se souřadnicemi: 94, zdarma: 82, zrušeno: 0
+  [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
-  [p9 vzd] 2026-10-07T17:00 → 2026-10-21T19:00 | Kreativní dílna v Galerii 9 |  |  📷
+  [p9 vzd] 2026-10-07T17:00 → 2026-10-21T17:00 | Kreativní dílna v Galerii 9 |  |  📷
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 |  📷
-  [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - štědrý | Galerie beseder |  📷
+  [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder |  📷
   [p14 vzd] 2026-10-20T16:30 → 2026-10-20T16:30 | Telefon v klidu |  | Hloubětínská 1138/5 📷
   [mkp deti] 2026-10-21T15:00 → 2026-10-21T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-10-21T16:00 → 2026-10-21T18:00 | Hrací odpoledne: puzzle | Knihovna Černý Most | Bobkova 534/47 📷
+  [p9 vzd] 2026-10-21T17:00 → 2026-10-21T19:00 | Kreativní dílna v Galerii 9 |  |  📷
   [mkp deti] 2026-10-21T19:00 → 2026-10-21T20:00 | Kvízový večer | Knihovna Vysočany | Zbuzkova 285/34 📷
-  [p14 zdr] 2026-10-22T07:00 → 2026-10-22T07:00 | Den zdraví | poliklinika parník | Generála Janouška 902/17 📷
+  [p14 zdr] 2026-10-22T07:00 → 2026-10-22T07:00 | Den zdraví | Poliklinika parník | Generála Janouška 902/17 📷
   [mkp sen] 2026-10-22T14:00 → 2026-10-22T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-10-22T15:15 → 2026-10-22T16:00 | Doučování ve Vysočanech | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-10-22T17:00 → 2026-10-22T18:00 | Syndrom vyhoření | Knihovna Prosek | Měšická 806/3 📷
@@ -28,7 +29,7 @@ s fotkou: 97, se souřadnicemi: 94, zdarma: 82, zrušeno: 0
   [mkp vzd] 2026-10-27T16:00 → 2026-10-27T18:30 | Kurz fermentace | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-10-29T10:00 → 2026-10-29T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-10-29T14:00 → 2026-10-29T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
-  [p9 kult] 2026-10-31T11:00 → 2026-10-31T17:00 | Pink Fest - Trocha prevence, trocha magie | restaurace Podviňák |  📷
+  [p9 kult] 2026-10-31T11:00 → 2026-10-31T17:00 | Pink Fest - Trocha prevence, trocha magie | Restaurace Podviňák |  📷
   [mkp deti] 2026-10-31T13:00 → 2026-10-31T16:00 | Divadlo Kamishibai | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 deti] 2026-11-01T17:00 → 2026-11-01T17:00 | Halloweenská stezka | Dětské hřiště Kyjská (křižovat | Kyjská 264/24 📷
   [mkp deti] 2026-11-02T16:00 → 2026-11-02T18:00 | Kouzelná baterka | Knihovna Vysočany | Zbuzkova 285/34 📷
@@ -36,7 +37,7 @@ s fotkou: 97, se souřadnicemi: 94, zdarma: 82, zrušeno: 0
   [mkp deti] 2026-11-03T16:00 → 2026-11-03T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-03T16:00 → 2026-11-03T17:00 | Cesta do pohádky: Černý Most | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-11-03T17:00 → 2026-11-03T19:00 | AI pro rodiče | Knihovna Černý Most | Bobkova 534/47 📷
-  [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka u brabců |  |  📷
+  [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [mkp deti] 2026-11-04T15:00 → 2026-11-04T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-11-04T16:00 → 2026-11-04T18:00 | Koláž z přírodnin | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-05T09:00 → 2026-11-05T13:00 | Jak na chytrý telefon a tablet – aplikace a jak na ně | Knihovna Černý Most | Bobkova 534/47 📷
