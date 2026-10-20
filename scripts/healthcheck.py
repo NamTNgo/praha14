@@ -74,6 +74,10 @@ CHECKS = [
     dict(file="vok.json", popis="VOK Praha 14",
          pocet=len, min=20, vek_h=45 * 24, cas=None,
          reseni="Harmonogram VOK (praha14.cz) se změnil; zkontroluj `scripts/build_vok.py`."),
+    dict(file="akce.json", popis="Akce – kalendáře Prahy 9, 14 a knihovny",
+         pocet=lambda d: len(d.get("akce", [])), min=15, vek_h=30, cas=lambda d: d.get("gen"),
+         reseni="Workflow Akce neběží nebo všechny zdroje padly. Spusť ho ručně a projdi "
+                "`docs/data/akce_report.txt` – u každého zdroje je počet akcí nebo chyba."),
     dict(file="vok9.json", popis="VOK Praha 9",
          pocet=lambda d: d.get("mista", 0) if isinstance(d.get("mista"), int) else len(d.get("mista", [])),
          min=20, vek_h=45 * 24, cas=None,
@@ -178,6 +182,25 @@ def main():
                     "nebo spusť workflow Lékaři ručně), nebo spadl velký poskytovatel webů. "
                     "Zkontroluj `docs/data/doktori_report.txt` (seznam vyřazených) a ověř pár "
                     "odkazů ručně, než usoudíš, že je chyba v datech."))
+
+    # akce: jednotlivé zdroje (selhání jednoho aplikace přežije, ale ukáže upozornění)
+    pa = DATA / "akce.json"
+    if pa.exists():
+        try:
+            zdroje = json.loads(pa.read_text(encoding="utf-8")).get("zdroje", {})
+        except Exception:
+            zdroje = {}
+        jmena = {"p9": ("Akce – kalendář Prahy 9", "praha9.cz/o-praze-9/kalendar-akci: události jsou JSON v "
+                        "`drupalSettings.fullCalendarView[0].calendar_options` – změnil se klíč nebo tvar? Oprav `praha9()`."),
+                 "p14": ("Akce – kalendář Prahy 14", "praha14.cz/zivot-na-praze-14 (admin-ajax `ys_events`): změnilo se "
+                         "HTML článků `p14-archive-akce__article`? Oprav `praha14()`."),
+                 "mkp": ("Akce – Městská knihovna", "mlp.cz/akce/vsechny-akce?nid_entityreference_filter=…: změnily se třídy "
+                         "`event-box` nebo id poboček? Oprav `knihovna()`.")}
+        for kod, (popis, reseni) in jmena.items():
+            z = zdroje.get(kod)
+            if z and not z.get("ok"):
+                problemy.append((popis, "zdroj selhal (%s), v aplikaci jsou akce z %s"
+                                 % (z.get("chyba") or "?", z.get("cas") or "?"), reseni + " Skript: `scripts/build_akce.py`."))
 
     # přímý test NDIC proxy
     ok, zprava = ndic_zivy()

@@ -120,7 +120,7 @@ KAT_MKP = {"vystava": "vys", "prednaska": "vzd", "koncert": "kult", "divadlo": "
            "kurz": "vzd", "workshop": "vzd", "dilna": "vzd", "beseda": "vzd", "hry": "deti", "cteni": "kult"}
 
 
-def kategorie(*texty, mkp_typ="", pro=""):
+def kategorie(*texty, mkp_typ="", pro="", jen=False):
     p = plain(" ".join(t or "" for t in texty))
     if mkp_typ:
         pp = plain(pro)
@@ -134,7 +134,7 @@ def kategorie(*texty, mkp_typ="", pro=""):
     for k, rx in KAT:
         if re.search(rx, p):
             return k
-    return "kult"
+    return None if jen else "kult"
 
 
 VYRADIT = re.compile(r"uzavreni|uzavren[ay]? (odbor|urad|pracovist)|omezeni provozu|uredni hodiny|odstavk|zmena provozni", re.I)
@@ -149,11 +149,11 @@ def priznaky(*texty):
     }
 
 
-def akce(src, id_, t, od, do, celyden, url, misto="", adresa_text="", popis="", img="", lat=None, lon=None, mc=None, **kw):
+def akce(src, id_, t, od, do, celyden, url, misto="", adresa_text="", popis="", img="", lat=None, lon=None, mc=None, hledat="", **kw):
     t = re.sub(r"\s+", " ", t or "").strip()
     a = None
     if lat is None:
-        a = najdi_adresu(adresa_text) or najdi_adresu(misto) or najdi_adresu(popis)
+        a = najdi_adresu(adresa_text) or najdi_adresu(misto) or najdi_adresu(hledat) or najdi_adresu(popis)
         if a:
             lat, lon, mc = a[1], a[2], a[3]
     r = {
@@ -166,7 +166,7 @@ def akce(src, id_, t, od, do, celyden, url, misto="", adresa_text="", popis="", 
         c = kw["cena"].strip()
         r["free"] = True if plain(c).startswith("zdarma") else False
         r["cena"] = "" if r["free"] else c
-    r["k"] = kategorie(t, popis[:400], misto, mkp_typ=kw.get("typ", ""), pro=kw.get("pro", ""))
+    r["k"] = kategorie(t, misto, mkp_typ=kw.get("typ", ""), pro=kw.get("pro", ""), jen=True) or kategorie(t, popis[:400], misto)
     if kw.get("pro"):
         r["pro"] = kw["pro"]
     return r
@@ -198,9 +198,11 @@ def _hezky(s):
         return s
     out = []
     for i, w in enumerate(s.lower().split(" ")):
-        if re.fullmatch(r"[ivxlc]+\.?", w):
+        dalsi = s.split(" ")[i + 1] if i + 1 < len(s.split(" ")) else ""
+        if re.fullmatch(r"[ivxlc]+\.", w) or w in ("ii", "iii", "iv", "vi", "vii", "viii", "ix", "xi", "xii"):
             out.append(w.upper())
-        elif w in ("prahy", "praha", "praze", "prahu") or i == 0 or (out and re.fullmatch(r"[IVXLC]+\.?", out[-1])):
+        elif w in ("prahy", "praha", "praze", "prahu") or i == 0 or re.fullmatch(r"\d+", dalsi) \
+                or (out and re.fullmatch(r"[IVXLC]+\.?", out[-1])):
             out.append(w[:1].upper() + w[1:])
         else:
             out.append(w)
@@ -212,6 +214,14 @@ def praha9():
     m = re.search(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', h, re.S)
     nast = json.loads(m.group(1))
     ev = json.loads(nast["fullCalendarView"][0]["calendar_options"])["events"]
+    def iso(v):
+        if isinstance(v, (int, float)) or (isinstance(v, str) and v.isdigit()):
+            return dt.datetime.fromtimestamp(int(v), TZ).strftime("%Y-%m-%dT%H:%M:%S")
+        return v
+    for e in ev:
+        e["start"] = iso(e["start"])
+        if e.get("end"):
+            e["end"] = iso(e["end"])
     skup = {}
     for e in ev:
         u = e.get("url") or ""
@@ -255,7 +265,7 @@ def praha9():
         if plain(pop).strip() == plain(x["raw"]).strip():
             pop = ""
         vys.append(akce("p9", x["eid"], x["titul"], x["od"], x["do"], x["cd"], x["url"],
-                        misto=x["misto"], adresa_text=x["misto"] + " " + x["raw"], popis=pop, img=x["img"], mc="9"))
+                        misto=x["misto"], hledat=x["raw"], popis=pop, img=x["img"], mc="9"))
     return vys
 
 
@@ -325,7 +335,7 @@ def praha14():
         if VYRADIT.search(plain(titul)):
             continue
         casti = [c.strip() for c in loc.split(",")]
-        misto = casti[0] if casti and casti[0] and not re.search(r"\d", casti[0]) else ""
+        misto = casti[0] if casti and casti[0] and not najdi_adresu(casti[0]) else ""
         adr = ", ".join(c for c in casti[1:] if c and c not in ("Praha", "Hlavní město Praha", "Czechia")) if misto else ", ".join(c for c in casti if c)
         pop, lat, lon = rss.get(href, ("", None, None))
         zaznamy.append({"href": href, "titul": titul, "misto": misto, "adr": adr, "od": od, "do": do, "cd": cd,
@@ -429,11 +439,25 @@ def klic(r):
 
 
 def sloucit(vse):
-    """Stejná akce v knihovně i v kalendáři Prahy 14: necháme knihovnu, doplníme fotku/souřadnice."""
+    """Stejná akce v knihovně i v kalendáři Prahy 14: necháme knihovnu, doplníme fotku/souřadnice.
+    Za duplicitu bereme stejný název a den, nebo stejný začátek na stejném místě."""
     poradi = {"mkp": 0, "p14": 1, "p9": 2}
-    out = {}
-    for r in sorted(vse, key=lambda r: poradi[r["src"]]):
+    # noční akce rozdělená o půlnoci (19:00–23:55 a 00:00–9:00) -> jedna
+    vse = sorted(vse, key=lambda r: (r["src"], r["t"], r["od"]))
+    spoj = []
+    for r in vse:
+        p = spoj[-1] if spoj else None
+        if p and p["src"] == r["src"] and p["t"] == r["t"] and p["do"][11:16] >= "23:55" and r["od"][11:16] == "00:00" \
+                and (dt.date.fromisoformat(p["do"][:10]) + dt.timedelta(days=1)).isoformat() == r["od"][:10]:
+            p["do"] = r["do"]
+            continue
+        spoj.append(r)
+    out, misto_cas = {}, {}
+    for r in sorted(spoj, key=lambda r: poradi[r["src"]]):
         k = klic(r)
+        k2 = (r["od"], round(r["lat"], 3), round(r["lon"], 3)) if r.get("lat") and len(r["od"]) > 10 else None
+        if k not in out and k2 in misto_cas:
+            k = misto_cas[k2]
         if k in out:
             o = out[k]
             for f in ("img", "lat", "lon", "pop", "a"):
@@ -442,6 +466,8 @@ def sloucit(vse):
             o.setdefault("dalsi", []).append(r["u"])
             continue
         out[k] = r
+        if k2:
+            misto_cas[k2] = k
     return list(out.values())
 
 
