@@ -62,6 +62,20 @@ def _stahni_text(url):
         return r.read(700000).decode("utf-8", "replace")
 
 
+def _odkryj_maily(h):
+    """polcare9(a)seznam(,)cz / jmeno [at] domena [dot] cz -> běžný e-mail."""
+    h = re.sub(r"\s*(?:\(a\)|\[at\]|\(at\)|\{at\}| zavináč )\s*", "@", h, flags=re.I)
+    return re.sub(r"(@[a-z0-9.-]+?)\s*(?:\(,\)|\(\.\)|\[dot\]|\(dot\)| tečka )\s*", r"\1.", h, flags=re.I)
+
+
+def tel_platny(t):
+    """České číslo: 9 číslic, nezačíná 0 ani 1 a nejsou to samé stejné číslice (999 999 999)."""
+    d = re.sub(r"\D", "", t or "")
+    if len(d) == 12 and d.startswith("420"):
+        d = d[3:]
+    return len(d) == 9 and d[0] in "23456789" and len(set(d)) > 1
+
+
 def _norm_tel(s):
     d = re.sub(r"\D", "", s or "")
     if len(d) == 12 and d.startswith("420"):
@@ -86,6 +100,7 @@ def kontakt_z_webu(w):
             if not html:
                 continue
             nacteno = True
+            html = _odkryj_maily(html)
             maily += [m.lower() for m in re.findall(r"mailto:([^\"'?>\s]+)", html, re.I)]
             maily += [m.lower() for m in EMAIL_RE.findall(html)]
             tel_odkazy += re.findall(r"tel:\+?([0-9\s ]{6,})", html)   # strukturované = jisté
@@ -97,8 +112,8 @@ def kontakt_z_webu(w):
             break   # když první scheme načetl stránky, nestřídej na http
     mail = next((m for m in maily if m.split("@")[-1].endswith(dom)), "")
     mail_free = next((m for m in maily if m.split("@")[-1] in FREEMAIL), "")
-    tel_odkaz = next((t for t in map(_norm_tel, tel_odkazy) if t), "")
-    tel_volny = next((t for t in map(_norm_tel, tel_text) if t), "")
+    tel_odkaz = next((t for t in map(_norm_tel, tel_odkazy) if t and tel_platny(t)), "")
+    tel_volny = next((t for t in map(_norm_tel, tel_text) if t and tel_platny(t)), "")
     return tel_odkaz, tel_volny, mail, mail_free
 
 
@@ -131,6 +146,9 @@ def doplnit_kontakty(out):
             # e-mail na bezplatné poště jen doplní prázdné (menší jistota než vlastní doména)
             r["e"] = mail_free
             pe += 1
+        # neplatné číslo z registru (035…, 154…, 999 999 999) bereme jako chybějící
+        if r.get("tel") and not tel_platny(r["tel"]):
+            r["tel"] = ""
         # telefon: tel: odkaz přepíše registr; volné číslo jen doplní chybějící
         if tel_odkaz and _norm_tel(r.get("tel", "")) != tel_odkaz:
             r["tel"] = tel_odkaz
@@ -146,8 +164,12 @@ DNY = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"]
 _DEN_PLNE = {"pondeli": 0, "utery": 1, "streda": 2, "ctvrtek": 3, "patek": 4, "sobota": 5, "nedele": 6}
 _DEN_ZKR = {"po": 0, "ut": 1, "st": 2, "ct": 3, "pa": 4, "so": 5, "ne": 6}
 _DEN_TOK = r"(pondeli|utery|streda|ctvrtek|patek|sobota|nedele|po|ut|st|ct|pa|so|ne)\b\.?"
-_DEN_RE = re.compile(r"^[\s•·*\-–]*" + _DEN_TOK + r"(?:\s*[-–—]\s*" + _DEN_TOK + r")?\s*:?\s*", re.I)
+# den, nebo seznam/rozsah dnů: „Po“, „po-pá“, „Pondělí až pátek“, „Po, Út, Čt“, „po a st“
+_DEN_RE = re.compile(r"^[\s•·*\-–]*" + _DEN_TOK + r"((?:\s*(?:[-–—]|az|a|,|\+|/|(?<=[.\s]))\s*" + _DEN_TOK + r")*)\s*:?\s*", re.I)
+_DEN_DALSI = re.compile(r"\s*([-–—]|az|a|,|\+|/|(?<=[.\s]))\s*" + _DEN_TOK, re.I)
 _CAS_RE = re.compile(r"\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(?:hod\.?)?\s*(?:[-–—]|do)\s*([01]?\d|2[0-3])[:.]([0-5]\d)\b")
+# volnější tvar „8 - 11“, „08-12 h“, „13–16 hod.“ – jen u řádků, které už patří ke dni
+_CAS_VOLNY = re.compile(r"(?<![\d.:/])\b([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\s*(?:h|hod\.?)?\s*(?:[-–—]|do|až)\s*([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\b(?![.:/]?\d)(?!\.\s?\d)")
 _ZAVRENO = re.compile(r"zavreno|neordinuj|neordinace|dovolen", re.I)
 
 
@@ -173,14 +195,16 @@ def _html_na_radky(html):
     return radky   # každý řádek = seznam buněk (u textu jen jedna)
 
 
-def _casy(text):
-    """[('8:00 – 11:00', zbytek textu bez časů)]"""
+def _casy(text, volne=False):
+    """[('8:00 – 11:00', ...)], zbytek textu bez časů. volne=True bere i časy bez minut."""
+    rx = _CAS_VOLNY if volne else _CAS_RE
     out = []
-    for m in _CAS_RE.finditer(text):
-        a, b = int(m.group(1)) * 60 + int(m.group(2)), int(m.group(3)) * 60 + int(m.group(4))
-        if a < b:
-            out.append("%d:%s – %d:%s" % (int(m.group(1)), m.group(2), int(m.group(3)), m.group(4)))
-    zbytek = _CAS_RE.sub(" ", text)
+    for m in rx.finditer(text):
+        ma, mb = m.group(2) or "00", m.group(4) or "00"
+        a, b = int(m.group(1)) * 60 + int(ma), int(m.group(3)) * 60 + int(mb)
+        if a < b and (volne is False or m.group(2) or m.group(4) or b - a <= 14 * 60):
+            out.append("%d:%s – %d:%s" % (int(m.group(1)), ma, int(m.group(3)), mb))
+    zbytek = rx.sub(" ", text)
     return out, zbytek
 
 
@@ -194,8 +218,8 @@ def _stitek(s):
     return s[0].upper() + s[1:]
 
 
-def _radky_casu(text, stitek=""):
-    casy, zbytek = _casy(text)
+def _radky_casu(text, stitek="", volne=True):
+    casy, zbytek = _casy(text, volne)
     st = stitek or _stitek(zbytek)
     return [c + (" · " + st if st else "") for c in casy]
 
@@ -205,23 +229,63 @@ def _den_z_radku(bunka):
     m = _DEN_RE.match(_bez_diakr(bunka))
     if not m:
         return None
-    a, b = m.group(1).lower(), (m.group(2) or "").lower()
+    a = m.group(1).lower()
     plne = a in _DEN_PLNE
-    # zkratky (Po, St…) jen když je na řádku čas – „Po předchozím objednání“ není pondělí
-    if not plne and not _CAS_RE.search(bunka) and len(bunka.strip(" .:")) > 3:
-        return None
-    ia = _DEN_PLNE.get(a, _DEN_ZKR.get(a))
-    ib = _DEN_PLNE.get(b, _DEN_ZKR.get(b)) if b else ia
-    if ib < ia:
-        return None
-    return list(range(ia, ib + 1)), bunka[m.end():]
+    zbytek = bunka[m.end():]
+    # zkratky (Po, St…) jen když hned za nimi následuje čas (nebo nic) – „Po předchozím
+    # objednání v pondělí od 8 do 12“ není rozpis ordinačních hodin
+    if not plne:
+        z = zbytek.strip(" .:")
+        if z and not re.match(r"\d|zavren|neordin|-\s*$", _bez_diakr(z)):
+            return None
+    idx = lambda t: _DEN_PLNE.get(t.lower(), _DEN_ZKR.get(t.lower()))
+    dny = [idx(a)]
+    for sep, tok in _DEN_DALSI.findall(m.group(2) or ""):
+        j = idx(tok)
+        if sep in ("-", "–", "—", "az"):
+            if j < dny[-1]:
+                return None
+            dny += list(range(dny[-1] + 1, j + 1))
+        else:
+            dny.append(j)
+    return sorted(set(dny)), zbytek
+
+
+_ROZDEL = re.compile(r"(?:(?<=[,;|])|(?<=hodiny)|(?<=doba)|(?<=:))\s*(?=(?:pondeli|utery|streda|ctvrtek|patek|sobota|nedele|po|ut|st|ct|pa|so|ne)\b)", re.I)
+
+
+def _rozdel(radky):
+    """„Po 7:00-16:00, Út 7:30-15:30“ nebo „ordinační hodiny Úterý 11–18“ -> zvláštní řádky po dnech."""
+    out = []
+    for bunky in radky:
+        if len(bunky) != 1:
+            out.append(bunky)
+            continue
+        t = bunky[0]
+        p = _bez_diakr(t)
+        rezy = [0]
+        for m in _ROZDEL.finditer(p):
+            z = m.start()
+            # řezat jen tam, kde předchozí kus už svůj čas má, nebo to není den („Po, Út, Čt: 8–12“ je jeden kus)
+            if z > 0 and _den_z_radku(t[z:].lstrip()) and _casy(t[z:z + 40], True)[0] \
+                    and (_casy(t[rezy[-1]:z], True)[0] or not _den_z_radku(t[rezy[-1]:z].strip(" ,;|") or "x")):
+                rezy.append(z)
+        if len(rezy) == 1:
+            out.append(bunky)
+            continue
+        for i, z in enumerate(rezy):
+            kus = t[z:rezy[i + 1] if i + 1 < len(rezy) else len(t)].strip(" ,;|")
+            if kus:
+                out.append([kus])
+    return out
 
 
 def hodiny_z_textu(radky):
     """Najde blok dnů s časy. Zvládá tabulku (dny v řádcích, sloupce s hlavičkou)
     i seznam (den na vlastním řádku, pod ním časy)."""
+    radky = _rozdel(radky)
     bloky, blok, hlavicka, posl_den, mezera = [], None, None, None, 0
-    meta = None   # {"start", "end", "nadpis"} k aktuálnímu bloku
+    meta, kratka_mezera = None, False   # {"start", "end", "nadpis"} k aktuálnímu bloku
     for i, bunky in enumerate(radky):
         d = _den_z_radku(bunky[0])
         if d:
@@ -236,6 +300,7 @@ def hodiny_z_textu(radky):
                 hlavicka = prev if len(prev) > 1 and not _casy("\t".join(prev))[0] else None
             lines = []
             if len(bunky) > 1:
+                lines += _radky_casu(zbytek)   # „PO-ČT 9-12 | 13-16“: čas může být i v buňce se dnem
                 for j, b in enumerate(bunky[1:], start=1):
                     st = ""
                     if hlavicka:
@@ -254,19 +319,21 @@ def hodiny_z_textu(radky):
             continue
         text = " ".join(bunky)
         casy = _radky_casu(text)
-        # řádek vyjmenovávající víc dnů („Odběry: po, stř, pá 7:30–10:00“) už k dni nepatří
+        # řádek, který zmiňuje další den („Odběry: po, stř 7:30–10:00“, „1× za 14 dní pondělí 13–18“), už k dni nepatří
         vic_dnu = len(re.findall(r"\b(po|ut|st|str|ct|pa|so|ne|pondeli|utery|streda|ctvrtek|patek)\b",
-                                 _bez_diakr(text))) >= 2
-        if casy and posl_den is not None and mezera == 0 and not vic_dnu:
+                                 _bez_diakr(text))) >= 1
+        if casy and posl_den is not None and (mezera == 0 or (mezera == 1 and kratka_mezera)) and not vic_dnu:
             for x in posl_den:
                 blok[x] += [c for c in casy if c not in blok[x]]
             meta["end"] = i
+            mezera = 0
             continue
         if posl_den is not None and mezera == 0 and _ZAVRENO.search(_bez_diakr(text)):
             for x in posl_den:
                 blok[x] = blok[x] or ["zavřeno"]
             continue
         mezera += 1
+        kratka_mezera = mezera == 1 and len(text) <= 40
         if mezera > 2:   # blok skončil
             bloky.append((blok, meta))
             blok, posl_den = None, None
@@ -466,6 +533,8 @@ def sjednotit_telefony(out):
         t = _norm_tel(r.get("tel", ""))
         if t:
             r["tel"] = t
+        if r.get("tel") and not tel_platny(r["tel"]):
+            r["tel"] = ""
 
 
 def rucni_prepisy(out, klice=("tel", "e", "w", "hod")):
