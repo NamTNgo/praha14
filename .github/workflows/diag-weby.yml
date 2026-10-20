@@ -1,7 +1,12 @@
 name: Diagnostika webů lékařů
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      js:
+        description: "Vykreslit weby v prohlížeči (Playwright)"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -15,6 +20,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: python scripts/diag_weby.py
+      - if: ${{ inputs.js }}
+        run: |
+          pip install -q playwright
+          python -m playwright install --with-deps chromium
+          python scripts/diag_weby_js.py
       # výsledek do samostatné větve (ne do main) – stáhne se přes git
       - run: |
           git config user.name "github-actions"
@@ -22,5 +32,6 @@ jobs:
           git checkout --orphan diag-weby
           git rm -rfq --cached .
           git add -f diag/weby.json
+          [ -f diag/weby_js.json ] && git add -f diag/weby_js.json || true
           git commit -qm "diagnostika webů lékařů"
           git push -f origin diag-weby

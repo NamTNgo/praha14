@@ -63,7 +63,16 @@ def _stahni_text(url, pokusu=2):
             with urllib.request.urlopen(req, timeout=15) as r:
                 if not (r.headers.get_content_type() or "").startswith("text"):
                     return ""
-                return r.read(700000).decode("utf-8", "replace")
+                raw = r.read(700000)
+                # kódování z hlavičky, jinak z <meta charset> (starší weby jsou ve windows-1250)
+                cs = r.headers.get_content_charset() or ""
+                if not cs:
+                    m = re.search(rb'<meta[^>]+charset=["\']?([\w-]+)', raw[:4000], re.I)
+                    cs = m.group(1).decode("ascii", "ignore") if m else "utf-8"
+                try:
+                    return raw.decode(cs, "replace")
+                except LookupError:
+                    return raw.decode("utf-8", "replace")
         except urllib.error.HTTPError as e:
             if e.code < 500 or i + 1 == pokusu:
                 raise
@@ -196,9 +205,9 @@ _DEN_TOK = r"(pondeli|utery|streda|ctvrtek|patek|sobota|nedele|po|ut|st|ct|pa|so
 # den, nebo seznam/rozsah dnů: „Po“, „po-pá“, „Pondělí až pátek“, „Po, Út, Čt“, „po a st“
 _DEN_RE = re.compile(r"^[\s•·*\-–]*" + _DEN_TOK + r"((?:\s*(?:[-–—]|az|a|,|\+|/|(?<=[.\s]))\s*" + _DEN_TOK + r")*)\s*:?\s*", re.I)
 _DEN_DALSI = re.compile(r"\s*([-–—]|az|a|,|\+|/|(?<=[.\s]))\s*" + _DEN_TOK, re.I)
-_CAS_RE = re.compile(r"\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(?:hod\.?)?\s*(?:[-–—]|do)\s*([01]?\d|2[0-3])[:.]([0-5]\d)\b")
+_CAS_RE = re.compile(r"\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(?:hod\.?)?\s*(?:[-–—~]|do)\s*([01]?\d|2[0-3])[:.]([0-5]\d)\b")
 # volnější tvar „8 - 11“, „08-12 h“, „13–16 hod.“ – jen u řádků, které už patří ke dni
-_CAS_VOLNY = re.compile(r"(?<![\d.:/])\b([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\s*(?:h|hod\.?)?\s*(?:[-–—]|do|až)\s*([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\b(?![.:/]?\d)(?!\.\s?\d)")
+_CAS_VOLNY = re.compile(r"(?<![\d.:/])\b([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\s*(?:h|hod\.?)?\s*(?:[-–—~]|do|až)\s*([01]?\d|2[0-3])(?:[:.]([0-5]\d))?\b(?![.:/]?\d)(?!\.\s?\d)")
 _ZAVRENO = re.compile(r"zavreno|neordinuj|neordinace|dovolen", re.I)
 
 
@@ -209,6 +218,8 @@ def _bez_diakr(s):
 def _html_na_radky(html):
     import html as htmlmod
     h = re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>", " ", html)
+    # „Po<span class="d-none">ndělí</span>“ – slovo rozdělené značkou nerozlamovat mezerou
+    h = re.sub(r"(?<=[^\W\d_])<(span|b|strong|em|i|small)\b[^>]*>(?=[^\W\d_])", "", h)
     h = re.sub(r"(?i)</t[dh]\s*>", "\t", h)
     h = re.sub(r"(?i)<br\s*/?>|</(p|div|li|tr|h\d|section|article|table|ul|ol|dt|dd)\s*>", "\n", h)
     h = htmlmod.unescape(re.sub(r"<[^>]+>", " ", h)).replace("\xa0", " ")
@@ -330,6 +341,9 @@ def hodiny_z_textu(radky):
             lines = []
             if len(bunky) > 1:
                 lines += _radky_casu(zbytek)   # „PO-ČT 9-12 | 13-16“: čas může být i v buňce se dnem
+                if not any(_casy(x, True)[0] for x in bunky[1:]):
+                    # „Po | : | 9:00 | ~ | 16:00“ – čas rozsekaný do buněk
+                    lines += _radky_casu(" ".join(bunky[1:]))
                 for j, b in enumerate(bunky[1:], start=1):
                     st = ""
                     if hlavicka:
@@ -472,6 +486,11 @@ def hodiny_z_jsonld(html):
                 else:
                     projdi(v)
 
+    # mikrodata: <meta itemprop="openingHours" content="Mo 07:30-11:30">
+    mikro = re.findall(r'itemprop=["\']openingHours["\'][^>]*content=["\']([^"\']+)', html or "", re.I) + \
+        re.findall(r'content=["\']([^"\']+)["\'][^>]*itemprop=["\']openingHours', html or "", re.I)
+    if mikro:
+        projdi({"openingHours": mikro})
     for blok in re.findall(r'(?is)<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html or ""):
         try:
             projdi(json.loads(blok, strict=False))
@@ -615,7 +634,13 @@ def web_zije(w):
                 req = urllib.request.Request(scheme + w, headers={"User-Agent": BROWSER_UA})
                 with urllib.request.urlopen(req, timeout=15) as r:
                     fin = urllib.parse.urlparse(r.geturl()).hostname or ""
-                    return _domena(fin) == cil
+                    if _domena(fin) != cil:
+                        return False
+                    # zrušený web na subdoméně hostingu (ocni-x.mypage.cz -> mypage.cz)
+                    bez = lambda h: h.lower()[4:] if h.lower().startswith("www.") else h.lower()
+                    if bez(host).count(".") >= 2 and bez(fin) == cil and bez(host) != cil:
+                        return False
+                    return True
             except urllib.error.HTTPError as e:
                 if e.code in (404, 410):
                     return False
