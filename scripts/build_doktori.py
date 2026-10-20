@@ -54,12 +54,23 @@ FREEMAIL = {"seznam.cz", "email.cz", "post.cz", "centrum.cz", "atlas.cz", "volny
 KONTAKT_CESTY = ("", "/kontakt", "/kontakt/", "/kontakty/", "/contact/")
 
 
-def _stahni_text(url):
-    req = urllib.request.Request(url, headers={"User-Agent": BROWSER_UA})
-    with urllib.request.urlopen(req, timeout=12) as r:
-        if not (r.headers.get_content_type() or "").startswith("text"):
-            return ""
-        return r.read(700000).decode("utf-8", "replace")
+def _stahni_text(url, pokusu=2):
+    """Text stránky; výpadek spojení nebo 5xx se jednou zopakuje (weby lékařů občas zaváhají)."""
+    import time
+    for i in range(pokusu):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": BROWSER_UA})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                if not (r.headers.get_content_type() or "").startswith("text"):
+                    return ""
+                return r.read(700000).decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            if e.code < 500 or i + 1 == pokusu:
+                raise
+        except Exception:
+            if i + 1 == pokusu:
+                raise
+        time.sleep(3)
 
 
 def _odkryj_maily(h):
@@ -125,7 +136,7 @@ def kontakt_z_webu(w):
     mail_free = next((m for m in maily if m.split("@")[-1] in FREEMAIL), "")
     tel_odkaz = next((t for t in map(_norm_tel, tel_odkazy) if t and tel_platny(t)), "")
     tel_volny = next((t for t in map(_norm_tel, tel_text) if t and tel_platny(t)), "")
-    return tel_odkaz, tel_volny, mail, mail_free
+    return tel_odkaz, tel_volny, mail, mail_free, nacteno
 
 
 def doplnit_kontakty(out):
@@ -146,7 +157,14 @@ def doplnit_kontakty(out):
     for r in out:
         if not r.get("w"):
             continue
-        tel_odkaz, tel_volny, mail, mail_free = kont.get(r["w"], ("", "", "", ""))
+        tel_odkaz, tel_volny, mail, mail_free, nacteno = kont.get(r["w"], ("", "", "", "", False))
+        if not nacteno:
+            # web teď neodpověděl – nech kontakty z minulého běhu (ty už z webu opravené byly)
+            pred = PREDCHOZI.get(r["id"]) or {}
+            for k in ("tel", "e"):
+                if pred.get(k):
+                    r[k] = pred[k]
+            continue
         dom = _domena(r["w"].split("/")[0])
         # e-mail: doplnit chybějící, nebo přepsat registrový z CIZÍ domény
         reg_cizi = r.get("e") and not r["e"].lower().split("@")[-1].endswith(dom)
@@ -473,23 +491,24 @@ def hodiny_z_webu(w):
     host = (w or "").split("/")[0]
     base = None
     kandidati = []
+    vlastni = w if "/" in w else w + "/"     # web jako podstránka (gynekolog.cz/karhan) – začni na ní
     for scheme in ("https://", "http://"):
         try:
-            html = _stahni_text(scheme + host + "/")
+            html = _stahni_text(scheme + vlastni)
         except Exception:
             continue
         if html:
             base = scheme + host
-            kandidati.append((base + "/", html))
+            kandidati.append((scheme + vlastni, html))
             break
     if not base:
-        return None
+        return NENACTENO
     # odkazy na stránku s hodinami / kontaktem
     odkazy = []
     for href, txt in re.findall(r'<a[^>]+href=["\']([^"\'#]+)["\'][^>]*>(.*?)</a>', kandidati[0][1], re.I | re.S):
         t = _bez_diakr(href + " " + re.sub(r"<[^>]+>", " ", txt))
         if "hodin" in t or "ordinac" in t or "kontakt" in t:
-            u = urllib.parse.urljoin(base + "/", href)
+            u = urllib.parse.urljoin(kandidati[0][0], href)
             if _domena(urllib.parse.urlparse(u).hostname or "") == _domena(host) and u not in odkazy:
                 odkazy.append(u)
     odkazy.sort(key=lambda u: 0 if "hodin" in _bez_diakr(u) else 1)
@@ -511,18 +530,29 @@ def hodiny_z_webu(w):
     return None
 
 
+NENACTENO = "nenacteno"
+PREDCHOZI = {}   # id -> záznam z minulého běhu (načte main); slouží jako záloha při výpadku webu
+
+
 def doplnit_hodiny(out):
     weby = sorted({r["w"] for r in out if r.get("w")})
     if not weby:
         return
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
         hod = dict(zip(weby, ex.map(lambda w: _bezpecne(hodiny_z_webu, w), weby)))
-    n = 0
+    n = drz = 0
     for r in out:
         h = hod.get(r.get("w"))
+        if h == NENACTENO:
+            # web se teď nenačetl – nech hodiny z minula (pokud byly)
+            h = (PREDCHOZI.get(r["id"]) or {}).get("hod")
+            drz += bool(h)
         if h:
             r["hod"] = h
             n += 1
+    if drz:
+        log("  hodiny ponechány z minula (web se nenačetl): %d" % drz)
+    hod = {w: (None if h == NENACTENO else h) for w, h in hod.items()}
     log("ordinační hodiny z webů: %d lékařů (%d webů z %d)" % (n, sum(1 for v in hod.values() if v), len(weby)))
     log("  bez hodin: " + ", ".join(w for w, h in sorted(hod.items()) if not h))
     for w, h in sorted(hod.items()):
@@ -568,29 +598,35 @@ def rucni_prepisy(out, klice=("tel", "e", "w", "hod")):
 
 
 def web_zije(w):
-    """True = web žije na své doméně. False = mrtvý nebo přesměrovaný jinam.
+    """True = web žije na své doméně. False = jistě mrtvý (404/410) nebo přesměrovaný
+    na cizí doménu. None = nepodařilo se ověřit (výpadek spojení, 5xx) – rozhodne minulý běh.
 
     Prošlé/prodané domény (etoile.cz -> zonky.cz) se poznají podle přesměrování
-    na cizí doménu; mrtvé podle chyby. Pomalý web ani bot-blokaci nezahazujeme.
+    na cizí doménu. Pomalý web ani bot-blokaci nezahazujeme.
     """
+    import time
     host = (w or "").split("/")[0]
     cil = _domena(host)
     if not cil or "." not in cil:
         return False
-    for scheme in ("https://", "http://"):
-        try:
-            req = urllib.request.Request(scheme + w, headers={"User-Agent": BROWSER_UA})
-            with urllib.request.urlopen(req, timeout=12) as r:
-                fin = urllib.parse.urlparse(r.geturl()).hostname or ""
-                return _domena(fin) == cil
-        except urllib.error.HTTPError as e:
-            # 404/410/5xx = nefunkční; 401/403/429 = blokace bota, web ale žije
-            return not (e.code in (404, 410) or 500 <= e.code < 600)
-        except (socket.timeout, TimeoutError):
-            return True
-        except Exception:
-            continue   # zkus http; když i to spadne, bereme jako mrtvý
-    return False
+    for pokus in range(3):
+        for scheme in ("https://", "http://"):
+            try:
+                req = urllib.request.Request(scheme + w, headers={"User-Agent": BROWSER_UA})
+                with urllib.request.urlopen(req, timeout=15) as r:
+                    fin = urllib.parse.urlparse(r.geturl()).hostname or ""
+                    return _domena(fin) == cil
+            except urllib.error.HTTPError as e:
+                if e.code in (404, 410):
+                    return False
+                if e.code < 500:
+                    return True    # 401/403/429 = blokace bota, web ale žije
+            except (socket.timeout, TimeoutError):
+                return True
+            except Exception:
+                pass
+        time.sleep(4)
+    return None
 
 
 def nacti_blocklist():
@@ -617,8 +653,16 @@ def proper_weby(out):
     log("ověřuji %d webů (blocklist: %d)…" % (len(k_overeni), len(weby) - len(k_overeni)))
     with concurrent.futures.ThreadPoolExecutor(max_workers=12) as ex:
         stav = dict(zip(k_overeni, ex.map(web_zije, k_overeni)))
+    minule = {r.get("w") for r in PREDCHOZI.values() if r.get("w")}
+    nejiste = [w for w in k_overeni if stav.get(w) is None]
+    if nejiste:
+        log("  web se nepodařilo ověřit (necháváme, pokud byl i minule): " + ", ".join(nejiste))
+
     def ok(w):
-        return _domena(w.split("/")[0]) not in block and stav.get(w, True)
+        if _domena(w.split("/")[0]) in block:
+            return False
+        st = stav.get(w, True)
+        return w in minule if st is None else st
     mrtve = [w for w in weby if not ok(w)]
     for r in out:
         if r.get("w") and not ok(r["w"]):
@@ -743,6 +787,10 @@ def main():
         out.append(r)
     out.sort(key=lambda r: (PRIORITA.index(r["o"]), plain(r["n"])))
 
+    try:
+        PREDCHOZI.update({r["id"]: r for r in json.loads((DATA / "doktori.json").read_text(encoding="utf-8"))})
+    except Exception:
+        pass
     proper_weby(out)
     rucni_prepisy(out, ("w",))   # opravené weby ať se procházejí už při hledání kontaktů a hodin
     doplnit_kontakty(out)
