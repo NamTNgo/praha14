@@ -158,7 +158,7 @@ def akce(src, id_, t, od, do, celyden, url, misto="", adresa_text="", popis="", 
             lat, lon, mc = a[1], a[2], a[3]
     r = {
         "id": src + "-" + str(id_), "src": src, "t": t, "od": od, "do": do, "cd": bool(celyden),
-        "m": misto or "", "a": (a[0] if a else (adresa_text or "")).strip(" ,"),
+        "m": (misto[:1].upper() + misto[1:]) if misto else "", "a": (a[0] if a else (adresa_text or "")).strip(" ,"),
         "lat": lat, "lon": lon, "mc": mc, "u": url, "img": img or "", "pop": zkrat(popis),
     }
     r.update(priznaky(t, popis, kw.get("cena", "")))
@@ -201,8 +201,12 @@ def _hezky(s):
         dalsi = s.split(" ")[i + 1] if i + 1 < len(s.split(" ")) else ""
         if re.fullmatch(r"[ivxlc]+\.", w) or w in ("ii", "iii", "iv", "vi", "vii", "viii", "ix", "xi", "xii"):
             out.append(w.upper())
-        elif w in ("prahy", "praha", "praze", "prahu") or i == 0 or re.fullmatch(r"\d+", dalsi) \
-                or (out and re.fullmatch(r"[IVXLC]+\.?", out[-1])):
+        elif w == "u" and dalsi and i > 0:
+            out.append("U")
+        elif w in ("prahy", "praha", "praze", "prahu") or i == 0 \
+                or (re.fullmatch(r"\d+", dalsi) and w.startswith(("galeri", "sal"))) \
+                or (out and (re.fullmatch(r"[IVXLC]+\.?", out[-1]) or out[-1] in ("-", "–", "U")
+                             or out[-1].lower().startswith("galeri") or out[-1].endswith(":"))):
             out.append(w[:1].upper() + w[1:])
         else:
             out.append(w)
@@ -224,7 +228,10 @@ def praha9():
             e["end"] = iso(e["end"])
     skup = {}
     for e in ev:
+        # celodenní úseky jedné výstavy spojit; opakované akce s časem nechat zvlášť
         u = e.get("url") or ""
+        if not e.get("allDay"):
+            u = u + "#" + e["start"]
         s = skup.setdefault(u, {"e": e, "od": e["start"], "do": e.get("end") or e["start"], "ad": e.get("allDay")})
         s["od"] = min(s["od"], e["start"])
         s["do"] = max(s["do"], e.get("end") or e["start"])
@@ -241,8 +248,10 @@ def praha9():
             continue
         titul, misto = _p9_titul(raw)
         img = (re.search(r'src="([^"]+)"', e.get("des") or "") or [None, ""])[1]
+        uu = u.split("#")[0]
         out.append({"raw": raw, "titul": _hezky(titul), "misto": _hezky(misto), "od": od[:16], "do": do[:16],
-                    "cd": cd, "url": P9 + u, "img": (P9 + img) if img.startswith("/") else img, "eid": e.get("eid") or u})
+                    "cd": cd, "url": P9 + uu, "img": (P9 + img) if img.startswith("/") else img,
+                    "eid": (e.get("eid") or uu) + ("-" + od[:10] if "#" in u else "")})
 
     def detail(x):
         try:
