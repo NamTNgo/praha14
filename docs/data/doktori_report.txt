@@ -26,7 +26,7 @@ ordinační hodiny z webů: 67 lékařů (64 webů z 119)
   ✓ www.csdc.cz  Po 8:00 – 20:00 | Út 8:00 – 20:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 20:00
   ✓ www.dental-pro.info  Po 8:00 – 12:00, 12:30 – 15:30 | Út 8:00 – 12:00, 12:30 – 15:30 | St 8:00 – 12:00, 12:30 – 15:30 | Čt 8:00 – 12:00, 12:30 – 15:30 | Pá 8:00 – 12:00, 12:30 – 15:30 | So zavřeno | Ne zavřeno
   ✓ www.dentalpartners.cz  Po 8:00 – 20:00 | Út 8:00 – 20:00 | St 8:00 – 20:00 | Čt 8:00 – 20:00 | Pá 8:00 – 15:00
-  ✓ www.detskalekarka.org  Po 8:00 – 9:00 | Út 8:00 – 9:00 | St 8:00 – 9:00 | Čt 8:00 – 9:00 | Pá 8:00 – 9:00
+  ✓ www.detskalekarka.org  Po 8:00 – 9:00 · Odběry, 9:00 – 10:30 · Pro nemocné, 10:30 – 15:00 · Pro objednané | Út 8:00 – 9:00 · Odběry, 9:00 – 10:30 · Pro nemocné, 10:30 – 15:00 · Pro objednané | St 8:00 – 9:00 · Odběry, 9:00 – 10:30 · Pro nemocné, 10:30 – 15:00 · Pro objednané | Čt 8:00 – 9:00 · Odběry, 9:00 – 10:30 · Pro nemocné, 10:30 – 15:00 · Pro objednané | Pá 8:00 – 9:00 · Odběry, 9:00 – 10:30 · Pro nemocné, 10:30 – 18:00 · Pro objednané
   ✓ www.detskylekar.org  Po 8:00 – 10:00 · Pro nemocné, 10:00 – 18:00 · Objednaní pacienti | Út 8:00 – 10:00 · Pro nemocné, 10:00 – 13:00 · Objednaní pacienti | St 7:00 – 8:00 · Obtížné odběry, 8:00 – 10:00 · Pro nemocné, 10:00 – 17:00 · Objednaní pacienti | Čt 8:00 – 10:00 · Pro nemocné, 10:00 – 13:00 · Objednaní pacienti | Pá 8:00 – 10:00 · Pro nemocné, 10:00 – 13:00 · Objednaní pacienti
   ✓ www.diblikova.cz  Po 8:15 – 12:30, 13:00 – 18:15 | Út 8:00 – 14:00 | St 8:15 – 12:30, 13:00 – 16:15, 16:15 – 17:15 · Administrativa | Čt 8:15 – 12:30, 13:00 – 16:15, 16:15 – 17:15 · Administrativa | Pá 7:00 – 13:00
   ✓ www.euclaboratore.cz  Po 8:00 – 17:00 | Út 8:00 – 17:00 | St 8:00 – 17:00 | Čt 8:00 – 17:00 | Pá 8:00 – 17:00
@@ -59,15 +59,15 @@ ordinační hodiny z webů: 67 lékařů (64 webů z 119)
   ✓ www.orlbetka.cz  Po 8:00 – 16:00 | Út zavřeno | St 7:00 – 14:00 | Čt 8:00 – 14:00 | Pá 8:00 – 13:00
   ✓ www.orlkyje.cz  Po 8:00 – 12:00, 12:30 – 14:30 | Út 7:00 – 12:00, 12:30 – 13:30 | St 8:00 – 12:00, 12:30 – 14:30 | Čt 7:00 – 12:00, 12:30 – 13:30 | Pá 8:00 – 14:00 | So zavřeno | Ne zavřeno
   ✓ www.ortopedia.cz  Po 7:30 – 13:30, 14:00 – 17:00 · Rázová vlna, 17:00 – 20:00 · MUDr. Štefan | Út 7:30 – 12:00, 13:00 – 16:00 · MUDr. Wagenknecht, 16:00 – 19:00 · Rázová vlna | St 7:30 – 14:00, 16:00 – 19:00 · MUDr. Koutek | Čt 7:30 – 13:30, 14:00 – 16:00 · Rázová vlna, 16:00 – 20:00 · MUDr. Štefan | Pá 7:30 – 13:30 · MUDr. Dočkal, 14:00 – 16:00 · Rázová vlna
-  ✓ www.polcare.cz  Po 9:00 – 13:00 | Út 13:00 – 15:00 | St 8:00 – 10:00 | Čt 8:00 – 10:00 | Pá 8:00 – 10:00
+  ✓ www.polcare.cz  Po 8:30 – 9:00 · Objednaní, 9:00 – 13:00 · Neobjednaní, 13:00 – 14:00 · Objednaní | Út 13:00 – 15:00 · Neobjednaní, 15:00 – 18:00 · Objednaní | St 7:30 – 8:00 · Objednaní, 8:00 – 10:00 · Neobjednaní, 10:00 – 13:00 · Objednaní, 13:00 – 14:00 · Objednaní | Čt 7:30 – 8:00 · Objednaní, 8:00 – 10:00 · Neobjednaní, 10:00 – 13:00 · Objednaní, 13:00 – 14:00 · Objednaní | Pá 7:30 – 8:00 · Objednaní, 8:00 – 10:00 · Neobjednaní, 10:00 – 12:00 · Objednaní, 12:00 – 14:00 · Objednaní
   ✓ www.praktikvysocany.cz  Po 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Út 12:00 – 18:00 | St 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Čt 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Pá 7:00 – 8:00, 8:00 – 11:30
   ✓ www.probeamed.cz  Po 7:30 – 14:00 | Út 7:30 – 14:00 | St 7:30 – 14:00 | Čt 12:00 – 18:00 | Pá 7:30 – 12:00
   ✓ www.psychiatriepapezova.cz  Po 9:00 – 20:00 | Út 8:30 – 18:30 | St 9:00 – 16:00 | Čt 9:00 – 17:00 | Pá 8:00 – 16:00
   ✓ www.salictum.cz  Po 12:00 – 18:00 | Út 7:30 – 14:00 | St 7:30 – 14:00 | Čt 7:30 – 14:00 | Pá 7:30 – 12:30 | So zavřeno | Ne zavřeno
-  ✓ www.smilecentrum.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 16:00
+  ✓ www.smilecentrum.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 16:00 | So 9:00 – 17:00
   ✓ www.stomteam.cz  Po 7:30 – 19:00 | Út 7:30 – 19:00 | St 7:30 – 19:00 | Čt 7:30 – 16:00 | Pá 7:30 – 14:00
   ✓ www.synlab.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 19:00
-  ✓ www.videntevinohrady.cz  Po 8:00 – 16:00 | Út 8:00 – 13:30 | St 8:00 – 12:00 | Čt 8:00 – 16:00
+  ✓ www.videntevinohrady.cz  Po 8:00 – 16:00 · MUDr. Kateřina Fialová, 8:00 – 16:00 · MUDr. Olga Nurieva, Ph.D. | Út 8:00 – 13:30 · MUDr. Kateřina Fialová, 8:00 – 16:00 · MUDr. Olga Nurieva, Ph.D. | St 8:00 – 12:00 · MUDr. Kateřina Fialová, 8:00 – 18:00 · MUDr. Olga Nurieva, Ph.D. | Čt 8:00 – 16:00 · MUDr. Kateřina Fialová, 8:00 – 16:00 · MUDr. Olga Nurieva, Ph.D., 12:00 – 12:30 · Polední pauza | Pá 7:00 – 12:00 · MUDr. Olga Nurieva, Ph.D., 12:00 – 12:30 · Polední pauza
   ✓ www.zubni.cz  Po 9:00 – 12:00, 13:00 – 16:00 | Út 9:00 – 12:00, 13:00 – 16:00 | St 9:00 – 12:00, 13:00 – 16:00 | Čt 9:00 – 12:00, 13:00 – 16:00
   ✓ www.zuby-smrcek.cz  Po 7:30 – 20:00 | Út 7:30 – 20:00 | St 7:30 – 20:00 | Čt 7:30 – 20:00 | Pá 7:30 – 15:00
 ručních přepisů kontaktů: 5
