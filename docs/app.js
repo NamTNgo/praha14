@@ -5,7 +5,8 @@
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
   var state = { address: null, query: "", tab: "doprava", skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
-    dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkQ: "" };
+    dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkQ: "",
+    akView: "list", akHist: [], akSel: null, akF: "tyden", akK: "all", akDenVse: {} };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -256,6 +257,7 @@
     if (state.tab === "skoly") return h + '<div class="body">' + skolyBody(a) + "</div>" + FOOT_SK;
     if (state.tab === "doprava") return h + '<div class="body">' + dopravaBody(a) + "</div>" + FOOT_DO;
     if (state.tab === "doktori") return h + '<div class="body">' + doktoriBody(a) + "</div>" + FOOT_DK;
+    if (state.tab === "akce") return h + '<div class="body">' + akceBody() + "</div>" + FOOT_AK;
     h += '<div class="body">';
     h += cisteniPruh(a);
     h += outageTop(a);
@@ -559,7 +561,8 @@
     oKrokZpet();
   }
   window.addEventListener("popstate", function () {
-    if (state.tab === "doktori" && state.dkHist.length) dkKrokZpet();
+    if (state.tab === "akce" && state.akHist.length) akKrokZpet();
+    else if (state.tab === "doktori" && state.dkHist.length) dkKrokZpet();
     else if (state.skHist.length) oKrokZpet();
   });
 
@@ -897,12 +900,263 @@
     dkKrokZpet();
   }
 
+  // ---- akce: kalendáře Prahy 9, Prahy 14 a Městské knihovny (scripts/build_akce.py) ----
+  var AK_K = {
+    deti: ["Děti a rodina", "#fdf1cb", "#7a5608"], kult: ["Kultura", "#ece6f7", "#5a3f9c"],
+    vys: ["Výstavy", "#dce8fb", "#245a93"], sen: ["Senioři", "#f6e1d6", "#8f4524"],
+    vzd: ["Vzdělávání", "#e3eef0", "#1d5d66"], sport: ["Sport", "#e1ecf6", "#245a93"],
+    zdr: ["Zdraví", "#dfeadd", "#1f4d36"], sous: ["Sousedské", "#efe9dc", "#5c4a1f"]
+  };
+  var AK_KPOR = ["deti", "kult", "vys", "sen", "vzd", "sport", "zdr", "sous"];
+  var AK_CAS = [["dny", "Dnes a zítra"], ["vikend", "Víkend"], ["tyden", "Tento týden"], ["vse", "Vše"]];
+  var AK_SRC = { p9: ["Kalendář akcí MČ Praha 9", "Prahy 9", "https://www.praha9.cz/o-praze-9/kalendar-akci"],
+    p14: ["Kalendář akcí MČ Praha 14", "Prahy 14", "https://www.praha14.cz/zivot-na-praze-14/akce/"],
+    mkp: ["Městská knihovna v Praze", "knihovny", "https://www.mlp.cz/akce/vsechny-akce"] };
+  var DNY_CELE = ["neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"];
+  var MES_GEN = ["ledna", "února", "března", "dubna", "května", "června", "července", "srpna", "září", "října", "listopadu", "prosince"];
+  var AK_DEN_MAX = 6;   // v jednom dni víc karet nevypisujeme, zbytek pod tlačítkem
+  var FOOT_AK = '<div class="foot">Zdroj dat: kalendáře akcí MČ Praha 9 a Praha 14 · Městská knihovna v Praze · Adresy: ČÚZK (RÚIAN)</div>';
+  var I_LIVE = '<span class="aklive"><span class="akdot"></span>Probíhá</span>';
+
+  function akD(s) {   // "2026-10-21" | "2026-10-21T15:00" -> Date (místní čas)
+    var p = s.split("T"), d = p[0].split("-"), t = (p[1] || "00:00").split(":");
+    return new Date(+d[0], +d[1] - 1, +d[2], +t[0], +t[1]);
+  }
+  function akDen(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function akIso(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function akKonec(a) {   // kdy akce opravdu skončí
+    if (a.do.length === 10) { var k = akD(a.do); k.setDate(k.getDate() + 1); return k; }
+    var e = akD(a.do);
+    return e > akD(a.od) ? e : new Date(akD(a.od).getTime() + 2 * 3600 * 1000);
+  }
+  function akDlouha(a) {  // výstava, kurz, celé týdny – víc než jeden den (noční akce přes půlnoc ne)
+    var d = (akDen(akD(a.do)) - akDen(akD(a.od))) / 864e5;
+    return d >= 2 || (d >= 1 && a.do.length === 10);
+  }
+  function akProbiha(a, ted) { return akDlouha(a) && akD(a.od) <= ted && akKonec(a) > ted; }
+  function akDatumTxt(d, rok) { return d.getDate() + ". " + MES_GEN[d.getMonth()] + (rok ? " " + d.getFullYear() : ""); }
+  function akCasTxt(a) {
+    if (a.cd || a.od.length === 10) return "";
+    var o = a.od.slice(11, 16).replace(/^0/, ""), d = a.do.length > 10 ? a.do.slice(11, 16).replace(/^0/, "") : "";
+    if (!d || a.do === a.od) return o;
+    if (a.do.slice(0, 10) !== a.od.slice(0, 10)) return o + " – " + d + " (" + DNY_CELE[akD(a.do).getDay()].slice(0, 2) + ")";
+    return o + " – " + d;
+  }
+  function akVzd(a) {
+    if (a.lat == null || !state.address) return null;
+    return dist(state.address.lat, state.address.lon, a.lat, a.lon);
+  }
+  function akVzdTxt(d) { return d == null ? "" : d < 1000 ? meters(d) : (Math.round(d / 100) / 10).toString().replace(".", ",") + " km"; }
+  function akMisto(a, kratce) {
+    var m = a.m || "", ad = a.a || "";
+    var t = kratce ? (m || ad) : (m && ad && m.indexOf(ad) < 0 ? m + ", " + ad : (m || ad));
+    if (!t) t = a.mc ? "Praha " + a.mc : "";
+    var d = akVzdTxt(akVzd(a));
+    return t + (d ? (t ? " · " : "") + d : "");
+  }
+  function akById(id) { var r = null; (data.akce && data.akce.akce || []).forEach(function (a) { if (a.id === id) r = a; }); return r; }
+
+  // časové okno filtru [od, do)
+  function akOkno(f, ted) {
+    var dnes = akDen(ted), od = dnes, d = new Date(dnes);
+    if (f === "dny") d.setDate(d.getDate() + 2);
+    else if (f === "tyden") d.setDate(d.getDate() + 7);
+    else if (f === "vikend") {
+      var wd = dnes.getDay();   // 0 = neděle
+      if (wd === 0) { d.setDate(d.getDate() + 1); }
+      else if (wd === 6) { d.setDate(d.getDate() + 2); }
+      else { od = new Date(dnes); od.setDate(od.getDate() + (6 - wd)); d = new Date(od); d.setDate(d.getDate() + 2); }
+    } else d.setDate(d.getDate() + 400);
+    return [od, d];
+  }
+  function akVse(ted) {
+    var A = data.akce && data.akce.akce || [];
+    return A.filter(function (a) { return akKonec(a) > ted; });
+  }
+  // krátké akce v okně; dlouhé, které už běží, patří do „Právě probíhá“
+  function akVOkne(f, k, ted) {
+    var w = akOkno(f, ted);
+    return akVse(ted).filter(function (a) {
+      if (k !== "all" && a.k !== k) return false;
+      if (akProbiha(a, ted)) return false;
+      var s = akD(a.od);
+      if (akDlouha(a)) return s >= w[0] && s < w[1];   // dlouhá akce, která teprve začne
+      return s < w[1] && akKonec(a) > w[0] && (s >= w[0] || akKonec(a) > ted);
+    }).sort(function (x, y) { return x.od < y.od ? -1 : x.od > y.od ? 1 : 0; });
+  }
+  function akBezi(k, ted) {
+    return akVse(ted).filter(function (a) { return akProbiha(a, ted) && (k === "all" || a.k === k); })
+      .sort(function (x, y) { var a = akVzd(x), b = akVzd(y); return (a == null ? 1e9 : a) - (b == null ? 1e9 : b); });
+  }
+
+  function akChips(a, velke) {
+    var k = AK_K[a.k] || AK_K.kult, s = velke ? " lg" : "";
+    return '<span class="akk' + s + '" style="background:' + k[1] + ";color:" + k[2] + '">' + k[0] + "</span>" +
+      (a.z ? '<span class="akk akzrus' + s + '">Zrušeno</span>' : "") +
+      (a.free ? '<span class="akfree' + s + '">Zdarma</span>' : (a.cena ? '<span class="akfree' + s + '">' + esc(a.cena) + "</span>" : "")) +
+      (a.reg ? '<span class="akfree' + s + '">Nutné přihlášení</span>' : "");
+  }
+  function akFoto(a, cls) {
+    if (!a.img) return "";
+    return '<img class="' + cls + '" src="' + esc(a.img) + '" alt="" loading="lazy" onerror="this.remove()">';
+  }
+  function akKarta(a) {
+    var cas = akCasTxt(a), o = cas.split(" – ");
+    var casHtml = !cas ? '<span class="akcd">Celý den</span>' : esc(o[0]) + (o[1] ? "<small>do " + esc(o[1]) + "</small>" : "");
+    var dlouha = akDlouha(a) ? '<div class="akm">' + "do " + akDatumTxt(akD(a.do)) + "</div>" : "";
+    return '<button type="button" class="card akcard' + (a.z ? " zrus" : "") + '" data-ak="' + esc(a.id) + '">' +
+      '<div class="aktime">' + casHtml + "</div>" +
+      '<div class="akbody"><div class="akt">' + esc(a.t) + '</div><div class="akm">' + esc(akMisto(a, true)) + "</div>" + dlouha +
+      '<div class="akmeta">' + akChips(a) + "</div></div>" + akFoto(a, "akimg") + "</button>";
+  }
+  function akDenNadpis(d, ted) {
+    var dnes = akDen(ted), z = new Date(dnes); z.setDate(z.getDate() + 1);
+    var t = +d === +dnes ? "Dnes" : +d === +z ? "Zítra" : DNY_CELE[d.getDay()].charAt(0).toUpperCase() + DNY_CELE[d.getDay()].slice(1);
+    var pod = (+d === +dnes || +d === +z ? DNY_CELE[d.getDay()] + " " : "") + akDatumTxt(d, d.getFullYear() !== dnes.getFullYear());
+    return '<div class="akday"><b>' + t + "</b><span>" + pod + "</span></div>";
+  }
+  function akVypadek() {
+    var z = data.akce && data.akce.zdroje || {}, h = "";
+    Object.keys(AK_SRC).forEach(function (k) {
+      var s = z[k];
+      if (!s || s.ok) return;
+      var cas = s.cas ? akD(s.cas) : null;
+      h += '<div class="dinfo warn">' + SVG('<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>', 18, "#a9791a", 2.2) +
+        "<span><b>Akce " + AK_SRC[k][1] + " můžou být neaktuální.</b> " +
+        (cas ? "Kalendář se nám naposledy podařilo načíst " + DNY_CELE[cas.getDay()] + " " + akDatumTxt(cas) + " v " + cas.getHours() + ":" + ("0" + cas.getMinutes()).slice(-2) + ". " : "Kalendář se teď nepodařilo načíst. ") +
+        'Úplný přehled je na <a href="' + AK_SRC[k][2] + '" target="_blank" rel="noopener">webu</a>.</span></div>';
+    });
+    return h;
+  }
+  function akNic() {
+    return '<div class="card-dashed akempty">' + SVG('<path d="M3 3l18 18"/><path d="M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.6M15 10.3a10 10 0 0 1 4 2.6M12 20h.01"/>', 28, "#6b6652", 2) +
+      '<div class="t1">Akce se teď nepodařilo načíst</div><div class="note">Zkuste to za chvíli. Mezitím najdete akce přímo v kalendářích městských částí.</div>' +
+      '<div class="dlinks"><a class="btn-ext" href="' + AK_SRC.p9[2] + '" target="_blank" rel="noopener">Kalendář Prahy 9 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
+      '<a class="btn-ext" href="' + AK_SRC.p14[2] + '" target="_blank" rel="noopener">Kalendář Prahy 14 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
+  }
+  function akFiltry(ted) {
+    var pritomne = {};
+    akVse(ted).forEach(function (a) { pritomne[a.k] = 1; });
+    var seg = '<div class="akseg" role="tablist">' + AK_CAS.map(function (c) {
+      var on = state.akF === c[0];
+      return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? "on" : "") + '" data-akf="' + c[0] + '">' + c[1] + "</button>";
+    }).join("") + "</div>";
+    var chips = [["all", "Vše"]].concat(AK_KPOR.filter(function (k) { return pritomne[k]; }).map(function (k) { return [k, AK_K[k][0]]; }));
+    return seg + '<div class="chipscroll"><div class="chiprow">' + chips.map(function (c) {
+      return '<button type="button" class="chip' + (state.akK === c[0] ? " on" : "") + '" data-akk="' + c[0] + '">' + c[1] + "</button>";
+    }).join("") + '</div><div class="chipfade"></div></div>';
+  }
+  function akPrazdno(ted) {
+    var kdy = { dny: "Dnes a zítra", vikend: "O víkendu", tyden: "Tento týden", vse: "V nejbližších týdnech" }[state.akF];
+    var co = state.akK === "all" ? "" : " v kategorii " + AK_K[state.akK][0].toLowerCase();
+    var dalsi = akVOkne("vse", state.akK, ted), nej = dalsi[0];
+    var vsech = state.akK === "all" ? 0 : akVOkne(state.akF, "all", ted).length;
+    var h = '<div class="card-dashed akempty">' + SVG('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', 28, "#6b6652", 2) +
+      '<div class="t1">' + kdy + co + " nic nemáme</div>";
+    if (nej) h += '<div class="note">Nejbližší je ' + DNY_CELE[akD(nej.od).getDay()] + " " + akDatumTxt(akD(nej.od)) + ".</div>";
+    h += '<div class="dlinks">' + (nej && state.akF !== "vse" ? '<button type="button" class="btn akbtn" data-akf="vse">Zobrazit nejbližší</button>' : "") +
+      (vsech ? '<button type="button" class="btn-ext akbtn2" data-akk="all">Všechny akce (' + vsech + ")</button>" : "") + "</div></div>";
+    return h;
+  }
+  function akceBody() {
+    if (!data.akce || !(data.akce.akce || []).length) return akNic();
+    var ted = new Date(), h = akVypadek() + akFiltry(ted);
+    var bezi = akBezi(state.akK, ted);
+    if (bezi.length) {
+      var n = bezi[0], d = akVzdTxt(akVzd(n));
+      h += '<button type="button" class="card akrow" id="akbezi"><div class="akbody">' +
+        '<div class="akrowt"><span class="akdot"></span>Právě probíhá</div>' +
+        '<div class="akm">' + bezi.length + " " + (bezi.length === 1 ? "výstava nebo kurz" : bezi.length < 5 ? "výstavy a kurzy" : "výstav a kurzů") +
+        " · nejblíž " + esc(n.t) + (d ? ", " + d : "") + "</div></div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+    }
+    var list = akVOkne(state.akF, state.akK, ted);
+    if (!list.length) return h + akPrazdno(ted);
+    var dny = {}, poradi = [];
+    list.forEach(function (a) {
+      var s = akD(a.od), k = akIso(s < akDen(ted) ? akDen(ted) : akDen(s));
+      if (!dny[k]) { dny[k] = []; poradi.push(k); }
+      dny[k].push(a);
+    });
+    poradi.forEach(function (k) {
+      var d = akD(k), vse = dny[k], ukaz = state.akDenVse[k] ? vse : vse.slice(0, AK_DEN_MAX);
+      h += '<div class="list">' + akDenNadpis(d, ted) + ukaz.map(akKarta).join("");
+      if (vse.length > ukaz.length) h += '<button type="button" class="btn-link" data-akden="' + k + '">Dalších ' + (vse.length - ukaz.length) + " " + (vse.length - ukaz.length < 5 ? "akce" : "akcí") + " " + ["v neděli", "v pondělí", "v úterý", "ve středu", "ve čtvrtek", "v pátek", "v sobotu"][d.getDay()] + "</button>";
+      h += "</div>";
+    });
+    h += '<div class="note" style="padding:0 4px">Akce z kalendářů Prahy 9, Prahy 14 a Městské knihovny v Praze. Aktualizujeme dvakrát denně.</div>';
+    return h;
+  }
+  function akHlava(nadpis, pod) {
+    return '<div class="head"><button type="button" class="btn-edit" id="akback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
+      (nadpis ? '<h1 style="margin-top:10px">' + nadpis + '</h1><div class="eyebrow">' + pod + "</div>" : "") + "</div>";
+  }
+  function viewAkceBezi() {
+    var ted = new Date(), bezi = akBezi(state.akK, ted);
+    var rows = bezi.map(function (a) {
+      return '<button type="button" class="akbrow" data-ak="' + esc(a.id) + '"><div class="akbody"><div class="akt">' + esc(a.t) + "</div>" +
+        '<div class="akm">' + I_LIVE + " · do " + akDatumTxt(akD(a.do)) + (akMisto(a, true) ? " · " + esc(akMisto(a, true)) : "") + "</div></div>" +
+        akFoto(a, "akimg") + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+    }).join("");
+    return akHlava("Právě probíhá", "Výstavy a kurzy v Praze 9 a 14, nejbližší první") +
+      '<div class="body" style="padding-bottom:28px">' + (rows ? '<div class="card akblist">' + rows + "</div>" :
+        '<div class="card-dashed akempty"><div class="t1">Teď nic neprobíhá</div></div>') + "</div>" + FOOT_AK;
+  }
+  function akIcs(a) {
+    function f(s) { return s.replace(/[-:]/g, "") + (s.length === 10 ? "" : "00"); }
+    var cd = a.od.length === 10, kon = cd ? akIso(akKonec(a)) : (a.do !== a.od ? a.do : akIso(akKonec(a)) + "T" + ("0" + akKonec(a).getHours()).slice(-2) + ":" + ("0" + akKonec(a).getMinutes()).slice(-2));
+    var t = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//moji-sousede//akce//CS", "BEGIN:VEVENT", "UID:" + a.id + "@moji-sousede",
+      (cd ? "DTSTART;VALUE=DATE:" : "DTSTART;TZID=Europe/Prague:") + f(a.od),
+      (cd ? "DTEND;VALUE=DATE:" : "DTEND;TZID=Europe/Prague:") + f(kon),
+      "SUMMARY:" + a.t.replace(/[,;]/g, "\\$&"), "LOCATION:" + akMisto(a).replace(/ · [\d,]+ k?m$/, "").replace(/[,;]/g, "\\$&"),
+      "URL:" + a.u, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    return "data:text/calendar;charset=utf-8," + encodeURIComponent(t);
+  }
+  function viewAkceDetail(a) {
+    var ted = new Date(), s = akD(a.od), cas = akCasTxt(a);
+    var kdy = akDlouha(a) ? (akProbiha(a, ted) ? "Probíhá do " + akDatumTxt(akD(a.do), true) : akDatumTxt(s) + " – " + akDatumTxt(akD(a.do), true)) :
+      DNY_CELE[s.getDay()].charAt(0).toUpperCase() + DNY_CELE[s.getDay()].slice(1) + " " + akDatumTxt(s) + (cas ? " · " + cas : "");
+    var misto = akMisto(a);
+    var gm = a.lat != null ? "https://www.google.com/maps/search/?api=1&query=" + a.lat + "," + a.lon :
+      (a.a ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(a.a + ", Praha") : "");
+    var pod = drow("Pro koho", a.pro ? a.pro.replace(/(^|, )Pro /g, "$1").replace(/^./, function (c) { return c.toUpperCase(); }) : null) + drow("Vstupné", a.free ? "Zdarma" : (a.cena || null)) + drow("Pořadatel", AK_SRC[a.src][0]);
+    return akHlava() + '<div class="body" style="gap:12px;padding-bottom:28px">' +
+      '<div class="dbadges">' + akChips(a, true) + "</div>" +
+      '<h1 class="dname">' + esc(a.t) + "</h1>" +
+      '<div class="akkdy">' + esc(kdy) + "</div>" +
+      (misto ? '<div class="daddr">' + SVG(PIN, 15, "#6b6652", 2) + esc(misto) + "</div>" : "") +
+      '<div class="dlinks">' + (gm ? '<a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
+      '<a class="btn-ext" href="' + esc(a.u) + '" target="_blank" rel="noopener">Web akce ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
+      (a.z ? '<div class="dinfo warn">' + SVG(I_INFO, 18, "#a9791a", 2.2) + "<span>Pořadatel akci zrušil.</span></div>" : "") +
+      (!misto ? '<div class="dinfo warn">' + SVG(I_INFO, 18, "#a9791a", 2.2) + "<span>Kalendář u této akce neuvádí místo. Podrobnosti najdete na webu akce.</span></div>" : "") +
+      akFoto(a, "akhero") +
+      (a.pop ? '<div class="card dcard"><div class="dtitle">O akci</div><div class="akpop">' + esc(a.pop) + "</div></div>" : "") +
+      dcard("Podrobnosti", pod) +
+      (a.z ? "" : '<a class="btn akcal" href="' + akIcs(a) + '" download="akce.ics">' + SVG('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M12 13v5M9.5 15.5h5"/>', 16, "currentColor", 2.2) + "Přidat do kalendáře</a>") +
+      '<div class="note">Zdroj: ' + AK_SRC[a.src][0] + ". Termín se může změnit, před návštěvou ho ověřte na webu akce.</div>" +
+      "</div>" + FOOT_AK;
+  }
+  function openAkce(view, id) {
+    state.akHist.push({ v: state.akView, s: state.akSel, y: window.scrollY });
+    state.akView = view; state.akSel = id || null;
+    try { history.pushState({ ak: state.akHist.length }, ""); } catch (e) {}
+    render(); window.scrollTo(0, 0);
+  }
+  function akKrokZpet() {
+    var p = state.akHist.pop() || { v: "list", s: null, y: 0 };
+    state.akView = p.v; state.akSel = p.s; render(); window.scrollTo(0, p.y || 0);
+  }
+  function akBack() {
+    if (state.akHist.length && history.state && history.state.ak) { history.back(); return; }
+    akKrokZpet();
+  }
+
   // ---- spodní navigace ----
   var BI_ODPAD = '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>';
   var BI_SKOLY = '<path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.5 3 6 3s6-2 6-3v-5"/>';
   var BI_DOPRAVA = '<path d="M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/>';
   var BI_LEKARI = '<path d="M11 2a2 2 0 0 0-2 2v2a3 3 0 0 0 6 0V4a2 2 0 0 0-2-2"/><path d="M12 9v3a4 4 0 0 1-8 0v-1"/><path d="M12 9v4a4 4 0 0 0 8 0v-1"/><circle cx="20" cy="11" r="2"/><circle cx="4" cy="11" r="2"/>';
-  var NAV = [["doprava", "Doprava", BI_DOPRAVA], ["odpad", "Odpad", BI_ODPAD], ["doktori", "Doktoři", BI_LEKARI], ["skoly", "Školy", BI_SKOLY]];
+  var BI_AKCE = '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>';
+  var NAV = [["doprava", "Doprava", BI_DOPRAVA], ["odpad", "Odpad", BI_ODPAD], ["akce", "Akce", BI_AKCE], ["doktori", "Doktoři", BI_LEKARI], ["skoly", "Školy", BI_SKOLY]];
   function bottomNav() {
     return '<nav class="bnav" role="tablist">' + NAV.map(function (t) {
       var on = state.tab === t[0];
@@ -914,7 +1168,8 @@
     return data && state.address && !window.__err &&
       (state.tab === "odpad" || state.tab === "doprava" ||
        (state.tab === "skoly" && state.skView === "list") ||
-       (state.tab === "doktori" && state.dkView === "list"));
+       (state.tab === "doktori" && state.dkView === "list") ||
+       (state.tab === "akce" && state.akView === "list"));
   }
 
   // ---- vykreslení a události ----
@@ -926,6 +1181,8 @@
     else if (state.tab === "skoly" && data.skoly && state.skView === "full") html = viewSkolyFull();
     else if (state.tab === "doktori" && data.doktori && state.dkView === "detail" && dkById(state.dkSel)) html = viewDoktorDetail(dkById(state.dkSel));
     else if (state.tab === "doktori" && data.doktori && state.dkView === "full") html = viewDoktoriFull();
+    else if (state.tab === "akce" && data.akce && state.akView === "detail" && akById(state.akSel)) html = viewAkceDetail(akById(state.akSel));
+    else if (state.tab === "akce" && data.akce && state.akView === "bezi") html = viewAkceBezi();
     else html = viewResult();
     if (data && state.address && state.tab === "skoly" && state.skSheet && state.skView !== "detail") html += sheetHtml();
     if (naSekci()) html += bottomNav();
@@ -970,7 +1227,7 @@
     if (sb) sb.addEventListener("click", function () { skBack(); });
     var sq = document.getElementById("skq");
     if (sq) sq.addEventListener("input", function () { state.skQ = sq.value; document.getElementById("sklist").innerHTML = skolyListHtml(); app.querySelectorAll("#sklist [data-sk]").forEach(function (b) { b.addEventListener("click", function () { openSkola(b.getAttribute("data-sk")); }); }); });
-    app.querySelectorAll("[data-nav]").forEach(function (b) { b.addEventListener("click", function () { state.tab = b.getAttribute("data-nav"); state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; render(); window.scrollTo(0, 0); }); });
+    app.querySelectorAll("[data-nav]").forEach(function (b) { b.addEventListener("click", function () { state.tab = b.getAttribute("data-nav"); state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; render(); window.scrollTo(0, 0); }); });
     app.querySelectorAll("[data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); });
     app.querySelectorAll("[data-dkf]").forEach(function (b) { b.addEventListener("click", function () { state.dkF = b.getAttribute("data-dkf"); render(); }); });
     var df = document.getElementById("dkfull");
@@ -979,8 +1236,18 @@
     if (db) db.addEventListener("click", function () { dkBack(); });
     var dq = document.getElementById("dkq");
     if (dq) dq.addEventListener("input", function () { state.dkQ = dq.value; document.getElementById("dklist").innerHTML = dkListHtml(); app.querySelectorAll("#dklist [data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); }); });
+    app.querySelectorAll("[data-ak]").forEach(function (b) { b.addEventListener("click", function () { openAkce("detail", b.getAttribute("data-ak")); }); });
+    app.querySelectorAll("[data-akf]").forEach(function (b) { b.addEventListener("click", function () { state.akF = b.getAttribute("data-akf"); state.akDenVse = {}; render(); }); });
+    app.querySelectorAll("[data-akk]").forEach(function (b) { b.addEventListener("click", function () { state.akK = b.getAttribute("data-akk"); render(); }); });
+    app.querySelectorAll("[data-akden]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY; state.akDenVse[b.getAttribute("data-akden")] = true; render(); window.scrollTo(0, y); }); });
+    var akb = document.getElementById("akbezi");
+    if (akb) akb.addEventListener("click", function () { openAkce("bezi"); });
+    var akon = app.querySelector("[data-akk].on");
+    if (akon && akon.scrollIntoView && state.akK !== "all") akon.scrollIntoView({ block: "nearest", inline: "center" });
+    var akx = document.getElementById("akback");
+    if (akx) akx.addEventListener("click", function () { akBack(); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "doprava"; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "doprava"; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
@@ -999,8 +1266,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; }), getJSON("data/akce.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       state.address = load();

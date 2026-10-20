@@ -62,7 +62,7 @@ def text(h):
     return re.sub(r"\n{2,}", "\n", t).strip()
 
 
-def zkrat(t, n=700):
+def zkrat(t, n=1400):
     t = (t or "").strip()
     if len(t) <= n:
         return t
