@@ -304,17 +304,20 @@ _NADPIS_NE = re.compile(r"hodin|letn|prazdnin|dovolen|zimn|svat|zmen|kontakt|adr
 
 
 def _nadpis_bloku(radky, i):
-    """Krátký nadpis těsně nad blokem dnů („Pro nemocné“), jinak ""."""
+    """Krátký nadpis těsně nad blokem dnů („Pro nemocné“), jinak "".
+    Nadpis může být zalomený do dvou řádků („Ordinační hodiny pro zdravé / a kojence“)."""
+    casti = []
     for j in (i - 1, i - 2):
         if j < 0:
             break
         r = radky[j]
-        if len(r) != 1 or _casy(r[0])[0] or _den_z_radku(r[0]):
-            continue
-        st = _stitek(r[0])
-        if st and len(st) <= 30 and not _NADPIS_NE.search(_bez_diakr(st)):
-            return st
-        return ""
+        if len(r) != 1 or _casy(r[0])[0] or _den_z_radku(r[0]) or len(r[0]) > 40:
+            break
+        casti.insert(0, r[0])
+    t = re.sub(r"(?i)^ordina\S*\s+hodiny\s*", "", " ".join(casti)).strip()
+    st = _stitek(t)
+    if st and len(st) <= 30 and not _NADPIS_NE.search(_bez_diakr(st)):
+        return st
     return ""
 
 
@@ -394,7 +397,7 @@ def sjednotit_telefony(out):
             r["tel"] = t
 
 
-def rucni_prepisy(out):
+def rucni_prepisy(out, klice=("tel", "e", "w", "hod")):
     """Ruční opravy z scripts/doktori_rucne.json – mají poslední slovo."""
     p = Path(__file__).resolve().parent / "doktori_rucne.json"
     try:
@@ -404,7 +407,7 @@ def rucni_prepisy(out):
     n = 0
     for r in out:
         for k, v in (prep.get(r["id"]) or {}).items():
-            if k in ("tel", "e", "w", "hod"):
+            if k in klice:
                 if k == "hod" and not v:
                     r.pop("hod", None)
                 else:
@@ -590,6 +593,7 @@ def main():
     out.sort(key=lambda r: (PRIORITA.index(r["o"]), plain(r["n"])))
 
     proper_weby(out)
+    rucni_prepisy(out, ("w",))   # opravené weby ať se procházejí už při hledání kontaktů a hodin
     doplnit_kontakty(out)
     doplnit_hodiny(out)
     sjednotit_telefony(out)
