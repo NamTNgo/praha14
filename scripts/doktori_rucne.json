@@ -2,7 +2,47 @@
   "_poznamka": "Ruční přepisy kontaktů lékařů, mají přednost před registrem i webem. Klíč = id z doktori.json, hodnoty tel/e/w (prázdný řetězec údaj smaže).",
   "d-116371": {
     "w": "detskylekar-jandova.cz",
-    "e": "mudrjandovadana@seznam.cz"
+    "e": "mudrjandovadana@seznam.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 11:00 · Pro nemocné",
+            "12:30 – 16:30 · Pro zdravé a kojence"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 11:00 · Pro nemocné",
+            "12:30 – 14:00 · Pro zdravé a kojence"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 11:00 · Pro nemocné",
+            "11:00 – 13:00 · Pro zvané děti"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "10:00 – 12:00 · Pro zdravé a kojence",
+            "13:00 – 15:30 · Pro nemocné"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 11:00 · Pro nemocné",
+            "11:00 – 13:00 · Pro zvané děti"
+          ]
+        ]
+      ],
+      "u": "https://detskylekar-jandova.cz/"
+    }
   },
   "d-226836": {
     "w": "mudrtrousilova.webnode.cz",
