@@ -48,5 +48,158 @@
     "w": "mudrtrousilova.webnode.cz",
     "tel": "281 911 729",
     "e": "mudr.trousilova@pediatr.cz"
+  },
+  "d-261451": {
+    "w": "alergoplus.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "7:00 – 12:00",
+            "13:00 – 17:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "12:00 – 18:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 12:00",
+            "13:00 – 16:00"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 12:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 12:00"
+          ]
+        ]
+      ],
+      "u": "https://alergoplus.cz/ordinacni-doba/"
+    }
+  },
+  "d-121955": {
+    "w": "www.ockovani-zahranici.cz/ockovaci-centrum-praha-9-cerny-most",
+    "tel": "608 317 544",
+    "e": "klepetkova@ockovani-zahranici.cz",
+    "hod": {
+      "r": [
+        [
+          "St",
+          [
+            "13:00 – 17:30"
+          ]
+        ]
+      ],
+      "u": "https://www.ockovani-zahranici.cz/ockovaci-centrum-praha-9-cerny-most"
+    }
+  },
+  "d-121598": {
+    "w": ""
+  },
+  "d-238682": {
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 15:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 15:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 18:00"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 18:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 14:00"
+          ]
+        ],
+        [
+          "So",
+          [
+            "zavřeno"
+          ]
+        ],
+        [
+          "Ne",
+          [
+            "zavřeno"
+          ]
+        ]
+      ],
+      "u": "https://www.kukura-suissa.cz/working-hours-ordina%C4%8Dn%C3%AD-hodiny"
+    }
+  },
+  "d-190313": {
+    "e": "endokrinologiecm@gmail.com",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:30 – 13:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:30 – 14:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "zavřeno"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "15:30 – 19:30"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:30 – 12:30"
+          ]
+        ]
+      ],
+      "u": "https://www.endokrinologiecernymost.cz/endokrinologie-pro-dospele/",
+      "h": "endokrinologie pro dospělé; diabetologie má vlastní hodiny"
+    }
+  },
+  "d-120441": {
+    "w": ""
+  },
+  "d-260879": {
+    "hod": {}
   }
 }
