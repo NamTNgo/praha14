@@ -964,7 +964,7 @@
   function akOkno(f, ted) {
     var dnes = akDen(ted), od = dnes, d = new Date(dnes);
     if (f === "dny") d.setDate(d.getDate() + 2);
-    else if (f === "tyden") d.setDate(d.getDate() + 7);
+    else if (f === "tyden") d.setDate(d.getDate() + (8 - (dnes.getDay() || 7)));   // kalendářní týden: od dneška do neděle
     else if (f === "vikend") {
       var wd = dnes.getDay();   // 0 = neděle
       if (wd === 0) { d.setDate(d.getDate() + 1); }
