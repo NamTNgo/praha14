@@ -415,7 +415,7 @@ def main():
         if konec < dnes:
             continue
         oop.append({"n": v["n"], "mc": v["mc"], "ul": [v["misto"].replace("ulice ", "")] if v["misto"] else [],
-                    "lat": v["lat"], "lon": v["lon"], "od": v.get("oop_od") or v["od"], "do": konec,
+                    "lat": v["lat"], "lon": v["lon"], "od": v.get("oop_od") or v["od"], "do": v.get("oop_do"),
                     "p": "Přechodná úprava provozu kvůli pracím – opatření úřadu MČ Praha " + v["mc"] + ".", "u": v["url"], "z": "oop"})
     for v in sorted(vyhl.values(), key=lambda x: x["od"]):
         if v["faze"] == "oop":

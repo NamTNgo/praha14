@@ -591,6 +591,7 @@
   function dden(iso) { var d = new Date(iso + "T00:00:00"); return HDAYS[d.getDay()] + " " + d.getDate() + ". " + (d.getMonth() + 1) + "."; }
   function obdobi(od, aDo) {
     if (od && aDo && od !== aDo) return fmtDate(od).replace(/ \d{4}$/, "") + " – " + fmtDate(aDo);
+    if (od && !aDo) return "od " + fmtDate(od);
     if (od) return fmtDate(od);
     if (aDo) return "do " + fmtDate(aDo);
     return "termín neuveden";
@@ -611,7 +612,9 @@
   }
   function uzavirkyPro(a) {
     if (!data.doprava || !a) return [];
-    return (data.doprava.uzavirky || []).map(function (x) {
+    var dnesIso = den0().toISOString().slice(0, 10);
+    var oop = (data.rizeni && data.rizeni.oop || []).filter(function (x) { return !x.do || x.do >= dnesIso; });
+    return (data.doprava.uzavirky || []).concat(oop).map(function (x) {
       // bez souřadnic ulici neumístíme; zůstane jen pro správnou městskou část
       var dd = x.lat == null ? null : dist(a.lat, a.lon, x.lat, x.lon);
       return { x: x, d: dd };
@@ -1523,7 +1526,7 @@
   function stavbyBody(a) {
     var st = stStav();
     if (!data.stavby || !data.stavby.projekty) return st;
-    var vse = stOkoli(a), xs = stFiltr(vse), h = st + stChips();
+    var vse = stOkoli(a), xs = stFiltr(vse), h = st + (state.stF === "all" ? rzSekce(a) : "") + stChips();
     if (!vse.length) {
       var nej = stOkoli(a, 1e6)[0];
       h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(I_JERAB, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Do 3 km se teď nic nestaví ani neplánuje</div>' +
@@ -1531,7 +1534,7 @@
     } else if (!xs.length) {
       h += '<div class="card-dashed row"><div class="grow"><div class="note" style="margin:0">V tomhle filtru do 3 km nic není.</div></div></div>';
     } else {
-      h += '<div class="label" style="margin-top:2px">Do 3 km od vaší adresy · ' + pl(xs.filter(function (x) { return stKat(x.p) !== "uzemi"; }).length, "projekt", "projekty", "projektů") + "</div>" + stSekce(xs, false);
+      h += '<div class="label" style="margin-top:2px">Velké projekty do 3 km · ' + pl(xs.filter(function (x) { return stKat(x.p) !== "uzemi"; }).length, "projekt", "projekty", "projektů") + "</div>" + stSekce(xs, false);
     }
     var uz = uzavirkyPro(a);
     h += '<button type="button" class="rdlink" data-act="tab:doprava">' + SVG(ST_KAT.dop[1], 20, "#6b6652", 2) + '<span class="grow"><b>Opravy silnic a chodníků</b>' +
@@ -1541,12 +1544,12 @@
     h += '<button type="button" class="btn-link" id="stfull">Celý seznam Prahy 9 a 14 (' + n + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     return h;
   }
-  var FOOT_ST = '<div class="foot">Zdroj dat: CAMP – Praha zítra (Institut plánování a rozvoje hl. m. Prahy) · Stav prodeje: novostavby.com · Opravy silnic: TSK, NDIC</div>';
+  var FOOT_ST = '<div class="foot">Zdroj dat: CAMP – Praha zítra (Institut plánování a rozvoje hl. m. Prahy) · Stavební řízení: úřední desky MČ Praha 9 a 14 · Stav prodeje: novostavby.com · Opravy silnic: TSK, NDIC</div>';
   function viewStavbyFull() {
     var a = state.address, xs = stFiltr((data.stavby.projekty || []).filter(function (p) { return p.mc === "9" || p.mc === "14"; })
       .map(function (p) { return { p: p, d: stDist(p, a) }; }).sort(function (x, y) { return x.d - y.d; }));
     return '<div class="head"><button type="button" class="btn-edit" id="stback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
-      '<h1 style="margin-top:6px">Stavby v Praze 9 a 14</h1></div><div class="body">' + stChips() + stSekce(xs, true) + "</div>" + FOOT_ST;
+      '<h1 style="margin-top:6px">Stavby v Praze 9 a 14</h1></div><div class="body">' + rzVseSekce(a) + stChips() + stSekce(xs, true) + "</div>" + FOOT_ST;
   }
   function viewStavbaDetail(p) {
     var a = state.address, d = stDist(p, a), kroky = ["Záměr", "Povolování", "Výstavba", "Hotovo"];
@@ -1606,8 +1609,86 @@
     }).join("") + "</div>";
   }
 
+  // ---- menší stavby: stavební řízení z úředních desek Prahy 9 a 14 (scripts/build_rizeni.py) ----
+  var RZ_R = 1500, RZ_DOMU = 500;
+  var RZ_FAZE = { zahajeno: ["f-povol", "Řízení zahájeno"], pred: ["f-stavi", "Před rozhodnutím"], rozhodnuto: ["f-hot", "Povoleno"],
+    odvolani: ["f-stavi", "Odvolání"], jes: ["f-plan", "Posuzuje se vliv na prostředí"], info: ["f-plan", "Oznámení"] };
+  var I_DOC = '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>';
+  var RZ_IKONY = {
+    "Zateplení": '<path d="M4 20V9l8-5 8 5v11"/><path d="M8 20v-7h8v7"/><path d="M2 12h3M19 12h3"/>',
+    "Úprava fasády": '<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/>',
+    "Nástavba": '<path d="M5 21V11h14v10"/><path d="M8 11V6h8v5"/><path d="M12 2v3"/>',
+    "Přístavba": '<path d="M3 21V10l6-4 6 4v11"/><path d="M15 21v-7h6v7"/>',
+    "Rodinný dům": '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-6h4v6"/>',
+    "Bytový dům": '<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1"/>',
+    "Chodník": '<path d="M7 21 10 3M17 21 14 3M12 7v2M12 13v2"/>',
+    "Sítě a přípojky": '<path d="M4 12h6l2-3 2 6 2-3h4"/><circle cx="4" cy="12" r="1.5"/><circle cx="20" cy="12" r="1.5"/>'
+  };
+  function rzVse() { return data.rizeni && data.rizeni.zamery ? data.rizeni.zamery : []; }
+  function rzById(id) { return rzVse().filter(function (z) { return z.id === id; })[0]; }
+  function rzDist(z, a) { return z.lat != null && z.presnost !== "ku" ? dist(a.lat, a.lon, z.lat, z.lon) : null; }
+  // v okolí jen záměry se známým místem (adresa nebo ulice); jen katastr → pouze v celém seznamu
+  function rzOkoli(a, r) {
+    return rzVse().map(function (z) { return { z: z, d: rzDist(z, a) }; })
+      .filter(function (x) { return x.d != null && x.d <= (r || RZ_R); }).sort(function (p, q) { return p.d - q.d; });
+  }
+  function rzDat(s) { var p = (s || "").split("-"); return p.length === 3 ? (+p[2]) + ". " + (+p[1]) + "." : ""; }
+  function rzFz(z) { var f = RZ_FAZE[z.faze] || RZ_FAZE.info; return '<span class="fz ' + f[0] + '"><i></i>' + f[1] + "</span>"; }
+  function rzMisto(z) {
+    if (z.presnost === "ku") return (z.misto || "").charAt(0).toUpperCase() + (z.misto || "").slice(1) + " (místo bez upřesnění)";
+    var m = z.misto || ""; return m.charAt(0).toUpperCase() + m.slice(1);
+  }
+  function rzKarta(x) {
+    var z = x.z;
+    return '<button type="button" class="card stc" data-rz="' + esc(z.id) + '"><span class="rzi">' + SVG(RZ_IKONY[z.druh] || I_DOC, 24, "#6b6652", 1.8) + "</span>" +
+      '<span class="stt"><span class="stfz">' + rzFz(z) + '</span><span class="stn">' + esc(z.n) + '</span><span class="stm">' + esc(z.druh) + " · vyvěšeno " + rzDat(z.d) + "</span>" +
+      '<span class="sta">' + esc(rzMisto(z)) + (x.d != null ? " · " + akVzdTxt(x.d) : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+  }
+  function rzSekce(a) {
+    if (!data.rizeni) return "";
+    var xs = rzOkoli(a), h = '<div class="stsec"><b>Na stavebním úřadu</b><span>do 1,5 km · ' + xs.length + "</span></div>" +
+      '<div class="note" style="padding:0 4px;margin:-2px 0 2px">Menší stavby a úpravy domů, o kterých teď rozhoduje stavební úřad.</div>';
+    if (!xs.length) return h + '<div class="card-dashed row"><div class="grow"><div class="note" style="margin:0">Do 1,5 km teď stavební úřad nic nezveřejnil. Vyhlášky sledujeme od 21. 10. 2026.</div></div></div>';
+    var otevr = state.stVse.rizeni, zob = otevr ? xs : xs.slice(0, ST_N);
+    h += '<div class="stlist">' + zob.map(rzKarta).join("") + "</div>";
+    if (xs.length > ST_N) h += '<button type="button" class="spadvic" data-stvse="rizeni">' + (otevr ? "Zobrazit méně" : "Další (" + (xs.length - ST_N) + ")") +
+      SVG(otevr ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
+    return h;
+  }
+  function rzVseSekce(a) {
+    var xs = rzVse().map(function (z) { return { z: z, d: rzDist(z, a) }; });
+    if (!xs.length) return "";
+    return '<div class="stsec"><b>Na stavebním úřadu</b><span>' + xs.length + '</span></div><div class="stlist">' + xs.map(rzKarta).join("") + "</div>";
+  }
+  function viewRizeniDetail(z) {
+    var a = state.address, d = rzDist(z, a);
+    var tl = (z.kroky || []).map(function (k) {
+      var f = RZ_FAZE[k.f] || RZ_FAZE.info;
+      return "<div><b>" + f[1] + "</b><small>vyvěšeno " + rzDat(k.d) + " " + k.d.slice(0, 4) + ' · <a href="' + esc(k.u) + '" target="_blank" rel="noopener">vyhláška</a></small></div>';
+    }).join("");
+    if (z.faze === "zahajeno" || z.faze === "pred") tl += '<div class="next"><b>Rozhodnutí o povolení</b><small>zatím nevydáno</small></div>';
+    var last = (z.kroky || [])[z.kroky.length - 1] || {};
+    return '<div class="head"><button type="button" class="btn-edit" id="stback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
+      '<div class="body" style="gap:12px;padding-bottom:28px"><div class="stfz">' + rzFz(z) + '<span class="fz f-plan">' + esc(z.druh) + "</span></div>" +
+      '<h1 style="margin:2px 0 0;font-size:23px">' + esc(z.n) + "</h1>" +
+      '<div class="skadr" style="font-size:15px">' + esc(rzMisto(z)) + (d != null ? " · " + akVzdTxt(d) + " od vás" : "") + ", Praha " + esc(z.mc) + "</div>" +
+      '<div class="card dcard"><div class="dtitle">Průběh řízení</div><div class="tl">' + tl + "</div></div>" +
+      (z.popis ? '<div class="card dcard"><div class="dtitle">Co se má stavět</div><div class="ptext">' + esc(z.popis.charAt(0).toUpperCase() + z.popis.slice(1)) + "</div></div>" : "") +
+      (z.faze === "zahajeno" ? '<div class="prz"><b>Jste soused?</b>Vlastníci sousedních pozemků a domů bývají účastníky řízení. Námitky lze podat do 15 dnů od doručení vyhlášky – postup a lhůta jsou v ní.</div>' : "") +
+      '<div class="dlinks">' + (last.u ? '<a class="btn-ext" href="' + esc(last.u) + '" target="_blank" rel="noopener">Vyhláška na úřední desce ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
+      (z.lat != null && z.presnost !== "ku" ? '<a class="btn-ext" href="https://www.google.com/maps/search/?api=1&query=' + z.lat + "," + z.lon + '" target="_blank" rel="noopener">Mapa ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + "</div>" +
+      '<div class="note" style="padding:0 4px">Zdroj: úřední deska MČ Praha ' + esc(z.mc) + "." + (z.presnost === "ulice" ? " Místo je určené jen podle ulice." : "") +
+      " Jména stavebníků a další osobní údaje z vyhlášek v aplikaci neukazujeme.</div></div>";
+  }
+  function openRizeni(id, odkud) {
+    state.stHist.push({ v: state.stView, s: state.stSel, y: window.scrollY, tab: odkud || null });
+    state.stView = "rizeni"; state.stSel = id;
+    try { history.pushState({ st: state.stHist.length }, ""); } catch (e) {}
+    render(); window.scrollTo(0, 0);
+  }
+
   // ---- Domů: co se týká vaší adresy ----
-  var FOOT_DOMU = '<div class="foot">' + NDIC_ZDROJ + " · Zdroj dat: Pražské vodovody a kanalizace · Policie ČR · CAMP Praha zítra · PTAS · TSK · Golemio · praha9.cz · praha14.cz · Městská knihovna v Praze</div>";
+  var FOOT_DOMU = '<div class="foot">' + NDIC_ZDROJ + " · Zdroj dat: Pražské vodovody a kanalizace · Policie ČR · CAMP Praha zítra · úřední desky MČ · PTAS · TSK · Golemio · praha9.cz · praha14.cz · Městská knihovna v Praze</div>";
   var DOMU_MAX = 3;
   function domuUpozorneni(a) {
     var r = vodaUpozorneni(a).concat(patUpozorneni()), ted = den0();
@@ -1625,6 +1706,9 @@
     }
     var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 5000; })[0];
     var uz = neh ? null : uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 300 && probiha(x.x); })[0];
+    var rz = data.rizeni ? rzOkoli(a, RZ_DOMU)[0] : null;
+    if (rz) r.push({ cls: "info", ic: RZ_IKONY[rz.z.druh] || I_DOC, fg: "#5b5b54", t: rz.z.druh + " · " + akVzdTxt(rz.d) + " od vás",
+      s: rz.z.n + " · " + (RZ_FAZE[rz.z.faze] || RZ_FAZE.info)[1].toLowerCase() + " " + rzDat(rz.z.d), act: "rz:" + rz.z.id });
     if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
       s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "dop:nehody" });
     if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n) + " · " + akVzdTxt(uz.d), s: obdobi(uz.x.od, uz.x.do), act: "tab:doprava" });
@@ -1701,6 +1785,7 @@
     var p = String(act).split(":"), t = p[0], v = p.slice(1).join(":");
     if (t === "voda") { openVoda(v); return; }
     if (t === "pat") { openPatrani(v); return; }
+    if (t === "rz") { var z1 = state.tab; state.stView = "list"; state.stHist = []; openRizeni(v, z1); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "st") { var z0 = state.tab; state.stView = "list"; state.stHist = []; openStavba(v, z0); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "dop") {   // rovnou na konkrétní sekci v Dopravě (např. nehody)
       prepniTab("doprava");
@@ -1765,6 +1850,7 @@
     else if (state.tab === "skoly" && data.skoly && state.skView === "full") html = viewSkolyFull();
     else if (state.tab === "doktori" && data.doktori && state.dkView === "detail" && dkById(state.dkSel)) html = viewDoktorDetail(dkById(state.dkSel));
     else if (state.tab === "doktori" && data.doktori && state.dkView === "full") html = viewDoktoriFull();
+    else if (state.tab === "stavby" && state.stView === "rizeni" && rzById(state.stSel)) html = viewRizeniDetail(rzById(state.stSel));
     else if (state.tab === "stavby" && data.stavby && state.stView === "detail" && stById(state.stSel)) html = viewStavbaDetail(stById(state.stSel));
     else if (state.tab === "stavby" && data.stavby && data.stavby.projekty && state.stView === "full") html = viewStavbyFull();
     else if (state.tab === "akce" && data.akce && state.akView === "detail" && akById(state.akSel)) html = viewAkceDetail(akById(state.akSel));
@@ -1824,6 +1910,7 @@
     if (dmv) dmv.addEventListener("click", function () { var y = window.scrollY; state.domuVse = true; render(); window.scrollTo(0, y); });
     app.querySelectorAll("[data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); });
     app.querySelectorAll("[data-dkf]").forEach(function (b) { b.addEventListener("click", function () { state.dkF = b.getAttribute("data-dkf"); render(); }); });
+    app.querySelectorAll("[data-rz]").forEach(function (b) { b.addEventListener("click", function () { openRizeni(b.getAttribute("data-rz")); }); });
     app.querySelectorAll("[data-st]").forEach(function (b) { b.addEventListener("click", function () { openStavba(b.getAttribute("data-st")); }); });
     app.querySelectorAll("[data-stf]").forEach(function (b) { b.addEventListener("click", function () { state.stF = b.getAttribute("data-stf"); render(); }); });
     app.querySelectorAll("[data-stvse]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY, k = b.getAttribute("data-stvse"); state.stVse[k] = !state.stVse[k]; render(); window.scrollTo(0, y); }); });
@@ -1903,8 +1990,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; }), getJSON("data/akce.json").catch(function () { return null; }), getJSON("data/voda.json").catch(function () { return null; }), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; }), getJSON("data/akce.json").catch(function () { return null; }), getJSON("data/voda.json").catch(function () { return null; }), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; }), getJSON("data/rizeni.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       state.address = load();

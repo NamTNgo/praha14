@@ -387,3 +387,17 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .hcc .cm{font-size:12.5px;color:#6b6652;margin-top:2px;font-weight:600}
 .rdlink{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:#fff;border:1px dashed #d9d4c3;border-radius:16px;padding:12px 14px;font-size:14px;color:#2c302b;line-height:1.4;cursor:pointer;margin-top:6px}
 .rdlink b{display:block;font-size:14.5px}
+
+/* stavební řízení (menší stavby) */
+.rzi{width:52px;height:52px;border-radius:14px;background:#efece2;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tl{display:flex;flex-direction:column;margin-top:4px}
+.tl div{position:relative;padding:0 0 14px 22px;font-size:14px;line-height:1.35}
+.tl div:before{content:"";position:absolute;left:3px;top:4px;width:10px;height:10px;border-radius:50%;background:#1f4d36}
+.tl div:after{content:"";position:absolute;left:7px;top:16px;bottom:0;width:2px;background:#d9d4c3}
+.tl div:last-child{padding-bottom:0}.tl div:last-child:after{display:none}
+.tl div.next:before{background:#fff;border:2px solid #b8b29f;box-sizing:border-box}
+.tl div.next{color:#8a8572}
+.tl b{display:block;font-size:14.5px}
+.tl small{font-size:12.5px;color:#6b6652}
+.prz{background:#fff8ec;border:1px solid #f0d9a8;border-radius:16px;padding:13px 14px;font-size:14px;line-height:1.5;color:#5c4512}
+.prz b{display:block;margin-bottom:2px}
