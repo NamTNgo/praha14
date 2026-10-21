@@ -242,10 +242,10 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .akcal { display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; border-radius:16px; padding:15px; min-height:48px; margin:0; }
 /* Akce: proužek dní a kalendář */
 .akprouzek { display:flex; flex-direction:column; gap:8px; margin-bottom:-4px; }
-.akprhl { display:flex; justify-content:space-between; align-items:center; padding:0 0 0 4px; }
+.akprhl { display:flex; justify-content:space-between; align-items:center; padding:0 0 0 4px; min-height:44px; }  /* „Dnes“ (44 px) se objevuje při posunu proužku – výška řádku se nesmí měnit */
 .akprhl b { font-size:15px; font-weight:800; }
 .akkalbtn { min-height:40px; padding:0 14px; border:none; cursor:pointer; font-family:inherit; }
-.akdny { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin:0 -20px; padding:2px 20px; -webkit-overflow-scrolling:touch; }
+.akdny { display:flex; gap:6px; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; margin:0 -20px; padding:2px 20px; -webkit-overflow-scrolling:touch; }
 .akdny::-webkit-scrollbar { display:none; }
 .akdb { flex:none; width:46px; font:inherit; color:var(--ink); background:#fff; border:1.5px solid #ece8da; border-radius:14px; padding:7px 0 6px; text-align:center; cursor:pointer; }
 .akdb span { display:block; font-size:11px; font-weight:700; color:#6b6652; }
