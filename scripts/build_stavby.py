@@ -90,7 +90,7 @@ def cisty(s):
 # ---- novostavby.com: jen štítek „V prodeji“ + odkaz (bez jejich fotek a textů) ----
 NS_API = "https://novostavby.com/wp-json/wp/v2/"
 NS_STAV = {"V prodeji": "V prodeji", "Předprodej": "Předprodej", "K pronájmu": "K pronájmu"}
-STOP = re.compile(r"\b(rezidence|residence|rezidencni|projekt|bytovy|bytove|dum|domy|byty|bydleni|etapa|faze|living|park|praha|\d+\.?)\b")
+STOP = re.compile(r"\b\d+\s*\.?\s*(etapa|faze)\b|\bpraha\s*\d+\b|\b(rezidence|residence|rezidencni|projekt|bytovy|bytove|dum|domy|byty|bydleni|etapa|faze|living|park|praha)\b")
 
 
 def ns_get(path):
