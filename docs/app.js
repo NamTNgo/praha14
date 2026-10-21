@@ -1201,15 +1201,18 @@
       '<div class="note">Zdroj: ' + AK_SRC[a.src][0] + ". Termín se může změnit, před návštěvou ho ověřte na webu akce.</div>" +
       "</div>" + FOOT_AK;
   }
-  function openAkce(view, id) {
-    state.akHist.push({ v: state.akView, s: state.akSel, y: window.scrollY });
+  function openAkce(view, id, odkud) {
+    // odkud = záložka, kam se má Zpět vrátit (např. detail otevřený z Domů)
+    state.akHist.push({ v: state.akView, s: state.akSel, y: window.scrollY, tab: odkud || null });
     state.akView = view; state.akSel = id || null;
     try { history.pushState({ ak: state.akHist.length }, ""); } catch (e) {}
     render(); window.scrollTo(0, 0);
   }
   function akKrokZpet() {
     var p = state.akHist.pop() || { v: "list", s: null, y: 0 };
-    state.akView = p.v; state.akSel = p.s; render(); window.scrollTo(0, p.y || 0);
+    state.akView = p.v; state.akSel = p.s;
+    if (p.tab) state.tab = p.tab;
+    render(); window.scrollTo(0, p.y || 0);
   }
   function akBack() {
     if (state.akHist.length && history.state && history.state.ak) { history.back(); return; }
@@ -1525,7 +1528,7 @@
       if (el) el.scrollIntoView({ block: "start" });
       return;
     }
-    if (t === "akce") { state.tab = "akce"; state.akView = "list"; state.akHist = []; render(); openAkce("detail", v); return; }
+    if (t === "akce") { var z = state.tab; state.akView = "list"; state.akHist = []; openAkce("detail", v, z); state.tab = "akce"; render(); window.scrollTo(0, 0); return; }
     if (t === "tab") { prepniTab(v); }
   }
   function prepniTab(t) {
