@@ -39,7 +39,7 @@ LOG = []
 # kandidát podle titulku/perexu ve výpisu (pak se ověří v článku)
 KANDIDAT = re.compile(r"pohřeš|pátr|ztrat|ztratil|nevrátil|neviděli|vypátr|nalezen|odešel|hledáme (?:muže|ženu|seniork|chlap|dív|dítě)", re.I)
 POHRESOVANY = re.compile(r"pohřešovan|ztratil[ai]? se|nevrátil[ai]? (?:se )?(?:domů|z )|odešel.{0,60}neznámo kam|obava o (?:jeho|její) život", re.I)
-PODEZRELY = re.compile(r"podezřel|pachatel|útočník|obviněn|odcizil|ukradl|vězn|uprchl|svědk|sprejer|loupež|napadl", re.I)
+PODEZRELY = re.compile(r"podezřel|pachatel|útočník|obviněn|odcizil|ukradl|vězn|uprchl|svědk|sprejer|loupež|napadl|vytáhl|nůž|vyhrožov|krádež", re.I)
 VYRESENO = re.compile(r"(?<![a-zá])(?:nalezen[aiy]?|vypátrán[aiy]?|odvolá(?:vá|v)(?:me|ají|áme)? pátrání|odvolání pátrání|je v pořádku|jsou v pořádku|bez známek života|zemřel[a]?)(?![a-zá])", re.I)
 NEGACE = re.compile(r"(?:nebyl[aiy]?|dosud ne|zatím ne|nepodařilo)\s*\S*\s*$", re.I)
 
@@ -206,7 +206,8 @@ def main():
             continue
         hlava = c["titulek"] + " " + c["perex"]
         vse = hlava + "\n" + c["telo"]
-        pohres = "patrani---pohresovani" in c["obr"] or bool(POHRESOVANY.search(vse))
+        pohres = ("patrani---pohresovani" in c["obr"] or bool(re.search(r"pohřešov", vse, re.I))
+                  or bool(POHRESOVANY.search(hlava)))
         if not pohres or "patrani---podezrely" in c["obr"] or PODEZRELY.search(hlava):
             log("  – není pohřešovaný:", c["titulek"])
             continue
