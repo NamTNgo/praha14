@@ -696,6 +696,20 @@
       return h;
     }
     h += cisteniKarta(a);
+    var neh = nehodyPro(a);
+    if (neh.length) {
+      h += '<div class="label" id="nehody" style="scroll-margin-top:16px">Nehody a mimořádné události</div>';
+      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každých 10 minut, ' +
+        nehCas() + " — nehoda už přesto může být odklizená.</div>";
+      h += '<div class="list">' + neh.map(function (r) {
+        var x = r.x;
+        return dkarta(I_CRASH, "#fdeedd", "#a2600f",
+          esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), null,
+          '<div class="t2">' + esc(x.n) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
+          (x.p ? '<div class="t3">' + esc(zkrat(datumy(x.p), 150)) + "</div>" : ""),
+          "Evidence dopravních informací (NDIC)", x.u, "Mapa dopravních informací");
+      }).join("") + "</div>";
+    }
     if (!uz.length) {
       h += '<div class="label">Uzavírky a práce v Praze ' + esc(a.mc) + "</div>";
       h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
@@ -719,20 +733,6 @@
       if (uz.length > DOP_N) h += '<button type="button" class="spadvic" id="dopvic">' +
         (state.dopVse ? "Zobrazit méně" : "Zobrazit všech " + uz.length + " " + sklonCount(uz.length)) +
         SVG(state.dopVse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
-    }
-    var neh = nehodyPro(a);
-    if (neh.length) {
-      h += '<div class="label" id="nehody" style="scroll-margin-top:16px">Nehody a mimořádné události</div>';
-      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každých 10 minut, ' +
-        nehCas() + " — nehoda už přesto může být odklizená.</div>";
-      h += '<div class="list">' + neh.map(function (r) {
-        var x = r.x;
-        return dkarta(I_CRASH, "#fdeedd", "#a2600f",
-          esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), null,
-          '<div class="t2">' + esc(x.n) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
-          (x.p ? '<div class="t3">' + esc(zkrat(datumy(x.p), 150)) + "</div>" : ""),
-          "Evidence dopravních informací (NDIC)", x.u, "Mapa dopravních informací");
-      }).join("") + "</div>";
     }
     h += '<div class="label">MHD v okolí</div>';
     if (!pi.v.length) {
