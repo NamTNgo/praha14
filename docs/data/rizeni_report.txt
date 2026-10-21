@@ -1,15 +1,4 @@
 Praha 9: na desce 71 vyhlášek
 Praha 14: vyhlášek odboru výstavby 1
-nových stavebních vyhlášek ke zpracování: 11
-  + [oop] Oprava fasády domu č.p. 1110, Drahobejlova · Úprava fasády · Drahobejlova 1110/31 (adresa)
-  + [zahajeno] Bytový dům U Proseckého kostela · Bytový dům · ulice U proseckého kostela (ulice)
-  + [jes] RD Krocínka - stavební úpravy, Pod Krocínkou 580/3 · Rodinný dům · Pod Krocínkou 580/3 (adresa)
-  + [oop] Přípojky, Horní Hrdlořezská · Sítě a přípojky · ulice Horní Hrdlořezská (ulice)
-  + [zahajeno] Nástavba, Ocelářská 2420/2a · Nástavba · Ocelářská 2420/2a (adresa)
-  + [oop] Rekonstrukce kanalizace, Pod Krocínkou, Nad Klíčovem, Ke Klíčovu · Sítě a přípojky · ulice Pod Krocínkou (ulice)
-  + [zahajeno] Zateplení dvorní fasády objektu č.p. 571, Na Břehu 11 · Zateplení · Na břehu 571/11 (adresa)
-  + [zahajeno] Chodník podél ulice Mezitraťová · Chodník · ulice Mezitraťová (ulice)
-  + [zahajeno] Bytový dům Freyova · Bytový dům · ulice Freyova (ulice)
-  + [jes] Propojení splaškové kanalizace - ul. Hrdlořezská, Mezitraťová · Sítě a přípojky · ulice Hrdlořezská (ulice)
-  + [rozhodnuto] Novostavba rodinného dvojdomu, ul. Za luhem · Rodinný dům · ? (bez místa)
+nových stavebních vyhlášek ke zpracování: 0
 záměrů v datech: 8 (s polohou 7), dopravních opatření: 3
