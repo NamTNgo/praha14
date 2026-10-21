@@ -299,7 +299,20 @@ def cisteni(ulice):
 # ---------- 2a. uzavírky z NDIC (DATEX II) ----------
 # Podmínky ŘSD: zdroj se uvádí v tomto přesném znění a jen u nezměněných dat.
 NDIC_ZDROJ = "Zdrojem digitalizovaných informací o silničním provozu je NDIC"
-NDIC_WEB = "https://www.dopravniinfo.cz/"
+NDIC_WEB = "https://dopravniinfo.gov.cz/"
+
+
+def ndic_odkaz(lat, lon):
+    """Mapa dopravních informací s špendlíkem přímo na místě události.
+
+    Web ŘSD umí jen ?do=show-point&x=&y= v S-JTSK (EPSG:5514); detail konkrétní
+    události odkazem otevřít nejde. Segment /Praha přiblíží mapu na Prahu.
+    """
+    if lat is None or lon is None:
+        return NDIC_WEB
+    from krovak import wgs_to_sjtsk
+    x, y = wgs_to_sjtsk(lat, lon)
+    return "%sPraha?do=show-point&x=%d&y=%d" % (NDIC_WEB, round(x), round(y))
 # xsi:type situationRecordu -> co z toho ukážeme uživateli a do které sekce to
 # patří. „prace“ jsou uzavírky a omezení, „nehoda“ jsou mimořádné události;
 # počasí a kolony neukazujeme vůbec.
@@ -489,7 +502,7 @@ def datex(url, token, ulice, body=None):
                 "n": popis, "mc": mc, "ul": ul or ndic_jmeno(z)[:2],
                 "lat": round(lat, 6) if lat is not None else None,
                 "lon": round(lon, 6) if lon is not None else None,
-                "od": od, "do": do, "p": txt[:300], "u": NDIC_WEB, "z": "ndic",
+                "od": od, "do": do, "p": txt[:300], "u": ndic_odkaz(lat, lon), "z": "ndic",
                 "kat": kat,
             }
             # jedna událost (situace) má často víc záznamů (omezení + práce);
