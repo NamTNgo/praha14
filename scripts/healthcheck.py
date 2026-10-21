@@ -82,6 +82,10 @@ CHECKS = [
          pocet=lambda d: 1 if d.get("ok") else 0, min=1, vek_h=4, cas=lambda d: d.get("gen"),
          reseni="Mapa událostí PVK (mapy.veoliavoda.cz, WFS ppu_pu_om) neodpovídá nebo změnila formát. "
                 "Projdi `docs/data/voda_report.txt` a `scripts/build_voda.py`."),
+    dict(file="patrani.json", popis="Pátrání po pohřešovaných (zpravodajství KŘP Praha)",
+         pocet=lambda d: 1 if d.get("ok") else 0, min=1, vek_h=4, cas=lambda d: d.get("gen"),
+         reseni="Zpravodajství policie.gov.cz/hlavni-mesto-praha neodpovídá nebo změnilo HTML. "
+                "Projdi `docs/data/patrani_report.txt` a `scripts/build_patrani.py`."),
     dict(file="vok9.json", popis="VOK Praha 9",
          pocet=lambda d: d.get("mista", 0) if isinstance(d.get("mista"), int) else len(d.get("mista", [])),
          min=20, vek_h=45 * 24, cas=None,
