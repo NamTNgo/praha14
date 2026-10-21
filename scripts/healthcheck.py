@@ -86,6 +86,9 @@ CHECKS = [
          pocet=lambda d: 1 if d.get("ok") else 0, min=1, vek_h=4, cas=lambda d: d.get("gen"),
          reseni="Zpravodajství policie.gov.cz/hlavni-mesto-praha neodpovídá nebo změnilo HTML. "
                 "Projdi `docs/data/patrani_report.txt` a `scripts/build_patrani.py`."),
+    dict(file="stavby.json", popis="Stavby – databáze Praha zítra (CAMP/IPR)",
+         pocet=lambda d: len(d.get("projekty", [])) if d.get("ok") else 0, min=20, vek_h=30, cas=lambda d: d.get("gen"),
+         reseni="GraphQL API praha.camp neodpovídá nebo změnilo schéma. Projdi `docs/data/stavby_report.txt` a `scripts/build_stavby.py`."),
     dict(file="vok9.json", popis="VOK Praha 9",
          pocet=lambda d: d.get("mista", 0) if isinstance(d.get("mista"), int) else len(d.get("mista", [])),
          min=20, vek_h=45 * 24, cas=None,
