@@ -1565,7 +1565,7 @@
       (popis === null && p._p ? '<div class="card dcard"><div class="dtitle">O projektu</div><div class="note" style="margin:0">Načítám popis…</div></div>' :
         popis ? '<div class="card dcard"><div class="dtitle">O projektu</div><div class="ptext stp">' + esc(popis) + "</div></div>" : "") +
       '<div class="dlinks"><a class="btn-ext" href="' + esc(data.stavby.web + p.id) + '" target="_blank" rel="noopener">Projekt na CAMP Praha zítra ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
-      (p.webp ? '<a class="btn-ext" href="' + esc(p.webp) + '" target="_blank" rel="noopener">' + (p.prodej ? "Prodej u developera " : "Web projektu ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" :
+      (p.webp ? '<a class="btn-ext" href="' + esc(p.webp) + '" target="_blank" rel="noopener">' + (p.prodej ? "Web developera " : "Web projektu ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" :
         p.prodej ? '<a class="btn-ext" href="' + esc(p.prodej.u) + '" target="_blank" rel="noopener">Prodej na novostavby.com ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
       (b ? '<a class="btn-ext" href="https://www.google.com/maps/search/?api=1&query=' + b[0] + "," + b[1] + '" target="_blank" rel="noopener">Mapa ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + "</div>" +
       '<div class="note" style="padding:0 4px">Údaje: CAMP – Praha zítra (IPR Praha)' + (mod ? ", naposledy upraveno " + (+mod[2]) + ". " + (+mod[1]) + ". " + mod[0] : "") +
