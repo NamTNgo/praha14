@@ -1,0 +1,8 @@
+událostí PVK celkem: 62, v Praze 9/14: 7 (probíhá 0, plánované 7), náhradních zásobování: 2
+  planovana 2026-10-21T22:00 – 2026-10-22T15:00  1575 adres  Prosecká 66
+  planovana 2026-10-22T08:00 – 2026-10-22T23:00  2 adres  Kolbenova 17
+  planovana 2026-10-27T07:30 – 2026-10-27T15:00  1 adres  Ramonova 10
+  planovana 2026-10-29T08:00 – 2026-10-29T18:00  11 adres  U tvrze 33
+  planovana 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Za vodárnou 20
+  planovana 2026-11-03T08:00 – 2026-11-03T11:00  1 adres  Pod plynojemem 164
+  planovana 2026-11-03T09:00 – 2026-11-03T12:00  2 adres  Průmyslová 32
