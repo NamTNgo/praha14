@@ -1,0 +1,2 @@
+projektů v databázi CAMP: 1270
+v okolí Prahy 9 a 14: 233 ({'stavi': 67, 'povoluje': 35, 'planuje': 84, 'hotovo': 47}); doplněno popisů: 233
