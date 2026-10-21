@@ -1,5 +1,6 @@
 :root { --bg:#f6f5f1; --ink:#1f241f; --green:#1f4d36; --muted:#726c5a; --faint:#6b6652; --line:#ece8da; }
 * { box-sizing: border-box; }
+html { scrollbar-gutter:stable; overflow-y:scroll; }  /* krátké výpisy (Víkend) nesmí schovat posuvník a rozhodit šířku */
 body { margin:0; background:var(--bg); color:var(--ink); font-family:"Public Sans",system-ui,-apple-system,sans-serif; -webkit-text-size-adjust:100%; }
 a { color:var(--green); }
 .app { max-width:430px; min-height:100vh; min-height:100dvh; margin:0 auto; display:flex; flex-direction:column; padding:0 0 env(safe-area-inset-bottom); }
@@ -197,7 +198,7 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 
 /* ---- Akce ---- */
 .akseg { display:flex; gap:4px; background:#ecebe4; border-radius:14px; padding:4px; }
-.akseg button { flex:1; font:inherit; font-size:13px; font-weight:700; color:#5b574a; background:none; border:none; border-radius:10px; padding:9px 4px; min-height:40px; cursor:pointer; }
+.akseg button { flex:1 1 0; min-width:0; font:inherit; font-size:13px; font-weight:700; color:#5b574a; background:none; border:none; border-radius:10px; padding:9px 4px; min-height:40px; cursor:pointer; }
 .akseg button.on { background:#fff; color:var(--green); box-shadow:0 1px 3px rgba(31,36,31,.12); }
 .akseg + .chipscroll { margin:-4px 0 -2px; }
 .akday { display:flex; align-items:baseline; gap:8px; padding:6px 4px 2px; }
