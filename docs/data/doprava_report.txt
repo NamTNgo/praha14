@@ -1,23 +1,23 @@
 ulic z RÚIAN: 506
-DATEX: staženo 45324223 B za 2 s (pokus 1)
-DATEX: 5579 situačních záznamů -> 9 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5365 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 50 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 55), ('publicevent', 31), ('carparks', 15), ('conditions', 14), ('environmentalobstruction', 13), ('authorityoperation', 13), ('roadsideservicedisruption', 2), ('nonweatherrelatedroadconditions', 2), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1)]
+DATEX: staženo 48118032 B za 3 s (pokus 1)
+DATEX: 5690 situačních záznamů -> 8 prací/uzavírek + 1 nehod pro P9/14; zahozeno: 5460 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 52 prošlé
+  jiné druhy událostí: [('abnormaltraffic', 45), ('publicevent', 38), ('conditions', 29), ('environmentalobstruction', 14), ('authorityoperation', 14), ('carparks', 13), ('nonweatherrelatedroadconditions', 3), ('roadsideservicedisruption', 2), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1), ('infrastructuredamageobstruction', 1), ('weatherrelatedroadconditions', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
-  bloků: 20, budoucích záznamů: 24
+  bloků: 20, budoucích záznamů: 18
 čištění P9: 1 PDF na https://www.praha9.cz/harmonogram-blokoveho-cisteni-jaro-podzim-2026
   https://www.praha9.cz/sites/default/files/downloads/2026/02/BLOKOV%C3%89%20%C4%8CI%C5%A0T%C4%9AN%C3%8D%20JARO-PODZIM%202026%20-%20info.pdf -> 7736 znaků textu
   bloků: 19, budoucích záznamů: 0
-cisteni: 10 záznamů
+cisteni: 7 záznamů
 uzavírky P9 strana 1: 12 bloků
 uzavírky P9 strana 2: 12 bloků
 uzavírky P9 strana 3: 5 bloků
 uzavírky P14 strana 1: 7 bloků
 uzavírky P14 strana 1: 15 bloků
-sloučení: 9 z NDIC + 6 z aktualit MČ (2 duplicit zahozeno)
-uzavirky: 15 záznamů
+sloučení: 8 z NDIC + 6 z aktualit MČ (2 duplicit zahozeno)
+uzavirky: 14 záznamů
 zastavky: 260 záznamů
-výluky PID: 2 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 4 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "high", "display_type": "inline", "text": "Havárie inženýrských sítí - přerušen provoz TRAM v obratišti Zvonařka. Více na www.DPP.cz.", "text_en": "Infrastructure network failure - no TRAM service at Zvonařka turning loop. More at www.DPP.cz.", "related_stops": [{"id": "U209Z1P", "name": "Jiřího z Poděbrad", "platform_code": "A"}, {"id": "U515Z1P", "name": "Olšanské hřbitovy", "platform_code": "A"}, {"id": "U400Z4P", "name": "Muzeum", "platform_code": "D"}, {"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}], "valid_from": "2026-10-17T20:55:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "c59e1287-1b58-4be0-8613-69a99b3ebd8b"}
-pid: 1 záznamů
+    {"priority": "high", "display_type": "inline", "text": "Havárie inženýrských sítí - přerušen provoz TRAM v obratišti Zvonařka. Více na www.DPP.cz.", "text_en": "Infrastructure network failure - no TRAM service at Zvonařka turning loop. More at www.DPP.cz.", "related_stops": [{"id": "U209Z1P", "name": "Jiřího z Poděbrad", "platform_code": "A"}, {"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}, {"id": "U400Z4P", "name": "Muzeum", "platform_code": "D"}, {"id": "U515Z1P", "name": "Olšanské hřbitovy", "platform_code": "A"}], "valid_from": "2026-10-17T20:55:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "c59e1287-1b58-4be0-8613-69a99b3ebd8b"}
+pid: 2 záznamů
