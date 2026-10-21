@@ -1,25 +1,24 @@
 p9: 8 akcí
-p14: 18 akcí
-mkp: 79 akcí
+p14: 17 akcí
+mkp: 80 akcí
 
 celkem 102 akcí; kategorie: {'sport': 3, 'vzd': 16, 'vys': 7, 'deti': 46, 'zdr': 1, 'sen': 17, 'kult': 11, 'sous': 1}
-s fotkou: 98, se souřadnicemi: 94, zdarma: 82, zrušeno: 0
+s fotkou: 98, se souřadnicemi: 99, zdarma: 87, zrušeno: 0
   [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
-  [p9 vzd] 2026-10-07T17:00 → 2026-10-21T17:00 | Kreativní dílna v Galerii 9 |  |  📷
-  [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 |  📷
-  [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder |  📷
-  [p14 vzd] 2026-10-20T16:30 → 2026-10-20T16:30 | Telefon v klidu |  | Hloubětínská 1138/5 📷
+  [p9 vzd] 2026-10-07T17:00 → 2026-10-21T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
+  [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
+  [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [mkp deti] 2026-10-21T15:00 → 2026-10-21T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-10-21T16:00 → 2026-10-21T18:00 | Hrací odpoledne: puzzle | Knihovna Černý Most | Bobkova 534/47 📷
-  [p9 vzd] 2026-10-21T17:00 → 2026-10-21T19:00 | Kreativní dílna v Galerii 9 |  |  📷
+  [p9 vzd] 2026-10-21T17:00 → 2026-10-21T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [mkp deti] 2026-10-21T19:00 → 2026-10-21T20:00 | Kvízový večer | Knihovna Vysočany | Zbuzkova 285/34 📷
   [p14 zdr] 2026-10-22T07:00 → 2026-10-22T07:00 | Den zdraví | Poliklinika parník | Generála Janouška 902/17 📷
   [mkp sen] 2026-10-22T14:00 → 2026-10-22T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-10-22T15:15 → 2026-10-22T16:00 | Doučování ve Vysočanech | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-10-22T17:00 → 2026-10-22T18:00 | Syndrom vyhoření | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-10-22T17:00 → 2026-10-22T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
-  [p9 kult] 2026-10-22T19:00 → 2026-10-22T20:15 | Cyklus koncertů komorní hudby | Obřadní síň |  📷
+  [p9 kult] 2026-10-22T19:00 → 2026-10-22T20:15 | Cyklus koncertů komorní hudby | Obřadní síň | Sokolovská 324/14 📷
   [mkp kult] 2026-10-23T14:00 → 2026-10-23T15:30 | Konverzační klub češtiny | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sport] 2026-10-24T11:00 → 2026-10-24T12:00 | Jóga na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 deti] 2026-10-25T15:00 → 2026-10-25T15:00 | Pohádka: Bruncvík aneb Jak lev do Čech přišel | KD Kyje a Restaurace Šimanda | Šimanovská 📷
@@ -99,6 +98,7 @@ s fotkou: 98, se souřadnicemi: 94, zdarma: 82, zrušeno: 0
   [p14 deti] 2026-11-28T14:00 → 2026-11-28T14:00 | Mikulášská nadílka v KD Kyje 28. 11. 2026 ve 14.00 hodin | KD Kyje | Šimanovská 47
   [mkp deti] 2026-12-01T16:00 → 2026-12-01T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp sen] 2026-12-03T14:00 → 2026-12-03T16:00 | Digitální poradna v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
+  [mkp vzd] 2026-12-04T17:00 → 2026-12-04T19:00 | Háčkování a pletení pro začátečníky | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-12-08T16:00 → 2026-12-08T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [p14 vys] 2026-12-09T18:30 → 2026-12-09T18:30 | Koncert v Galerii 14 – 9. 12. 2026 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [mkp deti] 2026-12-10T15:10 → 2026-12-10T16:10 | Doučování na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
