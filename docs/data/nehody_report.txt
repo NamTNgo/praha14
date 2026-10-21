@@ -1,3 +1,3 @@
-DATEX: staženo 38347678 B za 3 s (pokus 1)
-DATEX: 5330 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5145 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 52 prošlé
-  jiné druhy událostí: [('publicevent', 35), ('conditions', 23), ('environmentalobstruction', 14), ('carparks', 13), ('abnormaltraffic', 9), ('authorityoperation', 8), ('poorenvironmentconditions', 8), ('nonweatherrelatedroadconditions', 3), ('roadsideservicedisruption', 2), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1), ('weatherrelatedroadconditions', 1)]
+DATEX: staženo 38327205 B za 2 s (pokus 1)
+DATEX: 5327 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5143 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 52 prošlé
+  jiné druhy událostí: [('publicevent', 35), ('conditions', 22), ('environmentalobstruction', 14), ('carparks', 13), ('abnormaltraffic', 9), ('authorityoperation', 8), ('poorenvironmentconditions', 8), ('nonweatherrelatedroadconditions', 3), ('roadsideservicedisruption', 2), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1), ('weatherrelatedroadconditions', 1)]
