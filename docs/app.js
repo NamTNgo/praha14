@@ -722,7 +722,7 @@
     }
     var neh = nehodyPro(a);
     if (neh.length) {
-      h += '<div class="label">Nehody a mimořádné události</div>';
+      h += '<div class="label" id="nehody" style="scroll-margin-top:16px">Nehody a mimořádné události</div>';
       h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každých 10 minut, ' +
         nehCas() + " — nehoda už přesto může být odklizená.</div>";
       h += '<div class="list">' + neh.map(function (r) {
@@ -1446,7 +1446,7 @@
     var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 5000; })[0];
     var uz = neh ? null : uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 300 && probiha(x.x); })[0];
     if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
-      s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "tab:doprava" });
+      s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "dop:nehody" });
     if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n) + " · " + akVzdTxt(uz.d), s: obdobi(uz.x.od, uz.x.do), act: "tab:doprava" });
     var p = { help: -1, now: 0, plan: 1, found: 1.5, info: 2 };
     return r.sort(function (x, y) { return p[x.cls] - p[y.cls]; });
@@ -1519,6 +1519,12 @@
     var p = String(act).split(":"), t = p[0], v = p.slice(1).join(":");
     if (t === "voda") { openVoda(v); return; }
     if (t === "pat") { openPatrani(v); return; }
+    if (t === "dop") {   // rovnou na konkrétní sekci v Dopravě (např. nehody)
+      prepniTab("doprava");
+      var el = document.getElementById(v);
+      if (el) el.scrollIntoView({ block: "start" });
+      return;
+    }
     if (t === "akce") { state.tab = "akce"; state.akView = "list"; state.akHist = []; render(); openAkce("detail", v); return; }
     if (t === "tab") { prepniTab(v); }
   }
