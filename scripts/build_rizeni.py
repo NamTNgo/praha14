@@ -324,14 +324,29 @@ def praha14():
     return out
 
 
+def obdobi_oop(t):
+    """Platnost dopravního opatření: „od 12.10.2026 do 31.10.2026“."""
+    d = r"(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})"
+    m = re.search(r"od\s+(?:\d{1,2}[:.]\d{2}\s*(?:hod\.?)?\s*)?(?:dne\s+)?" + d + r".{0,40}?do\s+(?:\d{1,2}[:.]\d{2}\s*(?:hod\.?)?\s*)?(?:dne\s+)?" + d, t)
+    if not m:
+        return None, None
+    g = m.groups()
+    return "%s-%02d-%02d" % (g[2], int(g[1]), int(g[0])), "%s-%02d-%02d" % (g[5], int(g[4]), int(g[3]))
+
+
 def main():
     out_p = DATA / "rizeni.json"
+    cache_p = DATA / "rizeni_cache.json"     # zpracované vyhlášky – aplikace ho nenačítá
     try:
         pred = json.loads(out_p.read_text(encoding="utf-8"))
     except Exception:   # noqa: BLE001
         pred = {}
-    VERZE = 4   # při změně parseru zpracovat vyhlášky znovu
-    vyhl = {v["url"]: v for v in pred.get("_vyhlasky", [])} if pred.get("v") == VERZE else {}   # cache
+    try:
+        cache = json.loads(cache_p.read_text(encoding="utf-8"))
+    except Exception:   # noqa: BLE001
+        cache = {"v": pred.get("v"), "vyhlasky": pred.get("_vyhlasky", [])}
+    VERZE = 5   # při změně parseru zpracovat vyhlášky znovu
+    vyhl = {v["url"]: v for v in cache.get("vyhlasky", [])} if cache.get("v") == VERZE else {}
     adresy = nacti_adresy()
     zdroje = {}
     nove = []
@@ -378,6 +393,8 @@ def main():
             "lat": round(la, 6) if la else None, "lon": round(lo, 6) if lo else None,
             "mc": mc or ("9" if v["src"] == "p9" else "14"), "misto": misto, "presnost": presnost,
         }
+        if fk == "oop":
+            zaznam["oop_od"], zaznam["oop_do"] = obdobi_oop(t)
         vyhl[v["url"]] = zaznam
         if re.match(r"^č\.\s*p\.\s*\d+\s*$", zaznam["n"]) or len(zaznam["n"]) < 6:
             zaznam["n"] = zaznam["druh"] + (", " + misto if presnost == "adresa" else "")
@@ -388,7 +405,21 @@ def main():
     vyhl = {k: v for k, v in vyhl.items() if v["od"] >= hranice}
     # záměry: víc vyhlášek k jednomu záměru → jedna karta s historií
     zam = {}
+    # dopravní opatření kvůli stavbám patří do Dopravy (uzavírky a práce), ne mezi záměry
+    dnes = NOW.strftime("%Y-%m-%d")
+    oop = []
+    for v in sorted(vyhl.values(), key=lambda x: x["od"], reverse=True):
+        if v["faze"] != "oop":
+            continue
+        konec = v.get("oop_do") or (dt.date.fromisoformat(v["od"]) + dt.timedelta(days=30)).isoformat()
+        if konec < dnes:
+            continue
+        oop.append({"n": v["n"], "mc": v["mc"], "ul": [v["misto"].replace("ulice ", "")] if v["misto"] else [],
+                    "lat": v["lat"], "lon": v["lon"], "od": v.get("oop_od") or v["od"], "do": konec,
+                    "p": "Přechodná úprava provozu kvůli pracím – opatření úřadu MČ Praha " + v["mc"] + ".", "u": v["url"], "z": "oop"})
     for v in sorted(vyhl.values(), key=lambda x: x["od"]):
+        if v["faze"] == "oop":
+            continue
         z = zam.setdefault(v["zid"], {"id": re.sub(r"\W+", "-", v["zid"])[-40:], "n": v["n"], "druh": v["druh"], "mc": v["mc"],
                                        "lat": v["lat"], "lon": v["lon"], "misto": v["misto"], "presnost": v["presnost"],
                                        "popis": v["popis"], "kroky": []})
@@ -403,10 +434,11 @@ def main():
         z["faze"], z["fazeT"], z["d"] = z["kroky"][-1]["f"], z["kroky"][-1]["t"], z["kroky"][-1]["d"]
 
     ok = any(s.get("ok") for s in zdroje.values())
-    data = {"v": VERZE, "gen": NOW.isoformat(timespec="minutes"), "ok": ok, "zdroje": zdroje, "zamery": zamery,
-            "_vyhlasky": sorted(vyhl.values(), key=lambda x: x["od"], reverse=True)}
+    data = {"v": VERZE, "gen": NOW.isoformat(timespec="minutes"), "ok": ok, "zdroje": zdroje, "zamery": zamery, "oop": oop}
     out_p.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    log("záměrů v datech: %d (s polohou %d)" % (len(zamery), sum(1 for z in zamery if z["lat"])))
+    cache_p.write_text(json.dumps({"v": VERZE, "vyhlasky": sorted(vyhl.values(), key=lambda x: x["od"], reverse=True)},
+                                  ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    log("záměrů v datech: %d (s polohou %d), dopravních opatření: %d" % (len(zamery), sum(1 for z in zamery if z["lat"]), len(oop)))
     (DATA / "rizeni_report.txt").write_text("\n".join(LOG) + "\n", encoding="utf-8")
     print("\n".join(LOG))
     if not ok:
