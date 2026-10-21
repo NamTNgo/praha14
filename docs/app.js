@@ -1526,7 +1526,7 @@
   function stavbyBody(a) {
     var st = stStav();
     if (!data.stavby || !data.stavby.projekty) return st;
-    var vse = stOkoli(a), xs = stFiltr(vse), h = st + (state.stF === "all" ? rzSekce(a) : "") + stChips();
+    var vse = stOkoli(a), xs = stFiltr(vse), h = st + stChips() + rzSekce(a);
     if (!vse.length) {
       var nej = stOkoli(a, 1e6)[0];
       h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(I_JERAB, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Do 3 km se teď nic nestaví ani neplánuje</div>' +
@@ -1624,12 +1624,21 @@
     "Chodník": '<path d="M7 21 10 3M17 21 14 3M12 7v2M12 13v2"/>',
     "Sítě a přípojky": '<path d="M4 12h6l2-3 2 6 2-3h4"/><circle cx="4" cy="12" r="1.5"/><circle cx="20" cy="12" r="1.5"/>'
   };
-  function rzVse() { return data.rizeni && data.rizeni.zamery ? data.rizeni.zamery : []; }
-  function rzById(id) { return rzVse().filter(function (z) { return z.id === id; })[0]; }
+  // filtr Staveb platí i pro řízení: sítě a přípojky jen pod „Vše“
+  function rzKat(z) {
+    if (/dům|Nástavba|Přístavba|Zateplení|fasády|střechy|Balkony|Výtah|Garáž|Stavební úpravy|Novostavba|Demolice/.test(z.druh)) return "byd";
+    if (/Chodník|Komunikace/.test(z.druh)) return "dop";
+    return "jine";
+  }
+  function rzVse() {
+    var v = data.rizeni && data.rizeni.zamery ? data.rizeni.zamery : [];
+    return state.stF === "all" ? v : v.filter(function (z) { return rzKat(z) === state.stF; });
+  }
+  function rzById(id) { return (data.rizeni && data.rizeni.zamery || []).filter(function (z) { return z.id === id; })[0]; }
   function rzDist(z, a) { return z.lat != null && z.presnost !== "ku" ? dist(a.lat, a.lon, z.lat, z.lon) : null; }
   // v okolí jen záměry se známým místem (adresa nebo ulice); jen katastr → pouze v celém seznamu
-  function rzOkoli(a, r) {
-    return rzVse().map(function (z) { return { z: z, d: rzDist(z, a) }; })
+  function rzOkoli(a, r, bezFiltru) {
+    return (bezFiltru ? (data.rizeni && data.rizeni.zamery || []) : rzVse()).map(function (z) { return { z: z, d: rzDist(z, a) }; })
       .filter(function (x) { return x.d != null && x.d <= (r || RZ_R); }).sort(function (p, q) { return p.d - q.d; });
   }
   function rzDat(s) { var p = (s || "").split("-"); return p.length === 3 ? (+p[2]) + ". " + (+p[1]) + "." : ""; }
@@ -1648,6 +1657,7 @@
     if (!data.rizeni) return "";
     var xs = rzOkoli(a), h = '<div class="stsec"><b>Na stavebním úřadu</b><span>do 1,5 km · ' + xs.length + "</span></div>" +
       '<div class="note" style="padding:0 4px;margin:-2px 0 2px">Menší stavby a úpravy domů, o kterých teď rozhoduje stavební úřad.</div>';
+    if (!xs.length && state.stF !== "all") return "";
     if (!xs.length) return h + '<div class="card-dashed row"><div class="grow"><div class="note" style="margin:0">Do 1,5 km teď stavební úřad nic nezveřejnil. Vyhlášky sledujeme od 21. 10. 2026.</div></div></div>';
     var otevr = state.stVse.rizeni, zob = otevr ? xs : xs.slice(0, ST_N);
     h += '<div class="stlist">' + zob.map(rzKarta).join("") + "</div>";
@@ -1706,7 +1716,7 @@
     }
     var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 5000; })[0];
     var uz = neh ? null : uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 300 && probiha(x.x); })[0];
-    var rz = data.rizeni ? rzOkoli(a, RZ_DOMU)[0] : null;
+    var rz = data.rizeni ? rzOkoli(a, RZ_DOMU, true)[0] : null;
     if (rz) r.push({ cls: "info", ic: RZ_IKONY[rz.z.druh] || I_DOC, fg: "#5b5b54", t: rz.z.druh + " · " + akVzdTxt(rz.d) + " od vás",
       s: rz.z.n + " · " + (RZ_FAZE[rz.z.faze] || RZ_FAZE.info)[1].toLowerCase() + " " + rzDat(rz.z.d), act: "rz:" + rz.z.id });
     if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
