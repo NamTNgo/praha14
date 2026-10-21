@@ -1383,7 +1383,7 @@
       r.push({ cls: n <= 1 ? "plan" : "info", ic: I_SWEEP, fg: n <= 1 ? "#9a6a12" : "#6b6652",
         t: (n <= 0 ? "Dnes" : n === 1 ? "Zítra" : dden(c.d)) + " blokové čištění", s: "v " + sklon(c.u) + (c.od ? " · " + c.od + "–" + (c.do || "") : "") + " · přeparkujte", act: "tab:doprava" });
     }
-    var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 2000; })[0];
+    var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 5000; })[0];
     var uz = neh ? null : uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 300 && probiha(x.x); })[0];
     if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
       s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "tab:doprava" });
