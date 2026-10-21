@@ -264,7 +264,7 @@ def popis_zameru(t):
     """Jedna věta o tom, co se staví – jen věcná část, bez jmen."""
     if re.search(r"opatření obecné povahy", t[:1500], re.I):
         return ""
-    m = re.search(r"(?:předmětem záměru (?:jsou|je)|záměr spočívá v|spočívající v)\s+(.{20,260}?\.)", t)
+    m = re.search(r"(?:předmětem záměru (?:jsou|je)|záměr spočívá v|spočívající v)\s+(.{20,260}?\.)(?=\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|\s*$)", t)
     if not m:
         return ""
     s = m.group(1)
@@ -330,7 +330,7 @@ def main():
         pred = json.loads(out_p.read_text(encoding="utf-8"))
     except Exception:   # noqa: BLE001
         pred = {}
-    VERZE = 3   # při změně parseru zpracovat vyhlášky znovu
+    VERZE = 4   # při změně parseru zpracovat vyhlášky znovu
     vyhl = {v["url"]: v for v in pred.get("_vyhlasky", [])} if pred.get("v") == VERZE else {}   # cache
     adresy = nacti_adresy()
     zdroje = {}
@@ -379,6 +379,8 @@ def main():
             "mc": mc or ("9" if v["src"] == "p9" else "14"), "misto": misto, "presnost": presnost,
         }
         vyhl[v["url"]] = zaznam
+        if re.match(r"^č\.\s*p\.\s*\d+\s*$", zaznam["n"]) or len(zaznam["n"]) < 6:
+            zaznam["n"] = zaznam["druh"] + (", " + misto if presnost == "adresa" else "")
         log("  + [%s] %s · %s · %s (%s)" % (zaznam["faze"], zaznam["n"], zaznam["druh"], misto or "?", presnost or "bez místa"))
         time.sleep(0.5)
 
