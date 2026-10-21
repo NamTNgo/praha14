@@ -201,5 +201,444 @@
   },
   "d-260879": {
     "hod": {}
+  },
+  "d-122420": {
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 9:00 · Odběry",
+            "9:00 – 10:30 · Pro nemocné",
+            "10:30 – 15:00 · Pro objednané"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 9:00 · Odběry",
+            "9:00 – 10:30 · Pro nemocné",
+            "10:30 – 15:00 · Pro objednané"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 9:00 · Odběry",
+            "9:00 – 10:30 · Pro nemocné",
+            "10:30 – 15:00 · Pro objednané"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 9:00 · Odběry",
+            "9:00 – 10:30 · Pro nemocné",
+            "10:30 – 15:00 · Pro objednané"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 9:00 · Odběry",
+            "9:00 – 10:30 · Pro nemocné",
+            "10:30 – 18:00 · Pro objednané"
+          ]
+        ]
+      ],
+      "u": "https://www.detskalekarka.org/"
+    }
+  },
+  "d-244421": {
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 20:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 20:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 20:00"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 20:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 16:00"
+          ]
+        ],
+        [
+          "So",
+          [
+            "8:00 – 14:00"
+          ]
+        ],
+        [
+          "Ne",
+          [
+            "zavřeno"
+          ]
+        ]
+      ],
+      "u": "https://magicsmile.cz/pobocka/cerny-most/"
+    }
+  },
+  "d-118571": {
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 10:00 · Ortopedie",
+            "10:30 – 12:00 · Ortopedie",
+            "13:00 – 16:00 · Ortopedie"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 10:00 · Ortopedie",
+            "10:30 – 12:00 · Ortopedie",
+            "13:00 – 16:00 · Ortopedie"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 10:00 · Ortopedie",
+            "10:30 – 12:00 · Ortopedie",
+            "13:00 – 16:00 · Ortopedie"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 10:00 · Ortopedie",
+            "10:30 – 12:00 · Ortopedie",
+            "13:00 – 16:00 · Ortopedie"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 10:00 · Ortopedie",
+            "10:30 – 12:00 · Ortopedie",
+            "13:00 – 14:30 · Ortopedie"
+          ]
+        ]
+      ],
+      "u": "https://www.clpa-mediterra.cz/ambulance/ortopedie/"
+    }
+  },
+  "d-193388": {
+    "w": ""
+  },
+  "d-261023": {
+    "tel": "774 590 100",
+    "e": "info@lecbabolesti.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "10:00 – 16:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "9:00 – 15:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "15:00 – 20:00"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "10:00 – 14:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "15:00 – 20:00"
+          ]
+        ]
+      ],
+      "u": "https://www.lecbabolesti.cz/"
+    }
+  },
+  "d-191757": {
+    "tel": "222 767 090",
+    "e": "martin@lamm.cz"
+  },
+  "d-116460": {
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 14:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 14:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 14:00"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 14:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 13:00"
+          ]
+        ]
+      ],
+      "u": "https://www.zubnilekar-praha9.cz/"
+    }
+  },
+  "d-228056": {
+    "tel": "702 121 281"
+  },
+  "d-115953": {
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 14:30"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 14:30"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 14:30"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 12:30"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 12:00"
+          ]
+        ]
+      ],
+      "u": "http://web.quick.cz/zubni"
+    }
+  },
+  "d-191037": {
+    "w": "usni.cz/ordinace/praha-9-prosek",
+    "tel": "277 071 983",
+    "e": "orlprosek@usni.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "7:00 – 8:00 · Hodnocení výtěrů",
+            "8:00 – 13:00",
+            "13:30 – 15:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "8:00 – 13:00",
+            "13:30 – 15:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 14:00",
+            "16:00 – 19:00 · MUDr. Ciller"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 13:00",
+            "13:45 – 17:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 12:00"
+          ]
+        ]
+      ],
+      "u": "https://usni.cz/ordinace/praha-9-prosek/"
+    }
+  },
+  "d-122908": {
+    "tel": "266 010 322",
+    "e": "davidhradecky@centrum.cz"
+  },
+  "d-120272": {
+    "e": "myslinova.praktik@seznam.cz"
+  },
+  "d-228357": {
+    "w": "www.okrehabilitace.cz/cz/s1780/Pobocky/c2012-Praha-Prosek",
+    "tel": "222 252 757",
+    "e": "praha-prosek@okrehabilitace.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "7:00 – 16:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "7:00 – 19:30"
+          ]
+        ],
+        [
+          "St",
+          [
+            "7:00 – 14:30"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "7:00 – 17:00"
+          ]
+        ]
+      ],
+      "u": "https://www.okrehabilitace.cz/cz/s1780/Pobocky/c2012-Praha-Prosek"
+    }
+  },
+  "d-210099": {
+    "w": "www.keltiamed.cz/index.php/rehabilitace/cerny-most",
+    "tel": "703 144 341",
+    "e": "fyzioparnik@gmail.com",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "7:00 – 17:00 · Rehabilitace",
+            "9:00 – 12:00 · Ortopedie"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "7:00 – 17:30 · Rehabilitace",
+            "10:00 – 13:00 · Ortopedie"
+          ]
+        ],
+        [
+          "St",
+          [
+            "7:00 – 17:30 · Rehabilitace"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "7:00 – 17:00 · Rehabilitace",
+            "11:00 – 13:30 · Ortopedie"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "7:00 – 16:30 · Rehabilitace",
+            "9:00 – 12:00 · Ortopedie"
+          ]
+        ]
+      ],
+      "u": "https://www.keltiamed.cz/index.php/rehabilitace/cerny-most"
+    }
+  },
+  "d-211754": {
+    "w": "www.keltiamed.cz/index.php/neurologie/poliklinika-parnik-cerny-most",
+    "tel": "735 135 391",
+    "e": "mudr.jana.vosahlikova@seznam.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "8:00 – 15:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "7:00 – 13:00 · Jen objednaní"
+          ]
+        ],
+        [
+          "St",
+          [
+            "8:00 – 15:00"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "8:00 – 15:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "8:00 – 12:00"
+          ]
+        ]
+      ],
+      "u": "https://www.keltiamed.cz/index.php/neurologie/poliklinika-parnik-cerny-most"
+    }
+  },
+  "d-121244": {
+    "w": ""
   }
 }

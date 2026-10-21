@@ -689,6 +689,59 @@ def doplnit_z_prohlizece(out):
     log("z vykreslených webů doplněno: %d hodin, %d telefonů, %d e-mailů" % (nh, nt, ne))
 
 
+POLIKLINIKA_PROSEK = "https://www.poliklinikaprosek.cz/lekarska-pracoviste"
+_PRAVNI = re.compile(r"\b(s\.?\s?r\.?\s?o|spol|a\.?\s?s|ico[:\s\d]*|mudr|mddr|mgr|ph\.?d|csc|mba|dr|prof|ing)\b\.?|[.,]", re.I)
+
+
+def _klic_nazvu(s):
+    return re.sub(r"\s+", " ", _PRAVNI.sub(" ", plain(s))).strip()
+
+
+def doplnit_polikliniku_prosek(out):
+    """Poliklinika Prosek (Lovosická 440/40) zveřejňuje u každého pracoviště tabulku
+    lékař – telefon – e-mail – organizace. Doplní chybějící telefony a e-maily
+    ordinacím na této adrese (i těm bez vlastního webu)."""
+    nase = [r for r in out if r["a"].startswith("Lovosická 440/40") and (not r.get("tel") or not r.get("e"))]
+    if not nase:
+        return
+    try:
+        rozc = _stahni_text(POLIKLINIKA_PROSEK)
+    except Exception as e:
+        log("poliklinika Prosek nedostupná: %s" % e)
+        return
+    stranky = sorted(set(re.findall(r'href=["\'](?:https://www\.poliklinikaprosek\.cz)?(/lekarska-pracoviste/[a-z0-9-]+)["\']', rozc)))
+    radky = []   # (lékař, telefon, email, organizace)
+    for st in stranky:
+        try:
+            h = _stahni_text("https://www.poliklinikaprosek.cz" + st)
+        except Exception:
+            continue
+        for b in _html_na_radky(h or ""):
+            if len(b) >= 5 and re.search(r"\d{3}\s?\d{3}\s?\d{3}|@", " ".join(b[2:4])):
+                radky.append((b[0], b[2], b[3], b[4]))
+    log("poliklinika Prosek: %d stránek pracovišť, %d řádků lékařů" % (len(stranky), len(radky)))
+    nt = ne = 0
+    for r in nase:
+        kn = _klic_nazvu(r["n"])
+        kand = [x for x in radky if _klic_nazvu(x[3]) and (_klic_nazvu(x[3]) == kn)]
+        if not kand:
+            # „MUDr. Hana Skalická CSc.“ ↔ „MUDr. Skalická Hana“: obě slova jména v názvu ordinace
+            kand = [x for x in radky if (lambda sl: len(sl) >= 2 and all(w in kn.split() for w in sl))(_klic_nazvu(x[0]).split()[:2])]
+        if not kand:
+            continue
+        if not r.get("tel"):
+            t = next((_norm_tel(x[1]) for x in kand if tel_platny(_norm_tel(x[1]))), "")
+            if t:
+                r["tel"] = t
+                nt += 1
+        if not r.get("e"):
+            m = next((x[2].strip().lower() for x in kand if EMAIL_RE.fullmatch(x[2].strip())), "")
+            if m:
+                r["e"] = m
+                ne += 1
+    log("z polikliniky Prosek doplněno: %d telefonů, %d e-mailů" % (nt, ne))
+
+
 def _bezpecne(f, *a):
     try:
         return f(*a)
@@ -944,6 +997,7 @@ def main():
     doplnit_kontakty(out)
     doplnit_hodiny(out)
     doplnit_z_prohlizece(out)
+    _bezpecne(doplnit_polikliniku_prosek, out)
     sjednotit_telefony(out)
     rucni_prepisy(out)
 
