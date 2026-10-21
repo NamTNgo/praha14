@@ -256,7 +256,13 @@ def praha9():
     def detail(x):
         try:
             hh = stahni(x["url"])
-            m = re.search(r'field--name-body[^>]*>(.*?)</div>\s*</div>', hh, re.S) or re.search(r'field--name-body[^>]*>(.*?)</div>', hh, re.S)
+            # jen tělo článku akce – web má field--name-body i v inline CSS, v liště
+            # „Důležitá upozornění“ a v patičce, ty do popisu nepatří
+            hh = re.sub(r"(?is)<(style|script)[^>]*>.*?</\1>", " ", hh)
+            cl = hh.find("node--view-mode-full")
+            hh = hh[cl:] if cl >= 0 else ""
+            hh = hh.split("</article>")[0]
+            m = re.search(r'<div[^>]+class="[^"]*field--name-body[^"]*"[^>]*>(.*?)</div>', hh, re.S)
             x["pop"] = text(m.group(1)) if m else ""
             big = re.search(r'<img[^>]+src="(/sites/default/files/[^"]+)"[^>]*>', hh.split("field--name-body")[0][-6000:]) if "field--name-body" in hh else None
             if big and not x["img"]:
