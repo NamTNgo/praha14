@@ -712,7 +712,7 @@
         return dkarta(I_CONE, bg, fg, esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), dtag(x),
           '<div class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
           (x.ul && x.ul.length ? '<div class="t3">' + esc(x.n) + "</div>" : "") +
-          (popis(x) ? '<div class="t3">' + esc(zkrat(popis(x), 150)) + "</div>" : ""),
+          (popis(x) ? '<div class="t3">' + esc(zkrat(datumy(popis(x)), 150)) + "</div>" : ""),
           ndic ? "Evidence dopravních informací (NDIC)" : null, x.u,
           ndic ? "Mapa dopravních informací" : "Detail na praha" + x.mc + ".cz");
       }).join("") + "</div>";
@@ -730,7 +730,7 @@
         return dkarta(I_CRASH, "#fdeedd", "#a2600f",
           esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), null,
           '<div class="t2">' + esc(x.n) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
-          (x.p ? '<div class="t3">' + esc(zkrat(x.p, 150)) + "</div>" : ""),
+          (x.p ? '<div class="t3">' + esc(zkrat(datumy(x.p), 150)) + "</div>" : ""),
           "Evidence dopravních informací (NDIC)", x.u, "Mapa dopravních informací");
       }).join("") + "</div>";
     }
@@ -750,6 +750,7 @@
     return h;
   }
   // v článcích bývá za popisem ještě zhotovitel a telefon; do karty se to neplete
+  function datumy(t) { return String(t || "").replace(/\b(\d{1,2}):(\d{1,2}):(\d{4})\b/g, function (m, d, mo, y) { return +d + ". " + +mo + ". " + y; }); }
   function zkrat(t, n) { return t.length <= n ? t : t.slice(0, t.lastIndexOf(" ", n)) + "…"; }
   // úvod článku bývá přepsaný nadpis; pak nemá smysl ho v kartě opakovat
   function popis(x) {
@@ -1382,8 +1383,11 @@
       r.push({ cls: n <= 1 ? "plan" : "info", ic: I_SWEEP, fg: n <= 1 ? "#9a6a12" : "#6b6652",
         t: (n <= 0 ? "Dnes" : n === 1 ? "Zítra" : dden(c.d)) + " blokové čištění", s: "v " + sklon(c.u) + (c.od ? " · " + c.od + "–" + (c.do || "") : "") + " · přeparkujte", act: "tab:doprava" });
     }
-    var uz = uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 300 && probiha(x.x); })[0];
-    if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n) + " · " + meters(uz.d), s: obdobi(uz.x.od, uz.x.do), act: "tab:doprava" });
+    var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 2000; })[0];
+    var uz = neh ? null : uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 300 && probiha(x.x); })[0];
+    if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
+      s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "tab:doprava" });
+    if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n) + " · " + akVzdTxt(uz.d), s: obdobi(uz.x.od, uz.x.do), act: "tab:doprava" });
     var p = { now: 0, plan: 1, info: 2 };
     return r.sort(function (x, y) { return p[x.cls] - p[y.cls]; });
   }
