@@ -38,7 +38,14 @@ FAZE = {
 SEZNAM = """query { projects(limit: -1) { id slug label points address start end invested housingUnits modified
   type { name } status { name } investor { name } } }"""
 DETAIL = """query($id: ID) { project(id: $id) { slug name description { __typename ... on Text { content } }
-  slides { __typename ... on Image { hash } } } }"""
+  slides { __typename ... on Image { hash caption author } } } }"""
+# CAMP u projektů bez vlastního obrázku dává obecnou ilustraci IPR – ta se nepočítá
+ILUSTRACE = re.compile(r"ilustrační", re.I)
+PLAN = re.compile(r"schéma|situace|mapa|výkres|studie|koncepc|urbanistick|územní plán", re.I)
+
+
+def textik(h):
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", (h or "").replace("&nbsp;", " "))).strip()
 
 
 def log(*a):
@@ -66,7 +73,7 @@ def okno():
     adr = json.loads((DATA / "addresses.json").read_text(encoding="utf-8"))
     la = [a[3] for a in adr if a[3]]
     lo = [a[4] for a in adr if a[4]]
-    m = 0.012   # ~1 km kolem okrajových adres Prahy 9 a 14
+    m = 0.03    # ~3 km kolem okrajových adres Prahy 9 a 14 (aplikace ukazuje okruh 3 km)
     return min(la) - m, max(la) + m, min(lo) - m * 1.5, max(lo) + m * 1.5
 
 
@@ -137,20 +144,26 @@ def main():
     nove = 0
     for v in vys:
         s = stare.get(v["id"])
-        if s and s.get("_m") == v["_m"] and "popis" in s:
-            v["popis"], v["obr"] = s.get("popis", ""), s.get("obr", "")
+        if s and s.get("_m") == v["_m"] and "obrK" in s:
+            for k in ("popis", "obr", "obrK", "obrA"):
+                v[k] = s.get(k, "")
             continue
         try:
             d = gql(DETAIL, {"id": v["id"]})["project"] or {}
             ds = d.get("description") or {}
             v["popis"] = re.sub(r"\s+\n", "\n", (ds.get("content") or "").strip())[:900]
-            sl = [x for x in d.get("slides") or [] if x.get("hash")]
-            v["obr"] = sl[0]["hash"] if sl else ""
+            sl = [x for x in d.get("slides") or [] if x.get("hash") and not ILUSTRACE.search(textik(x.get("caption")))]
+            foto = [x for x in sl if not PLAN.search(textik(x.get("caption")))]
+            x = (foto or sl or [None])[0]
+            v["obr"] = x["hash"] if x else ""
+            v["obrK"] = "" if not x else ("foto" if foto else "plan")
+            v["obrA"] = textik(x.get("author"))[:80] if x else ""
             nove += 1
             time.sleep(0.3)
         except Exception as e:   # noqa: BLE001
             log("  ! detail nejde načíst:", v["id"], e)
-            v["popis"], v["obr"] = (s or {}).get("popis", ""), (s or {}).get("obr", "")
+            for k in ("popis", "obr", "obrK", "obrA"):
+                v[k] = (s or {}).get(k, "")
     for v in vys:
         v["_m"] = v["_m"] or 0
 
@@ -164,7 +177,8 @@ def main():
     except Exception:   # noqa: BLE001
         cerstve = False
     from collections import Counter
-    log("v okolí Prahy 9 a 14: %d (%s); doplněno popisů: %d" % (len(vys), dict(Counter(v["faze"] for v in vys)), nove))
+    log("v okolí Prahy 9 a 14: %d (%s); doplněno popisů: %d; obrázky: %s" % (len(vys), dict(Counter(v["faze"] for v in vys)), nove,
+        dict(Counter(v.get("obrK") or "žádný" for v in vys))))
     if stejne and cerstve:
         print("beze změny")
     else:
