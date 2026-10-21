@@ -78,6 +78,10 @@ CHECKS = [
          pocet=lambda d: len(d.get("akce", [])), min=15, vek_h=30, cas=lambda d: d.get("gen"),
          reseni="Workflow Akce neběží nebo všechny zdroje padly. Spusť ho ručně a projdi "
                 "`docs/data/akce_report.txt` – u každého zdroje je počet akcí nebo chyba."),
+    dict(file="voda.json", popis="Voda – odstávky a havárie PVK",
+         pocet=lambda d: 1 if d.get("ok") else 0, min=1, vek_h=4, cas=lambda d: d.get("gen"),
+         reseni="Mapa událostí PVK (mapy.veoliavoda.cz, WFS ppu_pu_om) neodpovídá nebo změnila formát. "
+                "Projdi `docs/data/voda_report.txt` a `scripts/build_voda.py`."),
     dict(file="vok9.json", popis="VOK Praha 9",
          pocet=lambda d: d.get("mista", 0) if isinstance(d.get("mista"), int) else len(d.get("mista", [])),
          min=20, vek_h=45 * 24, cas=None,
