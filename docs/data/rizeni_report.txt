@@ -5,7 +5,7 @@ nových stavebních vyhlášek ke zpracování: 11
   + [zahajeno] Bytový dům U Proseckého kostela · Bytový dům · ulice U proseckého kostela (ulice)
   + [jes] RD Krocínka - stavební úpravy, Pod Krocínkou 580/3 · Rodinný dům · Pod Krocínkou 580/3 (adresa)
   + [oop] Přípojky, Horní Hrdlořezská · Sítě a přípojky · ulice Horní Hrdlořezská (ulice)
-  + [zahajeno] č.p. 2420 · Nástavba · Ocelářská 2420/2a (adresa)
+  + [zahajeno] Nástavba, Ocelářská 2420/2a · Nástavba · Ocelářská 2420/2a (adresa)
   + [oop] Rekonstrukce kanalizace, Pod Krocínkou, Nad Klíčovem, Ke Klíčovu · Sítě a přípojky · ulice Pod Krocínkou (ulice)
   + [zahajeno] Chodník podél ulice Mezitraťová · Chodník · ulice Mezitraťová (ulice)
   + [zahajeno] Zateplení dvorní fasády objektu č.p. 571, Na Břehu 11 · Zateplení · Na břehu 571/11 (adresa)
