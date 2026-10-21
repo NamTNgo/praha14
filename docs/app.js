@@ -117,7 +117,7 @@
 
   function viewSearch() {
     var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
-    var h = '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Sousedka</h1>' +
+    var h = '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Pod okny</h1>' +
       '<div class="sub">Zadejte adresu a uvidíte, co se u vás děje: odstávky vody, svoz odpadu, uzavírky, akce, lékaře a školy v okolí.</div></div><div class="body">' +
       '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#8a8572", 2.2) +
       '<input id="q" class="input' + (none ? " bad" : "") + (q.trim().length >= 2 ? " has-clear" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '">' +
@@ -540,7 +540,7 @@
       '</span><h2>Nejste připojeni k internetu</h2><p>Pro zobrazení stanovišť a termínů potřebuje appka internetové připojení. Zkontrolujte prosím Wi-Fi nebo mobilní data.</p>' +
       '<button type="button" class="btn" id="retry">Zkusit znovu</button></div>';
   }
-  function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Sousedka</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
+  function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Pod okny</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
 
   // Z detailu se dá otevřít další detail (odkaz na spádovou školu), proto zásobník,
   // ne jedna předchozí obrazovka – jinak by se zpět vracelo samo na sebe.
@@ -1169,7 +1169,7 @@
   function akIcs(a) {
     function f(s) { return s.replace(/[-:]/g, "") + (s.length === 10 ? "" : "00"); }
     var cd = a.od.length === 10, kon = cd ? akIso(akKonec(a)) : (a.do !== a.od ? a.do : akIso(akKonec(a)) + "T" + ("0" + akKonec(a).getHours()).slice(-2) + ":" + ("0" + akKonec(a).getMinutes()).slice(-2));
-    var t = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//moji-sousede//akce//CS", "BEGIN:VEVENT", "UID:" + a.id + "@moji-sousede",
+    var t = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//pod-okny//akce//CS", "BEGIN:VEVENT", "UID:" + a.id + "@pod-okny",
       (cd ? "DTSTART;VALUE=DATE:" : "DTSTART;TZID=Europe/Prague:") + f(a.od),
       (cd ? "DTEND;VALUE=DATE:" : "DTEND;TZID=Europe/Prague:") + f(kon),
       "SUMMARY:" + a.t.replace(/[,;]/g, "\\$&"), "LOCATION:" + akMisto(a).replace(/ · [\d,]+ k?m$/, "").replace(/[,;]/g, "\\$&"),
