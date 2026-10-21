@@ -2,15 +2,15 @@ adresních klíčů z RÚIAN: 7530
 staženo 28400119 B
 sloupce registru: ZZ_ID, ZZ_kod, ZZ_nazev, ZZ_druh_kod, ZZ_druh_nazev, ZZ_druh_nazev_sekundarni, ZZ_misto_poskytovani_ID, ZZ_kraj_kod, ZZ_kraj_nazev, ZZ_okres_kod, ZZ_okres_nazev, ZZ_ORP_kod, ZZ_ORP_nazev, ZZ_obec, ZZ_spravni_obvod, ZZ_PSC, ZZ_ulice, ZZ_cislo_domovni_orientacni, ZZ_RUIAN_kod, ZZ_GPS, ZZ_datum_zahajeni_cinnosti, ZZ_obor_pece, ZZ_forma_pece, ZZ_druh_pece, ZZ_rozsah_pece
 ověřuji 135 webů (blocklist: 1)…
-  web se nepodařilo ověřit (necháváme, pokud byl i minule): gynekologie-harfa.cz, www.adamek.medikus.cz, www.lamm.cz, www.orl-bludovsky.cz, www.pcls.cz, www.praktickylekarpraha3.cz, www.rehafit.cz, www.stomatologpraha.cz, www.tri-stom.cz, www.zubnilekar-praha9.cz
+  web se nepodařilo ověřit (necháváme, pokud byl i minule): gynekologie-harfa.cz, www.adamek.medikus.cz, www.alafia-rhb.cz, www.bohnice.cz, www.hela-cz.cz, www.orl-bludovsky.cz, www.pcls.cz, www.praktickylekarpraha3.cz, www.stomatologpraha.cz, www.tri-stom.cz
 webů vyřazeno (mrtvé/přesměrované/blocklist): 21 z 136
   etoile.cz, eucpls.cz, gynekologie-harfa.cz, ocni-ziskalova.mypage.cz, programhplus.cz, psychiatriepapezova-cz.webnode.cz, www.adamek.medikus.cz, www.cestrova.webnode.cz, www.freseniusmedicalcare.cz/cs, www.gynekolog.cz/Slapnickova, www.hela-cz.cz, www.naturdent-ortodoncie.cz, www.novodent.cz, www.orl-bludovsky.cz, www.ortopedickaordinace.cz
-ručních přepisů kontaktů: 6
+ručních přepisů kontaktů: 12
 ověřuji kontakty z 114 webů…
-z webů doplněno/opraveno: 57 telefonů, 32 e-mailů
-  hodiny ponechány z minula (web se nenačetl): 1
-ordinační hodiny z webů: 84 lékařů (75 webů z 114)
-  bez hodin: detskylekar-jandova.cz, mojeambulance.cz, mudr-ivana-richterova-detska-neurologie.webnode.cz, mudrtrousilova.webnode.cz, pfcc.cz, pg2.cz, web.quick.cz/zubni, www.bbraun.cz, www.bohnice.cz, www.clpa-mediterra.cz, www.dajkova.cz, www.dcpaprsek.org, www.detskalekarka.org, www.drkraus.com, www.endokrinologiecernymost.cz, www.familydentalcare.cz, www.genvia.cz, www.gynekolog.cz/karhan, www.keltiamed.cz, www.kukura-suissa.cz, www.lamm.cz, www.lecbabolesti.cz, www.likvor.cz, www.magicsmile.cz, www.mediclinic.cz, www.natur-dent.cz, www.neuroaxon.cz, www.ockovani-zahranici.cz/ockovaci-centrum-praha-9-cerny-most, www.okrehabilitace.cz, www.olejar.cz, www.plastika-svitak.eu, www.podit.cz, www.poliklinikamodrany.cz, www.poliklinikaprosek.cz, www.rehafit.cz, www.usni.cz, www.vidia-diagnostika.cz, www.zubar-rajskazahrada.cz, www.zubnilekar-praha9.cz
+z webů doplněno/opraveno: 56 telefonů, 33 e-mailů
+  hodiny ponechány z minula (web se nenačetl): 2
+ordinační hodiny z webů: 87 lékařů (77 webů z 114)
+  bez hodin: detskylekar-jandova.cz, mojeambulance.cz, mudr-ivana-richterova-detska-neurologie.webnode.cz, mudrtrousilova.webnode.cz, pfcc.cz, pg2.cz, web.quick.cz/zubni, www.alafia-rhb.cz, www.bbraun.cz, www.bohnice.cz, www.clpa-mediterra.cz, www.dajkova.cz, www.dcpaprsek.org, www.detskalekarka.org, www.drkraus.com, www.endokrinologiecernymost.cz, www.genvia.cz, www.gynekolog.cz/karhan, www.keltiamed.cz, www.kukura-suissa.cz, www.lamm.cz, www.lecbabolesti.cz, www.likvor.cz, www.magicsmile.cz, www.mediclinic.cz, www.natur-dent.cz, www.neuroaxon.cz, www.ockovani-zahranici.cz/ockovaci-centrum-praha-9-cerny-most, www.olejar.cz, www.plastika-svitak.eu, www.podit.cz, www.poliklinikamodrany.cz, www.poliklinikaprosek.cz, www.rehafit.cz, www.vidia-diagnostika.cz, www.zubar-rajskazahrada.cz, www.zubnilekar-praha9.cz
   ✓ adriagyn.cz  Po 8:00 – 12:00, 12:30 – 16:00 | Út 7:00 – 12:00, 12:30 – 15:00 | St 8:00 – 12:00, 12:30 – 14:00 | Čt 9:00 – 13:00, 13:30 – 18:00 | Pá 8:00 – 12:00
   ✓ alergoplus.cz  Po 7:00 – 12:00, 13:00 – 17:00 | Út 12:00 – 18:00 | St 8:00 – 12:00, 13:00 – 16:00 | Čt 8:00 – 12:00 | Pá 8:00 – 12:00
   ✓ babyastramedico.cz  Po 7:00 – 9:00, 9:00 – 10:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 12:00 – 13:00, 13:45 – 15:00 · Objednaní - preventivní prohlídky, EKG, ECHO | Út 11:30 – 12:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 12:30 – 15:00 · Objednaní: neonatologická poradna a kojenci, 15:00 – 18:00 · Objednaní: preventivní prohlídky, ECHO, EKG | St 8:00 – 9:00, 9:00 – 10:30 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 11:00 – 11:30 · Objednaní: neonatologická poradna, 12:30 – 13:30 · Objednaní: kojenecká poradna, 13:45 – 15:00 · Objednaní: preventivní prohlídky, ECHO, EKG, spiromerie | Čt 9:00 – 10:00, 10:00 – 11:00 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 11:00 – 12:00 · Objednaní: Kojenecká poradna, 13:00 – 15:00 · Objednaní: Preventivní prohlídky | Pá 7:30 – 8:30 · Objednaní: odběry, předoperační vyšetření, očkování, 8:30 – 10:00 · Nemocní - NUTNO SE OBJEDNAT PŘES MEDEVIO, 10:00 – 12:00 · Kojenecká poradna a neonatologie
@@ -28,8 +28,8 @@ ordinační hodiny z webů: 84 lékařů (75 webů z 114)
   ✓ prvniplicni.cz  Po 7:00 – 18:00 | Út 7:00 – 18:00 | St 7:00 – 18:00 | Čt 7:00 – 18:00 | Pá 7:00 – 18:00
   ✓ r-med.eu  Po 9:00 – 15:00 | Út 9:00 – 15:00 | St 9:00 – 15:00 | Čt 9:00 – 15:00 | Pá 9:00 – 15:00
   ✓ rtgparnik.cz  Po 8:00 – 16:00 | Út 8:00 – 16:00 | St 8:00 – 16:00 | Čt 8:00 – 16:00 | Pá 8:00 – 12:45
+  ✓ usni.cz/ordinace/praha-9-prosek  Po 7:00 – 8:00, 8:00 – 15:00, 13:00 – 13:30 · Pauza na oběd hodnocení výtěrů | Út 8:00 – 15:00, 13:00 – 13:30 · Pauza na oběd MUDr. Šimůnková sestra Brunhoferová | St 8:00 – 14:00, 16:00 – 19:00 · MUDr. Ciller sestra Pivoňková/Sklenářová | Čt 8:00 – 17:00, 13:00 – 13:45 · Pauza na oběd | Pá 8:00 – 12:00
   ✓ vivadent.cz  Po 9:00 – 16:00 | Út 9:00 – 16:00 | St 9:00 – 16:00 | Čt 9:00 – 16:00 | Pá 9:00 – 16:00
-  ✓ www.alafia-rhb.cz  Po 7:00 – 11:00, 11:30 – 15:30 | Út 7:00 – 11:00, 11:30 – 15:30 | St 7:00 – 11:00, 11:30 – 15:30 | Čt 7:00 – 11:00, 11:30 – 15:30 | Pá 7:00 – 11:00, 11:30 – 15:30
   ✓ www.artmedi.cz  Po 7:00 – 16:00 | Út 7:00 – 16:00 | St 7:00 – 18:00 | Čt 7:00 – 16:00 | Pá 7:00 – 13:00
   ✓ www.artstom.cz  Po 8:00 – 21:00 | Út 8:00 – 21:00 | St 8:00 – 21:00 | Čt 8:00 – 21:00 | Pá 8:00 – 21:00
   ✓ www.babacare.cz  Po 7:30 – 14:30 · MUDr.Veronika (Janečková) Reznerová | Út 7:00 – 16:30 · MUDr. Stanislav Martan | St 7:30 – 14:00 · MUDr. Pavel Drbohlav | Čt 13:30 – 18:30 · MUDr. Sabina Šašurová / / MUDr. Stanislav Martan | Pá 9:00 – 10:30 · Zvané výkony
@@ -49,6 +49,8 @@ ordinační hodiny z webů: 84 lékařů (75 webů z 114)
   ✓ www.iscare.cz  Po 7:00 – 19:00 | Út 7:00 – 19:00 | St 7:00 – 19:00 | Čt 7:00 – 19:00 | Pá 7:00 – 19:00 | So 7:00 – 12:00
   ✓ www.kardioambulance.cz  Po 8:00 – 16:00 | Út 8:00 – 18:00 | St 7:30 – 16:00 | Čt 7:00 – 18:00 | Pá 7:00 – 14:00
   ✓ www.kardiopraha.eu  Po 7:00 – 12:30, 13:00 – 16:00 | Út 12:00 – 18:00 | St 7:00 – 13:00 | Čt 7:00 – 12:30, 13:00 – 16:00 | Pá 7:00 – 13:00
+  ✓ www.keltiamed.cz/index.php/neurologie/poliklinika-parnik-cerny-most  St 8:00 – 15:00 | Čt 8:00 – 15:00 | Pá 8:00 – 12:00
+  ✓ www.keltiamed.cz/index.php/rehabilitace/cerny-most  Po 7:00 – 17:00 | Út 7:00 – 17:30 | St 7:00 – 17:30 | Čt 7:00 – 17:00 | Pá 7:00 – 16:30
   ✓ www.kozni-praha.cz  Út 11:00 – 18:00 | St 9:00 – 16:00 | Čt 7:30 – 16:00 | Pá 8:00 – 13:00
   ✓ www.koznicernymost.cz  Po 8:30 – 15:00 | Út 8:30 – 12:15 | St 8:30 – 11:30 · Nadále, 13:00 – 18:30 · Nadále | Čt 8:30 – 11:45 | Pá 8:00 – 11:15
   ✓ www.lakimedo.cz  Po 8:00 – 14:30 | Út 8:00 – 14:30 | St 8:00 – 14:00 | Čt 12:00 – 18:00 | Pá 8:00 – 13:00
@@ -67,12 +69,12 @@ ordinační hodiny z webů: 84 lékařů (75 webů z 114)
   ✓ www.moldent.cz  Po 7:30 – 16:00 | Út 7:30 – 16:00 | St 11:00 – 18:00 | Čt 7:00 – 15:00 | Pá 7:30 – 13:00
   ✓ www.nejepinska.cz  Po 8:00 – 12:00 | Út 10:00 – 12:00 | St 13:00 – 16:00 | Čt 8:00 – 12:00 | Pá 13:00 – 16:00
   ✓ www.nuklearnimedicina.cz  Po 7:00 – 15:30 | Út 7:00 – 15:30 | St 7:00 – 15:30 | Čt 7:00 – 15:30 | Pá 7:00 – 15:30
+  ✓ www.okrehabilitace.cz/cz/s1780/Pobocky/c2012-Praha-Prosek  Po 7:00 – 15:30, 7:00 – 16:00, 7:00 – 19:00, 7:00 – 15:00 | Út 7:00 – 19:00, 7:00 – 19:30 | St 7:00 – 15:00, 7:00 – 14:30, 7:00 – 19:00 | Čt 7:00 – 17:00, 7:00 – 19:00 | Pá 7:00 – 14:30
   ✓ www.orlbetka.cz  Po 8:00 – 16:00 | Út zavřeno | St 7:00 – 14:00 | Čt 8:00 – 14:00 | Pá 8:00 – 13:00
   ✓ www.orlkyje.cz  Po 8:00 – 12:00, 12:30 – 14:30 | Út 7:00 – 12:00, 12:30 – 13:30 | St 8:00 – 12:00, 12:30 – 14:30 | Čt 7:00 – 12:00, 12:30 – 13:30 | Pá 8:00 – 14:00 | So zavřeno | Ne zavřeno
   ✓ www.orthostudio.cz  Po 8:00 – 12:00, 13:00 – 16:00 | Út 8:00 – 12:00, 13:00 – 16:00 | St 10:00 – 13:00, 14:00 – 18:00 | Čt 8:00 – 12:00, 13:00 – 16:00
   ✓ www.ortopedia.cz  Po 7:30 – 13:30, 14:00 – 17:00 · Rázová vlna, 17:00 – 20:00 · MUDr. Štefan | Út 7:30 – 12:00, 13:00 – 16:00 · MUDr. Wagenknecht, 16:00 – 19:00 · Rázová vlna | St 7:30 – 14:00, 16:00 – 19:00 · MUDr. Koutek | Čt 7:30 – 13:30, 14:00 – 16:00 · Rázová vlna, 16:00 – 20:00 · MUDr. Štefan | Pá 7:30 – 13:30 · MUDr. Dočkal, 14:00 – 16:00 · Rázová vlna
   ✓ www.polcare.cz  Po 9:00 – 13:00 | Út 13:00 – 15:00 | St 8:00 – 10:00 | Čt 8:00 – 10:00 | Pá 8:00 – 10:00
-  ✓ www.practicus-vseobecnylekar.cz  Út 7:00 – 9:00, 12:00 – 18:00 | St 7:00 – 11:30, 11:30 – 12:15, 12:00 – 18:00 | Čt 7:00 – 12:00, 12:00 – 14:30, 14:30 – 15:00 | Pá 7:00 – 12:00, 12:00 – 13:30
   ✓ www.praktikvysocany.cz  Po 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Út 12:00 – 18:00 | St 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Čt 7:00 – 8:00, 8:00 – 13:30, 13:30 – 14:00 | Pá 7:00 – 8:00, 8:00 – 11:30
   ✓ www.probeamed.cz  Po 7:30 – 14:00 | Út 7:30 – 14:00 | St 7:30 – 14:00 | Čt 12:00 – 18:00 | Pá 7:30 – 12:00
   ✓ www.psychiatriepapezova.cz  Po 9:00 – 20:00 | Út 8:30 – 18:30 | St 9:00 – 16:00 | Čt 9:00 – 17:00 | Pá 8:00 – 16:00
@@ -86,24 +88,20 @@ ordinační hodiny z webů: 84 lékařů (75 webů z 114)
   ✓ www.zubni.cz  Po 9:00 – 12:00, 13:00 – 16:00 | Út 9:00 – 12:00, 13:00 – 16:00 | St 9:00 – 12:00, 13:00 – 16:00 | Čt 9:00 – 12:00, 13:00 – 16:00
   ✓ www.zuby-smrcek.cz  Po 7:30 – 20:00 | Út 7:30 – 20:00 | St 7:30 – 20:00 | Čt 7:30 – 20:00 | Pá 7:30 – 15:00
   ✓ www.zzshmp.cz  Po 8:00 – 11:30, 12:30 – 15:00 | Út 8:00 – 11:30, 12:30 – 15:00 | St 8:00 – 11:30, 12:30 – 15:00 | Čt 8:00 – 11:30, 12:30 – 15:00 | Pá 8:00 – 11:30, 12:30 – 15:00
-vykresluji v prohlížeči 42 webů s chybějícími údaji…
+vykresluji v prohlížeči 38 webů s chybějícími údaji…
   ! prohlížeč web.quick.cz/zubni: Page.goto: Timeout 30000ms exceeded.
 Call log:
   - navigating to "https://web.qu
+  ! prohlížeč www.bohnice.cz: Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "https://www.bo
   ! prohlížeč www.drkraus.com: Page.goto: Timeout 30000ms exceeded.
 Call log:
   - navigating to "https://www.dr
-  ! prohlížeč www.lamm.cz: Page.goto: Timeout 30000ms exceeded.
-Call log:
-  - navigating to "https://www.la
-  ! prohlížeč www.rehafit.cz: Page.goto: Timeout 30000ms exceeded.
-Call log:
-  - navigating to "https://www.re
-  ! prohlížeč www.zubnilekar-praha9.cz: Page.goto: Timeout 30000ms exceeded.
-Call log:
-  - navigating to "https://www.zu
 z vykreslených webů doplněno: 3 hodin, 7 telefonů, 4 e-mailů
-ručních přepisů kontaktů: 18
+poliklinika Prosek: 37 stránek pracovišť, 149 řádků lékařů
+z polikliniky Prosek doplněno: 17 telefonů, 6 e-mailů
+ručních přepisů kontaktů: 50
 
 lékařů v Praze 9 a 14: 336
 podle MČ: Praha 14=102, Praha 9=234
