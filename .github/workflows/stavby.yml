@@ -28,7 +28,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git add docs/data/stavby.json docs/data/stavby_report.txt 2>/dev/null || true
+          git add docs/data/stavby.json docs/data/stavby_popis.json docs/data/stavby_report.txt 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m "Aktualizace staveb"
           for i in 1 2 3 4 5; do

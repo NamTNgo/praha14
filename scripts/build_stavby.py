@@ -87,6 +87,50 @@ def cisty(s):
     return "" if s in ("N/A", "-", "–") else s
 
 
+# ---- novostavby.com: jen štítek „V prodeji“ + odkaz (bez jejich fotek a textů) ----
+NS_API = "https://novostavby.com/wp-json/wp/v2/"
+NS_STAV = {"V prodeji": "V prodeji", "Předprodej": "Předprodej", "K pronájmu": "K pronájmu"}
+STOP = re.compile(r"\b(rezidence|residence|rezidencni|projekt|bytovy|bytove|dum|domy|byty|bydleni|etapa|faze|living|park|praha|\d+\.?)\b")
+
+
+def ns_get(path):
+    req = urllib.request.Request(NS_API + path, headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.loads(r.read().decode("utf-8")), r.headers.get("X-WP-TotalPages")
+
+
+def norm(s):
+    import unicodedata
+    s = unicodedata.normalize("NFKD", html_unescape(s or "")).encode("ascii", "ignore").decode().lower()
+    s = re.sub(r"[^a-z0-9 ]+", " ", s)
+    return re.sub(r"\s+", " ", STOP.sub(" ", s)).strip()
+
+
+def html_unescape(s):
+    import html
+    return html.unescape(s)
+
+
+def novostavby():
+    """{normalizovaný název: [(stav, odkaz, čtvrti)]} pro projekty, které se prodávají."""
+    stavy, _ = ns_get("property_status?per_page=50&_fields=id,name")
+    ids = {x["id"]: NS_STAV[x["name"]] for x in stavy if x["name"] in NS_STAV}
+    lok, _ = ns_get("property_location?per_page=100&_fields=id,name")
+    lok = {x["id"]: x["name"] for x in lok}
+    out, strana, pocet = {}, 1, 1
+    while strana <= pocet and strana <= 30:
+        d, tp = ns_get("property?per_page=100&page=%d&property_status=%s&_fields=title,link,property_status,property_location"
+                       % (strana, ",".join(map(str, ids))))
+        pocet = int(tp or 1)
+        for x in d:
+            st = next((ids[i] for i in x.get("property_status") or [] if i in ids), None)
+            if st:
+                out.setdefault(norm(x["title"]["rendered"]), []).append((st, x["link"], [lok.get(i, "") for i in x.get("property_location") or []]))
+        strana += 1
+        time.sleep(0.5)
+    return out
+
+
 def main():
     out_p = DATA / "stavby.json"
     try:
@@ -107,6 +151,13 @@ def main():
     log("projektů v databázi CAMP: %d" % len(vse))
 
     stare = {p["id"]: p for p in pred.get("projekty", [])}
+    try:
+        stp = json.loads((DATA / "stavby_popis.json").read_text(encoding="utf-8"))
+    except Exception:   # noqa: BLE001
+        stp = {}
+    for k, p in stare.items():
+        if "popis" not in p:
+            p["popis"] = stp.get(k, "")
     vys = []
     for p in vse:
         body = [(b["lat"], b["lon"]) for b in (p.get("points") or []) if b.get("lat")]
@@ -167,10 +218,37 @@ def main():
     for v in vys:
         v["_m"] = v["_m"] or 0
 
+    # štítek prodeje z novostavby.com – shoda názvu a městské části
+    try:
+        ns = novostavby()
+        sparovano = 0
+        for v in vys:
+            if v["faze"] == "planuje" or not any("Bydlení" in t for t in v["typ"]):
+                continue
+            k = norm(v["n"])
+            if len(k) < 4:
+                continue
+            for st, url, mista in ns.get(k, []):
+                if not v["mc"] or any(m == "Praha " + v["mc"] for m in mista) or not any(re.match(r"Praha \d", m) for m in mista):
+                    v["prodej"] = {"s": st, "u": url}
+                    sparovano += 1
+                    log("  prodej: %s → %s (%s)" % (v["n"], url, st))
+                    break
+        log("novostavby.com: %d prodávaných projektů, spárováno %d" % (sum(len(x) for x in ns.values()), sparovano))
+    except Exception as e:   # noqa: BLE001
+        log("novostavby.com nedostupné (štítky prodeje vynechány):", e)
+        for v in vys:
+            s = stare.get(v["id"])
+            if s and s.get("prodej"):
+                v["prodej"] = s["prodej"]
+
     poradi = {"stavi": 0, "povoluje": 1, "planuje": 2, "hotovo": 3}
     vys.sort(key=lambda v: (poradi[v["faze"]], v["n"]))
     data = {"gen": NOW.isoformat(timespec="minutes"), "ok": True, "zdroj": "https://praha.camp/praha-zitra",
             "web": WEB, "img": "https://praha.camp/img/cache/720/", "projekty": vys}
+    popisy = {v["id"]: v.pop("popis", "") for v in vys}
+    for v in vys:
+        v["_p"] = 1 if popisy.get(v["id"]) else 0
     stejne = pred.get("projekty") == vys and pred.get("ok")
     try:
         cerstve = NOW - dt.datetime.fromisoformat(pred.get("gen")) < dt.timedelta(hours=20)
@@ -183,6 +261,7 @@ def main():
         print("beze změny")
     else:
         out_p.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        (DATA / "stavby_popis.json").write_text(json.dumps({k: v for k, v in popisy.items() if v}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (DATA / "stavby_report.txt").write_text("\n".join(LOG), encoding="utf-8")
     print("\n".join(LOG))
 
