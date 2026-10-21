@@ -110,6 +110,16 @@ def html_text(h):
 
 
 def pdf_text(b):
+    import shutil
+    import subprocess
+    if shutil.which("pdftotext"):
+        try:
+            r = subprocess.run(["pdftotext", "-l", "3", "-", "-"], input=b, capture_output=True, timeout=60)
+            t = r.stdout.decode("utf-8", "replace")
+            if len(t.strip()) > 100:
+                return re.sub(r"\s+", " ", t)
+        except Exception as e:   # noqa: BLE001
+            log("    ! pdftotext:", e)
     try:
         from pypdf import PdfReader
         r = PdfReader(io.BytesIO(b))
@@ -141,17 +151,24 @@ def nacti_adresy():
 CASTI = ["prosek", "strizkov", "vysocany", "liben", "hloubetin", "hrdlorezy", "malesice", "kyje", "hostavice", "cerny most"]
 
 
-def najdi_misto(t, adresy):
-    """(lat, lon, mc, popis, presnost) z textu vyhlášky."""
+UREDY = re.compile(r"sokolovska\s+(?:14/324|324/14)|bratri venclik\w*\s+1073", re.I)
+
+
+def _maskuj(p):
+    """Adresy úřadů a účastníků (za „nar.“, „IČO“, „se sídlem“) z textu vyřadit – nejsou místem stavby."""
+    p = UREDY.sub(" ", p)
+    return re.sub(r"(nar\.|ico:?|se sidlem|bytem|trvale bytem)[^;()]{0,90}", " ", p)
+
+
+def _hledej(p, adresy, s_ulici_bez_prefixu=False):
     cp, ulc, ulice, kus = adresy
-    p = plain(t)
-    # 1) „Ukl. zn.: D - 571/Vysočany“ a „č.p. 571 … k.ú. Vysočany“
+    # „Ukl. zn.: D - 571/Vysočany“ a „č.p. 571 … k.ú. Vysočany“
     for m in re.finditer(r"(?:ukl\. ?zn\.?:?\s*[a-z]\s*-\s*|c\.\s*p\.\s*)(\d{1,5})[^\d/]{0,40}?(?:/|k\.\s*u\.\s*|v katastralnim uzemi\s+)\s*([a-z ]{4,12})", p):
         cast = next((c for c in CASTI if m.group(2).strip().startswith(c)), None)
         if cast and (m.group(1), cast) in cp:
             la, lo, mc, txt = cp[(m.group(1), cast)]
             return la, lo, mc, txt, "adresa"
-    # 2) „Na Břehu 11“ – ulice + číslo
+    # „Na Břehu 11“ – ulice + číslo
     for m in re.finditer(r"([a-z][a-z ]{2,30}?)\s+(\d{1,4})(?:/(\d{1,3}[a-z]?))?\b", p):
         u = m.group(1).strip()
         for i in range(len(u.split())):
@@ -160,7 +177,7 @@ def najdi_misto(t, adresy):
                 if c and (kand, c) in ulc:
                     la, lo, mc, txt = ulc[(kand, c)]
                     return la, lo, mc, txt, "adresa"
-    # 3) jen ulice („ul. Za luhem“, „podél ulice Mezitraťová“)
+    # jen ulice („ul. Za luhem“, „podél ulice Mezitraťová“)
     for m in re.finditer(r"(?:ul\.|ulicemi|ulic[ei]|ulici)\s+([a-z][a-z ]{2,30})", p):
         slova = m.group(1).split()
         for n in range(min(4, len(slova)), 0, -1):
@@ -168,7 +185,34 @@ def najdi_misto(t, adresy):
             if kand in ulice:
                 la, lo, mc, u = ulice[kand]
                 return la, lo, mc, "ulice " + u, "ulice"
-    # 4) katastrální území – jen pro městskou část, bez bodu
+    if s_ulici_bez_prefixu:   # titulky typu „Drahobejlova - OOP (…)“: nejdelší známá ulice v textu
+        nej = None
+        for u in ulice:
+            if len(u) >= 5 and re.search(r"(?<![a-z])" + re.escape(u) + r"(?![a-z])", p) and (not nej or len(u) > len(nej)):
+                nej = u
+        if nej:
+            for cnum in re.findall(r"c\.\s*p\.\s*(\d{1,5})", p):
+                if (nej, cnum) in ulc:
+                    la, lo, mc, txt = ulc[(nej, cnum)]
+                    return la, lo, mc, txt, "adresa"
+            la, lo, mc, u = ulice[nej]
+            return la, lo, mc, "ulice " + u, "ulice"
+    return None
+
+
+def najdi_misto(nazev, t, adresy):
+    """(lat, lon, mc, popis, presnost): nejdřív titulek vyhlášky, pak část dokumentu o záměru."""
+    kus = adresy[3]
+    r = _hledej(_maskuj(plain(nazev)), adresy, True)
+    if r:
+        return r
+    p = plain(t)
+    i = p.find("zamer")
+    telo = _maskuj(p[i:i + 2500] if i >= 0 else p)
+    r = _hledej(_maskuj(p[:400]), adresy) if re.search(r"ukl\. ?zn", p[:400]) else None   # hlavička se spisovou značkou
+    r = r or _hledej(telo, adresy)
+    if r:
+        return r
     for c in CASTI:
         if re.search(r"k\.\s*u\.\s*" + c + r"|katastralnim uzemi " + c + r"|/" + c, p):
             la, lo, mc = kus.get(c, (None, None, None))
@@ -205,6 +249,10 @@ def nazev_zameru(nazev, t):
     if m:
         return _orez(m.group(1))
     n = re.sub(r"^\d+\s*,\s*", "", nazev)                         # „719, Veřejná vyhláška…“
+    m = re.match(r"(.*?)\s*-\s*OOP\s*\((.*)\)\s*$", n)
+    if m:   # „Drahobejlova - OOP (oprava fasády domu č.p. 1110)“
+        return (m.group(2)[:1].upper() + m.group(2)[1:] + ", " + m.group(1)).strip()[:140]
+    n = re.sub(r"^JES\s*-\s*", "", n)
     if ":" in n and re.search(r"vyrozumění|sdělení|oznámení|vyhláška|písemnost", n.split(":")[0], re.I):
         n = n.split(":", 1)[1]
     n = re.split(r"\s*[-–:]\s*(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\"„])", n, maxsplit=1)[-1] if re.search(r"vyrozumění|sdělení|vyhláška|oznámení|rozhodnutí|písemnost", n, re.I) else n
@@ -214,6 +262,8 @@ def nazev_zameru(nazev, t):
 
 def popis_zameru(t):
     """Jedna věta o tom, co se staví – jen věcná část, bez jmen."""
+    if re.search(r"opatření obecné povahy", t[:1500], re.I):
+        return ""
     m = re.search(r"(?:předmětem záměru (?:jsou|je)|záměr spočívá v|spočívající v)\s+(.{20,260}?\.)", t)
     if not m:
         return ""
@@ -280,7 +330,7 @@ def main():
         pred = json.loads(out_p.read_text(encoding="utf-8"))
     except Exception:   # noqa: BLE001
         pred = {}
-    VERZE = 2   # při změně parseru zpracovat vyhlášky znovu
+    VERZE = 3   # při změně parseru zpracovat vyhlášky znovu
     vyhl = {v["url"]: v for v in pred.get("_vyhlasky", [])} if pred.get("v") == VERZE else {}   # cache
     adresy = nacti_adresy()
     zdroje = {}
@@ -315,7 +365,7 @@ def main():
             log("  ! nejde stáhnout:", v["url"], e)
             continue
         cely = v["nazev"] + " " + t
-        la, lo, mc, misto, presnost = najdi_misto(cely, adresy)
+        la, lo, mc, misto, presnost = najdi_misto(v["nazev"], t, adresy)
         fk, ft = faze(v["nazev"], t)
         jm = nazev_zameru(v["nazev"], t)
         zaznam = {

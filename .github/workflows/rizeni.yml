@@ -22,7 +22,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Knihovna na PDF
-        run: pip install pypdf==5.1.0
+        run: |
+          sudo apt-get install -y -qq poppler-utils >/dev/null
+          pip install pypdf==5.1.0
       - name: Stáhnout vyhlášky stavebních úřadů
         run: python scripts/build_rizeni.py
       - name: Uložit změny
