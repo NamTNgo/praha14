@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "domu", okSeg: "doktori", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
+  var state = { address: null, query: "", tab: "domu", okSeg: "doktori", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
     dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkQ: "",
     akView: "list", akHist: [], akSel: null, akF: "vse", akK: "all", akDenVse: {}, akDay: null, akKal: false, akKalM: null, akKalSel: null };
 
@@ -300,6 +300,13 @@
   var SK_CHIPS = [["all", "Vše"], ["ms", "Školky"], ["zs", "Základní"], ["ss", "Střední"]];
   var SK_Z = [["all", "Vše"], ["s", "Veřejné"], ["p", "Soukromé"], ["c", "Církevní"]];
   var SK_M = [["all", "Praha 9 a 14"], ["9", "Praha 9"], ["14", "Praha 14"]];
+  // přepínač Vše / Praha 9 / Praha 14 nad seznamy Škol a Staveb
+  function mcSeg(cur, attr) {
+    return '<div class="akseg mcseg" role="tablist" aria-label="Městská část">' + [["all", "Vše"], ["9", "Praha 9"], ["14", "Praha 14"]].map(function (c) {
+      var on = cur === c[0];
+      return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? "on" : "") + '" ' + attr + '="' + c[0] + '">' + c[1] + "</button>";
+    }).join("") + "</div>";
+  }
   var MONTHS_CS = ["leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"];
   var I_LAND = '<path d="M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M3 10l9-6 9 6"/>';
   var I_CASE = '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>';
@@ -382,7 +389,7 @@
   }
   function skExtra(s) { return s && s.w && data.skolyExtra ? data.skolyExtra[s.w] || null : null; }
   function fmtDate(iso) { var p = iso.split("-"); return +p[2] + ". " + +p[1] + ". " + p[0]; }
-  function skActive() { return (state.skZ !== "all" ? 1 : 0) + (state.skM !== "all" ? 1 : 0); }
+  function skActive() { return state.skZ !== "all" ? 1 : 0; }
   function skMatch(s) {
     return (state.skF === "all" || s.t === state.skF) && (state.skZ === "all" || s.z === state.skZ) && (state.skM === "all" || s.mc === state.skM);
   }
@@ -440,7 +447,7 @@
     var n = skCount();
     return '<div class="sheet-bg" data-sheetclose="1"></div><div class="sheet" role="dialog" aria-label="Filtry"><div class="grab"></div>' +
       '<div class="shhead"><div class="shh">Filtry</div><button type="button" class="shx" data-sheetclose="1" aria-label="Zavřít">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 16, "currentColor", 2.4) + "</button></div>" +
-      sec("Typ školy", SK_CHIPS, state.skF, "data-skf") + sec("Zřizovatel", SK_Z, state.skZ, "data-skz") + sec("Městská část", SK_M, state.skM, "data-skm") +
+      sec("Typ školy", SK_CHIPS, state.skF, "data-skf") + sec("Zřizovatel", SK_Z, state.skZ, "data-skz") +
       '<div class="shfoot"><button type="button" class="shreset" id="skreset">Zrušit vše</button><button type="button" class="btn shgo" data-sheetclose="1">Zobrazit ' + n + " " + (n === 1 ? "místo" : n >= 2 && n <= 4 ? "místa" : "míst") + "</button></div></div>";
   }
   // Karta školy: 1) typ + městská část (v okolí vzdálenost), 2) název, 3) adresa, 4) štítky
@@ -457,7 +464,7 @@
   function skolyBody(a) {
     if (!data.skoly) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Seznam škol se připravuje</div><div class="note" style="margin-top:2px">Data z rejstříku škol se právě doplňují. Zkuste to prosím později.</div></div></div>';
     var near = skNear(a);
-    var h = filterBar() + '<div class="list"><div class="label">V okruhu 1 km od adresy · ' + near.length + "</div>";
+    var h = mcSeg(state.skM, "data-skm") + filterBar() + '<div class="list"><div class="label">V okruhu 1 km od adresy · ' + near.length + "</div>";
     if (!near.length) h += '<div class="card-dashed row top"><div class="grow"><div class="t1">V okruhu 1 km nic nenajdeme</div><div class="note" style="margin-top:2px">Zkuste jiný filtr nebo celý seznam.</div></div></div>';
     near.forEach(function (x) { h += skolaCard(x.s, x.d, x.p); });
     h += "</div>" + '<button type="button" class="btn-link" id="skfull">Celý seznam Prahy 9 a 14 (' + data.skoly.length + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
@@ -473,7 +480,7 @@
       '<h1 style="margin-top:10px">Školy a školky</h1><div class="eyebrow">Praha 9 a 14</div></div><div class="body">' +
       '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#726c5a", 2) +
       '<input id="skq" class="input" type="search" placeholder="Název školy nebo ulice" autocomplete="off" value="' + esc(state.skQ) + '"></div>' +
-      filterBar() + '<div class="list" id="sklist">' + skolyListHtml() + "</div></div>" + FOOT_SK;
+      mcSeg(state.skM, "data-skm") + filterBar() + '<div class="list" id="sklist">' + skolyListHtml() + "</div></div>" + FOOT_SK;
   }
 
   // ---- detail školy ----
@@ -1491,7 +1498,9 @@
       '<span class="stn">' + esc(p.n) + "</span>" + (m ? '<span class="stm">' + esc(m) + "</span>" : "") +
       '<span class="sta">' + esc(stUlice(p)) + (x.d != null ? " · " + akVzdTxt(x.d) : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
   }
-  function stFiltr(xs) { return state.stF === "all" ? xs : xs.filter(function (x) { return stKat(x.p) === state.stF; }); }
+  function stFiltr(xs) {
+    return xs.filter(function (x) { return (state.stF === "all" || stKat(x.p) === state.stF) && (state.stM === "all" || x.p.mc === state.stM); });
+  }
   function stChips() {
     return '<div class="chipscroll"><div class="chiprow">' + ST_FILTRY.map(function (k) {
       return '<button type="button" class="chip' + (state.stF === k ? " on" : "") + '" data-stf="' + k + '">' + (k === "all" ? "Vše" : ST_KAT[k][0]) + "</button>";
@@ -1526,7 +1535,7 @@
   function stavbyBody(a) {
     var st = stStav();
     if (!data.stavby || !data.stavby.projekty) return st;
-    var vse = stOkoli(a), xs = stFiltr(vse), h = st + stChips() + rzSekce(a);
+    var vse = stOkoli(a), xs = stFiltr(vse), h = st + mcSeg(state.stM, "data-stm") + stChips() + rzSekce(a);
     if (!vse.length) {
       var nej = stOkoli(a, 1e6)[0];
       h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(I_JERAB, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Do 3 km se teď nic nestaví ani neplánuje</div>' +
@@ -1549,7 +1558,7 @@
     var a = state.address, xs = stFiltr((data.stavby.projekty || []).filter(function (p) { return p.mc === "9" || p.mc === "14"; })
       .map(function (p) { return { p: p, d: stDist(p, a) }; }).sort(function (x, y) { return x.d - y.d; }));
     return '<div class="head"><button type="button" class="btn-edit" id="stback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
-      '<h1 style="margin-top:6px">Stavby v Praze 9 a 14</h1></div><div class="body">' + rzVseSekce(a) + stChips() + stSekce(xs, true) + "</div>" + FOOT_ST;
+      '<h1 style="margin-top:6px">Stavby v Praze 9 a 14</h1></div><div class="body">' + mcSeg(state.stM, "data-stm") + stChips() + rzVseSekce(a) + stSekce(xs, true) + "</div>" + FOOT_ST;
   }
   function viewStavbaDetail(p) {
     var a = state.address, d = stDist(p, a), kroky = ["Záměr", "Povolování", "Výstavba", "Hotovo"];
@@ -1632,7 +1641,7 @@
   }
   function rzVse() {
     var v = data.rizeni && data.rizeni.zamery ? data.rizeni.zamery : [];
-    return state.stF === "all" ? v : v.filter(function (z) { return rzKat(z) === state.stF; });
+    return v.filter(function (z) { return (state.stF === "all" || rzKat(z) === state.stF) && (state.stM === "all" || z.mc === state.stM); });
   }
   function rzById(id) { return (data.rizeni && data.rizeni.zamery || []).filter(function (z) { return z.id === id; })[0]; }
   function rzDist(z, a) { return z.lat != null && z.presnost !== "ku" ? dist(a.lat, a.lon, z.lat, z.lon) : null; }
@@ -1896,7 +1905,7 @@
     app.querySelectorAll("[data-sheet]").forEach(function (b) { b.addEventListener("click", function () { state.skSheet = true; render(); }); });
     app.querySelectorAll("[data-sheetclose]").forEach(function (b) { b.addEventListener("click", function () { state.skSheet = false; render(); }); });
     var rs = document.getElementById("skreset");
-    if (rs) rs.addEventListener("click", function () { state.skF = "all"; state.skZ = "all"; state.skM = "all"; render(); });
+    if (rs) rs.addEventListener("click", function () { state.skF = "all"; state.skZ = "all"; render(); });
     app.querySelectorAll("[data-sk]").forEach(function (b) { b.addEventListener("click", function (ev) { ev.preventDefault(); openSkola(b.getAttribute("data-sk")); }); });
     var sv = document.getElementById("spadvic");
     if (sv) sv.addEventListener("click", function () { var y = window.scrollY; state.spadVse = !state.spadVse; render(); window.scrollTo(0, y); });
@@ -1922,6 +1931,7 @@
     app.querySelectorAll("[data-dkf]").forEach(function (b) { b.addEventListener("click", function () { state.dkF = b.getAttribute("data-dkf"); render(); }); });
     app.querySelectorAll("[data-rz]").forEach(function (b) { b.addEventListener("click", function () { openRizeni(b.getAttribute("data-rz")); }); });
     app.querySelectorAll("[data-st]").forEach(function (b) { b.addEventListener("click", function () { openStavba(b.getAttribute("data-st")); }); });
+    app.querySelectorAll("[data-stm]").forEach(function (b) { b.addEventListener("click", function () { state.stM = b.getAttribute("data-stm"); render(); }); });
     app.querySelectorAll("[data-stf]").forEach(function (b) { b.addEventListener("click", function () { state.stF = b.getAttribute("data-stf"); render(); }); });
     app.querySelectorAll("[data-stvse]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY, k = b.getAttribute("data-stvse"); state.stVse[k] = !state.stVse[k]; render(); window.scrollTo(0, y); }); });
     var stf = document.getElementById("stfull");
