@@ -4,9 +4,9 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "domu", okSeg: "doktori", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", skSheet: false, spadVse: false, dopVse: false,
-    dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkQ: "",
-    akView: "list", akHist: [], akSel: null, akF: "vse", akK: "all", akDenVse: {}, akDay: null, akKal: false, akKalM: null, akKalSel: null };
+  var state = { address: null, query: "", tab: "domu", okSeg: "doktori", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", sheet: null, spadVse: false, dopVse: false,
+    dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkM: "all", dkQ: "",
+    akView: "list", akHist: [], akSel: null, akF: "vse", akK: "all", akM: "all", akDenVse: {}, akDay: null, akKal: false, akKalM: null, akKalSel: null };
 
   var TYPES = [
     { id: "papir", name: "Papír", core: true, bg: "#dce8fb", fg: "#2f6fb0",
@@ -300,11 +300,37 @@
   var SK_CHIPS = [["all", "Vše"], ["ms", "Školky"], ["zs", "Základní"], ["ss", "Střední"]];
   var SK_Z = [["all", "Vše"], ["s", "Veřejné"], ["p", "Soukromé"], ["c", "Církevní"]];
   var SK_M = [["all", "Praha 9 a 14"], ["9", "Praha 9"], ["14", "Praha 14"]];
-  // chipy městské části na začátku řady filtrů (Školy, Stavby); „Vše“ ruší městskou část i typ
-  function mcChips(cur, attr) {
-    return [["9", "Praha 9"], ["14", "Praha 14"]].map(function (c) {
-      return '<button type="button" class="chip' + (cur === c[0] ? " on" : "") + '" ' + attr + '="' + c[0] + '">' + c[1] + "</button>";
-    }).join("");
+  // Jednotné filtry (Lékaři, Školy, Stavby, Akce): tlačítko Filtry s panelem + chipy v jedné řadě
+  // [Filtry] [Vše] [Praha 9] [Praha 14] [typy…]. Vše ruší městskou část i typ. Odznak na Filtrech
+  // počítá jen filtry, které v řadě chipů nejsou vidět (Zřizovatel u škol).
+  var MC_OPT = [["all", "Praha 9 i 14"], ["9", "Praha 9"], ["14", "Praha 14"]];
+  var FB = {
+    dk: { f: "dkF", m: "dkM", t: "Obor", o: function () { return DK_CHIPS; }, x: [], n: ["lékař", "lékaři", "lékařů"], c: function () { return dkCount(); } },
+    sk: { f: "skF", m: "skM", t: "Typ školy", o: function () { return SK_CHIPS; }, x: [["Zřizovatel", SK_Z, "skZ"]], n: ["místo", "místa", "míst"], c: function () { return skCount(); } },
+    st: { f: "stF", m: "stM", t: "Typ stavby", o: function () { return [["all", "Vše"]].concat(ST_FILTRY.slice(1).map(function (k) { return [k, ST_KAT[k][0]]; })); }, x: [], n: ["stavba", "stavby", "staveb"], c: function () { return stCount(); } },
+    ak: { f: "akK", m: "akM", t: "Kategorie", o: function () { return akTypy(); }, x: [], n: ["akce", "akce", "akcí"], c: function () { return akCount(); } }
+  };
+  function fChip(on, attr, label) { return '<button type="button" class="chip' + (on ? " on" : "") + '" ' + attr + ">" + label + "</button>"; }
+  function fBar(k) {
+    var d = FB[k], f = state[d.f], m = state[d.m];
+    var n = d.x.filter(function (x) { return state[x[2]] !== "all"; }).length;
+    return '<div class="fbar"><button type="button" class="fbtn' + (n ? " on" : "") + '" data-sheet="' + k + '" aria-haspopup="dialog">' + SVG(I_SLIDERS, 16, "currentColor", 2.2) + "Filtry" +
+      (n ? '<span class="fbadge">' + n + "</span>" : "") + '</button><div class="chips fchips">' +
+      fChip(f === "all" && m === "all", 'data-fall="' + k + '"', "Vše") +
+      MC_OPT.slice(1).map(function (c) { return fChip(m === c[0], 'data-fm="' + k + '" data-v="' + c[0] + '"', c[1]); }).join("") +
+      d.o().slice(1).map(function (c) { return fChip(f === c[0], 'data-ff="' + k + '" data-v="' + c[0] + '"', c[1]); }).join("") + "</div></div>";
+  }
+  function fSheet(k) {
+    var d = FB[k], n = d.c();
+    function sec(title, list, key) {
+      return '<div class="shsec"><div class="shtitle">' + title + '</div><div class="chips">' + list.map(function (c) {
+        return '<button type="button" class="chip big' + (state[key] === c[0] ? " on" : "") + '" data-fs="' + key + '" data-v="' + c[0] + '">' + c[1] + "</button>";
+      }).join("") + "</div></div>";
+    }
+    return '<div class="sheet-bg" data-sheetclose="1"></div><div class="sheet" role="dialog" aria-label="Filtry"><div class="grab"></div>' +
+      '<div class="shhead"><div class="shh">Filtry</div><button type="button" class="shx" data-sheetclose="1" aria-label="Zavřít">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 16, "currentColor", 2.4) + "</button></div>" +
+      sec("Městská část", MC_OPT, d.m) + sec(d.t, d.o(), d.f) + d.x.map(function (x) { return sec(x[0], x[1], x[2]); }).join("") +
+      '<div class="shfoot"><button type="button" class="shreset" data-freset="' + k + '">Zrušit vše</button><button type="button" class="btn shgo" data-sheetclose="1">Zobrazit ' + pl(n, d.n[0], d.n[1], d.n[2]) + "</button></div></div>";
   }
   var MONTHS_CS = ["leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"];
   var I_LAND = '<path d="M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M3 10l9-6 9 6"/>';
@@ -431,26 +457,7 @@
     if (z === "c") return '<span class="stag">' + SVG(I_CROSS, 12, "currentColor", 2.2) + "Církevní</span>";
     return "";
   }
-  function filterBar() {
-    var n = skActive();
-    return '<div class="fbar"><button type="button" class="fbtn' + (n ? " on" : "") + '" data-sheet="1" aria-haspopup="dialog">' + SVG(I_SLIDERS, 16, "currentColor", 2.2) + "Filtry" +
-      (n ? '<span class="fbadge">' + n + "</span>" : "") + '</button><div class="chips fchips">' +
-      '<button type="button" class="chip' + (state.skF === "all" && state.skM === "all" ? " on" : "") + '" data-skf="all" data-mcreset="1">Vše</button>' +
-      mcChips(state.skM, "data-skm") +
-      SK_CHIPS.slice(1).map(function (c) { return '<button type="button" class="chip' + (state.skF === c[0] ? " on" : "") + '" data-skf="' + c[0] + '">' + c[1] + "</button>"; }).join("") + "</div></div>";
-  }
-  function sheetHtml() {
-    function sec(title, list, cur, attr) {
-      return '<div class="shsec"><div class="shtitle">' + title + '</div><div class="chips">' + list.map(function (c) {
-        return '<button type="button" class="chip big' + (cur === c[0] ? " on" : "") + '" ' + attr + '="' + c[0] + '">' + c[1] + "</button>";
-      }).join("") + "</div></div>";
-    }
-    var n = skCount();
-    return '<div class="sheet-bg" data-sheetclose="1"></div><div class="sheet" role="dialog" aria-label="Filtry"><div class="grab"></div>' +
-      '<div class="shhead"><div class="shh">Filtry</div><button type="button" class="shx" data-sheetclose="1" aria-label="Zavřít">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 16, "currentColor", 2.4) + "</button></div>" +
-      sec("Typ školy", SK_CHIPS, state.skF, "data-skf") + sec("Zřizovatel", SK_Z, state.skZ, "data-skz") +
-      '<div class="shfoot"><button type="button" class="shreset" id="skreset">Zrušit vše</button><button type="button" class="btn shgo" data-sheetclose="1">Zobrazit ' + n + " " + (n === 1 ? "místo" : n >= 2 && n <= 4 ? "místa" : "míst") + "</button></div></div>";
-  }
+  function filterBar() { return fBar("sk"); }
   // Karta školy: 1) typ + městská část (v okolí vzdálenost), 2) název, 3) adresa, 4) štítky
   function skolaCard(s, d, p) {
     p = p || skSites(s)[0];
@@ -555,13 +562,13 @@
   // ne jedna předchozí obrazovka – jinak by se zpět vracelo samo na sebe.
   function openSkola(id) {
     state.skHist.push({ v: state.skView, s: state.skSel, y: window.scrollY });
-    state.skView = "detail"; state.skSel = id; state.skSheet = false; state.spadVse = false;
+    state.skView = "detail"; state.skSel = id; state.sheet = null; state.spadVse = false;
     try { history.pushState({ sk: state.skHist.length }, ""); } catch (e) {}
     render(); window.scrollTo(0, 0);
   }
   function oKrokZpet() {
     var p = state.skHist.pop() || { v: "list", s: null, y: 0 };
-    state.skView = p.v; state.skSel = p.s; state.skSheet = false; state.spadVse = false;
+    state.skView = p.v; state.skSel = p.s; state.sheet = null; state.spadVse = false;
     render(); window.scrollTo(0, p.y || 0);
   }
   function skBack() {
@@ -818,7 +825,8 @@
   var DK_T = { prak: "Praktik", det: "Dětský", zub: "Zubař", gyn: "Gynekolog", spec: "Specialista" };
   var DK_CHIPS = [["all", "Vše"], ["prak", "Praktik"], ["det", "Dětský"], ["zub", "Zubař"], ["gyn", "Gynekolog"], ["spec", "Specialisté"]];
   function dkById(id) { return (data.doktori || []).filter(function (s) { return s.id === id; })[0]; }
-  function dkMatch(s) { return state.dkF === "all" || s.o === state.dkF; }
+  function dkMatch(s) { return (state.dkF === "all" || s.o === state.dkF) && (state.dkM === "all" || s.mc === state.dkM); }
+  function dkCount() { return state.dkView === "full" ? dkFull().length : dkNear(state.address).length; }
   function dkNear(a) {
     return (data.doktori || []).filter(dkMatch).map(function (s) { return { s: s, d: dist(a.lat, a.lon, s.lat, s.lon) }; })
       .filter(function (x) { return x.d <= RADIUS; }).sort(function (x, y) { return x.d - y.d; });
@@ -838,11 +846,7 @@
       '<div class="skadr">' + esc(s.a) + "</div></div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
   }
   // Posuvná filtrační lišta – jeden řádek, obory se doscrollují (varianta A).
-  function dkFilterBar() {
-    return '<div class="chipscroll"><div class="chiprow">' + DK_CHIPS.map(function (c) {
-      return '<button type="button" class="chip' + (state.dkF === c[0] ? " on" : "") + '" data-dkf="' + c[0] + '">' + c[1] + "</button>";
-    }).join("") + '</div><div class="chipfade"></div></div>';
-  }
+  function dkFilterBar() { return fBar("dk"); }
   function dkListHtml() {
     var r = dkFull();
     if (!r.length) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Nic jsme nenašli</div><div class="note" style="margin-top:2px">Zkuste jiný obor, jméno nebo ulici.</div></div></div>';
@@ -993,18 +997,20 @@
     return A.filter(function (a) { return akKonec(a) > ted; });
   }
   // krátké akce v okně; dlouhé, které už běží, patří do „Právě probíhá“
-  function akVOkne(f, k, ted) {
+  // mc: městská část z filtru v záložce Akce (Domů filtr nepoužívá)
+  function akVOkne(f, k, ted, mc) {
     var w = akOkno(f, ted);
     return akVse(ted).filter(function (a) {
       if (k !== "all" && a.k !== k) return false;
+      if (mc && mc !== "all" && a.mc !== mc) return false;
       if (akProbiha(a, ted)) return false;
       var s = akD(a.od);
       if (akDlouha(a)) return s >= w[0] && s < w[1];   // dlouhá akce, která teprve začne
       return s < w[1] && akKonec(a) > w[0] && (s >= w[0] || akKonec(a) > ted);
     }).sort(function (x, y) { return x.od < y.od ? -1 : x.od > y.od ? 1 : 0; });
   }
-  function akBezi(k, ted) {
-    return akVse(ted).filter(function (a) { return akProbiha(a, ted) && (k === "all" || a.k === k); })
+  function akBezi(k, ted, mc) {
+    return akVse(ted).filter(function (a) { return akProbiha(a, ted) && (k === "all" || a.k === k) && (!mc || mc === "all" || a.mc === mc); })
       .sort(function (x, y) { var a = akVzd(x), b = akVzd(y); return (a == null ? 1e9 : a) - (b == null ? 1e9 : b); });
   }
 
@@ -1053,22 +1059,30 @@
       '<div class="dlinks"><a class="btn-ext" href="' + AK_SRC.p9[2] + '" target="_blank" rel="noopener">Kalendář Prahy 9 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
       '<a class="btn-ext" href="' + AK_SRC.p14[2] + '" target="_blank" rel="noopener">Kalendář Prahy 14 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
   }
-  function akFiltry(ted) {
+  function akTypy() {
     var pritomne = {};
-    akVse(ted).forEach(function (a) { pritomne[a.k] = 1; });
+    akVse(new Date()).forEach(function (a) { pritomne[a.k] = 1; });
+    return [["all", "Vše"]].concat(AK_KPOR.filter(function (k) { return pritomne[k]; }).map(function (k) { return [k, AK_K[k][0]]; }));
+  }
+  function akSeznam(ted) {
+    var list = akVOkne(state.akF, state.akK, ted, state.akM);
+    if (state.akF === "vse" && state.akDay) list = list.filter(function (a) {
+      var s = akD(a.od); return akIso(s < akDen(ted) ? akDen(ted) : akDen(s)) === state.akDay;
+    });
+    return list;
+  }
+  function akCount() { var ted = new Date(); return akSeznam(ted).length + akBezi(state.akK, ted, state.akM).length; }
+  function akFiltry(ted) {
     var seg = '<div class="akseg" role="tablist">' + AK_CAS.map(function (c) {
       var on = state.akF === c[0];
       return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? "on" : "") + '" data-akf="' + c[0] + '">' + c[1] + "</button>";
     }).join("") + "</div>";
-    var chips = [["all", "Vše"]].concat(AK_KPOR.filter(function (k) { return pritomne[k]; }).map(function (k) { return [k, AK_K[k][0]]; }));
-    return seg + (state.akF === "vse" ? akProuzek(ted) : "") + '<div class="chipscroll"><div class="chiprow">' + chips.map(function (c) {
-      return '<button type="button" class="chip' + (state.akK === c[0] ? " on" : "") + '" data-akk="' + c[0] + '">' + c[1] + "</button>";
-    }).join("") + '</div><div class="chipfade"></div></div>';
+    return seg + (state.akF === "vse" ? akProuzek(ted) : "") + fBar("ak");
   }
   // dny, ve kterých se něco koná (podle zvolené kategorie): iso -> počet
   function akDnyAkci(ted) {
     var m = {};
-    akVOkne("vse", state.akK, ted).forEach(function (a) {
+    akVOkne("vse", state.akK, ted, state.akM).forEach(function (a) {
       var s = akD(a.od), k = akIso(s < akDen(ted) ? akDen(ted) : akDen(s));
       m[k] = (m[k] || 0) + 1;
     });
@@ -1124,8 +1138,8 @@
     var kdy = { dny: "Dnes a zítra", vikend: "O víkendu", tyden: "Tento týden", vse: "V nejbližších týdnech" }[state.akF];
     if (state.akDay) { var dd = akD(state.akDay); kdy = VE_DNI[dd.getDay()].charAt(0).toUpperCase() + VE_DNI[dd.getDay()].slice(1) + " " + akDatumTxt(dd); }
     var co = state.akK === "all" ? "" : " v kategorii " + AK_K[state.akK][0].toLowerCase();
-    var dalsi = akVOkne("vse", state.akK, ted).filter(function (a) { return !state.akDay || a.od.slice(0, 10) > state.akDay; }), nej = dalsi[0];
-    var vsech = state.akK === "all" ? 0 : akVOkne(state.akF, "all", ted).length;
+    var dalsi = akVOkne("vse", state.akK, ted, state.akM).filter(function (a) { return !state.akDay || a.od.slice(0, 10) > state.akDay; }), nej = dalsi[0];
+    var vsech = state.akK === "all" ? 0 : akVOkne(state.akF, "all", ted, state.akM).length;
     var h = '<div class="card-dashed akempty">' + SVG('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', 28, "#6b6652", 2) +
       '<div class="t1">' + kdy + co + " nic nemáme</div>";
     if (nej) h += '<div class="note">Nejbližší je ' + DNY_CELE[akD(nej.od).getDay()] + " " + akDatumTxt(akD(nej.od)) + ".</div>";
@@ -1136,7 +1150,7 @@
   function akceBody() {
     if (!data.akce || !(data.akce.akce || []).length) return akNic();
     var ted = new Date(), h = akVypadek() + akFiltry(ted);
-    var bezi = akBezi(state.akK, ted);
+    var bezi = akBezi(state.akK, ted, state.akM);
     if (bezi.length) {
       var n = bezi[0], d = akVzdTxt(akVzd(n));
       h += '<button type="button" class="card akrow" id="akbezi"><div class="akbody">' +
@@ -1144,10 +1158,7 @@
         '<div class="akm">' + bezi.length + " " + (bezi.length === 1 ? "výstava nebo kurz" : bezi.length < 5 ? "výstavy a kurzy" : "výstav a kurzů") +
         " · nejblíž " + esc(n.t) + (d ? ", " + d : "") + "</div></div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
     }
-    var list = akVOkne(state.akF, state.akK, ted);
-    if (state.akF === "vse" && state.akDay) list = list.filter(function (a) {
-      var s = akD(a.od); return akIso(s < akDen(ted) ? akDen(ted) : akDen(s)) === state.akDay;
-    });
+    var list = akSeznam(ted);
     if (!list.length) return h + akPrazdno(ted);
     var dny = {}, poradi = [];
     list.forEach(function (a) {
@@ -1170,7 +1181,7 @@
       (nadpis ? '<h1 style="margin-top:10px">' + nadpis + '</h1><div class="eyebrow">' + pod + "</div>" : "") + "</div>";
   }
   function viewAkceBezi() {
-    var ted = new Date(), bezi = akBezi(state.akK, ted);
+    var ted = new Date(), bezi = akBezi(state.akK, ted, state.akM);
     var rows = bezi.map(function (a) {
       return '<button type="button" class="akbrow" data-ak="' + esc(a.id) + '"><div class="akbody"><div class="akt">' + esc(a.t) + "</div>" +
         '<div class="akm">' + I_LIVE + " · do " + akDatumTxt(akD(a.do)) + (akMisto(a, true) ? " · " + esc(akMisto(a, true)) : "") + "</div></div>" +
@@ -1502,12 +1513,12 @@
   function stFiltr(xs) {
     return xs.filter(function (x) { return (state.stF === "all" || stKat(x.p) === state.stF) && (state.stM === "all" || x.p.mc === state.stM); });
   }
-  function stChips() {
-    return '<div class="chipscroll"><div class="chiprow">' +
-      '<button type="button" class="chip' + (state.stF === "all" && state.stM === "all" ? " on" : "") + '" data-stf="all" data-mcreset="1">Vše</button>' +
-      mcChips(state.stM, "data-stm") + ST_FILTRY.slice(1).map(function (k) {
-      return '<button type="button" class="chip' + (state.stF === k ? " on" : "") + '" data-stf="' + k + '">' + ST_KAT[k][0] + "</button>";
-    }).join("") + '</div><div class="chipfade"></div></div>';
+  function stChips() { return fBar("st"); }
+  // počet pro tlačítko v panelu: velké projekty (bez rozvojových území) + záměry na stavebním úřadu
+  function stCount() {
+    var a = state.address, full = state.stView === "full";
+    var xs = full ? stFiltr((data.stavby.projekty || []).filter(function (p) { return p.mc === "9" || p.mc === "14"; }).map(function (p) { return { p: p }; })) : stFiltr(stOkoli(a));
+    return xs.filter(function (x) { return stKat(x.p) !== "uzemi"; }).length + (full ? rzVse().length : rzOkoli(a).length);
   }
   function stSekce(xs, vse) {
     var h = "";
@@ -1878,7 +1889,7 @@
     else if (state.tab === "akce" && data.akce && state.akView === "detail" && akById(state.akSel)) html = viewAkceDetail(akById(state.akSel));
     else if (state.tab === "akce" && data.akce && state.akView === "bezi") html = viewAkceBezi();
     else html = viewResult();
-    if (data && state.address && state.tab === "skoly" && state.skSheet && state.skView !== "detail") html += sheetHtml();
+    if (state.sheet && FB[state.sheet] && html.indexOf('data-sheet="' + state.sheet + '"') >= 0) html += fSheet(state.sheet); else state.sheet = null;
     if (data && state.address && state.tab === "akce" && state.akView === "list" && state.akKal) html += akKalendar();
     if (naSekci()) html += bottomNav();
     app.innerHTML = html;
@@ -1902,13 +1913,14 @@
       });
     }
     app.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { state.tab = b.getAttribute("data-tab"); state.skView = "list"; state.skHist = []; render(); window.scrollTo(0, 0); }); });
-    app.querySelectorAll("[data-skf]").forEach(function (b) { b.addEventListener("click", function () { state.skF = b.getAttribute("data-skf"); if (b.hasAttribute("data-mcreset")) state.skM = "all"; render(); }); });
-    app.querySelectorAll("[data-skz]").forEach(function (b) { b.addEventListener("click", function () { state.skZ = b.getAttribute("data-skz"); render(); }); });
-    app.querySelectorAll("[data-skm]").forEach(function (b) { b.addEventListener("click", function () { var v = b.getAttribute("data-skm"); state.skM = state.skM === v ? "all" : v; render(); }); });
-    app.querySelectorAll("[data-sheet]").forEach(function (b) { b.addEventListener("click", function () { state.skSheet = true; render(); }); });
-    app.querySelectorAll("[data-sheetclose]").forEach(function (b) { b.addEventListener("click", function () { state.skSheet = false; render(); }); });
-    var rs = document.getElementById("skreset");
-    if (rs) rs.addEventListener("click", function () { state.skF = "all"; state.skZ = "all"; render(); });
+    app.querySelectorAll("[data-sheet]").forEach(function (b) { b.addEventListener("click", function () { state.sheet = b.getAttribute("data-sheet"); render(); }); });
+    app.querySelectorAll("[data-sheetclose]").forEach(function (b) { b.addEventListener("click", function () { state.sheet = null; render(); }); });
+    function fZmena() { state.akDenVse = {}; render(); }
+    app.querySelectorAll("[data-fall]").forEach(function (b) { b.addEventListener("click", function () { var d = FB[b.getAttribute("data-fall")]; state[d.f] = "all"; state[d.m] = "all"; fZmena(); }); });
+    app.querySelectorAll("[data-fm]").forEach(function (b) { b.addEventListener("click", function () { var d = FB[b.getAttribute("data-fm")], v = b.getAttribute("data-v"); state[d.m] = state[d.m] === v ? "all" : v; fZmena(); }); });
+    app.querySelectorAll("[data-ff]").forEach(function (b) { b.addEventListener("click", function () { var d = FB[b.getAttribute("data-ff")]; state[d.f] = b.getAttribute("data-v"); fZmena(); }); });
+    app.querySelectorAll("[data-fs]").forEach(function (b) { b.addEventListener("click", function () { state[b.getAttribute("data-fs")] = b.getAttribute("data-v"); fZmena(); }); });
+    app.querySelectorAll("[data-freset]").forEach(function (b) { b.addEventListener("click", function () { var d = FB[b.getAttribute("data-freset")]; state[d.f] = "all"; state[d.m] = "all"; d.x.forEach(function (x) { state[x[2]] = "all"; }); fZmena(); }); });
     app.querySelectorAll("[data-sk]").forEach(function (b) { b.addEventListener("click", function (ev) { ev.preventDefault(); openSkola(b.getAttribute("data-sk")); }); });
     var sv = document.getElementById("spadvic");
     if (sv) sv.addEventListener("click", function () { var y = window.scrollY; state.spadVse = !state.spadVse; render(); window.scrollTo(0, y); });
@@ -1931,11 +1943,8 @@
     var dmv = document.getElementById("domuvic");
     if (dmv) dmv.addEventListener("click", function () { var y = window.scrollY; state.domuVse = true; render(); window.scrollTo(0, y); });
     app.querySelectorAll("[data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); });
-    app.querySelectorAll("[data-dkf]").forEach(function (b) { b.addEventListener("click", function () { state.dkF = b.getAttribute("data-dkf"); render(); }); });
     app.querySelectorAll("[data-rz]").forEach(function (b) { b.addEventListener("click", function () { openRizeni(b.getAttribute("data-rz")); }); });
     app.querySelectorAll("[data-st]").forEach(function (b) { b.addEventListener("click", function () { openStavba(b.getAttribute("data-st")); }); });
-    app.querySelectorAll("[data-stm]").forEach(function (b) { b.addEventListener("click", function () { var v = b.getAttribute("data-stm"); state.stM = state.stM === v ? "all" : v; render(); }); });
-    app.querySelectorAll("[data-stf]").forEach(function (b) { b.addEventListener("click", function () { var v = b.getAttribute("data-stf"); state.stF = v; if (b.hasAttribute("data-mcreset")) state.stM = "all"; render(); }); });
     app.querySelectorAll("[data-stvse]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY, k = b.getAttribute("data-stvse"); state.stVse[k] = !state.stVse[k]; render(); window.scrollTo(0, y); }); });
     var stf = document.getElementById("stfull");
     if (stf) stf.addEventListener("click", function () { state.stHist.push({ v: "list", s: null, y: window.scrollY }); state.stView = "full"; try { history.pushState({ st: state.stHist.length }, ""); } catch (e) {} render(); window.scrollTo(0, 0); });
@@ -1989,8 +1998,11 @@
     app.querySelectorAll("[data-akden]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY; state.akDenVse[b.getAttribute("data-akden")] = true; render(); window.scrollTo(0, y); }); });
     var akb = document.getElementById("akbezi");
     if (akb) akb.addEventListener("click", function () { openAkce("bezi"); });
-    var akon = app.querySelector("[data-akk].on");
-    if (akon && akon.scrollIntoView && state.akK !== "all") akon.scrollIntoView({ block: "nearest", inline: "center" });
+    // aktivní chip vždy na očích: lišta se doscrolluje k poslednímu zapnutému chipu
+    app.querySelectorAll(".fchips").forEach(function (r) {
+      var on = r.querySelectorAll(".chip.on"), c = on[on.length - 1];
+      if (c && c.offsetLeft + c.offsetWidth > r.clientWidth - 16) r.scrollLeft = c.offsetLeft - 8;
+    });
     var akx = document.getElementById("akback");
     if (akx) akx.addEventListener("click", function () { akBack(); });
     var e = document.getElementById("edit");
