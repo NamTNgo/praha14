@@ -264,7 +264,7 @@ def popis_zameru(t):
     """Jedna věta o tom, co se staví – jen věcná část, bez jmen."""
     if re.search(r"opatření obecné povahy", t[:1500], re.I):
         return ""
-    m = re.search(r"(?:předmětem záměru (?:jsou|je)|záměr spočívá v|spočívající v)\s+(.{20,260}?\.)(?=\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|\s*$)", t)
+    m = re.search(r"(?:předmětem záměru (?:jsou|je)|záměr spočívá v|spočívající v)\s+(.{20,260}?[^\d\s]\.)(?=\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|\s*$)", t)
     if not m:
         return ""
     s = m.group(1)
