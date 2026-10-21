@@ -35,7 +35,7 @@ FAZE = {
     "Koncepční studie": "planuje", "Strategická studie": "planuje", "Prověřovací studie": "planuje",
     "Dokončeno": "hotovo",
 }
-SEZNAM = """query { projects(limit: -1) { id slug label points address start end invested housingUnits modified
+SEZNAM = """query { projects(limit: -1) { id slug label points address start end invested housingUnits modified source
   type { name } status { name } investor { name } } }"""
 DETAIL = """query($id: ID) { project(id: $id) { slug name description { __typename ... on Text { content } }
   slides { __typename ... on Image { hash caption author } } } }"""
@@ -131,6 +131,35 @@ def novostavby():
     return out
 
 
+# web projektu / developera ze zdrojů CAMP (ne zpravodajství, realitní portály ani úřady)
+CIZI = re.compile(r"novostavby|sreality|bezrealitky|idnes|denik|e15|forbes|cc\.cz|wired|archiweb|estav|ceskenoviny|aktualne|seznamzpravy|"
+                  r"irozhlas|novinky|ihned|lidovky|echo24|zdopravy|iprpraha|praha\.camp|praha\.eu|praha\d*\.cz|cka\.cz|developerske-projekty|"
+                  r"youtube|facebook|instagram|wikipedia|google|mapy\.|cuzk|tsk-praha|dpp\.cz|archdaily|stavbaweb|asb-portal|prahaliving|reality", re.I)
+
+
+def web_projektu(zdroje, nazev, investori):
+    dom = []
+    for z in zdroje or []:
+        z = (z or "").strip()
+        if " " in z or "." not in z or CIZI.search(z):
+            continue
+        dom.append(z if z.startswith("http") else "https://" + z)
+    if not dom:
+        return ""
+    def klic(u):
+        h = re.sub(r"^https?://(www\.)?", "", u).split("/")[0].replace("-", "")
+        cesta = u.split("/", 3)[3] if u.count("/") >= 3 else ""
+        n = [w for w in norm(nazev).split() if len(w) >= 4]
+        i = [w for w in norm(" ".join(investori)).split() if len(w) >= 4 and w not in ("development", "group", "real", "estate", "praha")]
+        if any(w in h for w in n):
+            return 0          # doména projektu (simplyprosek.cz, kolbengate.cz)
+        if any(w in h for w in i):
+            return 1 if any(w in cesta for w in n) else 2   # web developera, ideálně stránka projektu
+        return 3              # architekt apod. – jen když nic lepšího není
+    nej = min(dom, key=klic)
+    return nej if klic(nej) <= 2 else ""
+
+
 def main():
     out_p = DATA / "stavby.json"
     try:
@@ -189,6 +218,7 @@ def main():
             "body": [[round(la, 6), round(lo, 6)] for la, lo in body[:6]],
             "mod": dt.datetime.fromtimestamp((p.get("modified") or 0) / 1000, TZ).strftime("%Y-%m-%d") if p.get("modified") else "",
             "_m": p.get("modified"),
+            "webp": web_projektu(p.get("source"), p.get("label") or "", [i["name"] for i in p.get("investor") or [] if i.get("name")]),
         })
 
     # popis a obrázek – jen u nových nebo změněných projektů (šetrné k API)
