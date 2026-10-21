@@ -117,8 +117,8 @@
 
   function viewSearch() {
     var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
-    var h = '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Kam s odpadem?</h1>' +
-      '<div class="sub">Zadejte adresu a uvidíte, kde a kdy v okolí odnést odpad.</div></div><div class="body">' +
+    var h = '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Sousedka</h1>' +
+      '<div class="sub">Zadejte adresu a uvidíte, co se u vás děje: odstávky vody, svoz odpadu, uzavírky, akce, lékaře a školy v okolí.</div></div><div class="body">' +
       '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#8a8572", 2.2) +
       '<input id="q" class="input' + (none ? " bad" : "") + (q.trim().length >= 2 ? " has-clear" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '">' +
       '<button type="button" class="clear-btn" id="clr" aria-label="Vymazat text"' + (q.trim().length >= 2 ? "" : " hidden") + '><span class="clear-dot">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 10, "#fff", 3.2) + "</span></button></div>";
@@ -540,7 +540,7 @@
       '</span><h2>Nejste připojeni k internetu</h2><p>Pro zobrazení stanovišť a termínů potřebuje appka internetové připojení. Zkontrolujte prosím Wi-Fi nebo mobilní data.</p>' +
       '<button type="button" class="btn" id="retry">Zkusit znovu</button></div>';
   }
-  function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Kam s odpadem?</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
+  function viewLoading() { return '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Sousedka</h1></div><div class="body"><div class="skel"></div><div class="skel"></div></div>'; }
 
   // Z detailu se dá otevřít další detail (odkaz na spádovou školu), proto zásobník,
   // ne jedna předchozí obrazovka – jinak by se zpět vracelo samo na sebe.
