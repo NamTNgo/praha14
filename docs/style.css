@@ -336,3 +336,13 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .vcis .ci{width:30px;height:30px;border-radius:9px;background:#e9f0e9;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .vcis .cn{font-size:14.5px;font-weight:700}
 .vcis .cd{margin-left:auto;font-size:13.5px;font-weight:700;color:#1f4d36;white-space:nowrap}
+
+/* pátrání po pohřešovaných */
+.hal.help{background:#e7eef8;border:1.5px solid #b8cbe6}
+.hal.found{background:#e6f1e9;border:1.5px solid #b5d4be}
+.vchip.help{background:#e7eef8;color:#234f8c}
+.vchip.found{background:#e6f1e9;color:#1f5a35}
+.pmista{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pmista span{font-size:13px;font-weight:700;background:#f3f1ea;border-radius:999px;padding:5px 10px}
+.ptext{font-size:15px;line-height:1.5;color:#2c302b}
+.btn-158{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;border-radius:14px;background:#1f4d36;color:#fff;font-size:16.5px;font-weight:800;text-decoration:none}
