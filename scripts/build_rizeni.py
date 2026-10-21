@@ -67,9 +67,10 @@ DRUHY = [   # (vzorek, štítek) – první shoda vyhrává
 ]
 FAZE = [    # (vzorek, kód, text) – první shoda vyhrává
     (r"odvolán", "odvolani", "Odvolání"),
-    (r"rozhodnutí|povolení záměru(?! s názvem)|povoluje", "rozhodnuto", "Rozhodnuto"),
+    (r"zahájení řízení", "zahajeno", "Řízení zahájeno"),
     (r"seznámení s podklady|podklad[yů] rozhodnutí", "pred", "Před rozhodnutím"),
-    (r"zahájení řízení|zahájen", "zahajeno", "Řízení zahájeno"),
+    (r"rozhodnutí|povoluje|vydává povolení", "rozhodnuto", "Rozhodnuto"),
+    (r"zahájen", "zahajeno", "Řízení zahájeno"),
     (r"\bJES\b|environmentální", "jes", "Posouzení vlivu na prostředí"),
     (r"opatření obecné povahy|\bOOP\b", "oop", "Opatření úřadu"),
 ]
@@ -116,8 +117,6 @@ def pdf_text(b):
     except Exception as e:   # noqa: BLE001
         log("    ! PDF nejde přečíst:", e)
         return ""
-    # pypdf občas rozsype diakritiku na „p ř ibli ž n ě“ – slepíme jednoznaky
-    t = re.sub(r"(?<=\w) (?=[ěščřžýáíéúůťďňĚŠČŘŽÝÁÍÉÚŮŤĎŇ])|(?<=[ěščřžýáíéúůťďňĚŠČŘŽÝÁÍÉÚŮŤĎŇ]) (?=\w)", "", t)
     return re.sub(r"\s+", " ", t)
 
 
@@ -177,10 +176,11 @@ def najdi_misto(t, adresy):
     return None, None, None, "", ""
 
 
-def druh(t):
-    for rx, s in DRUHY:
-        if re.search(rx, t, re.I):
-            return s
+def druh(nazev, t=""):
+    for zdroj in (nazev, t):          # název záměru má přednost před textem dokumentu
+        for rx, s in DRUHY:
+            if re.search(rx, zdroj, re.I):
+                return s
     return "Stavba"
 
 
@@ -205,9 +205,11 @@ def nazev_zameru(nazev, t):
     if m:
         return _orez(m.group(1))
     n = re.sub(r"^\d+\s*,\s*", "", nazev)                         # „719, Veřejná vyhláška…“
+    if ":" in n and re.search(r"vyrozumění|sdělení|oznámení|vyhláška|písemnost", n.split(":")[0], re.I):
+        n = n.split(":", 1)[1]
     n = re.split(r"\s*[-–:]\s*(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\"„])", n, maxsplit=1)[-1] if re.search(r"vyrozumění|sdělení|vyhláška|oznámení|rozhodnutí|písemnost", n, re.I) else n
     n = re.sub(r"^(stanoviska|písemnosti rozhodnutí|rozhodnutí)\s*[-–:]\s*", "", n, flags=re.I)
-    return _orez(n.strip(" |,.\"„“"))[:140]
+    return _orez(n.strip(" |,.\"„“")).strip(" |,.\"„“")[:140]
 
 
 def popis_zameru(t):
@@ -278,7 +280,8 @@ def main():
         pred = json.loads(out_p.read_text(encoding="utf-8"))
     except Exception:   # noqa: BLE001
         pred = {}
-    vyhl = {v["url"]: v for v in pred.get("_vyhlasky", [])}   # už zpracované vyhlášky (cache)
+    VERZE = 2   # při změně parseru zpracovat vyhlášky znovu
+    vyhl = {v["url"]: v for v in pred.get("_vyhlasky", [])} if pred.get("v") == VERZE else {}   # cache
     adresy = nacti_adresy()
     zdroje = {}
     nove = []
@@ -314,11 +317,12 @@ def main():
         cely = v["nazev"] + " " + t
         la, lo, mc, misto, presnost = najdi_misto(cely, adresy)
         fk, ft = faze(v["nazev"], t)
+        jm = nazev_zameru(v["nazev"], t)
         zaznam = {
             "url": v["url"], "src": v["src"], "od": v["od"],
             "zid": zamer_id(t) or v["url"],
-            "n": nazev_zameru(v["nazev"], t),
-            "druh": druh(v["nazev"] + " " + t[:3000]),
+            "n": jm,
+            "druh": druh(jm + " " + v["nazev"], t[:3000]),
             "faze": fk, "fazeT": ft,
             "popis": popis_zameru(t),
             "lat": round(la, 6) if la else None, "lon": round(lo, 6) if lo else None,
@@ -347,7 +351,7 @@ def main():
         z["faze"], z["fazeT"], z["d"] = z["kroky"][-1]["f"], z["kroky"][-1]["t"], z["kroky"][-1]["d"]
 
     ok = any(s.get("ok") for s in zdroje.values())
-    data = {"gen": NOW.isoformat(timespec="minutes"), "ok": ok, "zdroje": zdroje, "zamery": zamery,
+    data = {"v": VERZE, "gen": NOW.isoformat(timespec="minutes"), "ok": ok, "zdroje": zdroje, "zamery": zamery,
             "_vyhlasky": sorted(vyhl.values(), key=lambda x: x["od"], reverse=True)}
     out_p.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log("záměrů v datech: %d (s polohou %d)" % (len(zamery), sum(1 for z in zamery if z["lat"])))
