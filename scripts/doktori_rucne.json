@@ -639,11 +639,236 @@
     }
   },
   "d-121244": {
-    "w": ""
+    "w": "smilecentrum.cz/kontakt/fdc-liben"
   },
   "d-122561": {
     "w": "www.etoilecz.cz",
     "tel": "720 050 798",
     "e": "info@etoilecz.cz"
+  },
+  "d-241500": {
+    "w": "drsaskova.cz"
+  },
+  "d-224267": {
+    "w": "www.mudrengelmann.cz"
+  },
+  "d-243503": {
+    "w": "www.mduskova.cz"
+  },
+  "d-242242": {
+    "w": "www.schallerova.cz"
+  },
+  "d-210005": {
+    "w": "mudrskoda.cz"
+  },
+  "d-246331": {
+    "w": "www.mudrbouckova.cz"
+  },
+  "d-260202": {
+    "w": "praktikzahorova.cz"
+  },
+  "d-191756": {
+    "w": "wotkeova.cz"
+  },
+  "d-222595": {
+    "w": "www.standardmedica.cz"
+  },
+  "d-239341": {
+    "w": "vaspraktikpraha.cz/hloubetin"
+  },
+  "d-241766": {
+    "w": "www.smiletime.cz"
+  },
+  "d-247390": {
+    "w": "www.smilecentrum.cz/kontakt/sc-eliska"
+  },
+  "d-227605": {
+    "w": "www.denteclinic.cz"
+  },
+  "d-228112": {
+    "w": "tkalych.cz"
+  },
+  "d-242412": {
+    "w": "tkalych.cz"
+  },
+  "d-210502": {
+    "w": "www.erikalencova.cz"
+  },
+  "d-225506": {
+    "w": "www.forward-dental.cz"
+  },
+  "d-246438": {
+    "w": "www.francemed.cz"
+  },
+  "d-249011": {
+    "w": "www.fresiadent.cz"
+  },
+  "d-123492": {
+    "w": "www.lbclinic.cz"
+  },
+  "d-259445": {
+    "w": "www.mddrhatemmarouf.cz"
+  },
+  "d-249072": {
+    "w": "midodent.cz"
+  },
+  "d-116405": {
+    "w": "ordinace.kohlik.eu"
+  },
+  "d-190194": {
+    "w": "www.vylecenikusmevu.cz",
+    "e": "info@vylecenikusmevu.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "9:00 – 17:00"
+          ]
+        ],
+        [
+          "Út",
+          [
+            "9:00 – 17:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "7:30 – 15:30"
+          ]
+        ],
+        [
+          "Čt",
+          [
+            "7:30 – 15:30"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "7:30 – 15:30"
+          ]
+        ]
+      ],
+      "u": "https://www.vylecenikusmevu.cz/"
+    }
+  },
+  "d-243502": {
+    "w": "mddrhelta.cz"
+  },
+  "d-210499": {
+    "w": "www.barbaraprusova.cz"
+  },
+  "d-244399": {
+    "w": "www.zubariupivovaru.cz"
+  },
+  "d-244408": {
+    "w": "www.zubariupivovaru.cz"
+  },
+  "d-248097": {
+    "w": "www.zubnivysocany.cz"
+  },
+  "d-121826": {
+    "w": "www.gynekolog.cz/slapnickova"
+  },
+  "d-228240": {
+    "w": "www.gynveko.cz"
+  },
+  "d-121706": {
+    "w": "www.gynekologie-harfa.cz",
+    "hod": {
+      "r": [
+        [
+          "Po",
+          [
+            "15:30 – 20:00"
+          ]
+        ],
+        [
+          "St",
+          [
+            "10:00 – 13:30",
+            "15:30 – 20:00"
+          ]
+        ],
+        [
+          "Pá",
+          [
+            "15:30 – 17:30 · Jen objednané pacientky"
+          ]
+        ]
+      ],
+      "u": "https://www.gynekologie-harfa.cz/"
+    }
+  },
+  "d-205529": {
+    "w": "www.darcovstvivajicek.cz"
+  },
+  "d-192367": {
+    "w": "alergologie.detskylekar.org"
+  },
+  "d-122788": {
+    "w": "www.mediclinic.cz/lekar/mediclinic-neurologie-praha-9-vajgarska"
+  },
+  "d-190306": {
+    "w": "www.bioregena.cz"
+  },
+  "d-226727": {
+    "w": "www.andrologickaklinika.cz"
+  },
+  "d-243078": {
+    "w": "www.ortopedie-fyzioterapie.cz"
+  },
+  "d-228055": {
+    "w": "christies-prague.com"
+  },
+  "d-226603": {
+    "w": "www.domov-senioru-praha.cz"
+  },
+  "d-225891": {
+    "w": "www.fitcare.cz"
+  },
+  "d-205146": {
+    "w": "nephrocare.com/cs-cz/clinic/praha-9-vysocany"
+  },
+  "d-247680": {
+    "w": "imaonline.cz"
+  },
+  "d-260877": {
+    "w": "www.klinikaob.cz"
+  },
+  "d-244821": {
+    "w": "www.ocnimediport.cz/hloubetin"
+  },
+  "d-120189": {
+    "w": "www.ocnimediport.cz/prosek1-prosek2"
+  },
+  "d-239098": {
+    "w": "psychiatriepraha9.cz"
+  },
+  "d-239118": {
+    "w": "www.dclinic.cz"
+  },
+  "d-206378": {
+    "w": "www.psychiatriepapezova.cz"
+  },
+  "d-243901": {
+    "w": "mybestcare.cz"
+  },
+  "d-209383": {
+    "w": "www.ortopedicka-ordinace.cz"
+  },
+  "d-228050": {
+    "w": "www.orthomedica.cz"
+  },
+  "d-246431": {
+    "w": "www.ortopediehloubetin.cz"
+  },
+  "d-244778": {
+    "w": "www.plicnikyje.cz"
+  },
+  "d-226726": {
+    "w": "www.prodiagnostika.cz"
   }
 }

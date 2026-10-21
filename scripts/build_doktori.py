@@ -742,6 +742,64 @@ def doplnit_polikliniku_prosek(out):
     log("z polikliniky Prosek doplněno: %d telefonů, %d e-mailů" % (nt, ne))
 
 
+PARNIK = "https://poliklinikaparnik.cz"
+
+
+def poliklinika_parnik():
+    """Poliklinika Parník (Generála Janouška 902/17) má u každého oboru bloky ordinací:
+    název, IČ, lékař, telefon, e-mail, web a ordinační hodiny. Vrátí seznam bloků."""
+    rozc = _stahni_text(PARNIK + "/lekari") or ""
+    stranky = sorted(set(re.findall(r'href=["\'](?:https://poliklinikaparnik\.cz)?(/lekari/[a-z0-9-]+)/?["\']', rozc)))
+    bloky = []
+    for st in stranky:
+        try:
+            h = _stahni_text(PARNIK + st) or ""
+        except Exception:
+            continue
+        for kus in re.split(r'<div class="personal"[^>]*>', h)[1:]:
+            radky = _html_na_radky(_odkryj_maily(kus.split("</article>")[0]))
+            i = next((i for i, b in enumerate(radky) if re.match(r"I[ČC]O?\s*:?\s*\d{6,8}", b[0])), None)
+            if i is None:
+                continue
+            text = "\n".join(" ".join(b) for b in radky)
+            web = re.search(r"web\s*:\s*(?:https?://)?([\w.-]+\.[a-z]{2,}[^\s,]*)", text, re.I)
+            tel = re.search(r"tel\w*\s*:?[^\d+]{0,15}(\+?[\d ]{9,16})", text, re.I)
+            mail = EMAIL_RE.search(text)
+            try:
+                hod = hodiny_z_textu([b for b in radky if not re.match(r"I[ČC]O?\s*:", b[0])])
+            except Exception:
+                hod = None
+            bloky.append({
+                "ico": re.sub(r"\D", "", radky[i][0]),
+                "n": radky[i - 1][0] if i else (radky[i + 1][0] if i + 1 < len(radky) else ""),
+                "tel": _norm_tel(tel.group(1)) if tel else "",
+                "e": mail.group(0).lower() if mail else "",
+                "w": web.group(1).rstrip("/") if web else "",
+                "hod": {"r": hod, "u": PARNIK + st} if hod else None,
+            })
+    return bloky
+
+
+def doplnit_polikliniku_parnik(out):
+    nase = [r for r in out if r["a"].startswith("Generála Janouška 902/17")]
+    if not nase:
+        return
+    bloky = poliklinika_parnik()
+    log("poliklinika Parník: %d bloků ordinací" % len(bloky))
+    n = {"tel": 0, "e": 0, "w": 0, "hod": 0}
+    for r in nase:
+        kn = _klic_nazvu(r["n"])
+        b = next((b for b in bloky if r.get("ico") and b["ico"] == r["ico"]), None) or \
+            next((b for b in bloky if b["n"] and _klic_nazvu(b["n"]) == kn), None)
+        if not b:
+            continue
+        for k in ("tel", "e", "w", "hod"):
+            if b[k] and not r.get(k) and (k != "tel" or tel_platny(b[k])):
+                r[k] = b[k]
+                n[k] += 1
+    log("z polikliniky Parník doplněno: " + ", ".join("%s %d" % kv for kv in n.items()))
+
+
 def _bezpecne(f, *a):
     try:
         return f(*a)
@@ -753,6 +811,8 @@ def _bezpecne(f, *a):
 def sjednotit_telefony(out):
     """Telefony z registru (+420266610451) do stejného tvaru jako z webu (266 610 451)."""
     for r in out:
+        if "<" in (r.get("e") or ""):   # „reditel<i class='fa fa-at'></i>zzshmp.cz“
+            r["e"] = re.sub(r"<[^>]+>", "", re.sub(r"<i[^>]*fa-at[^>]*>\s*(</i>)?", "@", r["e"])).strip()
         t = _norm_tel(r.get("tel", ""))
         if t:
             r["tel"] = t
@@ -976,6 +1036,7 @@ def main():
                 "w": re.sub(r"^https?://", "", (row.get("poskytovatel_web") or "").strip()).rstrip("/"),
                 "dr": (row.get("ZZ_druh_nazev") or "").strip(),
                 "obory": [],
+                "ico": next((re.sub(r"\D", "", v or "") for k, v in row.items() if k and k.lower().startswith("poskytovatel") and k.lower().endswith("ico")), ""),
             }
         if obor and obor not in r["obory"]:
             r["obory"].append(obor)
@@ -998,9 +1059,12 @@ def main():
     doplnit_hodiny(out)
     doplnit_z_prohlizece(out)
     _bezpecne(doplnit_polikliniku_prosek, out)
+    _bezpecne(doplnit_polikliniku_parnik, out)
     sjednotit_telefony(out)
     rucni_prepisy(out)
 
+    for r in out:
+        r.pop("ico", None)   # jen pro párování, do aplikace nejde
     (DATA / "doktori.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     from collections import Counter
