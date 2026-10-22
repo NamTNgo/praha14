@@ -58,7 +58,7 @@ def useky(key):
     for f in out:
         p = f.get("properties", f)
         jm = p.get("name") or ""
-        m = re.match(r"(P(9|14))-\d+", jm)
+        m = re.match(r"(P(9|14)(?:\.\d+)?)-\d+", jm)        # „P9-0123“ i „P9.3-0123“ (podoblast)
         if not m or p.get("parking_policy") != "zone":
             continue
         c = (p.get("centroid") or {}).get("coordinates")
@@ -121,7 +121,7 @@ def main():
     skup = defaultdict(lambda: {"ulice": [], "n": 0})
     for x in u:
         if x[3] and x[3] >= hranice:
-            g = skup[(x[3], x[5][1:])]
+            g = skup[(x[3], re.match(r"P(\d+)", x[5]).group(1))]
             g["n"] += 1
             if x[4] and x[4] not in g["ulice"]:
                 g["ulice"].append(x[4])
