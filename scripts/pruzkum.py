@@ -1,40 +1,43 @@
 """Jednorázový průzkum zdrojů z GitHub runneru (výsledek jde do větve „pruzkum“, ne do main)."""
 import json
-import urllib.parse
+import os
 import urllib.request
 from pathlib import Path
 
-UA = {"User-Agent": "Mozilla/5.0 (compatible; pod-okny-bot; +https://github.com/NamTNgo/praha14)"}
+KEY = os.environ.get("GOLEMIO_API_KEY", "")
 out = {}
 
 
-def get(url, data=None):
-    req = urllib.request.Request(url, data=data, headers=UA)
-    with urllib.request.urlopen(req, timeout=40) as r:
-        return r.status, r.read().decode("utf-8", "replace")
+def get(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "pod-okny-bot", "X-Access-Token": KEY, "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return r.status, r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode("utf-8", "replace")[:300]
+    except Exception as e:   # noqa: BLE001
+        return 0, str(e)
 
 
-base = "https://mpp.praha.eu/arcgis/rest/services/DOP/Zony_placeneho_stani/MapServer"
-try:
-    s, t = get(base + "?f=json")
-    j = json.loads(t)
-    out["sluzba"] = {"status": s, "popis": j.get("serviceDescription") or j.get("description"), "vrstvy": [[l["id"], l["name"]] for l in j.get("layers", [])]}
-    for l in j.get("layers", []):
-        try:
-            s2, t2 = get("%s/%d?f=json" % (base, l["id"]))
-            m = json.loads(t2)
-            q = {"where": "1=1", "geometry": "14.45,50.08,14.62,50.13", "geometryType": "esriGeometryEnvelope", "inSR": "4326",
-                 "spatialRel": "esriSpatialRelIntersects", "outFields": "*", "returnGeometry": "false", "resultRecordCount": "5", "f": "json"}
-            s3, t3 = get("%s/%d/query?%s" % (base, l["id"], urllib.parse.urlencode(q)))
-            qq = json.loads(t3)
-            sc, tc = get("%s/%d/query?%s" % (base, l["id"], urllib.parse.urlencode(dict(q, returnCountOnly="true"))))
-            out["L%d" % l["id"]] = {"nazev": l["name"], "geom": m.get("geometryType"), "pole": [f["name"] + ":" + (f.get("alias") or "") for f in m.get("fields") or []],
-                                   "pocet_p9_14": json.loads(tc).get("count"), "ukazka": [f.get("attributes") for f in qq.get("features", [])[:5]], "chyba": qq.get("error")}
-        except Exception as e:   # noqa: BLE001
-            out["L%d" % l["id"]] = {"chyba": str(e)}
-except Exception as e:   # noqa: BLE001
-    out["sluzba"] = {"chyba": str(e)}
+G = "https://api.golemio.cz"
+for path in ["/v3/parking?latlng=50.1059,14.5406&range=1500&limit=5",
+             "/v3/parking?latlng=50.1059,14.5406&range=1500&limit=5&category=zone",
+             "/v3/parking-sources", "/v3/parking/sources",
+             "/v3/parking-tariffs?limit=3", "/v2/parkingzones?limit=3", "/v2/parking-zones?limit=3",
+             "/v3/parking?source=tsk_v2&limit=3", "/v3/parking?primarySource=tsk_v2&limit=3",
+             "/v3/parking?latlng=50.1269,14.4900&range=800&limit=5"]:
+    s, t = get(G + path)
+    try:
+        j = json.loads(t)
+        if isinstance(j, dict) and "features" in j:
+            prev = [{k: (v if not isinstance(v, (list, dict)) else "…") for k, v in (f.get("properties") or {}).items()} for f in j["features"][:3]]
+            out[path] = {"status": s, "pocet": len(j["features"]), "ukazka": prev}
+        elif isinstance(j, list):
+            out[path] = {"status": s, "pocet": len(j), "ukazka": [{k: (v if not isinstance(v, (list, dict)) else "…") for k, v in x.items()} if isinstance(x, dict) else x for x in j[:4]]}
+        else:
+            out[path] = {"status": s, "ukazka": str(j)[:600]}
+    except Exception:   # noqa: BLE001
+        out[path] = {"status": s, "text": t[:300]}
 
 Path("diag").mkdir(exist_ok=True)
 Path("diag/pruzkum.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-print(json.dumps(out, ensure_ascii=False)[:3000])
