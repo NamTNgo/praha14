@@ -1278,6 +1278,16 @@
   var I_NOWATER = '<path d="M12 2.7s6 6.1 6 10.8a6 6 0 0 1-12 0C6 8.8 12 2.7 12 2.7Z"/><path d="m4 4 16 16"/>';
   var I_TRUCK = '<rect x="2" y="8" width="13" height="8" rx="4"/><path d="M15 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/>';
   var PVK_MAPA = "https://mapy.veoliavoda.cz/udalosti/?branch=PVK";
+  // Odkaz přímo na špendlík události. Mapa PVK bere „bookmark“ = base64("zoom;lat;lon"), díky kterému
+  // po načtení nepřeskočí na celou Prahu. Střed = špendlík PVK (centroid události). Zoom co nejblíž:
+  // oblast (obrys) 17 – víc PVK špendlík oblasti skrývá; jednotlivé adresy 18 (maximum mapy).
+  function pvkOdkaz(u) {
+    var c = u.stred || (u.adresy && u.adresy[0]);
+    if (!c) return PVK_MAPA;
+    var z = (u.obrys || []).length ? 17 : 18, la = (+c[0]).toFixed(6), lo = (+c[1]).toFixed(6);
+    return PVK_MAPA + "&bookmark=" + encodeURIComponent(btoa(z + ";" + la + ";" + lo)) + "&lat=" + la + "&lon=" + lo + "&zoom=" + z + "&marker=none";
+  }
+
   var VODA_OKOLI = 700;   // m – odstávky v okolí (ne na adrese) ukážeme jen jako zprávu v Bydlení
   function vCas(s) { return s ? akD(s) : null; }
   function vHod(d) { return d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2); }
@@ -1400,7 +1410,7 @@
       '<div class="body" style="gap:12px;padding-bottom:28px">' + chip +
       '<h1 style="margin:4px 0 0;font-size:23px">' + (f === "pozdeji" || f === "brzy" ? "Odstávka pitné vody" : "Přerušená dodávka vody") + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + (moje ? "Týká se vaší adresy " + esc(a.label) : "V okolí vaší adresy · " + esc(((u.adresy[0] || [0, 0, ""])[2]))) + "</div>" +
-      '<div class="dlinks"><a class="btn-ext" href="' + PVK_MAPA + '" target="_blank" rel="noopener">Otevřít na mapě PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
+      '<div class="dlinks"><a class="btn-ext" href="' + esc(pvkOdkaz(u)) + '" target="_blank" rel="noopener">Otevřít na mapě PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
       '<div class="card dcard"><div class="vtime">' +
       '<div><div class="k">Od</div><div class="v">' + (od ? vHod(od) : "–") + '</div><div class="s">' + (od ? vDen(od, ted) + (Math.abs(akDen(od) - akDen(ted)) <= 864e5 ? ", " + HDAYS[od.getDay()].toLowerCase() + " " + od.getDate() + ". " + (od.getMonth() + 1) + "." : "") : "") + "</div></div>" +
       '<div><div class="k">Do</div><div class="v">' + (dd ? "kolem " + vHod(dd) : "neznámo") + '</div><div class="s">' + (dd ? vDen(dd, ted) + (Math.abs(akDen(dd) - akDen(ted)) <= 864e5 ? ", " + HDAYS[dd.getDay()].toLowerCase() + " " + dd.getDate() + ". " + (dd.getMonth() + 1) + "." : "") : "PVK konec zatím neuvedly") + "</div></div></div>" +
