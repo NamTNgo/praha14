@@ -1,0 +1,14 @@
+Praha 9: opatření na desce 10
+Praha 14: přechodných úprav provozu na desce 5
+nové: Opatření OP_Kovanecká · 2026-11-12–2026-11-12 · Kovanecká, U školičky, Kovářská · přistavení jeřábu za účelem složení stavebních bun
+nové: Drahobejlova - OOP (oprava fasády domu č.p. 1110) · 2026-11-04–2026-12-31 · Drahobejlova · umístění zařízení staveniště pro opravu fasády dom
+nové: Nademlejnská, NN7194 - OOP (výjezd ze staveniště) · 2026-10-20–2027-10-19 · Nademlejnská · označení vjezdu a výjezdu ze staveniště v rámci vý
+nové: Opatření OP_U Svobodárny · 2026-10-29–2026-11-11 · U svobodárny · přistavení kontejneru na stavební odpad a suť
+nové: Horní Hrdlořezská - OOP (přípojky) · 2026-10-30–2026-11-10 · Horní Hrdlořezská · realizace vodovodní a kanalizační přípojky
+nové: MHMP_Opatření OP_Beranových, Pod Táborem · None–None · Pod Táborem · 
+nové: Pod Krocínkou, Nad Klíčovem, Ke Klíčovu - OOP (rekonstrukce  · 2026-10-26–2027-03-20 · Pod Krocínkou, Nad Klíčovem, Ke Klíčovu · rekonstrukce kanalizace
+nové: Nad Krocínkou - OOP · 2026-10-28–2026-10-31 · Nad Krocínkou · výměny kabelů NN
+nové: Opatření OP_FILM_TV Nova_Ocelářská 17 · 2026-10-23–2026-10-23 · Ocelářská · natáčení seriálu „Ulice“
+nové: 701, Opatření obecné povahy - stanovení přechodné úpravy pro · 2026-10-07–2026-10-23 · Vodňanská, Kačínská · výkopu pro pokládku optických kabelů
+nové: 694, Opatření obecné povahy - stanovení přechodné úpravy pro · 2026-10-07–2026-10-31 · Volkova · záboru pro montáž plošiny
+výstup: 11 platných opatření
