@@ -1,0 +1,43 @@
+name: Přerušení dodávky elektřiny (oznámení PRE na úředních deskách)
+
+on:
+  schedule:
+    - cron: "53 6,16 * * *"   # oznámení přibývají během pracovního dne
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: elektrina
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: PDF a OCR (čeština)
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-ces >/dev/null
+          pip install pypdf==5.1.0
+      - name: Stáhnout oznámení PRE
+        run: python scripts/build_elektrina.py
+      - name: Uložit změny
+        if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add docs/data/elektrina.json docs/data/elektrina_cache.json docs/data/elektrina_report.txt 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -m "Aktualizace odstávek elektřiny"
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash origin main && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
