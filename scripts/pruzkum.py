@@ -1,44 +1,25 @@
-"""Jednorázový průzkum zdrojů z GitHub runneru (výsledek jde do větve „pruzkum“, ne do main)."""
-import json
-import os
-import urllib.request
+import json, os, re, urllib.request, urllib.parse
+from collections import Counter
 from pathlib import Path
-
 KEY = os.environ.get("GOLEMIO_API_KEY", "")
-out = {}
-
-
-def get(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "pod-okny-bot", "X-Access-Token": KEY, "Accept": "application/json"})
-    try:
-        with urllib.request.urlopen(req, timeout=60) as r:
-            return r.status, r.read().decode("utf-8", "replace")
-    except urllib.error.HTTPError as e:
-        return e.code, e.read().decode("utf-8", "replace")[:300]
-    except Exception as e:   # noqa: BLE001
-        return 0, str(e)
-
-
-G = "https://api.golemio.cz"
-for path in ["/v3/parking?primarySource=tsk_v2&boundingBox=50.15,14.45,50.07,14.65&limit=3",
-             "/v3/parking?primarySource=tsk_v2&boundingBox=50.15,14.45,50.07,14.65&limit=10000&offset=0",
-             "/v3/parking?primarySource=tsk_v2&limit=2&offset=20000"]:
-    s, t = get(G + path)
-    try:
-        j = json.loads(t)
-        feats = j["features"] if isinstance(j, dict) and "features" in j else j
-        if isinstance(feats, list):
-            props = [f.get("properties", f) for f in feats]
-            from collections import Counter
-            out[path] = {"status": s, "pocet": len(props),
-                         "filtry": Counter(str(p.get("filter")) for p in props).most_common(),
-                         "politika": Counter(str(p.get("parking_policy")) for p in props).most_common(),
-                         "valid_from_max": sorted([str(p.get("valid_from")) for p in props])[-8:],
-                         "ukazka": props[:2], "geom": feats[0].get("geometry", {}).get("type") if feats and isinstance(feats[0], dict) else None}
-        else:
-            out[path] = {"status": s, "ukazka": str(j)[:800]}
-    except Exception as e:   # noqa: BLE001
-        out[path] = {"status": s, "text": t[:500], "e": str(e)}
-
+def get(q):
+    req = urllib.request.Request("https://api.golemio.cz/v3/parking?" + urllib.parse.urlencode(q), headers={"X-Access-Token": KEY, "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=90) as r:
+        return json.loads(r.read())
+allf = []
+off = 0
+while True:
+    j = get({"primarySource": "tsk_v2", "boundingBox": "50.16,14.44,50.06,14.66", "limit": 1000, "offset": off})
+    f = j.get("features", j) if isinstance(j, dict) else j
+    allf += f
+    if len(f) < 1000: break
+    off += 1000
+props = [x.get("properties", x) for x in allf]
+pref = Counter(re.split(r"[-;]", p.get("name") or "")[0] for p in props)
+# úseky s centroidem v Praze 9 (zhruba Vysočany/Prosek/Střížkov)
+v9 = [p for p in props if (p.get("centroid") or {}).get("coordinates") and 50.095 < p["centroid"]["coordinates"][1] < 50.135 and 14.47 < p["centroid"]["coordinates"][0] < 14.53]
+out = {"celkem": len(props), "prefixy": pref.most_common(40), "v9_pocet": len(v9),
+       "v9_ukazka": [[p.get("name"), p.get("filter"), p.get("valid_from"), (p.get("address") or {}).get("address_region") if isinstance(p.get("address"), dict) else None] for p in v9[:25]],
+       "v9_prefixy": Counter(re.split(r"[-;]", p.get("name") or "")[0] for p in v9).most_common(20)}
 Path("diag").mkdir(exist_ok=True)
 Path("diag/pruzkum.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
