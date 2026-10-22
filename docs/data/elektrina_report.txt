@@ -1,0 +1,46 @@
+Praha 9: oznámení PRE na desce 7
+Praha 14: oznámení PRE na desce 9
+nové: Predistribuce, a.s., oznámení o přerušení dodávky elektřiny
+    dny ? None–None · adres 9 · ulic bez čísla -
+nové: Predistribuce, a.s., oznámení o přerušení dodávky elektřiny
+    OCR: 1576 znaků
+    dny ? None–None · adres 2 · ulic bez čísla -
+nové: PREdistribuce - oznámení o přerušení dodávky elektřiny dne 03.11.2026 8.00 - 11.00 hod
+    OCR: 1152 znaků
+    dny 2026-11-03 08:00–11:00 · adres 4 · ulic bez čísla -
+nové: PREdistribuce - oznámení o přerušení dodávky elektřiny dne 29.10.2026 8.00 - 15.00 hod
+    dny 2026-10-29 08:00–15:00 · adres 0 · ulic bez čísla -
+nové: Predistribuce, a.s., oznámení o přerušení dodávky elektřiny
+    OCR: 1117 znaků
+    dny ? None–None · adres 2 · ulic bez čísla -
+nové: Predistribuce, a.s., oznámení o přerušení dodávky elektřiny
+    dny ? None–None · adres 8 · ulic bez čísla -
+nové: PREdistribuce - oznámení o přerušení dodávky elektřiny dne 26.10.2026, 25.11.2026
+    OCR: 2426 znaků
+    dny 2026-10-26,2026-11-25 None–None · adres 2 · ulic bez čísla -
+nové: 716, Oznámení o přerušení dodávky elektřiny v ul. Poříčanská č.p. 716/8, 722/6, 732/4, 736
+    OCR: 1214 znaků
+    dny ? None–None · adres 4 · ulic bez čísla -
+nové: 715, Oznámení o přerušení dodávky elektřiny v ul. Klánovická, Štolmířská, Poříčanská, Horo
+    OCR: 1480 znaků
+    dny ? None–None · adres 39 · ulic bez čísla -
+nové: 712, Oznámení o přerušení dodávky elektřiny v ul. Klánovická, Liblická, Vaňkova
+    OCR: 1376 znaků
+    dny ? None–None · adres 30 · ulic bez čísla -
+nové: 709, Oznámení o přerušení dodávky elektřiny v ul. Klánovická, Poříčanská
+    OCR: 1241 znaků
+    dny ? None–None · adres 6 · ulic bez čísla -
+nové: 705, Oznámení o přerušení dodávky elektřiny v ul. Klánovická
+    OCR: 1232 znaků
+    dny ? None–None · adres 7 · ulic bez čísla -
+nové: 699, Oznámení o přerušení dodávky elektřiny v ul. Klánovická č.p. 305/28,306/30,307/32,282
+    OCR: 1224 znaků
+    dny ? None–None · adres 5 · ulic bez čísla -
+nové: 697, Oznámení o přerušení dodávky elektřiny v ul. Generála Janouška č.p. 873
+    dny ? None–None · adres 1 · ulic bez čísla -
+nové: 684, Oznámení o přerušení dodávky elektřiny v ul. Klánovická
+    OCR: 1210 znaků
+    dny ? None–None · adres 10 · ulic bez čísla -
+nové: 685, Oznámení o přerušení dodávky elektřiny v ul. Koclířova
+    dny 2026-10-23 08:00–16:00 · adres 7 · ulic bez čísla -
+výstup: 3 plánovaných přerušení v Praze 9/14
