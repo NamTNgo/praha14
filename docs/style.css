@@ -401,3 +401,19 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .tl small{font-size:12.5px;color:#6b6652}
 .prz{background:#fff8ec;border:1px solid #f0d9a8;border-radius:16px;padding:13px 14px;font-size:14px;line-height:1.5;color:#5c4512}
 .prz b{display:block;margin-bottom:2px}
+/* filtry dle Airbnb: rozbalovací chipy + panel s volbami a počty */
+.ddrow{display:flex;align-items:center;gap:6px}
+.dd{flex:0 1 auto;min-width:0;display:inline-flex;align-items:center;gap:3px;font:inherit;font-size:13.5px;font-weight:700;color:var(--ink);background:#fff;border:1.5px solid #e4e1d8;border-radius:20px;padding:0 9px 0 12px;min-height:40px;cursor:pointer}
+.dd span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd svg{flex:none;color:#8a8572}
+.dd.on{flex-shrink:0;background:var(--green);border-color:var(--green);color:#fff}
+.dd.on svg{color:#fff}
+.ddclr{flex:none;margin-left:auto;width:40px;height:40px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink);background:#ecebe4;border:none;cursor:pointer}
+.fopts{display:flex;flex-direction:column;margin:2px -4px 6px}
+.fopt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;font-size:15.5px;font-weight:600;color:var(--ink);background:none;border:none;border-bottom:1px solid #ece8da;padding:14px 4px;min-height:52px;cursor:pointer}
+.fopt:last-child{border-bottom:none}
+.fopt .fcnt{font-size:13.5px;font-weight:700;color:#8a8572}
+.fopt i{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #cfcab8;box-sizing:border-box}
+.fopt.on{font-weight:800}
+.fopt.on i{border:7px solid var(--green)}
+.fopt.nula{color:#a9a493}
