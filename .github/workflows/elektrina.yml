@@ -3,7 +3,11 @@ name: Přerušení dodávky elektřiny (oznámení PRE na úředních deskách)
 on:
   schedule:
     - cron: "53 6,16 * * *"   # oznámení přibývají během pracovního dne
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      ladeni:
+        description: "Vypsat přečtený text oznámení do logu (znovu načte všechna)"
+        default: ""
 
 permissions:
   contents: write
@@ -27,7 +31,11 @@ jobs:
           sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-ces >/dev/null
           pip install pypdf==5.1.0
       - name: Stáhnout oznámení PRE
-        run: python scripts/build_elektrina.py
+        env:
+          LADENI: ${{ inputs.ladeni }}
+        run: |
+          if [ -n "$LADENI" ]; then rm -f docs/data/elektrina_cache.json; fi
+          python scripts/build_elektrina.py
       - name: Uložit změny
         if: always()
         run: |

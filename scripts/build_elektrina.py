@@ -16,6 +16,7 @@ Výstup docs/data/elektrina.json:
 """
 import datetime as dt
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -206,6 +207,10 @@ def main():
         except Exception as e:   # noqa: BLE001
             log("    ! nejde stáhnout:", e)
             continue
+        if os.environ.get("LADENI"):   # jen do výpisu běhu, ne do repozitáře: úsek s adresami a termínem
+            s1 = re.sub(r"\s+", " ", t)
+            i = max(0, plain(s1).find("na adres"))
+            print("=== %s\n%s\n" % (v["nazev"][:80], s1[i:i + 700]))
         dny, od, do = dny_a_cas(t, v["nazev"])
         body, cele = adresy(t, v["nazev"], cp, ulice)
         cache["vyhlasky"][v["url"]] = {"src": v["src"], "nazev": v["nazev"], "vyv": v["vyv"], "dny": dny, "od": od, "do": do,
