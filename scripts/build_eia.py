@@ -39,7 +39,7 @@ def log(*a):
 
 
 def stahni(url, data=None):
-    hd = {"User-Agent": UA}
+    hd = {"User-Agent": UA, "Accept-Language": "cs-CZ,cs;q=0.9"}
     if data is not None:
         data = urllib.parse.urlencode(data).encode()
         hd["Content-Type"] = "application/x-www-form-urlencoded"
@@ -58,9 +58,15 @@ def txt(h):
     return re.sub(r"\s+", " ", H.unescape(re.sub(r"<[^>]+>", " ", h or ""))).strip()
 
 
+MESICE = {m: i + 1 for i, m in enumerate(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])}
+
+
 def datum(s):
-    m = re.search(r"(\d{1,2})\.(\d{1,2})\.(\d{4})", s or "")
-    return "%s-%02d-%02d" % (m.group(3), int(m.group(2)), int(m.group(1))) if m else None
+    m = re.search(r"(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})", s or "")
+    if m:
+        return "%s-%02d-%02d" % (m.group(3), int(m.group(2)), int(m.group(1)))
+    m = re.search(r"([A-Z][a-z]{2}) (\d{1,2}) [\d:]+ \w+ (\d{4})", s or "")    # „Wed Aug 05 15:31:06 CEST 2026“
+    return "%s-%02d-%02d" % (m.group(3), MESICE.get(m.group(1), 1), int(m.group(2))) if m and m.group(1) in MESICE else None
 
 
 def hledej(ku):
@@ -119,8 +125,6 @@ def detail(kod):
             elif k.startswith("Informace o místě a času konání") and v:
                 z["kroky"][-1]["kde"] = v[:200]
     z["kroky"] = [k for k in z["kroky"] if k.get("d") or k.get("lhuta")]
-    if not z.get("zmena") and not z["kroky"] and not (DATA / "eia_ladeni.html").exists():
-        (DATA / "eia_ladeni.html").write_text(h, encoding="utf-8")
     if not z.get("zmena") and not z["kroky"]:
         log("    ? %s: štítky %s" % (kod, " / ".join(sorted({txt(x)[:40] for x in re.findall(r'<td class="label">([\s\S]*?)</td>', h)}))[:600]))
     return z
