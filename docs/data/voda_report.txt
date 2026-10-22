@@ -1,9 +1,8 @@
-událostí PVK celkem: 49, v Praze 9/14: 8 (probíhá 3, plánované 5), náhradních zásobování: 36
+událostí PVK celkem: 46, v Praze 9/14: 7 (probíhá 2, plánované 5), náhradních zásobování: 15
   probiha 2026-10-21T15:34 – 2026-10-23T16:00  1 adres  Jinolická 889
-  probiha 2026-10-21T22:00 – 2026-10-22T21:00  1575 adres  Novoborská 3
   probiha 2026-10-22T08:00 – 2026-10-22T23:00  2 adres  Kolbenova 17
   planovana 2026-10-27T07:30 – 2026-10-27T15:00  1 adres  Ramonova 10
-  planovana 2026-10-29T08:00 – 2026-10-29T18:00  11 adres  U tvrze 30
-  planovana 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Za vodárnou 26
+  planovana 2026-10-29T08:00 – 2026-10-29T18:00  11 adres  U tvrze 29
+  planovana 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Na štěpnici 11
   planovana 2026-11-03T08:00 – 2026-11-03T11:00  1 adres  Pod plynojemem 164
-  planovana 2026-11-03T09:00 – 2026-11-03T12:00  2 adres  Národních hrdinů 891
+  planovana 2026-11-03T09:00 – 2026-11-03T12:00  2 adres  Průmyslová 32
