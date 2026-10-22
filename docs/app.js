@@ -1279,14 +1279,20 @@
   var I_TRUCK = '<rect x="2" y="8" width="13" height="8" rx="4"/><path d="M15 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/>';
   var PVK_MAPA = "https://mapy.veoliavoda.cz/udalosti/?branch=PVK";
   // Odkaz přímo na špendlík události. Mapa PVK bere „bookmark“ = base64("zoom;lat;lon"), díky kterému
-  // po načtení nepřeskočí na celou Prahu. Střed = špendlík PVK (centroid události). Zoom co nejblíž:
-  // oblast (obrys) 17 – víc PVK špendlík oblasti skrývá; jednotlivé adresy 18 (maximum mapy).
-  function pvkOdkaz(u) {
-    var c = u.stred || (u.adresy && u.adresy[0]);
+  // po načtení nepřeskočí na celou Prahu. Střed = zasažená adresa nejblíž adrese uživatele (u velké
+  // odstávky leží střed oblasti klidně kilometr daleko), zoom 18 = maximum mapy. Bez adres střed oblasti, 17.
+  function pvkOdkaz(u, a) {
+    var c = null, z = 18;
+    (u.adresy || []).forEach(function (x) {
+      var d = a ? dist(a.lat, a.lon, x[0], x[1]) : 0;
+      if (!c || d < c[2]) c = [x[0], x[1], d];
+    });
+    if (!c && u.stred) { c = u.stred; z = 17; }
     if (!c) return PVK_MAPA;
-    var z = (u.obrys || []).length ? 17 : 18, la = (+c[0]).toFixed(6), lo = (+c[1]).toFixed(6);
+    var la = (+c[0]).toFixed(6), lo = (+c[1]).toFixed(6);
     return PVK_MAPA + "&bookmark=" + encodeURIComponent(btoa(z + ";" + la + ";" + lo)) + "&lat=" + la + "&lon=" + lo + "&zoom=" + z + "&marker=none";
   }
+
 
   var VODA_OKOLI = 700;   // m – odstávky v okolí (ne na adrese) ukážeme jen jako zprávu v Bydlení
   function vCas(s) { return s ? akD(s) : null; }
@@ -1410,7 +1416,7 @@
       '<div class="body" style="gap:12px;padding-bottom:28px">' + chip +
       '<h1 style="margin:4px 0 0;font-size:23px">' + (f === "pozdeji" || f === "brzy" ? "Odstávka pitné vody" : "Přerušená dodávka vody") + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + (moje ? "Týká se vaší adresy " + esc(a.label) : "V okolí vaší adresy · " + esc(((u.adresy[0] || [0, 0, ""])[2]))) + "</div>" +
-      '<div class="dlinks"><a class="btn-ext" href="' + esc(pvkOdkaz(u)) + '" target="_blank" rel="noopener">Otevřít na mapě PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
+      '<div class="dlinks"><a class="btn-ext" href="' + esc(pvkOdkaz(u, a)) + '" target="_blank" rel="noopener">Otevřít na mapě PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
       '<div class="card dcard"><div class="vtime">' +
       '<div><div class="k">Od</div><div class="v">' + (od ? vHod(od) : "–") + '</div><div class="s">' + (od ? vDen(od, ted) + (Math.abs(akDen(od) - akDen(ted)) <= 864e5 ? ", " + HDAYS[od.getDay()].toLowerCase() + " " + od.getDate() + ". " + (od.getMonth() + 1) + "." : "") : "") + "</div></div>" +
       '<div><div class="k">Do</div><div class="v">' + (dd ? "kolem " + vHod(dd) : "neznámo") + '</div><div class="s">' + (dd ? vDen(dd, ted) + (Math.abs(akDen(dd) - akDen(ted)) <= 864e5 ? ", " + HDAYS[dd.getDay()].toLowerCase() + " " + dd.getDate() + ". " + (dd.getMonth() + 1) + "." : "") : "PVK konec zatím neuvedly") + "</div></div></div>" +
