@@ -41,7 +41,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git add docs/data/elektrina.json docs/data/elektrina_cache.json docs/data/elektrina_report.txt docs/data/elektrina_ladeni.txt 2>/dev/null || true
+          git add -A docs/data/elektrina.json docs/data/elektrina_cache.json docs/data/elektrina_report.txt "docs/data/elektrina_ladeni.txt" 2>/dev/null || git add -A docs/data/elektrina.json docs/data/elektrina_cache.json docs/data/elektrina_report.txt
           git diff --cached --quiet && exit 0
           git commit -m "Aktualizace odstávek elektřiny"
           for i in 1 2 3 4 5; do
