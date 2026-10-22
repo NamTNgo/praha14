@@ -43,6 +43,7 @@ h1 { margin:0; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:
 .links { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .link { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:700; color:var(--green); background:#e9f0e9; border-radius:16px; padding:11px 14px; text-decoration:none; min-height:44px; }
 .link:active { background:#dde8dd; }
+button.link { border:none; font-family:inherit; cursor:pointer; }
 .hint { font-size:12.5px; color:var(--faint); padding:0 4px; line-height:1.4; }
 .center { text-align:center; align-items:center; padding:28px 24px; display:flex; flex-direction:column; gap:12px; }
 .center .t1 { font-size:17px; font-weight:800; }
