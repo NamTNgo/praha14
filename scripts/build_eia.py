@@ -109,6 +109,8 @@ def detail(kod):
             z["ozn"] = v
         elif k == "Datum a čas posledních úprav":
             z["zmena"] = datum(v)
+        elif k.startswith("Datum a čas") or k.startswith("Datum posledn"):
+            z["zmena"] = datum(v)
         elif sekce and z["kroky"]:
             if k.startswith("Datum zveřejnění"):
                 z["kroky"][-1]["d"] = datum(v)
@@ -117,6 +119,8 @@ def detail(kod):
             elif k.startswith("Informace o místě a času konání") and v:
                 z["kroky"][-1]["kde"] = v[:200]
     z["kroky"] = [k for k in z["kroky"] if k.get("d") or k.get("lhuta")]
+    if not z.get("zmena") and not z["kroky"]:
+        log("    ? %s: štítky %s" % (kod, " / ".join(sorted({txt(x)[:40] for x in re.findall(r'<td class="label">([\s\S]*?)</td>', h)}))[:600]))
     return z
 
 
