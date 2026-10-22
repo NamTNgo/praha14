@@ -30,6 +30,7 @@ from build_rizeni import (DATA, NOW, P9, P9_DESKA, P14, html_text, pdf_text, pla
 
 VERZE = 1
 LOG = []
+LADENI = []
 JE_PRE = re.compile(r"přerušení dodávky elektř|preruseni dodavky elektr|vypnutí elektř|odstávk\w* elektř", re.I)
 
 
@@ -210,7 +211,7 @@ def main():
         if os.environ.get("LADENI"):   # jen do výpisu běhu, ne do repozitáře: úsek s adresami a termínem
             s1 = re.sub(r"\s+", " ", t)
             i = max(0, plain(s1).find("na adres"))
-            print("=== %s\n%s\n" % (v["nazev"][:80], s1[i:i + 700]))
+            LADENI.append("=== %s\n%s\n" % (v["nazev"][:80], s1[i:i + 700]))
         dny, od, do = dny_a_cas(t, v["nazev"])
         body, cele = adresy(t, v["nazev"], cp, ulice)
         cache["vyhlasky"][v["url"]] = {"src": v["src"], "nazev": v["nazev"], "vyv": v["vyv"], "dny": dny, "od": od, "do": do,
@@ -238,6 +239,8 @@ def main():
     cache_p.write_text(json.dumps(cache, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log("výstup: %d plánovaných přerušení v Praze 9/14" % len(ud))
     (DATA / "elektrina_report.txt").write_text("\n".join(LOG) + "\n", encoding="utf-8")
+    if LADENI:
+        (DATA / "elektrina_ladeni.txt").write_text("\n".join(LADENI), encoding="utf-8")
     print("\n".join(LOG))
 
 
