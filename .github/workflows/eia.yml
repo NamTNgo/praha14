@@ -28,7 +28,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git add -A docs/data/eia.json docs/data/eia_report.txt
+          git add -A docs/data/eia.json docs/data/eia_report.txt; git add -A docs/data/eia_ladeni.html 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m "Aktualizace záměrů EIA"
           for i in 1 2 3 4 5; do

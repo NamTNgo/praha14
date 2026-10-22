@@ -119,6 +119,8 @@ def detail(kod):
             elif k.startswith("Informace o místě a času konání") and v:
                 z["kroky"][-1]["kde"] = v[:200]
     z["kroky"] = [k for k in z["kroky"] if k.get("d") or k.get("lhuta")]
+    if not z.get("zmena") and not z["kroky"] and not (DATA / "eia_ladeni.html").exists():
+        (DATA / "eia_ladeni.html").write_text(h, encoding="utf-8")
     if not z.get("zmena") and not z["kroky"]:
         log("    ? %s: štítky %s" % (kod, " / ".join(sorted({txt(x)[:40] for x in re.findall(r'<td class="label">([\s\S]*?)</td>', h)}))[:600]))
     return z
