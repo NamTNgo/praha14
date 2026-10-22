@@ -26,7 +26,6 @@ DATA = Path(__file__).resolve().parent.parent / "docs" / "data"
 TZ = ZoneInfo("Europe/Prague")
 NOW = dt.datetime.now(TZ)
 G = "https://api.golemio.cz/v3/parking"
-BBOX = "50.16,14.44,50.06,14.66"         # sever,západ,jih,východ – Praha 9 a 14 s rezervou
 BARVY = {"blue": "b", "violet": "v", "orange": "o"}
 NOVE_DNI = 60                              # rozšíření ukazujeme 60 dní po zavedení (a všechna budoucí)
 CTVRTI = re.compile(r"Praha\s*9\b|Praha\s*14\b|Prosek|Střížkov|Vysočan|Libe[nň]|Hloubětín|Hrdlořez|Černý Most|Kyje|Hostavic|Lehovec|Jahodnic", re.I)
@@ -37,8 +36,8 @@ def log(*a):
     LOG.append(" ".join(str(x) for x in a))
 
 
-def golemio(key, offset):
-    q = {"primarySource": "tsk_v2", "boundingBox": BBOX, "limit": 1000, "offset": offset}
+def golemio(key, offset, bbox):
+    q = {"primarySource": "tsk_v2", "boundingBox": bbox, "limit": 1000, "offset": offset}
     req = urllib.request.Request(G + "?" + urllib.parse.urlencode(q),
                                  headers={"X-Access-Token": key, "Accept": "application/json", "User-Agent": "pod-okny-bot"})
     with urllib.request.urlopen(req, timeout=90) as r:
@@ -46,14 +45,35 @@ def golemio(key, offset):
     return j.get("features", j) if isinstance(j, dict) else j
 
 
+def dlazdice():
+    """API vrací nejvýš 2000 úseků seřazených podle názvu → území dělíme na menší čtverce."""
+    s, w, j, v = 50.16, 14.44, 50.06, 14.66
+    krok_la, krok_lo = 0.02, 0.04
+    la = j
+    while la < s:
+        lo = w
+        while lo < v:
+            yield "%.3f,%.3f,%.3f,%.3f" % (min(la + krok_la, s), lo, la, min(lo + krok_lo, v))
+            lo += krok_lo
+        la += krok_la
+
+
 def useky(key):
-    out, offset = [], 0
-    while True:
-        dav = golemio(key, offset)
-        out += dav
-        if len(dav) < 1000:
-            break
-        offset += 1000
+    out, vid = [], set()
+    for bb in dlazdice():
+        offset = 0
+        while True:
+            dav = golemio(key, offset, bb)
+            for f in dav:
+                p = f.get("properties", f)
+                if p.get("id") not in vid:
+                    vid.add(p.get("id"))
+                    out.append(f)
+            if len(dav) < 1000 or offset >= 1000:
+                if len(dav) == 1000 and offset >= 1000:
+                    log("  ! dlaždice %s má přes 2000 úseků, zmenšit krok" % bb)
+                break
+            offset += 1000
     vys = []
     for f in out:
         p = f.get("properties", f)
@@ -70,7 +90,7 @@ def useky(key):
         ulice = jm.split(";", 1)[1].strip() if ";" in jm else ""
         ulice = re.sub(r"\s*\(.*?\)\s*$", "", ulice)
         vys.append([round(c[1], 6), round(c[0], 6), BARVY.get(p.get("filter"), "?"), vf, ulice, m.group(1)])
-    log("úseků ZPS v Praze 9/14: %d (z %d v obdélníku)" % (len(vys), len(out)))
+    log("úseků ZPS v Praze 9/14: %d (z %d v okolí)" % (len(vys), len(out)))
     return vys
 
 
