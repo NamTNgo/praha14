@@ -619,7 +619,7 @@
   // Znění zdroje NDIC je dané podmínkami ŘSD, neměnit.
   var NDIC_ZDROJ = "Zdrojem digitalizovaných informací o silničním provozu je NDIC";
   var FOOT_DO = '<div class="foot">' + NDIC_ZDROJ +
-    ' · Zdroj dat: PID (Golemio) · praha9.cz · praha14.cz · TSK (rozpisy blokového čištění)</div>';
+    ' · Zdroj dat: PID (Golemio) · praha9.cz · praha14.cz · TSK (rozpisy blokového čištění, zóny placeného stání přes Golemio) · parking.praha.eu</div>';
   var I_SWEEP = '<path d="M2.5 14V8a1 1 0 0 1 1-1h6.5a1 1 0 0 1 1 1v6"/>' +
     '<path d="M12.6 14v-3.4a1 1 0 0 1 .3-.7l1.2-1.2a1 1 0 0 1 .7-.3h1.9a1 1 0 0 1 .8.4l1.6 2.2a1 1 0 0 1 .2.6V14"/>' +
     '<circle cx="6" cy="16.3" r="1.6"/><path d="M13.2 16.1h8.3"/><path d="M15 16.1v2.4M17.4 16.1v2.4M19.8 16.1v2.4"/>';
@@ -747,10 +747,12 @@
         (data.doprava.ndic ? sledr(I_CRASH, "<b>Nehody</b> v Praze " + esc(a.mc) + " — nic") : "") +
         sledr(I_BUS2, "<b>Výluky PID</b> na " + pi.z + " zastávkách do 1 km — nic") +
         "</div>" + genNote() + "</div></div>";
+      h += parkovaniKarta(a);
       h += mimoDosah();
       return h;
     }
     h += cisteniKarta(a);
+    h += parkovaniKarta(a);
     var neh = nehodyPro(a);
     if (neh.length) {
       h += '<div class="label" id="nehody" style="scroll-margin-top:16px">Nehody a mimořádné události</div>';
@@ -1609,6 +1611,7 @@
     } else {
       h += '<div class="label" style="margin-top:2px">Velké projekty do 3 km · ' + pl(xs.filter(function (x) { return stKat(x.p) !== "uzemi"; }).length, "projekt", "projekty", "projektů") + "</div>" + stSekce(xs, false);
     }
+    h += eiaSekce(a);
     var uz = uzavirkyPro(a);
     h += '<button type="button" class="rdlink" data-act="tab:doprava">' + SVG(ST_KAT.dop[1], 20, "#6b6652", 2) + '<span class="grow"><b>Opravy silnic a chodníků</b>' +
       (uz.length ? "V Praze " + esc(a.mc) + " teď " + (uz.length === 1 ? "běží 1 uzavírka nebo práce" : "běží " + uz.length + " " + sklonCount(uz.length)) + ". Najdete je v záložce Doprava." : "Uzavírky a práce na silnicích najdete v záložce Doprava.") +
@@ -1617,7 +1620,7 @@
     h += '<button type="button" class="btn-link" id="stfull">Celý seznam Prahy 9 a 14 (' + n + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     return h;
   }
-  var FOOT_ST = '<div class="foot">Zdroj dat: CAMP – Praha zítra (Institut plánování a rozvoje hl. m. Prahy) · Stavební řízení: úřední desky MČ Praha 9 a 14 · Stav prodeje: novostavby.com · Opravy silnic: TSK, NDIC</div>';
+  var FOOT_ST = '<div class="foot">Zdroj dat: CAMP – Praha zítra (Institut plánování a rozvoje hl. m. Prahy) · Stavební řízení: úřední desky MČ Praha 9 a 14 · Posuzování vlivů: Informační systém EIA (CENIA) · Stav prodeje: novostavby.com · Opravy silnic: TSK, NDIC</div>';
   function viewStavbyFull() {
     var a = state.address, xs = stFiltr((data.stavby.projekty || []).filter(function (p) { return p.mc === "9" || p.mc === "14"; })
       .map(function (p) { return { p: p, d: stDist(p, a) }; }).sort(function (x, y) { return x.d - y.d; }));
@@ -1771,6 +1774,115 @@
     render(); window.scrollTo(0, 0);
   }
 
+  // ---- záměry s posuzováním vlivů na životní prostředí (EIA, CENIA) ----
+  var I_LEAF = '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z"/><path d="M2 21c0-3 1.9-5.4 5.1-6"/>';
+  var EIA_KONEC = { "Nepodléhá dalšímu posuzování": "Bez dalšího posuzování", "Stanovisko": "Vydáno stanovisko", "Ukončeno z jiných důvodů": "Ukončeno" };
+  function isoDen(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function eiaOtevrena(z) { return !!z.lhuta && z.lhuta >= isoDen(new Date()); }
+  function eiaPro(a) {
+    if (!data.eia || !a) return [];
+    var rok = isoDen(new Date(den0() - 365 * 864e5));
+    return (data.eia.zamery || []).filter(function (z) {
+      if ((z.mc || []).indexOf(a.mc) < 0 || (state.stM !== "all" && (z.mc || []).indexOf(state.stM) < 0)) return false;
+      if (z.stav === "Ukončeno z jiných důvodů") return false;
+      return eiaOtevrena(z) || !EIA_KONEC[z.stav] || (z.zmena || "") >= rok;
+    }).sort(function (x, y) {
+      var ox = eiaOtevrena(x), oy = eiaOtevrena(y), ux = a.part && x.ku.indexOf(a.part) >= 0, uy = a.part && y.ku.indexOf(a.part) >= 0;
+      return (oy - ox) || (uy - ux) || ((y.zmena || "") < (x.zmena || "") ? -1 : 1);
+    });
+  }
+  function eiaById(k) { return ((data.eia && data.eia.zamery) || []).filter(function (z) { return z.kod === k; })[0]; }
+  function eiaStav(z) {
+    var o = eiaOtevrena(z);
+    return '<span class="fz ' + (o ? "f-povol" : EIA_KONEC[z.stav] ? "f-hot" : "f-plan") + '"><i></i>' + esc(o ? "Můžete se vyjádřit" : EIA_KONEC[z.stav] || z.stav) + "</span>";
+  }
+  function eiaKarta(z) {
+    return '<button type="button" class="card stc" data-eia="' + esc(z.kod) + '"><span class="rzi">' + SVG(I_LEAF, 24, "#3d6b4a", 1.8) + "</span>" +
+      '<span class="stt"><span class="stfz">' + eiaStav(z) + '</span><span class="stn">' + esc(z.n.replace(/^"|"$/g, "")) + "</span>" +
+      '<span class="stm">' + (eiaOtevrena(z) ? "Vyjádření do " + rzDat(z.lhuta) + " · " : "") + esc(z.stav) + "</span>" +
+      '<span class="sta">' + esc(z.ku.join(", ")) + (z.kuVse > z.ku.length ? " a další území" : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+  }
+  function eiaSekce(a) {
+    if (!data.eia || state.stF !== "all") return "";
+    var xs = eiaPro(a);
+    if (!xs.length) return "";
+    var otevr = state.stVse.eia, zob = otevr ? xs : xs.slice(0, ST_N);
+    var h = '<div class="stsec"><b>Posuzování vlivů na prostředí</b><span>Praha ' + esc(a.mc) + " · " + xs.length + "</span></div>" +
+      '<div class="note" style="padding:0 4px;margin:-2px 0 2px">Velké záměry, u kterých úřad posuzuje vliv na okolí (EIA). Během řízení se k nim může vyjádřit kdokoli.</div>' +
+      '<div class="stlist">' + zob.map(eiaKarta).join("") + "</div>";
+    if (xs.length > ST_N) h += '<button type="button" class="spadvic" data-stvse="eia">' + (otevr ? "Zobrazit méně" : "Další (" + (xs.length - ST_N) + ")") +
+      SVG(otevr ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
+    return h;
+  }
+  function viewEiaDetail(z) {
+    var tl = (z.kroky || []).map(function (k) {
+      return "<div><b>" + esc(k.f) + "</b><small>" + (k.d ? "zveřejněno " + rzDat(k.d) + " " + k.d.slice(0, 4) : "") +
+        (k.lhuta ? (k.d ? " · " : "") + "vyjádření do " + rzDat(k.lhuta) + " " + k.lhuta.slice(0, 4) : "") + "</small></div>";
+    }).join("");
+    if (!EIA_KONEC[z.stav]) tl += '<div class="next"><b>Další krok řízení</b><small>zatím nezveřejněn</small></div>';
+    return '<div class="head"><button type="button" class="btn-edit" id="stback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
+      '<div class="body" style="gap:12px;padding-bottom:28px"><div class="stfz">' + eiaStav(z) + '<span class="fz f-plan">EIA</span></div>' +
+      '<h1 style="margin:2px 0 0;font-size:23px">' + esc(z.n.replace(/^"|"$/g, "")) + "</h1>" +
+      '<div class="skadr" style="font-size:15px">' + esc(z.ku.join(", ")) + (z.kuVse > z.ku.length ? " a další katastrální území" : "") + "</div>" +
+      '<div class="dlinks"><a class="btn-ext" href="' + esc(z.u) + '" target="_blank" rel="noopener">Dokumenty na portálu EIA ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
+      (eiaOtevrena(z) ? '<div class="prz"><b>Můžete se vyjádřit do ' + rzDat(z.lhuta) + "</b>Písemné vyjádření pošlete příslušnému úřadu (" + esc(z.urad) + "). Kde a jak ho podat, najdete v informaci o záměru na portálu EIA.</div>" : "") +
+      '<div class="card dcard"><div class="dtitle">Průběh posuzování</div><div class="tl">' + (tl || "<div><b>" + esc(z.stav) + "</b></div>") + "</div></div>" +
+      dcard("O záměru", drow("Oznamovatel", z.ozn || null) + drow("Příslušný úřad", z.urad || null) + drow("Kód záměru", z.kod)) +
+      '<div class="note" style="padding:0 4px">Zdroj: Informační systém EIA (CENIA). Kontrolujeme jednou denně.</div></div>';
+  }
+  function openEia(k, odkud) {
+    state.stHist.push({ v: state.stView, s: state.stSel, y: window.scrollY, tab: odkud || null });
+    state.stView = "eia"; state.stSel = k;
+    try { history.pushState({ st: state.stHist.length }, ""); } catch (e) {}
+    render(); window.scrollTo(0, 0);
+  }
+
+  // ---- parkování: zóny placeného stání (Golemio / TSK) a aktuality parking.praha.eu ----
+  var I_PARK = '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>';
+  var ZPS_BLIZ = 80;   // m – úsek zóny tak blízko adresy = ulice je v zóně
+  var ZPS_BARVA = { b: ["modrá", "jen pro rezidenty"], v: ["fialová", "smíšená – rezidenti s oprávněním, ostatní platí"], o: ["oranžová", "krátkodobé placené stání"] };
+  var ZPS_MC = { "9": /Praha\s*9\b|Prosek|Střížkov|Vysočan|Libe[nň]|Hrdlořez/i, "14": /Praha\s*14\b|Černý Most|Kyje|Hostavic|Hloubětín|Lehovec|Jahodnic/i };
+  function zpsPro(a) {
+    if (!data.zps || !a) return null;
+    var nej = null;
+    (data.zps.useky || []).forEach(function (u) { if (u[5].replace(/\..*/, "") !== "P" + a.mc) return; var d = dist(a.lat, a.lon, u[0], u[1]); if (!nej || d < nej.d) nej = { u: u, d: d }; });
+    var ul = plain(a.street || ""), nove = (data.zps.nove || []).filter(function (n) { return n.mc === a.mc; });
+    return { nej: nej, v: !!(nej && nej.d <= ZPS_BLIZ), nove: nove, moje: nove.filter(function (n) { return n.ulice.some(function (x) { return plain(x) === ul; }); })[0],
+      zpravy: (data.zps.zpravy || []).filter(function (z) { return ZPS_MC[a.mc] && ZPS_MC[a.mc].test(z.t); }) };
+  }
+  function zpsUpozorneni(a) {
+    var z = zpsPro(a);
+    if (!z || !z.moje) return [];
+    var dn = Math.round((new Date(z.moje.od + "T00:00:00") - den0()) / 864e5);
+    if (dn < -14 || dn > 30) return [];
+    return [{ cls: dn <= 7 && dn >= 0 ? "plan" : "info", ic: I_PARK, fg: "#2f6fb0", t: (dn > 0 ? "Od " : "Nově od ") + dden(z.moje.od).toLowerCase() + " placené parkování ve vaší ulici",
+      s: "zóna placeného stání · rezidenti potřebují parkovací oprávnění", act: "tab:doprava" }];
+  }
+  function parkovaniKarta(a) {
+    var z = zpsPro(a);
+    if (!z) return "";
+    var h = '<div class="label">Parkování</div>', t1, txt;
+    if (z.v) {
+      var b = ZPS_BARVA[z.nej.u[2]] || ["", ""];
+      t1 = "Vaše ulice je v zóně placeného stání";
+      txt = (b[0] ? "Zóna " + b[0] + " – " + b[1] + ". " : "") + "Jako místní potřebujete rezidentní parkovací oprávnění, vyřídíte ho online.";
+    } else if (a.mc === "14") {
+      t1 = "Placené parkování tu není";
+      txt = "V Praze 14 zóny placeného stání zatím nejsou, v ulicích parkujete zdarma.";
+    } else {
+      t1 = "Ve vaší ulici placené stání není";
+      txt = "V ulici " + esc(a.street) + " parkujete zdarma." + (z.nej && z.nej.d <= 1500 ? (z.nej.u[4] ? " Nejbližší zóna placeného stání je v ulici " + esc(z.nej.u[4]) + ", " + akVzdTxt(z.nej.d) + "." : " Nejbližší zóna placeného stání je " + akVzdTxt(z.nej.d) + " od vás.") : "");
+    }
+    var nove = z.nove.map(function (n) { return '<div class="dnote" style="margin-top:8px"><b>Rozšíření zóny od ' + dden(n.od).toLowerCase() + ":</b> " + esc(n.ulice.slice(0, 5).join(", ")) + (n.ulice.length > 5 ? " a další" : "") + "</div>"; }).join("");
+    var zpr = z.zpravy.slice(0, 3).map(function (x) { return '<a class="zpr" href="' + esc(x.u) + '" target="_blank" rel="noopener"><span>' + esc(x.t) + "</span><small>" + (x.d ? rzDat(x.d) : "") + " " + SVG(I_EXT, 11, "currentColor", 2.4) + "</small></a>"; }).join("");
+    h += '<div class="card' + (z.v ? "" : "-dashed") + ' row top"><span class="badge" style="background:' + (z.v ? "#e3edf8" : "#ececea") + '">' + SVG(I_PARK, 18, z.v ? "#2f6fb0" : "#5b5b54", 2) + "</span>" +
+      '<div class="grow"><div class="t1">' + t1 + '</div><div class="note" style="margin-top:2px">' + txt + "</div>" + nove +
+      '<div class="links">' + (z.v ? '<a class="link" href="https://portal.zpspraha.cz/" target="_blank" rel="noopener">Parkovací oprávnění ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" : "") +
+      '<a class="link" href="https://parking.praha.eu/cs/mapa/" target="_blank" rel="noopener">Mapa zón ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>" +
+      (zpr ? '<div class="zprs"><div class="shtitle" style="margin:12px 0 4px">Aktuality o parkování</div>' + zpr + "</div>" : "") + "</div></div>";
+    return h;
+  }
+
   // ---- elektřina: plánovaná přerušení dodávky (oznámení PREdistribuce z úředních desek) ----
   var I_NOPOWER = '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/><path d="m3 3 18 18"/>';
   var I_POWER = '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>';
@@ -1885,7 +1997,9 @@
   var FOOT_DOMU = '<div class="foot">' + NDIC_ZDROJ + " · Zdroj dat: Pražské vodovody a kanalizace · Policie ČR · CAMP Praha zítra · úřední desky MČ · PTAS · TSK · Golemio · praha9.cz · praha14.cz · Městská knihovna v Praze</div>";
   var DOMU_MAX = 3;
   function domuUpozorneni(a) {
-    var r = vodaUpozorneni(a).concat(elUpozorneni(a), patUpozorneni()), ted = den0();
+    var r = vodaUpozorneni(a).concat(elUpozorneni(a), zpsUpozorneni(a), patUpozorneni()), ted = den0();
+    var eia = data.eia ? (data.eia.zamery || []).filter(function (z) { return eiaOtevrena(z) && a.part && z.ku.indexOf(a.part) >= 0; })[0] : null;
+    if (eia) r.push({ cls: "info", ic: I_LEAF, fg: "#3d6b4a", t: "Můžete se vyjádřit k záměru · do " + rzDat(eia.lhuta), s: eia.n.replace(/^"|"$/g, "") + " · posuzování vlivů na prostředí", act: "eia:" + eia.kod });
     var o = outageFor(a);
     if (o) {
       var dn = Math.round((new Date(o.from + "T00:00:00") - ted) / 864e5);
@@ -1980,6 +2094,7 @@
     if (t === "voda") { openVoda(v); return; }
     if (t === "el") { openEl(v); return; }
     if (t === "pat") { openPatrani(v); return; }
+    if (t === "eia") { var z2 = state.tab; state.stView = "list"; state.stHist = []; openEia(v, z2); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "rz") { var z1 = state.tab; state.stView = "list"; state.stHist = []; openRizeni(v, z1); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "st") { var z0 = state.tab; state.stView = "list"; state.stHist = []; openStavba(v, z0); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "dop") {   // rovnou na konkrétní sekci v Dopravě (např. nehody)
@@ -2047,6 +2162,7 @@
     else if (state.tab === "doktori" && data.doktori && state.dkView === "detail" && dkById(state.dkSel)) html = viewDoktorDetail(dkById(state.dkSel));
     else if (state.tab === "doktori" && data.doktori && state.dkView === "full") html = viewDoktoriFull();
     else if (state.tab === "stavby" && state.stView === "rizeni" && rzById(state.stSel)) html = viewRizeniDetail(rzById(state.stSel));
+    else if (state.tab === "stavby" && state.stView === "eia" && eiaById(state.stSel)) html = viewEiaDetail(eiaById(state.stSel));
     else if (state.tab === "stavby" && data.stavby && state.stView === "detail" && stById(state.stSel)) html = viewStavbaDetail(stById(state.stSel));
     else if (state.tab === "stavby" && data.stavby && data.stavby.projekty && state.stView === "full") html = viewStavbyFull();
     else if (state.tab === "akce" && data.akce && state.akView === "detail" && akById(state.akSel)) html = viewAkceDetail(akById(state.akSel));
@@ -2113,6 +2229,7 @@
     if (dmv) dmv.addEventListener("click", function () { var y = window.scrollY; state.domuVse = true; render(); window.scrollTo(0, y); });
     app.querySelectorAll("[data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); });
     app.querySelectorAll("[data-rz]").forEach(function (b) { b.addEventListener("click", function () { openRizeni(b.getAttribute("data-rz")); }); });
+    app.querySelectorAll("[data-eia]").forEach(function (b) { b.addEventListener("click", function () { openEia(b.getAttribute("data-eia")); }); });
     app.querySelectorAll("[data-st]").forEach(function (b) { b.addEventListener("click", function () { openStavba(b.getAttribute("data-st")); }); });
     app.querySelectorAll("[data-stvse]").forEach(function (b) { b.addEventListener("click", function () { var y = window.scrollY, k = b.getAttribute("data-stvse"); state.stVse[k] = !state.stVse[k]; render(); window.scrollTo(0, y); }); });
     var stf = document.getElementById("stfull");
@@ -2189,8 +2306,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; }), getJSON("data/akce.json").catch(function () { return null; }), getJSON("data/voda.json").catch(function () { return null; }), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; }), getJSON("data/rizeni.json").catch(function () { return null; }), getJSON("data/elektrina.json").catch(function () { return null; }), getJSON("data/opatreni.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17], elektrina: v[18], opatreni: v[19] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; }), getJSON("data/akce.json").catch(function () { return null; }), getJSON("data/voda.json").catch(function () { return null; }), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; }), getJSON("data/rizeni.json").catch(function () { return null; }), getJSON("data/elektrina.json").catch(function () { return null; }), getJSON("data/opatreni.json").catch(function () { return null; }), getJSON("data/zps.json").catch(function () { return null; }), getJSON("data/eia.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17], elektrina: v[18], opatreni: v[19], zps: v[20], eia: v[21] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       state.address = load();
