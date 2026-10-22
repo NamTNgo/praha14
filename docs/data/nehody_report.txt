@@ -1,2 +1,2 @@
-DATEX: staženo 37696069 B za 2 s (pokus 1)
+DATEX: staženo 37696069 B za 1 s (pokus 1)
 nehody SELHALY: no element found: line 1547, column 69838
