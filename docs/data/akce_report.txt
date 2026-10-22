@@ -1,15 +1,13 @@
-p9: 8 akcí
+p9: 6 akcí
 p14: 17 akcí
 mkp: 77 akcí
 
-celkem 99 akcí; kategorie: {'sport': 3, 'vzd': 16, 'vys': 7, 'zdr': 1, 'sen': 17, 'deti': 43, 'kult': 11, 'sous': 1}
-s fotkou: 95, se souřadnicemi: 96, zdarma: 84, zrušeno: 0
+celkem 97 akcí; kategorie: {'sport': 3, 'vzd': 14, 'vys': 7, 'zdr': 1, 'sen': 17, 'deti': 43, 'kult': 11, 'sous': 1}
+s fotkou: 93, se souřadnicemi: 94, zdarma: 82, zrušeno: 0
   [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
-  [p9 vzd] 2026-10-07T17:00 → 2026-10-21T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
-  [p9 vzd] 2026-10-21T17:00 → 2026-10-21T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p14 zdr] 2026-10-22T07:00 → 2026-10-22T07:00 | Den zdraví | Poliklinika parník | Generála Janouška 902/17 📷
   [mkp sen] 2026-10-22T14:00 → 2026-10-22T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-10-22T15:15 → 2026-10-22T16:00 | Doučování ve Vysočanech | Knihovna Vysočany | Zbuzkova 285/34 📷
