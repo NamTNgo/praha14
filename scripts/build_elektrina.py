@@ -23,6 +23,7 @@ import subprocess
 import sys
 import tempfile
 import urllib.parse
+import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -239,7 +240,7 @@ def main():
         if not posl or posl < dnes or not (x["adresy"] or x["ulice"]):
             continue                            # proběhlé, bez data nebo mimo Prahu 9/14
         mc = sorted({a[3] for a in x["adresy"]} or {ulice[plain(u)]["mc"] for u in x["ulice"] if plain(u) in ulice})
-        ud.append({"id": re.sub(r"\D", "", url)[-9:] or str(abs(hash(url)) % 10 ** 9), "mc": mc, "dny": x["dny"],
+        ud.append({"id": str(zlib.crc32(url.encode())), "mc": mc, "dny": x["dny"],
                    "od": x["od"], "do": x["do"], "adresy": [a[:3] for a in x["adresy"]], "ulice": x["ulice"],
                    "u": url, "vyv": x["vyv"]})
     ud.sort(key=lambda u: (u["dny"][0], u["od"] or ""))
