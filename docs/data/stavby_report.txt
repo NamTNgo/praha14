@@ -125,4 +125,4 @@ projektů v databázi CAMP: 1277
   prodej: Rezidence V Údolí → https://novostavby.com/property/v-udoli/ (V prodeji)
   prodej: Tesla Hloubětín → https://novostavby.com/property/tesla-hloubetin/ (V prodeji)
 novostavby.com: 1084 prodávaných projektů, spárováno 125
-v okolí Prahy 9 a 14: 459 ({'stavi': 148, 'povoluje': 66, 'planuje': 154, 'hotovo': 91}); doplněno popisů: 2; obrázky: {'foto': 404, 'žádný': 36, 'plan': 19}
+v okolí Prahy 9 a 14: 459 ({'stavi': 148, 'povoluje': 66, 'planuje': 154, 'hotovo': 91}); doplněno popisů: 0; obrázky: {'foto': 404, 'žádný': 36, 'plan': 19}
