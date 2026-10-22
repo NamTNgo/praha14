@@ -1400,13 +1400,13 @@
       '<div class="body" style="gap:12px;padding-bottom:28px">' + chip +
       '<h1 style="margin:4px 0 0;font-size:23px">' + (f === "pozdeji" || f === "brzy" ? "Odstávka pitné vody" : "Přerušená dodávka vody") + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + (moje ? "Týká se vaší adresy " + esc(a.label) : "V okolí vaší adresy · " + esc(((u.adresy[0] || [0, 0, ""])[2]))) + "</div>" +
+      '<div class="dlinks"><a class="btn-ext" href="' + PVK_MAPA + '" target="_blank" rel="noopener">Otevřít na mapě PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
       '<div class="card dcard"><div class="vtime">' +
       '<div><div class="k">Od</div><div class="v">' + (od ? vHod(od) : "–") + '</div><div class="s">' + (od ? vDen(od, ted) + (Math.abs(akDen(od) - akDen(ted)) <= 864e5 ? ", " + HDAYS[od.getDay()].toLowerCase() + " " + od.getDate() + ". " + (od.getMonth() + 1) + "." : "") : "") + "</div></div>" +
       '<div><div class="k">Do</div><div class="v">' + (dd ? "kolem " + vHod(dd) : "neznámo") + '</div><div class="s">' + (dd ? vDen(dd, ted) + (Math.abs(akDen(dd) - akDen(ted)) <= 864e5 ? ", " + HDAYS[dd.getDay()].toLowerCase() + " " + dd.getDate() + ". " + (dd.getMonth() + 1) + "." : "") : "PVK konec zatím neuvedly") + "</div></div></div>" +
       '<div class="dnote" style="margin-top:10px">' + (f === "po" ? "Podle plánu už mělo skončit, PVK obnovení dodávky zatím nepotvrdily. " : "Čas obnovení je odhad Pražských vodovodů a kanalizací. ") +
       (u.pocet > 1 ? "Odstávka zasahuje " + u.pocet.toLocaleString("cs-CZ") + " odběrných míst." : "") + "</div></div>" +
       '<div class="card dcard"><div class="dtitle">Náhradní zásobování' + (cis.length ? " · nejblíž vám" : "") + "</div>" + nz + "</div>" +
-      '<div class="dlinks"><a class="btn-ext" href="' + PVK_MAPA + '" target="_blank" rel="noopener">Mapa odstávek PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
       '<div class="note" style="padding:0 4px">Zdroj: Pražské vodovody a kanalizace' + (gen ? ", ověřeno " + vDen(gen, ted) + " v " + vHod(gen) : "") + ". Stav kontrolujeme každých 15 minut.</div></div>";
   }
   function openVoda(id) {
@@ -1462,16 +1462,15 @@
     var h = '<div class="head"><button type="button" class="btn-edit" id="vodaback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
       '<div class="body" style="gap:12px;padding-bottom:28px">' +
       (hotovo ? '<span class="vchip found"><i></i>Pátrání odvoláno</span>' : '<span class="vchip help"><i></i>Policie pátrá · vyhlášeno ' + esc(patKdy(p.pub)) + "</span>") +
-      '<h1 style="margin:4px 0 0;font-size:23px">' + esc(patTitulek(p)) + "</h1>";
+      '<h1 style="margin:4px 0 0;font-size:23px">' + esc(patTitulek(p)) + "</h1>" +
+      '<div class="dlinks"><a class="btn-ext" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + (hotovo ? "Zpráva na webu policie " : "Foto a popis na webu policie ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>";
     if (hotovo) {
-      h += '<div class="card dcard"><div class="ptext">Policie pátrání odvolala. Děkujeme všem, kdo zprávu sdíleli a pomáhali. Popis osoby už proto neukazujeme.</div></div>' +
-        '<div class="dlinks"><a class="btn-ext" href="' + esc(p.url) + '" target="_blank" rel="noopener">Zpráva na webu policie ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>";
+      h += '<div class="card dcard"><div class="ptext">Policie pátrání odvolala. Děkujeme všem, kdo zprávu sdíleli a pomáhali. Popis osoby už proto neukazujeme.</div></div>';
     } else {
       h += '<div class="card dcard"><div class="ptext">' + esc(p.perex || "") + "</div>" +
         ((p.mista || []).length ? '<div class="pmista">' + p.mista.map(function (m) { return "<span>" + esc(m) + "</span>"; }).join("") + "</div>" : "") +
         '<div class="dnote" style="margin-top:10px">Text je úvod policejní zprávy. Celý popis a fotografie jsou jen na webu policie.</div></div>' +
         '<a class="btn-158" href="tel:158">' + SVG(I_TEL, 18, "currentColor", 2.2) + "Viděli jste tuto osobu? Volejte 158</a>" +
-        '<div class="dlinks"><a class="btn-ext" href="' + esc(p.url) + '" target="_blank" rel="noopener">Popis a foto na webu policie ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
         '<div class="card dcard"><div class="dtitle">Když osobu uvidíte</div><div class="ptext" style="font-size:14px">Zůstaňte s ní nebo ji sledujte z dálky, zavolejte 158 a řekněte, kde přesně jste. Osobu nikam neodvážejte.</div></div>';
     }
     return h + '<div class="note" style="padding:0 4px">Zdroj: zpravodajství Policie ČR, KŘP hl. m. Prahy' + (gen ? ", ověřeno " + vDen(gen, ted).toLowerCase() + " v " + vHod(gen) : "") +
