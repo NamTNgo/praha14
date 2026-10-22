@@ -430,3 +430,9 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .zprs { margin-top:2px; }
 .zpr { display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid #ece8da; color:var(--ink); text-decoration:none; font-size:13.5px; font-weight:600; line-height:1.35; }
 .zpr small { flex:none; font-size:12px; font-weight:700; color:#8a8572; display:inline-flex; align-items:center; gap:3px; }
+/* sdílení */
+.btn-share { gap:6px; border:none; font-family:inherit; cursor:pointer; }
+.toast { position:fixed; left:50%; bottom:88px; transform:translateX(-50%); max-width:340px; width:calc(100% - 40px); background:#1f241f; color:#fff; font-size:14px; font-weight:600; line-height:1.35; padding:12px 16px; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:50; transition:opacity .4s; text-align:center; }
+.toast.pryc { opacity:0; }
+.sdcta { padding:18px; background:#f4f8f3; border-color:#dfe8dd; }
+.sdcta .btn { width:100%; }
