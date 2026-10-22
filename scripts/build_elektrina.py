@@ -28,7 +28,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_rizeni import (DATA, NOW, P9, P9_DESKA, P14, html_text, pdf_text, plain, stahni)  # noqa: E402
 
-VERZE = 1
+VERZE = 2
 LOG = []
 LADENI = []
 JE_PRE = re.compile(r"přerušení dodávky elektř|preruseni dodavky elektr|vypnutí elektř|odstávk\w* elektř", re.I)
@@ -132,18 +132,28 @@ CAS = re.compile(r"(\d{1,2})\s*[:.]\s*(\d{2})")
 
 
 def dny_a_cas(t, nazev):
-    """Dny přerušení a časové okno. Datum vystavení a vyvěšení ignorujeme."""
+    """Dny přerušení a časové okno z úseku „dne … od … do …“ (před větou „Dodávka elektřiny bude…“).
+    V oznámení bývají mezi popisky zbytky tabulky („od: | 8.00 hod.“) a datum někdy až za „od:“,
+    proto bereme všechna data a časy z celého úseku. Datum vystavení je až za ním."""
     s = re.sub(r"\s+", " ", t)
-    blok = re.search(r"dne\s*:?\s*(.{0,120}?)\s*od\s*:?\s*(\d{1,2}\s*[:.]\s*\d{2})\s*(?:hod\.?)?\s*do\s*:?\s*(\d{1,2}\s*[:.]\s*\d{2})", s, re.I)
-    dny, od, do = [], None, None
-    if blok:
-        dny = ["%s-%02d-%02d" % (m.group(3), int(m.group(2)), int(m.group(1))) for m in DATUM.finditer(blok.group(1))]
-        od, do = ["%02d:%s" % (int(CAS.search(x).group(1)), CAS.search(x).group(2)) for x in (blok.group(2), blok.group(3))]
-    if not dny:   # Praha 9 má datum často v názvu („…dne 03.11.2026 8.00 - 11.00 hod“)
-        dny = ["%s-%02d-%02d" % (m.group(3), int(m.group(2)), int(m.group(1))) for m in DATUM.finditer(nazev)]
+    m = re.search(r"\bdne\b(.{0,220}?)(?:Dodávka elektřiny|Dodavka elektriny|$)", s, re.I)
+    usek = m.group(1) if m else ""
+    # časté chyby OCR v číslech: S→5, O→0, l/I→1 (jen hned vedle číslic)
+    usek = re.sub(r"(?<=[\d.])[Oo]|[Oo](?=[\d.])", "0", usek)
+    usek = re.sub(r"(?<![A-Za-zÀ-ž])S(?=\.\d)", "5", usek)
+    usek = re.sub(r"(?<=[\d.])[lI]|[lI](?=\d)", "1", usek)
+    dny = ["%s-%02d-%02d" % (d.group(3), int(d.group(2)), int(d.group(1))) for d in DATUM.finditer(usek)]
+    bez_dat = DATUM.sub(" ", usek)
+    casy = ["%02d:%s" % (int(c.group(1)), c.group(2)) for c in re.finditer(r"(?<!\d)(\d{1,2})\s*[:.]\s*(\d{2})(?!\d)", bez_dat)
+            if int(c.group(1)) <= 24 and int(c.group(2)) < 60]
+    od, do = (casy[0], casy[-1]) if len(casy) >= 2 else (None, None)
+    # Praha 9 má data často i v názvu („…dne 26.10.2026, 25.11.2026“) – sloučíme
+    dny += ["%s-%02d-%02d" % (d.group(3), int(d.group(2)), int(d.group(1))) for d in DATUM.finditer(nazev)]
+    if not od:
         c = re.search(r"(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})", nazev)
         if c:
             od, do = "%02d:%s" % (int(c.group(1)), c.group(2)), "%02d:%s" % (int(c.group(3)), c.group(4))
+    dny = [d for d in dny if "2020" < d[:4] < "2100"]
     return sorted(set(dny)), od, do
 
 
