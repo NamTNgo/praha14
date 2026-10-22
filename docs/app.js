@@ -1617,14 +1617,15 @@
       '<div class="stfz">' + stFz(p) + '<span class="fz f-plan">' + ST_KAT[stKat(p)][0] + "</span>" + stProdej(p) + "</div>" +
       '<h1 style="margin:2px 0 0;font-size:23px">' + esc(p.n) + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + esc((p.adr || []).slice(0, 3).join(", ")) + (d != null ? " · " + akVzdTxt(d) + " od vás" : "") + "</div>" +
+      // odkazy jako u škol: hned pod adresou, mapa první
+      '<div class="dlinks">' + (b ? '<a class="btn-ext" href="https://www.google.com/maps/search/?api=1&query=' + b[0] + "," + b[1] + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
+      (p.webp ? '<a class="btn-ext" href="' + esc(p.webp) + '" target="_blank" rel="noopener">' + (p.prodej ? "Web developera " : "Web projektu ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" :
+        p.prodej ? '<a class="btn-ext" href="' + esc(p.prodej.u) + '" target="_blank" rel="noopener">Prodej na novostavby.com ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
+      '<a class="btn-ext" href="' + esc(data.stavby.web + p.id) + '" target="_blank" rel="noopener">Projekt na CAMP Praha zítra ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
       (stKat(p) !== "uzemi" ? '<div class="card dcard"><div class="krok">' + kroky.map(function (t, k) { return '<div class="' + (k === i ? "now" : k < i ? "done" : "") + '">' + t + "</div>"; }).join("") + "</div></div>" : "") +
       (fakta.length ? '<div class="fgrid">' + fakta.map(function (f) { return '<div><div class="k">' + f[0] + '</div><div class="v">' + esc(f[1]) + "</div></div>"; }).join("") + "</div>" : "") +
       (popis === null && p._p ? '<div class="card dcard"><div class="dtitle">O projektu</div><div class="note" style="margin:0">Načítám popis…</div></div>' :
         popis ? '<div class="card dcard"><div class="dtitle">O projektu</div><div class="ptext stp">' + esc(popis) + "</div></div>" : "") +
-      '<div class="dlinks"><a class="btn-ext" href="' + esc(data.stavby.web + p.id) + '" target="_blank" rel="noopener">Projekt na CAMP Praha zítra ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
-      (p.webp ? '<a class="btn-ext" href="' + esc(p.webp) + '" target="_blank" rel="noopener">' + (p.prodej ? "Web developera " : "Web projektu ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" :
-        p.prodej ? '<a class="btn-ext" href="' + esc(p.prodej.u) + '" target="_blank" rel="noopener">Prodej na novostavby.com ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
-      (b ? '<a class="btn-ext" href="https://www.google.com/maps/search/?api=1&query=' + b[0] + "," + b[1] + '" target="_blank" rel="noopener">Mapa ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + "</div>" +
       '<div class="note" style="padding:0 4px">Údaje: CAMP – Praha zítra (IPR Praha)' + (mod ? ", naposledy upraveno " + (+mod[2]) + ". " + (+mod[1]) + ". " + mod[0] : "") +
       ". Termíny jsou odhady investora." + (p.obr && p.obrA ? " Obrázek: " + esc(p.obrA) + "." : "") + (p.prodej ? " Stav prodeje podle novostavby.com." : "") + (p.webp ? " Web projektu podle zdrojů IPR." : "") + "</div></div>";
   }
@@ -1736,11 +1737,11 @@
       '<div class="body" style="gap:12px;padding-bottom:28px"><div class="stfz">' + rzFz(z) + '<span class="fz f-plan">' + esc(z.druh) + "</span></div>" +
       '<h1 style="margin:2px 0 0;font-size:23px">' + esc(z.n) + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + esc(rzMisto(z)) + (d != null ? " · " + akVzdTxt(d) + " od vás" : "") + ", Praha " + esc(z.mc) + "</div>" +
+      '<div class="dlinks">' + (z.lat != null && z.presnost !== "ku" ? '<a class="btn-ext" href="https://www.google.com/maps/search/?api=1&query=' + z.lat + "," + z.lon + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
+      (last.u ? '<a class="btn-ext" href="' + esc(last.u) + '" target="_blank" rel="noopener">Vyhláška na úřední desce ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + "</div>" +
       '<div class="card dcard"><div class="dtitle">Průběh řízení</div><div class="tl">' + tl + "</div></div>" +
       (z.popis ? '<div class="card dcard"><div class="dtitle">Co se má stavět</div><div class="ptext">' + esc(z.popis.charAt(0).toUpperCase() + z.popis.slice(1)) + "</div></div>" : "") +
       (z.faze === "zahajeno" ? '<div class="prz"><b>Jste soused?</b>Vlastníci sousedních pozemků a domů bývají účastníky řízení. Námitky lze podat do 15 dnů od doručení vyhlášky – postup a lhůta jsou v ní.</div>' : "") +
-      '<div class="dlinks">' + (last.u ? '<a class="btn-ext" href="' + esc(last.u) + '" target="_blank" rel="noopener">Vyhláška na úřední desce ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
-      (z.lat != null && z.presnost !== "ku" ? '<a class="btn-ext" href="https://www.google.com/maps/search/?api=1&query=' + z.lat + "," + z.lon + '" target="_blank" rel="noopener">Mapa ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + "</div>" +
       '<div class="note" style="padding:0 4px">Zdroj: úřední deska MČ Praha ' + esc(z.mc) + "." + (z.presnost === "ulice" ? " Místo je určené jen podle ulice." : "") +
       " Jména stavebníků a další osobní údaje z vyhlášek v aplikaci neukazujeme.</div></div>";
   }
