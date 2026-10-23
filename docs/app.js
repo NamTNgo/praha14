@@ -751,8 +751,10 @@
       h += mimoDosah();
       return h;
     }
-    h += cisteniKarta(a);
-    h += parkovaniKarta(a);
+    // pořadí: co se právě děje nahoře (MHD výluky, blokové čištění), klidové sekce dole
+    var mhd = mhdSekce(pi);
+    if (pi.v.length) h += mhd;
+    if (c) h += cisteniKarta(a);
     var neh = nehodyPro(a);
     if (neh.length) {
       h += '<div class="label" id="nehody" style="scroll-margin-top:16px">Nehody a mimořádné události</div>';
@@ -791,7 +793,14 @@
         (state.dopVse ? "Zobrazit méně" : "Zobrazit všech " + uz.length + " " + sklonCount(uz.length)) +
         SVG(state.dopVse ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 13, "currentColor", 2.8) + "</button>";
     }
-    h += '<div class="label">MHD v okolí</div>';
+    h += parkovaniKarta(a);
+    if (!pi.v.length) h += mhd;
+    if (!c) h += cisteniKarta(a);
+    h += mimoDosah();
+    return h;
+  }
+  function mhdSekce(pi) {
+    var h = '<div class="label">MHD v okolí</div>';
     if (!pi.v.length) {
       h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_BUS2, 18, "#6b6652") +
         '</span><div class="grow"><div class="t1" style="color:#6b6557">Žádná výluka na zastávkách do 1 km</div>' +
@@ -803,7 +812,6 @@
           '<div class="t3" style="margin-top:3px">' + esc(p.t) + "</div>", "PID", p.u, "Výluka na pid.cz");
       }).join("") + "</div>";
     }
-    h += mimoDosah();
     return h;
   }
   // v článcích bývá za popisem ještě zhotovitel a telefon; do karty se to neplete
