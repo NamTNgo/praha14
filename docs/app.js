@@ -2215,11 +2215,11 @@
   // ---- spodní navigace ----
   var BI_ODPAD = '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>';
   var BI_SKOLY = '<path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.5 3 6 3s6-2 6-3v-5"/>';
-  var BI_DOPRAVA = '<path d="M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/>';
+  var BI_DOPRAVA = '<path d="M8.5 3 4 21M15.5 3 20 21"/><path d="M12 4v2.5M12 10.5v3M12 17.5v3"/>';
   var BI_LEKARI = '<path d="M11 2a2 2 0 0 0-2 2v2a3 3 0 0 0 6 0V4a2 2 0 0 0-2-2"/><path d="M12 9v3a4 4 0 0 1-8 0v-1"/><path d="M12 9v4a4 4 0 0 0 8 0v-1"/><circle cx="20" cy="11" r="2"/><circle cx="4" cy="11" r="2"/>';
   var BI_AKCE = '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>';
   var BI_DOMU = '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>';
-  var BI_BYDLENI = '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M12 10.5s2.5 2.6 2.5 4.4a2.5 2.5 0 0 1-5 0c0-1.8 2.5-4.4 2.5-4.4Z"/>';
+  var BI_BYDLENI = '<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h1.5M13.5 7H15M9 11h1.5M13.5 11H15M9 15h1.5M13.5 15H15"/><path d="M10.5 21v-2.5h3V21"/>';
   var BI_OKOLI = PIN;
   var NAV = [["domu", "Domů", BI_DOMU], ["doprava", "Doprava", BI_DOPRAVA], ["odpad", "Bydlení", BI_BYDLENI], ["akce", "Akce", BI_AKCE], ["okoli", "Okolí", BI_OKOLI]];
   function navOn(id) { return id === "okoli" ? (state.tab === "doktori" || state.tab === "skoly" || state.tab === "stavby") : state.tab === id; }
