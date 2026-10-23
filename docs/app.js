@@ -2093,6 +2093,14 @@
     return '<button type="button" class="card vkarta parkarta" id="parstart"><span class="badge" style="background:#fff">' + SVG(I_BULB, 20, "var(--green)") + "</span>" +
       '<span class="grow"><span class="pareb">Zapojte se' + (f.k === "vysledky" ? "" : " · do " + parDo(f)) + '</span><span class="vt">' + t[0] + '</span><span class="vs">' + t[1] + "</span></span>" + SVG(I_CHEV, 16, "#7d9a85", 2.4) + "</button>";
   }
+  // Praha 9 nemá participativní rozpočet – ukazujeme nejnovější výzvu z aktualit MČ (anketa, projednání, úklid)
+  function vyzvaKarta(a) {
+    var v = a && a.mc === "9" && data.vyzvy && data.vyzvy.p9 ? data.vyzvy.p9[0] : null;
+    if (!v) return "";
+    var d = v.do ? v.do.split("-") : null;
+    return '<a class="card vkarta parkarta" href="' + esc(v.u) + '" target="_blank" rel="noopener"><span class="badge" style="background:#fff">' + SVG(I_BULB, 20, "var(--green)") + "</span>" +
+      '<span class="grow"><span class="pareb">Zapojte se' + (d ? " · do " + +d[2] + ". " + +d[1] + "." : "") + '</span><span class="vt">' + esc(v.t) + '</span><span class="vs">Praha 9 se ptá obyvatel · na webu MČ</span></span>' + SVG(I_EXT, 14, "#7d9a85", 2.4) + "</a>";
+  }
   function viewPar() {
     var f = parFaze(), k = f ? f.k : "";
     var cta = k === "podani" ? ["Podat nápad do " + parDo(f), PAR_WEB + "/podat-projekt"] : k === "hlasovani" ? ["Hlasovat do " + parDo(f), PAR_WEB] :
@@ -2290,7 +2298,7 @@
       domuTile("odpad", BI_BYDLENI, "Bydlení", kont ? "Kontejnery " + meters(kont.d) : "Kontejnery dál než 1 km", vm ? "odstávka vody " + vodaKdy(vm).t.replace(/ bez vody$/, "").toLowerCase() : st === "ok" ? "voda bez odstávky" : "stav vody neověřen") +
       domuTile("akce", BI_AKCE, "Akce", tyd == null ? "Nedostupné" : tyd + " tento týden", bez ? bez + (bez >= 2 && bez <= 4 ? " právě probíhají" : " právě probíhá") : "v Praze 9 a 14") +
       domuTile("okoli", BI_OKOLI, "Okolí", (dk == null ? "– lékařů" : pl(dk, "lékař", "lékaři", "lékařů")) + " · " + (sk == null ? "– škol" : pl(sk, "škola", "školy", "škol")), stn ? pl(stn, "stavba", "stavby", "staveb") + " do 3 km" : "do 1 km") + "</div>";
-    h += parKarta(a) + zavKarta();
+    h += parKarta(a) + vyzvaKarta(a) + zavKarta();
     return h;
   }
   function domuAkce(act) {
@@ -2532,8 +2540,8 @@
   function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; }), getJSON("data/akce.json").catch(function () { return null; }), getJSON("data/voda.json").catch(function () { return null; }), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; }), getJSON("data/rizeni.json").catch(function () { return null; }), getJSON("data/elektrina.json").catch(function () { return null; }), getJSON("data/opatreni.json").catch(function () { return null; }), getJSON("data/zps.json").catch(function () { return null; }), getJSON("data/eia.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17], elektrina: v[18], opatreni: v[19], zps: v[20], eia: v[21] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getJSON("data/nehody.json").catch(function () { return null; }), getJSON("data/akce.json").catch(function () { return null; }), getJSON("data/voda.json").catch(function () { return null; }), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; }), getJSON("data/rizeni.json").catch(function () { return null; }), getJSON("data/elektrina.json").catch(function () { return null; }), getJSON("data/opatreni.json").catch(function () { return null; }), getJSON("data/zps.json").catch(function () { return null; }), getJSON("data/eia.json").catch(function () { return null; }), getJSON("data/vyzvy.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17], elektrina: v[18], opatreni: v[19], zps: v[20], eia: v[21], vyzvy: v[22] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       state.address = load();
