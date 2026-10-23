@@ -1,0 +1,25 @@
+# Nasazuje GitHub Actions (.github/workflows/worker.yml) při změně ve složce worker/.
+# Tajné hodnoty (NDIC_USER, NDIC_PASS, PROXY_TOKEN, GH_TOKEN) zůstávají v Cloudflare, sem nepatří.
+name = "ndic-proxy"
+main = "ndic-proxy.js"
+compatibility_date = "2026-10-01"
+keep_vars = true
+account_id = "becf7da87b8877ebce9a27ecb3626b6b"
+
+[[r2_buckets]]
+binding = "NDIC_BUCKET"
+bucket_name = "ndic-data"
+
+[[durable_objects.bindings]]
+name = "STAHOVAC"
+class_name = "Stahovac"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Stahovac"]
+
+[triggers]
+crons = ["*/10 * * * *"]
+
+[observability]
+enabled = true

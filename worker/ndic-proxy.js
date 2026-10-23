@@ -21,6 +21,27 @@ const GH_WORKFLOW = "nehody.yml";
 
 const STATUS = "status.json";
 
+import { DurableObject } from "cloudflare:workers";
+
+// Cron Workeru běží kdekoli na světě (např. DFW = Dallas) a odtamtud ŘSD vrací 522.
+// Stahování proto dělá Durable Object založený ve východní Evropě (locationHint "eeur"),
+// odkud je ŘSD dostupné (ověřeno z VIE). Cron ho jen zavolá.
+export class Stahovac extends DurableObject {
+  async fetch(request) {
+    try {
+      await refresh(this.env);
+      return new Response("ok");
+    } catch (e) {
+      return new Response(String(e && e.message || e), { status: 502 });
+    }
+  }
+}
+
+function stahovac(env) {
+  const ns = env.STAHOVAC;
+  return ns.get(ns.idFromName("ndic-eu"), { locationHint: "eeur" });
+}
+
 // jeden pokus o stažení s časovým limitem (bez limitu fetch visí, než ho Cloudflare utne)
 async function stahni(env, ms) {
   const ctl = new AbortController();
@@ -102,12 +123,8 @@ export default {
     // ruční naplnění: /refresh stáhne ŘSD rovnou a nahlásí výsledek (volá se z Prahy)
     if (new URL(request.url).pathname === "/refresh") {
       if (!env.NDIC_BUCKET) return new Response("chybí binding NDIC_BUCKET\n", { status: 500 });
-      try {
-        await refresh(env);
-        return new Response("ok\n");
-      } catch (e) {
-        return new Response("refresh error: " + e + "\n", { status: 500 });
-      }
+      const r = await stahovac(env).fetch("https://stahovac/refresh");
+      return new Response((r.ok ? "ok" : "refresh error: " + (await r.text())) + "\n", { status: r.ok ? 200 : 500 });
     }
     // stav posledního stahování (bez tajných údajů) – čte ho GitHub a kontrola zdraví dat
     if (new URL(request.url).pathname === "/status") {
@@ -127,10 +144,9 @@ export default {
   // cron: stáhne ŘSD do R2 a hned spustí parsování na GitHubu (spolehlivý plánovač)
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
-      try {
-        await refresh(env);
-      } catch (e) {
-        console.error(String(e && e.message || e));
+      const r = await stahovac(env).fetch("https://stahovac/refresh");
+      if (!r.ok) {
+        console.error("NDIC přes evropský Durable Object selhal: " + (await r.text()));
         return;                      // bez nových dat GitHub nespouštíme
       }
       await spustGithub(env);
