@@ -19,19 +19,49 @@ const KEY = "latest.xml";
 const GH_REPO = "NamTNgo/praha14";
 const GH_WORKFLOW = "nehody.yml";
 
+const STATUS = "status.json";
+
+// jeden pokus o stažení s časovým limitem (bez limitu fetch visí, než ho Cloudflare utne)
+async function stahni(env, ms) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), ms);
+  try {
+    const r = await fetch(UPSTREAM, {
+      signal: ctl.signal,
+      headers: {
+        Authorization: "Basic " + btoa(env.NDIC_USER + ":" + env.NDIC_PASS),
+        Accept: "application/xml, text/xml, */*",
+      },
+    });
+    if (!r.ok) throw new Error("upstream HTTP " + r.status);
+    return await r.arrayBuffer();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+// stáhne ŘSD do R2; při chybě jednou zopakuje a výsledek uloží do status.json (čte ho /status)
 async function refresh(env) {
-  const r = await fetch(UPSTREAM, {
-    headers: {
-      Authorization: "Basic " + btoa(env.NDIC_USER + ":" + env.NDIC_PASS),
-      Accept: "application/xml, text/xml, */*",
-    },
-  });
-  if (!r.ok) throw new Error("upstream " + r.status);
+  let buf = null, chyby = [];
+  for (const ms of [60000, 90000]) {
+    try {
+      buf = await stahni(env, ms);
+      break;
+    } catch (e) {
+      chyby.push(e && e.name === "AbortError" ? "timeout po " + ms / 1000 + " s" : String(e && e.message || e));
+    }
+  }
+  const stav = { at: new Date().toISOString(), ok: !!buf, chyby, bytes: buf ? buf.byteLength : 0 };
+  await env.NDIC_BUCKET.put(STATUS, JSON.stringify(stav), { httpMetadata: { contentType: "application/json" } });
+  if (!buf) {
+    console.error("NDIC refresh selhal: " + chyby.join(" | "));
+    throw new Error("NDIC refresh selhal: " + chyby.join(" | "));
+  }
   // R2.put chce známou délku; stream z fetche ji nemá, proto napřed do paměti
-  const buf = await r.arrayBuffer();
   await env.NDIC_BUCKET.put(KEY, buf, {
     httpMetadata: { contentType: "application/xml; charset=utf-8" },
   });
+  console.log("NDIC refresh ok, " + buf.byteLength + " B");
 }
 
 export default {
@@ -50,6 +80,11 @@ export default {
         return new Response("refresh error: " + e + "\n", { status: 500 });
       }
     }
+    // stav posledního stahování (bez tajných údajů) – čte ho GitHub a kontrola zdraví dat
+    if (new URL(request.url).pathname === "/status") {
+      const st = await env.NDIC_BUCKET.get(STATUS);
+      return new Response(st ? await st.text() : "{}", { headers: { "Content-Type": "application/json" } });
+    }
     const obj = await env.NDIC_BUCKET.get(KEY);
     if (!obj) return new Response("No data yet\n", { status: 503 });
     return new Response(obj.body, {
@@ -63,7 +98,12 @@ export default {
   // cron: stáhne ŘSD do R2 a hned spustí parsování na GitHubu (spolehlivý plánovač)
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
-      await refresh(env);
+      try {
+        await refresh(env);
+      } catch (e) {
+        console.error(String(e && e.message || e));
+        return;                      // bez nových dat GitHub nespouštíme
+      }
       await spustGithub(env);
     })());
   },
