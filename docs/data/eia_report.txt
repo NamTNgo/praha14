@@ -15,5 +15,6 @@ kandidátů: 19
   PHA1278 Výroba filamentů do 3D tiskáren Prusa - navýšení kapacity vý · Nepodléhá dalšímu posuzování · Libeň
   PHA1280 Energetické centrum Malešice · Závěry zjišťovacího řízení · Hrdlořezy, Kyje
   PHA1284 Recyklační středisko Hloubětín - EcoVera · Ukončeno z jiných důvodů · Hloubětín
-  PHA1294 Košinka II · Nepodléhá dalšímu posuzování · Libeň
-  ! detail PLK1923 <urlopen error timed out>
+  ! detail PHA1294 <urlopen error [Errno 111] Connection refused>
+  ! detail PLK1923 <urlopen error [Errno 111] Connection refused>
+  ! detail ULK1341 <urlopen error [Errno 111] Connection refused>
