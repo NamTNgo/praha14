@@ -608,7 +608,7 @@
     oKrokZpet();
   }
   window.addEventListener("popstate", function () {
-    if (state.zav && state.zav !== "list") { state.zav = "list"; render(); window.scrollTo(0, 0); }
+    if (state.zav && state.zav !== "list" && state.zav !== "par") { state.zav = "list"; render(); window.scrollTo(0, 0); }
     else if (state.vodaSel || state.patSel || state.zav) vodaKrokZpet();
     else if (state.tab === "akce" && state.akHist.length) akKrokZpet();
     else if (state.tab === "doktori" && state.dkHist.length) dkKrokZpet();
@@ -2072,6 +2072,41 @@
     try { history.pushState({ voda: 1 }, ""); } catch (e) {}
     render(); window.scrollTo(0, 0);
   }
+  // ---- Zapojte se: participativní rozpočet Prahy 14 (termíny podle pravidel 5. ročníku, kontrolovat jednou ročně) ----
+  var I_BULB = '<path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/>';
+  var PAR_WEB = "https://projekty.praha14.cz/paroz/participativni-rozpocet";
+  var PAR = [
+    { k: "podani", n: "Podávání nápadů", od: "2026-10-01", do: "2026-12-31", t: "1. 10. – 31. 12. 2026" },
+    { k: "kontrola", n: "Kontrola úřadem", od: "2027-01-01", do: "2027-04-30", t: "leden – duben 2027" },
+    { k: "hlasovani", n: "Hlasování obyvatel", od: "2027-06-01", do: "2027-06-20", t: "1. – 20. 6. 2027" },
+    { k: "vysledky", n: "Výsledky", od: "2027-07-01", do: "2027-07-31", t: "červenec 2027" },
+    { k: "realizace", n: "Realizace", od: "2027-10-01", do: "2029-12-31", t: "od října 2027" }
+  ];
+  function parFaze() { var d = isoDen(new Date()); return PAR.filter(function (f) { return f.od <= d && d <= f.do; })[0] || null; }
+  function parDo(f) { var x = f.do.split("-"); return +x[2] + ". " + +x[1] + "."; }
+  function parKarta(a) {
+    var f = parFaze();
+    if (!a || a.mc !== "14" || !f || (f.k !== "podani" && f.k !== "hlasovani" && f.k !== "vysledky")) return "";
+    var t = f.k === "podani" ? ["Máte nápad pro svou čtvrť?", "Praha 14 ho může zaplatit z participativního rozpočtu"] :
+      f.k === "hlasovani" ? ["Hlasujte o projektech pro Prahu 14", "Které nápady sousedů se uskuteční, rozhodujete vy"] :
+      ["Známe vítěze participativního rozpočtu", "Podívejte se, co se v Praze 14 postaví"];
+    return '<button type="button" class="card vkarta parkarta" id="parstart"><span class="badge" style="background:#fff">' + SVG(I_BULB, 20, "var(--green)") + "</span>" +
+      '<span class="grow"><span class="pareb">Zapojte se' + (f.k === "vysledky" ? "" : " · do " + parDo(f)) + '</span><span class="vt">' + t[0] + '</span><span class="vs">' + t[1] + "</span></span>" + SVG(I_CHEV, 16, "#7d9a85", 2.4) + "</button>";
+  }
+  function viewPar() {
+    var f = parFaze(), k = f ? f.k : "";
+    var cta = k === "podani" ? ["Podat nápad do " + parDo(f), PAR_WEB + "/podat-projekt"] : k === "hlasovani" ? ["Hlasovat do " + parDo(f), PAR_WEB] :
+      k === "vysledky" ? ["Výsledky hlasování", PAR_WEB + "/vysledky-hlasovani"] : ["Web participativního rozpočtu", PAR_WEB];
+    return zavHlav("Participativní rozpočet").replace('<div class="eyebrow">Nahlásit</div>', '<div class="eyebrow">Zapojte se · Praha 14</div>') +
+      '<div class="ptext" style="font-size:15px">Navrhněte, co by se mělo v okolí zlepšit – lavičky, zeleň, hřiště, komunitní akce. Nejlepší nápady vyberou v hlasování sami obyvatelé a městská část je zaplatí.</div>' +
+      '<a class="btn zavbtn" href="' + cta[1] + '" target="_blank" rel="noopener">' + esc(cta[0]) + " " + SVG(I_EXT, 14, "#fff", 2.4) + "</a>" +
+      '<a class="btn-ext" style="align-self:center" href="' + PAR_WEB + '/zasady" target="_blank" rel="noopener">Pravidla a příklady projektů ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
+      '<div class="card dcard"><div class="dtitle">Jak to probíhá</div>' + PAR.map(function (x) {
+        var on = x.k === k;
+        return '<div class="parf' + (on ? " on" : "") + '"><i></i><div><div class="pn">' + esc(x.n) + (on ? ' <span class="parted">teď</span>' : "") + '</div><div class="pt">' + esc(x.t) + "</div></div></div>";
+      }).join("") + "</div>" +
+      '<div class="note">Až začne hlasování, připomeneme ho tady i na Domů.</div></div>';
+  }
   function openEl(id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };
     state.elSel = String(id); state.elVse = false;
@@ -2255,7 +2290,7 @@
       domuTile("odpad", BI_BYDLENI, "Bydlení", kont ? "Kontejnery " + meters(kont.d) : "Kontejnery dál než 1 km", vm ? "odstávka vody " + vodaKdy(vm).t.replace(/ bez vody$/, "").toLowerCase() : st === "ok" ? "voda bez odstávky" : "stav vody neověřen") +
       domuTile("akce", BI_AKCE, "Akce", tyd == null ? "Nedostupné" : tyd + " tento týden", bez ? bez + (bez >= 2 && bez <= 4 ? " právě probíhají" : " právě probíhá") : "v Praze 9 a 14") +
       domuTile("okoli", BI_OKOLI, "Okolí", (dk == null ? "– lékařů" : pl(dk, "lékař", "lékaři", "lékařů")) + " · " + (sk == null ? "– škol" : pl(sk, "škola", "školy", "škol")), stn ? pl(stn, "stavba", "stavby", "staveb") + " do 3 km" : "do 1 km") + "</div>";
-    h += zavKarta();
+    h += parKarta(a) + zavKarta();
     return h;
   }
   function domuAkce(act) {
@@ -2327,6 +2362,7 @@
     else if (state.patSel && patById(state.patSel)) html = viewPatraniDetail(patById(state.patSel));
     else if (state.vodaSel && vodaById(state.vodaSel)) html = viewVodaDetail(vodaById(state.vodaSel));
     else if (state.elSel && elById(state.elSel)) html = viewElDetail(elById(state.elSel));
+    else if (state.zav === "par") html = viewPar();
     else if (state.zav) html = viewZavada();
     else if (state.tab === "skoly" && data.skoly && state.skView === "detail" && skById(state.skSel)) html = viewSkolaDetail(skById(state.skSel));
     else if (state.tab === "skoly" && data.skoly && state.skView === "full") html = viewSkolyFull();
@@ -2399,6 +2435,8 @@
     app.querySelectorAll("[data-okseg]").forEach(function (b) { b.addEventListener("click", function () { state.okSeg = b.getAttribute("data-okseg"); prepniTab(state.okSeg); }); });
     var zs = document.getElementById("zavstart");
     if (zs) zs.addEventListener("click", function () { openZav(); });
+    var ps = document.getElementById("parstart");
+    if (ps) ps.addEventListener("click", function () { openZav("par"); });
     app.querySelectorAll("[data-zav]").forEach(function (b) { b.addEventListener("click", function () { state.zav = b.getAttribute("data-zav"); state.zavTxt = ""; state.zavPoz = null; try { history.pushState({ voda: 1 }, ""); } catch (e) {} render(); window.scrollTo(0, 0); }); });
     var zt = document.getElementById("zavtxt");
     if (zt) zt.addEventListener("input", function () { state.zavTxt = zt.value; });

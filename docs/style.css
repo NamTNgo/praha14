@@ -448,3 +448,15 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .zavtxt{width:100%;margin-top:6px;font:inherit;font-size:15px;color:var(--ink);border:1px solid #ddd8c8;border-radius:10px;padding:10px 12px;resize:vertical;background:#fff}
 .zavtxt:focus{outline:2px solid var(--green);outline-offset:0;border-color:transparent}
 .zavbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none;font-size:15.5px;font-weight:800;padding:15px}
+/* zapojte se – participativní rozpočet */
+.parkarta{margin-top:14px;background:#eef4ea;border-color:#cfe0c6}
+.parkarta + .zavkarta{margin-top:10px}
+.pareb{display:block;font-size:11.5px;font-weight:700;color:#3d6b4f;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.parkarta .vs{color:#4d5a4f}
+.parf{display:flex;gap:12px;align-items:flex-start;padding:7px 0}
+.parf i{width:12px;height:12px;border-radius:50%;margin-top:4px;flex-shrink:0;border:2px solid #cfc9b6}
+.parf.on i{background:var(--green);border-color:var(--green)}
+.parf .pn{font-weight:600;font-size:14.5px}
+.parf.on .pn{font-weight:800}
+.parf .pt{font-size:12.5px;color:var(--muted)}
+.parted{font-size:11px;background:#e1ece4;color:var(--green);padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700}
