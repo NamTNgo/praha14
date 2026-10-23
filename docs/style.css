@@ -436,3 +436,15 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .toast.pryc { opacity:0; }
 .sdcta { padding:18px; background:#f4f8f3; border-color:#dfe8dd; }
 .sdcta .btn { width:100%; }
+/* nahlášení závady */
+.zavkarta{margin-top:14px}
+.vt{display:block;font-weight:800;font-size:15px}
+.vs{display:block;font-size:13px;color:var(--muted);margin-top:2px;line-height:1.35}
+.zavlist{padding:0;overflow:hidden}
+.zavrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;background:#fff;border:none;border-top:1px solid var(--line);padding:13px 16px;cursor:pointer}
+.zavrow:first-child{border-top:none}
+.zavrow .vt{font-weight:700}
+.zavkde{display:flex;align-items:center;gap:10px;margin-top:6px}
+.zavtxt{width:100%;margin-top:6px;font:inherit;font-size:15px;color:var(--ink);border:1px solid #ddd8c8;border-radius:10px;padding:10px 12px;resize:vertical;background:#fff}
+.zavtxt:focus{outline:2px solid var(--green);outline-offset:0;border-color:transparent}
+.zavbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none;font-size:15.5px;font-weight:800;padding:15px}

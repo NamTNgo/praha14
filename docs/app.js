@@ -608,7 +608,8 @@
     oKrokZpet();
   }
   window.addEventListener("popstate", function () {
-    if (state.vodaSel || state.patSel) vodaKrokZpet();
+    if (state.zav && state.zav !== "list") { state.zav = "list"; render(); window.scrollTo(0, 0); }
+    else if (state.vodaSel || state.patSel || state.zav) vodaKrokZpet();
     else if (state.tab === "akce" && state.akHist.length) akKrokZpet();
     else if (state.tab === "doktori" && state.dkHist.length) dkKrokZpet();
     else if (state.tab === "stavby" && state.stHist.length) stKrokZpet();
@@ -1447,7 +1448,7 @@
   }
   function vodaKrokZpet() {
     var z = state.vodaZ || { tab: state.tab, y: 0 };
-    state.vodaSel = null; state.patSel = null; state.elSel = null; state.tab = z.tab; render(); window.scrollTo(0, z.y || 0);
+    state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.tab = z.tab; render(); window.scrollTo(0, z.y || 0);
   }
   function vodaBack() {
     if (state.sdil) { sdilKonec(); return; }
@@ -1996,6 +1997,81 @@
       dcard("Porucha mimo ohlášený čas", drow("Poruchová linka PREdistribuce", "800 823 823", { href: "tel:800823823", icon: I_PH })) +
       '<div class="note" style="padding:0 4px">Zdroj: oznámení PREdistribuce na úřední desce MČ Praha ' + esc(u.mc.join(" a ")) + (gen ? ", ověřeno " + vDen(gen, ted) + " v " + vHod(gen) : "") + ". Desky kontrolujeme dvakrát denně.</div></div>";
   }
+  // ---- nahlášení závady (úřad / správce podle MČ, e-mail se připraví za uživatele) ----
+  var I_FLAG = '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>';
+  var I_MAIL = '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>';
+  var ZAV_P9 = { kdo: "Kontrola čistoty a černých skládek, ÚMČ Praha 9", m: "fialam@praha9.cz", t: "283 091 369" };
+  var ZAV_P14 = { kdo: "Odbor životního prostředí ÚMČ Praha 14", m: "Marketa.Adamkova@praha14.cz", cc: "Lukas.Wesselsky@praha14.cz", t: "225 295 325" };
+  var ZAV = [
+    { k: "neporadek", n: "Nepořádek a černá skládka", p: "Např. u kontejnerů leží matrace a pytle se sutí", "9": ZAV_P9, "14": ZAV_P14 },
+    { k: "kontejner", n: "Přeplněný kontejner na tříděný odpad", p: "Např. plasty přetékají už druhý den", "9": ZAV_P9,
+      "14": { kdo: "Odbor životního prostředí ÚMČ Praha 14", m: "Pavel.Brazdil@praha14.cz", t: "225 295 332" } },
+    { k: "zelen", n: "Dětské hřiště, zeleň, lavičky", p: "Např. rozbitá houpačka, zlomená větev, poničená lavička",
+      "9": { kdo: "Úřad MČ Praha 9", m: "podatelna@praha9.cz", t: "283 091 111" }, "14": ZAV_P14 },
+    { k: "lampa", n: "Nesvítí lampa", p: "Např. nesvítí lampa před vchodem, na sloupu je číslo …",
+      vse: { kdo: "Technologie hl. m. Prahy", m: "poruchyvo@thmp.cz", t: "800 404 060" } },
+    { k: "silnice", n: "Díra v silnici, značka, semafor", vse: { kdo: "Technická správa komunikací (TSK)", web: "https://zavady.tsk-praha.cz/" } },
+    { k: "voda", n: "Voda, kanalizace", vse: { kdo: "Pražské vodovody a kanalizace", t: "840 111 112", tel: 1, pozn: "Poruchy vodovodu a kanalizace přijímá dispečink nonstop po telefonu." } },
+    { k: "el", n: "Elektřina", vse: { kdo: "PREdistribuce", t: "800 823 823", tel: 1, pozn: "Poruchy dodávky elektřiny přijímá poruchová linka nonstop." } },
+    { k: "plyn", n: "Plyn – cítíte plyn", vse: { kdo: "Pražská plynárenská – pohotovost", t: "1239", tel: 1, pozn: "Cítíte-li plyn, nezapínejte elektrické spotřebiče ani světla, otevřete okna, odejděte a volejte." } }
+  ];
+  function zavKat(k) { return ZAV.filter(function (z) { return z.k === k; })[0]; }
+  function zavKam(z) { var a = state.address; return z.vse || z[a && a.mc === "9" ? "9" : "14"]; }
+  function zavKarta() {
+    return '<button type="button" class="card vkarta zavkarta" id="zavstart"><span class="badge" style="background:#fbe9dc">' + SVG(I_FLAG, 20, "#a2501c") + "</span>" +
+      '<span class="grow"><span class="vt">Něco tu není v pořádku?</span><span class="vs">Nahlaste nepořádek, rozbitou lampu nebo díru v silnici</span></span>' + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+  }
+  function zavHlav(t) {
+    return '<div class="head"><button type="button" class="btn-edit" id="vodaback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
+      '<div class="body" style="gap:12px;padding-bottom:28px"><div class="eyebrow">Nahlásit</div><h1 style="margin:0;font-size:24px">' + esc(t) + "</h1>";
+  }
+  function viewZavada() {
+    var a = state.address, z = zavKat(state.zav);
+    if (!z) {
+      return zavHlav("Co se děje?") + '<div class="card zavlist">' + ZAV.map(function (x) {
+        var k = zavKam(x);
+        return '<button type="button" class="zavrow" data-zav="' + x.k + '"><span class="grow"><span class="vt">' + esc(x.n) + '</span><span class="vs">' + esc(k.kdo) +
+          (k.tel ? " · telefon" : k.web ? " · formulář" : " · e-mail") + "</span></span>" + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+      }).join("") + "</div></div>";
+    }
+    var k = zavKam(z), h = zavHlav(z.n);
+    if (k.tel) {
+      return h + '<div class="card dcard"><div class="ptext" style="font-size:15px">' + esc(k.pozn) + " Volejte <b>" + esc(k.kdo) + "</b>.</div>" +
+        '<a class="btn zavbtn" href="tel:' + k.t.replace(/\s/g, "") + '">' + SVG(I_PH_P, 18, "#fff", 2.2) + "Zavolat " + esc(k.t) + "</a>" +
+        '<div class="note" style="text-align:center;margin-top:10px">Připravte si adresu: ' + esc(a.label) + "</div></div></div>";
+    }
+    if (k.web) {
+      return h + '<div class="card dcard"><div class="ptext" style="font-size:15px">Díry v silnici, poškozené značky a nefunkční semafory řeší <b>' + esc(k.kdo) + "</b> přes svůj formulář. Uveďte v něm adresu " + esc(a.label) + ".</div>" +
+        '<a class="btn zavbtn" href="' + k.web + '" target="_blank" rel="noopener">Otevřít formulář TSK ' + SVG(I_EXT, 14, "#fff", 2.4) + "</a></div></div>";
+    }
+    var poz = state.zavPoz;
+    return h + '<div class="card dcard"><div class="dtitle">Kde</div><div class="zavkde">' + SVG(PIN, 18, "var(--green)", 2.2) +
+      '<span class="grow"><b>' + (poz ? "Vaše aktuální poloha" : "U adresy " + esc(a.label)) + "</b></span></div>" +
+      (navigator.geolocation ? '<button type="button" class="link" id="zavpoz" style="margin-top:6px">' + (poz ? "Použít adresu " + esc(a.label) : "Použít mou aktuální polohu") + "</button>" : "") + "</div>" +
+      '<div class="card dcard"><div class="dtitle">Co přesně</div><textarea id="zavtxt" class="zavtxt" rows="4" placeholder="' + esc(z.p) + '">' + esc(state.zavTxt || "") + "</textarea>" +
+      '<div class="note" style="margin-top:8px">Fotku přiložíte v e-mailu.</div></div>' +
+      '<button type="button" class="btn zavbtn" id="zavsend">' + SVG(I_MAIL, 18, "#fff", 2.2) + "Odeslat úřadu</button>" +
+      '<div class="note" style="text-align:center">Otevře se váš e-mail s připraveným textem a mapou místa. Adresát: ' + esc(k.kdo) + ". Stačí odeslat.</div>" +
+      '<div class="card dcard"><div class="dtitle">Raději zavolat?</div><a class="vlink" style="margin-top:6px;display:inline-flex;gap:6px;align-items:center" href="tel:' + k.t.replace(/\s/g, "") + '">' + I_PH + esc(k.t) + "</a></div></div>";
+  }
+  var I_PH_P = '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/>';
+  function zavOdeslat() {
+    var a = state.address, z = zavKat(state.zav), k = zavKam(z), poz = state.zavPoz;
+    var lat = poz ? poz[0] : a.lat, lon = poz ? poz[1] : a.lon;
+    var txt = (state.zavTxt || "").trim();
+    var body = "Dobrý den,\n\nchci nahlásit: " + z.n.toLowerCase() + ".\n\n" +
+      "Místo: " + (poz ? "poblíž adresy " + a.label + " (podle polohy telefonu)" : a.label) + "\n" +
+      "Mapa: https://www.google.com/maps/search/?api=1&query=" + lat.toFixed(6) + "," + lon.toFixed(6) + "\n\n" +
+      (txt ? "Popis: " + txt + "\n\n" : "") + "Děkuji za vyřešení.\n\n--\nNahlášeno přes aplikaci Pod okny\n";
+    location.href = "mailto:" + k.m + "?" + (k.cc ? "cc=" + encodeURIComponent(k.cc) + "&" : "") +
+      "subject=" + encodeURIComponent("Hlášení: " + z.n + " – " + a.label) + "&body=" + encodeURIComponent(body);
+  }
+  function openZav(k) {
+    if (!state.zav) state.vodaZ = { tab: state.tab, y: window.scrollY };
+    state.zav = k || "list"; state.zavTxt = ""; state.zavPoz = null;
+    try { history.pushState({ voda: 1 }, ""); } catch (e) {}
+    render(); window.scrollTo(0, 0);
+  }
   function openEl(id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };
     state.elSel = String(id); state.elVse = false;
@@ -2179,6 +2255,7 @@
       domuTile("odpad", BI_BYDLENI, "Bydlení", kont ? "Kontejnery " + meters(kont.d) : "Kontejnery dál než 1 km", vm ? "odstávka vody " + vodaKdy(vm).t.replace(/ bez vody$/, "").toLowerCase() : st === "ok" ? "voda bez odstávky" : "stav vody neověřen") +
       domuTile("akce", BI_AKCE, "Akce", tyd == null ? "Nedostupné" : tyd + " tento týden", bez ? bez + (bez >= 2 && bez <= 4 ? " právě probíhají" : " právě probíhá") : "v Praze 9 a 14") +
       domuTile("okoli", BI_OKOLI, "Okolí", (dk == null ? "– lékařů" : pl(dk, "lékař", "lékaři", "lékařů")) + " · " + (sk == null ? "– škol" : pl(sk, "škola", "školy", "škol")), stn ? pl(stn, "stavba", "stavby", "staveb") + " do 3 km" : "do 1 km") + "</div>";
+    h += zavKarta();
     return h;
   }
   function domuAkce(act) {
@@ -2201,7 +2278,7 @@
   function prepniTab(t) {
     if (t === "okoli") t = state.okSeg || "doktori";
     if (t === "doktori" || t === "skoly" || t === "stavby") state.okSeg = t;
-    state.tab = t; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; state.vodaSel = null; state.patSel = null; state.elSel = null; state.stView = "list"; state.stHist = [];
+    state.tab = t; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.stView = "list"; state.stHist = [];
     render(); window.scrollTo(0, 0);
   }
   // přepínač Lékaři / Školy v záložce Okolí
@@ -2234,7 +2311,7 @@
   }
   function naSekci() {
     return data && state.address && !window.__err &&
-      !state.vodaSel && !state.patSel && !state.elSel && (state.tab === "domu" || state.tab === "odpad" || state.tab === "doprava" ||
+      !state.vodaSel && !state.patSel && !state.elSel && !state.zav && (state.tab === "domu" || state.tab === "odpad" || state.tab === "doprava" ||
        (state.tab === "skoly" && state.skView === "list") ||
        (state.tab === "doktori" && state.dkView === "list") ||
        (state.tab === "stavby" && state.stView === "list") ||
@@ -2250,6 +2327,7 @@
     else if (state.patSel && patById(state.patSel)) html = viewPatraniDetail(patById(state.patSel));
     else if (state.vodaSel && vodaById(state.vodaSel)) html = viewVodaDetail(vodaById(state.vodaSel));
     else if (state.elSel && elById(state.elSel)) html = viewElDetail(elById(state.elSel));
+    else if (state.zav) html = viewZavada();
     else if (state.tab === "skoly" && data.skoly && state.skView === "detail" && skById(state.skSel)) html = viewSkolaDetail(skById(state.skSel));
     else if (state.tab === "skoly" && data.skoly && state.skView === "full") html = viewSkolyFull();
     else if (state.tab === "doktori" && data.doktori && state.dkView === "detail" && dkById(state.dkSel)) html = viewDoktorDetail(dkById(state.dkSel));
@@ -2319,6 +2397,20 @@
     var elv = document.getElementById("elvse");
     if (elv) elv.addEventListener("click", function () { var y = window.scrollY; state.elVse = !state.elVse; render(); window.scrollTo(0, y); });
     app.querySelectorAll("[data-okseg]").forEach(function (b) { b.addEventListener("click", function () { state.okSeg = b.getAttribute("data-okseg"); prepniTab(state.okSeg); }); });
+    var zs = document.getElementById("zavstart");
+    if (zs) zs.addEventListener("click", function () { openZav(); });
+    app.querySelectorAll("[data-zav]").forEach(function (b) { b.addEventListener("click", function () { state.zav = b.getAttribute("data-zav"); state.zavTxt = ""; state.zavPoz = null; try { history.pushState({ voda: 1 }, ""); } catch (e) {} render(); window.scrollTo(0, 0); }); });
+    var zt = document.getElementById("zavtxt");
+    if (zt) zt.addEventListener("input", function () { state.zavTxt = zt.value; });
+    var zsn = document.getElementById("zavsend");
+    if (zsn) zsn.addEventListener("click", zavOdeslat);
+    var zp = document.getElementById("zavpoz");
+    if (zp) zp.addEventListener("click", function () {
+      if (state.zavPoz) { state.zavPoz = null; render(); return; }
+      zp.textContent = "Zjišťuji polohu…";
+      navigator.geolocation.getCurrentPosition(function (g) { state.zavPoz = [g.coords.latitude, g.coords.longitude]; render(); },
+        function () { zp.textContent = "Polohu se nepodařilo zjistit"; }, { enableHighAccuracy: true, timeout: 10000 });
+    });
     var vb = document.getElementById("vodaback");
     if (vb) vb.addEventListener("click", function () { vodaBack(); });
     var dmv = document.getElementById("domuvic");
@@ -2383,7 +2475,7 @@
     var akx = document.getElementById("akback");
     if (akx) akx.addEventListener("click", function () { akBack(); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "domu"; state.vodaSel = null; state.patSel = null; state.elSel = null; state.stView = "list"; state.stHist = []; state.domuVse = false; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "domu"; state.zav = null; state.vodaSel = null; state.patSel = null; state.elSel = null; state.stView = "list"; state.stHist = []; state.domuVse = false; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
