@@ -2105,7 +2105,7 @@
         t: (n <= 0 ? "Dnes" : n === 1 ? "Zítra" : dden(c.d)) + " blokové čištění", s: "v " + sklon(c.u) + (c.od ? " · " + c.od + "–" + (c.do || "") : "") + " · přeparkujte", act: "tab:doprava" });
     }
     var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 5000; })[0];
-    var uz = neh ? null : uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 300 && probiha(x.x); })[0];
+    var uz = uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 1000 && probiha(x.x); })[0];   // nejbližší probíhající do 1 km
     var rz = data.rizeni ? rzOkoli(a, RZ_DOMU, true)[0] : null;
     if (rz) r.push({ cls: "info", ic: RZ_IKONY[rz.z.druh] || I_DOC, fg: "#5b5b54", t: rz.z.druh + " · " + akVzdTxt(rz.d) + " od vás",
       s: rz.z.n + " · " + (RZ_FAZE[rz.z.faze] || RZ_FAZE.info)[1].toLowerCase() + " " + rzDat(rz.z.d), act: "rz:" + rz.z.id });
@@ -2225,7 +2225,7 @@
   function navOn(id) { return id === "okoli" ? (state.tab === "doktori" || state.tab === "skoly" || state.tab === "stavby") : state.tab === id; }
   function bottomNav() {
     // nové naléhavé upozornění, když jste mimo Domů → tečka na záložce
-    var tecka = state.tab !== "domu" && state.address && domuUpozorneni(state.address).some(function (x) { return x.cls === "now" || x.cls === "plan" || x.cls === "help"; });
+    var tecka = false;   // tečku na záložce Domů nepoužíváme
     return '<nav class="bnav" role="tablist">' + NAV.map(function (t) {
       var on = navOn(t[0]);
       return '<button type="button" class="' + (on ? "on" : "") + '" data-nav="' + t[0] + '" aria-selected="' + on + '"' + (t[0] === "domu" && tecka ? ' aria-label="Domů – nové upozornění"' : "") + '>' +
