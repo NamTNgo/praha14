@@ -54,7 +54,7 @@ async function refresh(env) {
   const stav = { at: new Date().toISOString(), ok: !!buf, chyby, bytes: buf ? buf.byteLength : 0 };
   await env.NDIC_BUCKET.put(STATUS, JSON.stringify(stav), { httpMetadata: { contentType: "application/json" } });
   if (!buf) {
-    console.error("NDIC refresh selhal: " + chyby.join(" | "));
+    console.error("NDIC refresh selhal (" + (await colo()) + "): " + chyby.join(" | "));
     throw new Error("NDIC refresh selhal: " + chyby.join(" | "));
   }
   // R2.put chce známou délku; stream z fetche ji nemá, proto napřed do paměti
@@ -64,9 +64,38 @@ async function refresh(env) {
   console.log("NDIC refresh ok, " + buf.byteLength + " B");
 }
 
+// datové centrum Cloudflare, ve kterém Worker právě běží (např. PRG, FRA)
+async function colo() {
+  try {
+    const t = await (await fetch("https://www.cloudflare.com/cdn-cgi/trace")).text();
+    return (t.match(/colo=(\w+)/) || [])[1] || "?";
+  } catch (e) {
+    return "?";
+  }
+}
+
+// diagnostika bez tokenu: jen zkusí spojení s ŘSD (bez přihlášení) – nic tajného nevrací
+async function test() {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 20000);
+  const t0 = Date.now();
+  let vysledek;
+  try {
+    const r = await fetch(UPSTREAM, { method: "HEAD", signal: ctl.signal });
+    vysledek = "HTTP " + r.status;
+  } catch (e) {
+    vysledek = e && e.name === "AbortError" ? "timeout 20 s" : "chyba: " + (e && e.message || e);
+  } finally {
+    clearTimeout(t);
+  }
+  return "datové centrum: " + (await colo()) + "\nŘSD odpověď: " + vysledek + " za " + (Date.now() - t0) + " ms\n" +
+    "(HTTP 401 nebo 405 = spojení funguje; 522 nebo timeout = Cloudflare se k ŘSD nedostane)\n";
+}
+
 export default {
   // GitHub Actions čte hotovou kopii z R2
   async fetch(request, env, ctx) {
+    if (new URL(request.url).pathname === "/test") return new Response(await test(), { headers: { "Content-Type": "text/plain; charset=utf-8" } });
     if (request.headers.get("Authorization") !== "Bearer " + env.PROXY_TOKEN) {
       return new Response("Forbidden\n", { status: 403 });
     }
