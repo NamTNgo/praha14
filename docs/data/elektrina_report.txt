@@ -1,3 +1,5 @@
 Praha 9: oznámení PRE na desce 7
-Praha 14: oznámení PRE na desce 9
-výstup: 15 plánovaných přerušení v Praze 9/14
+Praha 14: oznámení PRE na desce 8
+nové: PREdistribuce - oznámení o přerušení dodávky elektřiny dne 12.11.2026 8.00 - 15.00 hod
+    dny 2026-11-12 08:00–15:00 · adres 8 · ulic bez čísla -
+výstup: 14 plánovaných přerušení v Praze 9/14
