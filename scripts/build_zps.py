@@ -15,6 +15,8 @@ import json
 import os
 import re
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -40,8 +42,16 @@ def golemio(key, offset, bbox):
     q = {"primarySource": "tsk_v2", "boundingBox": bbox, "limit": 1000, "offset": offset}
     req = urllib.request.Request(G + "?" + urllib.parse.urlencode(q),
                                  headers={"X-Access-Token": key, "Accept": "application/json", "User-Agent": "pod-okny-bot"})
-    with urllib.request.urlopen(req, timeout=90) as r:
-        j = json.loads(r.read().decode("utf-8"))
+    for pokus in range(5):              # Golemio při souběhu s jinými úlohami vrací 429 – počkat a zkusit znovu
+        try:
+            with urllib.request.urlopen(req, timeout=90) as r:
+                j = json.loads(r.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError as e:
+            if e.code != 429 or pokus == 4:
+                raise
+            time.sleep(15 * (pokus + 1))
+    time.sleep(0.7)
     return j.get("features", j) if isinstance(j, dict) else j
 
 
