@@ -477,3 +477,19 @@ button.uzk{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
 button.uzk .t1,button.uzk .t2,button.uzk .t3,button.uzk .dsrc,button.uzk .note,button.uzk .dhead{display:block}
 button.uzk .dhead{display:flex}
 button.uzk > svg:last-child{align-self:center;flex-shrink:0}
+/* Tento týden u vás */
+.tydr{font-size:13px;color:var(--muted);font-weight:600}
+.card.tyd{padding:2px 16px 4px}
+.tydr1{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:none;border-top:1px solid var(--line);padding:10px 0;cursor:pointer}
+.card.tyd > .tydr1:first-child,.card.tyd > .tydklid + .tydr1{border-top:none}
+.tydd{width:40px;text-align:center;flex-shrink:0}
+.tydd b{display:block;font-size:12px;font-weight:800}
+.tydd small{display:block;font-size:11px;color:var(--muted)}
+.tydi{width:30px;height:30px;border-radius:9px;background:#f3f1ea;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tydt{display:block;font-weight:700;font-size:14.5px}
+.tyds{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.tydvic{width:100%;font:inherit;font-weight:700;font-size:13.5px;color:var(--green);background:none;border:none;border-top:1px solid var(--line);padding:10px 0;cursor:pointer}
+.tydklid{display:flex;gap:10px;align-items:center;padding:12px 0}
+.tydklid > span > span{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.tydkom{display:flex;gap:10px;align-items:center;padding:12px 0 8px;border-top:1px solid var(--line);font-size:13px;color:#4d5a4f;line-height:1.4}
+.tydkom svg{flex-shrink:0}

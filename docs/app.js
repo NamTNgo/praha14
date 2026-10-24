@@ -2057,6 +2057,7 @@
   }
   var I_PH_P = '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/>';
   function zavOdeslat() {
+    komZapis("hlaseni");
     var a = state.address, z = zavKat(state.zav), k = zavKam(z), poz = state.zavPoz;
     var lat = poz ? poz[0] : a.lat, lon = poz ? poz[1] : a.lon;
     var txt = (state.zavTxt || "").trim();
@@ -2154,6 +2155,7 @@
       document.querySelectorAll("#umtbox [data-umt]").forEach(function (t) {
         t.addEventListener("click", function () {
           var a = t.getAttribute("data-umt"), r = umtData[k] || { ano: 0, ne: 0, ja: null };
+          if (a === "ano" && r.ja !== "ano") komZapis("umt");
           // hned ukázat výsledek, server pak pošle přesná čísla
           if (r.ja) r[r.ja] = Math.max(0, r[r.ja] - 1);
           if (a !== "zrus") r[a] = (r[a] || 0) + 1;
@@ -2221,6 +2223,101 @@
     state.uzSel = k === "uz" ? id : null; state.tvSel = k === "tv" ? id : null;
     try { history.pushState({ voda: 1 }, ""); } catch (e) {}
     render(); window.scrollTo(0, 0);
+  }
+  // ---- Tento týden u vás (Domů) ----
+  var I_T_DROP = '<path d="M12 2.7s6 6.1 6 10.8a6 6 0 0 1-12 0C6 8.8 12 2.7 12 2.7Z"/>';
+  var I_T_BOLT = '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>';
+  var I_T_FIRE = '<path d="M12 22c4 0 7-2.7 7-7 0-4-3-6-4-9-2 2-2 4-2 4s-1-2-3-3c0 3-5 5-5 8 0 4.3 3 7 7 7Z"/>';
+  var I_T_SWEEP = '<path d="M3 21h18M6 21l2-8h8l2 8M10 13V4a2 2 0 0 1 4 0v9"/>';
+  var I_T_CONE = '<path d="M9.3 3h5.4l5.3 16H4L9.3 3Z"/><path d="M7 11h10M5.5 15.5h13"/>';
+  var I_T_CAL = '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>';
+  var I_T_USERS = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>';
+  var TYD_N = 5;
+  function pricti(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }   // bez 864e5 kvůli změně času
+  function tydOkno(ted) {
+    var d = den0(), po = pricti(d, -((d.getDay() + 6) % 7));
+    var pristi = ted.getDay() === 0 || ted.getDay() === 6;        // o víkendu už příští týden (zbytek týdne ukazuje „Dnes a zítra“)
+    if (pristi) po = pricti(po, 7);
+    return { od: po, do: pricti(po, 7), pristi: pristi };
+  }
+  function dm(d) { return d.getDate() + ". " + (d.getMonth() + 1) + "."; }
+  function hm(s) { return s ? String(s).replace(/^0/, "") : ""; }
+  function tydPolozky(a, ted) {
+    var w = tydOkno(ted), r = [], d0 = den0();
+    var v = function (d) { return d && d >= w.od && d < w.do && d >= d0; };
+    vodaPro(a).forEach(function (x) {
+      var od = vCas(x.u.od), dd = vCas(x.u.do);
+      if (v(akDen(od))) r.push({ d: od, ic: I_T_DROP, fg: "#2f6fb0", t: "Odstávka vody " + vHod(od) + (dd ? "–" + vHod(dd) : ""), s: ulicePrvni(x.u.adresy, 2), act: "voda:" + x.u.id });
+    });
+    elPro(a).forEach(function (x) {
+      if (v(akDen(x.x.od))) r.push({ d: x.x.od, ic: I_T_BOLT, fg: "#9a6a12", t: "Vypnutý proud" + (x.u.od ? " " + hm(x.u.od) + (x.u.do ? "–" + hm(x.u.do) : "") : ""), s: elUlice(x.u).slice(0, 2).join(", "), act: "el:" + x.u.id });
+    });
+    var o = outageFor(a);
+    if (o && v(new Date(o.from + "T00:00:00"))) r.push({ d: new Date(o.from + "T00:00:00"), ic: I_T_FIRE, fg: "#b8582a", t: "Odstávka teplé vody", s: "do " + dm(new Date(o.to + "T00:00:00")) + " · " + o.name, act: "tv:" + tvId(o) });
+    var c = cisteniPro(a);
+    if (c && v(new Date(c.d + "T00:00:00"))) {
+      var cd = new Date(c.d + "T00:00:00"), pred = pricti(cd, -1);
+      r.push({ d: cd, ic: I_T_SWEEP, fg: "#9a6a12", t: "Blokové čištění " + c.u, s: (c.od ? c.od + "–" + (c.do || "") + " · " : "") + "přeparkujte " + (pred < d0 ? "hned" : DNY_GEN[pred.getDay()] === "neděle" ? "v neděli večer" : "v " + DNY_CELE[pred.getDay()].replace("středa", "středu").replace("sobota", "sobotu").replace("neděle", "neděli") + " večer"), act: "tab:doprava" });
+    }
+    var uz = uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 1000; }), trva = null;
+    uz.forEach(function (x) {
+      var od = x.x.od ? new Date(x.x.od + "T00:00:00") : null;
+      if (v(od) && od > d0) r.push({ d: od, ic: I_T_CONE, fg: "#b03a3a", t: "Začíná uzavírka " + (x.x.ul && x.x.ul.length ? x.x.ul.join(", ") : x.x.n), s: (x.x.do ? "do " + dm(new Date(x.x.do + "T00:00:00")) + " · " : "") + akVzdTxt(x.d), act: "uz:" + uzId(x.x) });
+      else if (!trva && probiha(x.x) && !w.pristi) trva = x;
+    });
+    if (data.akce) {
+      var pa = pricti(w.od, 4), ak = akVse(ted).filter(function (x) {
+        var s = akD(x.od), dz = akVzd(x); return !x.z && s >= pa && s < w.do && (dz == null || dz <= 3000);
+      });
+      if (ak.length) r.push({ d: pa, dn: "Pá–Ne", ic: I_T_CAL, fg: "#2f6fb0", t: pl(ak.length, "akce", "akce", "akcí") + " v okolí", s: ak[0].t + (ak.length > 1 ? " a další" : ""), act: "tab:akce" });
+    }
+    r.sort(function (x, y) { return x.d - y.d; });
+    if (trva) r.unshift({ d: trva.x.od ? new Date(trva.x.od + "T00:00:00") : d0, trva: 1, ic: I_T_CONE, fg: "#b03a3a", t: "Uzavírka " + (trva.x.ul && trva.x.ul.length ? trva.x.ul.join(", ") : trva.x.n) + " trvá",
+      s: (trva.x.do ? "do " + dm(new Date(trva.x.do + "T00:00:00")) + " · " : "") + akVzdTxt(trva.d), act: "uz:" + uzId(trva.x) });
+    return { w: w, r: r };
+  }
+  function tydenKarta(a) {
+    var t = tydPolozky(a, new Date()), w = t.w, r = t.r, konec = pricti(w.do, -1);
+    var rozsah = (w.pristi ? "příští týden · " : "") + dm(w.od) + " – " + dm(konec);
+    var zob = state.tydVse ? r : r.slice(0, TYD_N);
+    var h = '<div class="hsec"><b>Tento týden u vás</b><span class="tydr">' + rozsah + "</span></div><div class=\"card tyd\">";
+    if (!r.length) h += '<div class="tydklid">' + SVG('<path d="M20 6 9 17l-5-5"/>', 18, "#2f6b45", 2.4) + "<span><b>Klidný týden</b><span>Na vaší adrese se nic neplánuje. Kdyby se něco změnilo, uvidíte to tady.</span></span></div>";
+    h += zob.map(function (x) {
+      return '<button type="button" class="tydr1" data-act="' + esc(x.act) + '"><span class="tydd"><b>' + (x.dn || (x.trva ? "od " : "") + HDAYS[x.d.getDay()]) + "</b><small>" + dm(x.d) + "</small></span>" +
+        '<span class="tydi">' + SVG(x.ic, 16, x.fg, 2.2) + '</span><span class="grow"><span class="tydt">' + esc(x.t) + '</span><span class="tyds">' + esc(x.s) + "</span></span></button>";
+    }).join("");
+    if (r.length > TYD_N) h += '<button type="button" class="tydvic" id="tydvic">' + (state.tydVse ? "Zobrazit méně" : "Další " + (r.length - TYD_N) + " v tomto týdnu") + "</button>";
+    h += '<div id="ctvrt" data-part="' + esc(a.part || "Praha " + a.mc) + '"></div></div>';
+    return h;
+  }
+  // komunita: anonymní počty za čtvrť (hlášení, „U mě taky“, sdílení) přes API Pod okny
+  function komZapis(typ) {
+    var a = state.address; if (!a) return;
+    umtUrl().then(function (u) {
+      if (!u) return;
+      fetch(u + "/udalost", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ typ: typ, part: a.part || "Praha " + a.mc }) }).catch(function () {});
+    }).catch(function () {});
+  }
+  function komNacti() {
+    var el = document.getElementById("ctvrt");
+    if (!el) return;
+    var part = el.getAttribute("data-part"), po = tydOkno(new Date()).od, od = pricti(po, -7), dO = po;
+    var vypis = function (j) {
+      var e = document.getElementById("ctvrt"); if (!e || !j) return;
+      var c = [];
+      if (j.hlaseni) c.push("nahlásili " + pl(j.hlaseni, "problém", "problémy", "problémů"));
+      if (j.umt) c.push("potvrdili " + pl(j.umt, "výpadek", "výpadky", "výpadků"));
+      if (j.sdileni) c.push("poslali dál " + pl(j.sdileni, "upozornění", "upozornění", "upozornění"));
+      if (!c.length) { e.innerHTML = ""; return; }
+      e.innerHTML = '<div class="tydkom">' + SVG(I_T_USERS, 18, "#1f4d36", 2) + "<span><b>" + esc(part) + " minulý týden:</b> sousedé " + (c.length > 1 ? c.slice(0, -1).join(", ") + " a " + c[c.length - 1] : c[0]) + ".</span></div>";
+    };
+    var k = part + od.getTime();
+    if (komNacti.c && komNacti.c[k]) { vypis(komNacti.c[k]); return; }
+    umtUrl().then(function (u) {
+      if (!u) return;
+      return fetch(u + "/ctvrt?part=" + encodeURIComponent(part) + "&od=" + od.getTime() + "&do=" + dO.getTime()).then(function (x) { return x.ok ? x.json() : null; })
+        .then(function (j) { komNacti.c = komNacti.c || {}; komNacti.c[k] = j; vypis(j); });
+    }).catch(function () {});
   }
   function openEl(id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };
@@ -2300,6 +2397,7 @@
   function sdilej(k, id) {
     var t = sdilText(k, id), url = sdilUrl(k, id);
     if (!t) return;
+    komZapis("sdileni");
     if (navigator.share) { navigator.share({ title: "Pod okny", text: t, url: url }).catch(function () {}); return; }
     var hotovo = function () { toast("Zpráva s odkazem je zkopírovaná, vložte ji sousedům"); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t + " " + url).then(hotovo, function () { window.prompt("Zkopírujte zprávu:", t + " " + url); });
@@ -2433,6 +2531,7 @@
     var dk = data.doktori ? (data.doktori || []).filter(function (s) { return dist(a.lat, a.lon, s.lat, s.lon) <= RADIUS; }).length : null;
     var sk = data.skoly ? data.skoly.filter(function (s) { return skSites(s).some(function (p) { return dist(a.lat, a.lon, p.lat, p.lon) <= RADIUS; }); }).length : null;
     var vm = vodaPro(a)[0];
+    h += tydenKarta(a);
     h += domuStavby(a);
     var stn = data.stavby && data.stavby.projekty ? stOkoli(a).filter(function (x) { return stKat(x.p) !== "uzemi"; }).length : null;
     h += '<div class="hsec"><b>Ve vašem okolí</b></div><div class="htiles">' +
@@ -2608,6 +2707,9 @@
     umtNapoj();
     var vb = document.getElementById("vodaback");
     if (vb) vb.addEventListener("click", function () { vodaBack(); });
+    var tv = document.getElementById("tydvic");
+    if (tv) tv.addEventListener("click", function () { var y = window.scrollY; state.tydVse = !state.tydVse; render(); window.scrollTo(0, y); });
+    komNacti();
     var dmv = document.getElementById("domuvic");
     if (dmv) dmv.addEventListener("click", function () { var y = window.scrollY; state.domuVse = true; render(); window.scrollTo(0, y); });
     app.querySelectorAll("[data-dk]").forEach(function (b) { b.addEventListener("click", function () { openDoktor(b.getAttribute("data-dk")); }); });

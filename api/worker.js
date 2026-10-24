@@ -13,6 +13,9 @@ export class Hlasy extends DurableObject {
     this.sql = ctx.storage.sql;
     this.sql.exec("CREATE TABLE IF NOT EXISTS h (k TEXT, d TEXT, a TEXT, t INTEGER, ip TEXT, PRIMARY KEY (k, d))");
     this.sql.exec("CREATE INDEX IF NOT EXISTS h_t ON h (t)");
+    // komunita: anonymní počty za čtvrť (bez zařízení, jen typ, čtvrť, čas a otisk IP kvůli limitu)
+    this.sql.exec("CREATE TABLE IF NOT EXISTS u (t INTEGER, typ TEXT, part TEXT, ip TEXT)");
+    this.sql.exec("CREATE INDEX IF NOT EXISTS u_p ON u (part, t)");
   }
   pocty(klice, d) {
     const od = Date.now() - OKNO, out = {};
@@ -23,6 +26,19 @@ export class Hlasy extends DurableObject {
       out[k] = r;
     }
     return out;
+  }
+  udalost(typ, part, ip) {
+    const ted = Date.now();
+    this.sql.exec("DELETE FROM u WHERE t < ?", ted - 60 * 24 * OKNO);
+    const n = [...this.sql.exec("SELECT COUNT(*) AS n FROM u WHERE ip = ? AND t > ?", ip, ted - OKNO)][0].n;
+    if (n >= LIMIT_IP) return false;
+    this.sql.exec("INSERT INTO u (t, typ, part, ip) VALUES (?, ?, ?, ?)", ted, typ, part, ip);
+    return true;
+  }
+  ctvrt(part, od, dO) {
+    const r = { hlaseni: 0, umt: 0, sdileni: 0 };
+    for (const x of this.sql.exec("SELECT typ, COUNT(*) AS n FROM u WHERE part = ? AND t >= ? AND t < ? GROUP BY typ", part, od, dO)) r[x.typ] = x.n;
+    return r;
   }
   hlas(k, d, a, ip) {
     const ted = Date.now();
@@ -64,6 +80,19 @@ export default {
       const ok = await stub.hlas(b.k, b.d, b.a, ip);
       if (!ok) return json({ chyba: "limit" }, 429);
       return json((await stub.pocty([b.k], b.d))[b.k]);
+    }
+    const okPart = (p) => typeof p === "string" && p.length >= 2 && p.length <= 40;
+    if (url.pathname === "/udalost" && request.method === "POST") {
+      let b;
+      try { b = await request.json(); } catch (e) { return json({ chyba: "json" }, 400); }
+      if (!["hlaseni", "umt", "sdileni"].includes(b.typ) || !okPart(b.part)) return json({ chyba: "vstup" }, 400);
+      const ip = await hash(request.headers.get("CF-Connecting-IP") || "?");
+      return (await stub.udalost(b.typ, b.part, ip)) ? json({ ok: true }) : json({ chyba: "limit" }, 429);
+    }
+    if (url.pathname === "/ctvrt" && request.method === "GET") {
+      const part = url.searchParams.get("part"), od = +url.searchParams.get("od"), dO = +url.searchParams.get("do");
+      if (!okPart(part) || !(od > 0) || !(dO > od) || dO - od > 31 * 24 * OKNO) return json({ chyba: "vstup" }, 400);
+      return json(await stub.ctvrt(part, od, dO));
     }
     return json({ ok: true, sluzba: "pod-okny-api" });
   },
