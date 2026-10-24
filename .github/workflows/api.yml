@@ -1,0 +1,34 @@
+name: Nasadit API Pod okny
+
+on:
+  push:
+    branches: [main]
+    paths: ["api/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: wr
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: api
+          command: deploy
+      - name: Uložit adresu API pro aplikaci
+        env:
+          URL: ${{ steps.wr.outputs.deployment-url }}
+        run: |
+          [ -n "$URL" ] || exit 0
+          printf '{"url":"%s"}\n' "$URL" > docs/data/api.json
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add docs/data/api.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Adresa API"
+          for i in 1 2 3 4 5; do git pull --rebase --autostash origin main && git push && exit 0; sleep $((i*5)); done

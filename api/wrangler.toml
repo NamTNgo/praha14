@@ -1,0 +1,17 @@
+# Nasazuje GitHub Actions (.github/workflows/api.yml) při změně ve složce api/.
+name = "pod-okny-api"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+account_id = "becf7da87b8877ebce9a27ecb3626b6b"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "HLASY"
+class_name = "Hlasy"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Hlasy"]
+
+[observability]
+enabled = true
