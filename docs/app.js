@@ -2214,7 +2214,7 @@
       '<div class="dlinks">' + (src ? '<a class="btn-ext" href="' + esc(src) + '" target="_blank" rel="noopener">Oznámení MČ Praha ' + esc(o.mc) + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
       '<a class="btn-ext" href="https://www.ptas.cz/aktuality/" target="_blank" rel="noopener">Pražská teplárenská ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("tv", tvId(o)) + "</div>" +
       detCas(o.from, o.to, "Dodávku teplé vody přerušuje Pražská teplárenská kvůli plánovaným pracím. Týká se domů napojených na dálkové teplo.") +
-      '<div class="note" style="padding:0 4px">Zdroj: ' + (src ? esc(src.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]) : "MČ") + ", kontrolujeme jednou týdně.</div></div>";
+      '<div class="note" style="padding:0 4px">Zdroj: ' + (src ? esc(src.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]) : "MČ") + ". Termíny přepisujeme ručně z oznámení MČ, změny na stránce hlídáme denně.</div></div>";
   }
   function openDet(k, id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };

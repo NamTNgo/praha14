@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent / "watch"
 PAGES = {
     "Praha 9 – mobilní sběr nebezpečných odpadů": "https://www.praha9.cz/mobilni-sber-nebezpecnych-odpadu-a-jedlych-oleju-v-r-2026",
+    "Praha 9 – odstávky teplé vody": "https://www.praha9.cz/planovane-letni-odstavky-teple-vody-praha-9",
+    "Praha 14 – odstávka teplé vody": "https://www.praha14.cz/zivot-na-praze-14/letni-odstavka-teple-vody-v-praze-14/",
     "Praha 14 – odpady": "https://www.praha14.cz/urad-mestske-casti/hledam-informaci/zivotni-prostredi/odpady/",
 }
 DOC = re.compile(r"\.(pdf|docx?|xlsx?|png|jpe?g|zip)(\?|$)", re.I)
