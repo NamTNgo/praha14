@@ -238,10 +238,9 @@
     var today = new Date(); today.setHours(0, 0, 0, 0);
     var from = new Date(o.from + "T00:00:00"), days = Math.round((from - today) / 86400000);
     var chip = days <= 0 ? "Právě probíhá" : days === 1 ? "Zítra" : days <= 4 ? "Za " + days + " dny" : "Za " + days + " dní";
-    return '<div class="card row top" style="background:#fff8ec;border-color:#f0d9a8"><span class="badge" style="background:#fbe3d4">' + SVG(DROP, 18, "#b8582a") + '</span><div class="grow">' +
-      '<div class="t1">Odstávka teplé vody <span class="chip">' + chip + '</span></div><div class="t2">' + esc(o.name) + " · " + outageRange(o) + '</div>' +
-      '<div class="note">Dodávku teplé vody přerušuje Pražská teplárenská kvůli plánovaným pracím.</div>' +
-      '<div class="links"><a class="link" href="https://www.ptas.cz/aktuality/" target="_blank" rel="noopener">Podrobnosti u PTAS ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
+    return '<button type="button" class="card row top uzk" data-tv="' + tvId(o) + '" style="background:#fff8ec;border-color:#f0d9a8"><span class="badge" style="background:#fbe3d4">' + SVG(DROP, 18, "#b8582a") + '</span><span class="grow">' +
+      '<span class="t1">Odstávka teplé vody <span class="chip">' + chip + '</span></span><span class="t2">' + esc(o.name) + " · " + outageRange(o) + '</span>' +
+      '<span class="note">Dodávku teplé vody přerušuje Pražská teplárenská kvůli plánovaným pracím.</span></span>' + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
   }
   function outageNone(addr) {
     if (!data.outages || outageFor(addr)) return "";
@@ -609,7 +608,7 @@
   }
   window.addEventListener("popstate", function () {
     if (state.zav && state.zav !== "list" && state.zav !== "par") { state.zav = "list"; render(); window.scrollTo(0, 0); }
-    else if (state.vodaSel || state.patSel || state.zav) vodaKrokZpet();
+    else if (state.vodaSel || state.patSel || state.zav || state.uzSel || state.tvSel) vodaKrokZpet();
     else if (state.tab === "akce" && state.akHist.length) akKrokZpet();
     else if (state.tab === "doktori" && state.dkHist.length) dkKrokZpet();
     else if (state.tab === "stavby" && state.stHist.length) stKrokZpet();
@@ -783,12 +782,12 @@
       h += '<div class="list">' + zob.map(function (r) {
         var x = r.x, bg = probiha(x) ? "#f7dede" : "#efece2", fg = probiha(x) ? "#b03a3a" : "#6b6652";
         var ndic = x.z === "ndic";
-        return dkarta(I_CONE, bg, fg, esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), dtag(x),
-          '<div class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
-          (x.ul && x.ul.length ? '<div class="t3">' + esc(x.n) + "</div>" : "") +
-          (popis(x) ? '<div class="t3">' + esc(zkrat(datumy(popis(x)), 150)) + "</div>" : ""),
-          ndic ? "Evidence dopravních informací (NDIC)" : null, x.u,
-          ndic ? "Mapa dopravních informací" : "Detail na praha" + x.mc + ".cz");
+        return '<button type="button" class="card row top uzk" data-uz="' + uzId(x) + '"><span class="badge" style="background:' + bg + '">' + SVG(I_CONE, 18, fg) + "</span>" +
+          '<span class="grow"><span class="dhead"><span class="t1">' + esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n) + "</span>" + dtag(x) + "</span>" +
+          '<span class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : "") + "</span>" +
+          (x.ul && x.ul.length ? '<span class="t3">' + esc(x.n) + "</span>" : "") +
+          (popis(x) ? '<span class="t3">' + esc(zkrat(datumy(popis(x)), 150)) + "</span>" : "") +
+          (ndic ? '<span class="dsrc">Evidence dopravních informací (NDIC)</span>' : "") + "</span>" + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
       }).join("") + "</div>";
       if (uz.length > DOP_N) h += '<button type="button" class="spadvic" id="dopvic">' +
         (state.dopVse ? "Zobrazit méně" : "Zobrazit všech " + uz.length + " " + sklonCount(uz.length)) +
@@ -1449,7 +1448,7 @@
   }
   function vodaKrokZpet() {
     var z = state.vodaZ || { tab: state.tab, y: 0 };
-    state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.tab = z.tab; render(); window.scrollTo(0, z.y || 0);
+    state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.uzSel = null; state.tvSel = null; state.tab = z.tab; render(); window.scrollTo(0, z.y || 0);
   }
   function vodaBack() {
     if (state.sdil) { sdilKonec(); return; }
@@ -2174,6 +2173,55 @@
         .then(function (j) { if (j && j[k]) { umtData[k] = j[k]; prekresli(); } });
     }).catch(function () {});
   }
+  // ---- detail uzavírky a odstávky teplé vody (kvůli sdílení) ----
+  function hashId(t) { var h = 0; t = String(t); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+  function uzVse() {
+    if (!data.doprava) return [];
+    var vid = {}, oop = (data.opatreni && data.opatreni.oop || []).concat(data.rizeni && data.rizeni.oop || []).filter(function (x) { if (vid[x.u]) return false; vid[x.u] = 1; return true; });
+    return (data.doprava.uzavirky || []).concat(oop);
+  }
+  function uzId(x) { return hashId([x.n, (x.ul || []).join(","), x.od, x.do, x.mc].join("|")); }
+  function uzById(id) { return uzVse().filter(function (x) { return uzId(x) === id; })[0]; }
+  function tvId(o) { return hashId([o.mc, o.name, o.from].join("|")); }
+  function tvById(id) { return (data.outages && data.outages.list || []).filter(function (o) { return tvId(o) === id; })[0]; }
+  var DNY_GEN = ["neděle", "pondělí", "úterý", "středy", "čtvrtka", "pátku", "soboty"];
+  function detDen(iso) { if (!iso) return ["neuvedeno", ""]; var d = new Date(iso + "T00:00:00"); return [d.getDate() + ". " + (d.getMonth() + 1) + ".", DNY_CELE[d.getDay()]]; }
+  function detCas(od, aDo, pozn) {
+    var a = detDen(od), b = detDen(aDo);
+    return '<div class="card dcard"><div class="vtime"><div><div class="k">Od</div><div class="v">' + a[0] + '</div><div class="s">' + a[1] + "</div></div>" +
+      '<div><div class="k">Do</div><div class="v">' + b[0] + '</div><div class="s">' + b[1] + "</div></div></div>" + (pozn ? '<div class="dnote" style="margin-top:10px">' + pozn + "</div>" : "") + "</div>";
+  }
+  function detHlava() { return '<div class="head"><button type="button" class="btn-edit" id="vodaback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>"; }
+  function viewUzDetail(x) {
+    var a = state.address, d = a && x.lat != null ? dist(a.lat, a.lon, x.lat, x.lon) : null, ndic = x.z === "ndic", ted = probiha(x);
+    var gm = x.lat != null ? "https://www.google.com/maps/search/?api=1&query=" + x.lat + "," + x.lon : "";
+    var p = datumy(x.p || "");
+    return detHlava() + '<div class="body" style="gap:12px;padding-bottom:28px">' + (ted ? '<span class="vchip now"><i></i>Probíhá</span>' : '<span class="vchip plan"><i></i>Plánovaná uzavírka</span>') +
+      '<h1 style="margin:4px 0 0;font-size:23px">' + esc(x.ul && x.ul.length ? "Uzavírka " + x.ul.join(", ") : x.n) + "</h1>" +
+      '<div class="skadr" style="font-size:15px">' + esc(x.ul && x.ul.length ? x.n : "Praha " + x.mc) + (d != null ? " · " + akVzdTxt(d) + " od vás" : "") + "</div>" +
+      '<div class="dlinks">' + (gm ? '<a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
+      (x.u ? '<a class="btn-ext" href="' + esc(x.u) + '" target="_blank" rel="noopener">' + (ndic ? "Dopravní info " : "Opatření na úřední desce ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + sdilBtn("uz", uzId(x)) + "</div>" +
+      detCas(x.od, x.do, x.do ? "Konec je plánovaný termín silničního úřadu, uzavírka může skončit dřív." : "") +
+      (p ? '<div class="card dcard"><div class="dtitle">Co se děje</div><div class="ptext" style="font-size:14.5px">' + esc(p) + "</div></div>" : "") +
+      '<div class="note" style="padding:0 4px">' + (ndic ? "Zdroj: Národní dopravní informační centrum (NDIC), aktualizace každých 10 minut." : "Zdroj: úřední deska MČ Praha " + esc(x.mc) + ", kontrolujeme dvakrát denně.") + "</div></div>";
+  }
+  function viewTvDetail(o) {
+    var t0 = den0(), f = new Date(o.from + "T00:00:00"), ted = f <= t0;
+    var src = data.outages.src && data.outages.src[o.mc];
+    return detHlava() + '<div class="body" style="gap:12px;padding-bottom:28px">' + (ted ? '<span class="vchip now"><i></i>Probíhá</span>' : '<span class="vchip plan"><i></i>Plánovaná odstávka</span>') +
+      '<h1 style="margin:4px 0 0;font-size:23px">Odstávka teplé vody</h1>' +
+      '<div class="skadr" style="font-size:15px">' + esc(o.name) + "</div>" +
+      '<div class="dlinks">' + (src ? '<a class="btn-ext" href="' + esc(src) + '" target="_blank" rel="noopener">Oznámení MČ Praha ' + esc(o.mc) + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
+      '<a class="btn-ext" href="https://www.ptas.cz/aktuality/" target="_blank" rel="noopener">Pražská teplárenská ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("tv", tvId(o)) + "</div>" +
+      detCas(o.from, o.to, "Dodávku teplé vody přerušuje Pražská teplárenská kvůli plánovaným pracím. Týká se domů napojených na dálkové teplo.") +
+      '<div class="note" style="padding:0 4px">Zdroj: ' + (src ? esc(src.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]) : "MČ") + ", kontrolujeme jednou týdně.</div></div>";
+  }
+  function openDet(k, id) {
+    state.vodaZ = { tab: state.tab, y: window.scrollY };
+    state.uzSel = k === "uz" ? id : null; state.tvSel = k === "tv" ? id : null;
+    try { history.pushState({ voda: 1 }, ""); } catch (e) {}
+    render(); window.scrollTo(0, 0);
+  }
   function openEl(id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };
     state.elSel = String(id); state.elVse = false;
@@ -2208,6 +2256,17 @@
     if (k === "pat") {
       var p = patById(id); if (!p || p.stav === "nalezen") return null;
       return patTitulek(p) + ". Viděli jste tuto osobu? Volejte 158. Popis a foto:";
+    }
+    if (k === "uz") {
+      var uz = uzById(id); if (!uz || (uz.do && dnu(uz.do) < 0)) return null;
+      var kde = "uzavírka " + (uz.ul && uz.ul.length ? uz.ul.join(", ") : uz.n), co = uz.ul && uz.ul.length ? " – " + uz.n.charAt(0).toLowerCase() + uz.n.slice(1) : "";
+      if (probiha(uz)) return kde.charAt(0).toUpperCase() + kde.slice(1) + (uz.do ? " až do " + detDen(uz.do)[0] : "") + co + ". Podrobnosti:";
+      return "Od " + (dnu(uz.od) <= 6 ? DNY_GEN[new Date(uz.od + "T00:00:00").getDay()] + " " : "") + detDen(uz.od)[0] + (uz.do ? " do " + detDen(uz.do)[0] : "") + " " + kde + co + ". Podrobnosti:";
+    }
+    if (k === "tv") {
+      var o = tvById(id); if (!o || dnu(o.to) < 0) return null;
+      if (dnu(o.from) <= 0) return "Teď neteče teplá voda – " + o.name + " (do " + DNY_GEN[new Date(o.to + "T00:00:00").getDay()] + " " + detDen(o.to)[0] + "). Podrobnosti:";
+      return "Od " + (dnu(o.from) <= 6 ? DNY_GEN[new Date(o.from + "T00:00:00").getDay()] + " " : "") + detDen(o.from)[0] + " do " + detDen(o.to)[0] + " nepoteče teplá voda – " + o.name + ". Podrobnosti:";
     }
     if (k === "ak") {
       var ak = akById(id); if (!ak) return null;
@@ -2248,21 +2307,23 @@
   }
   // příchod přes sdílený odkaz
   function sdilZHash() {
-    var m = /^#(voda|el|pat|eia|ak|st|rz)=(.+)$/.exec(location.hash || "");
+    var m = /^#(voda|el|pat|eia|ak|st|rz|uz|tv)=(.+)$/.exec(location.hash || "");
     if (!m) return;
     var k = m[1], id = decodeURIComponent(m[2]);
-    if (!(k === "voda" ? vodaById(id) : k === "el" ? elById(id) : k === "pat" ? patById(id) : k === "ak" ? akById(id) : k === "st" ? stById(id) : k === "rz" ? rzById(id) : eiaById(id))) return;
+    if (!(k === "voda" ? vodaById(id) : k === "el" ? elById(id) : k === "pat" ? patById(id) : k === "ak" ? akById(id) : k === "st" ? stById(id) : k === "rz" ? rzById(id) : k === "uz" ? uzById(id) : k === "tv" ? tvById(id) : eiaById(id))) return;
     state.sdil = k;
     if (k === "voda") state.vodaSel = id;
     else if (k === "el") state.elSel = id;
     else if (k === "pat") state.patSel = id;
+    else if (k === "uz") state.uzSel = id;
+    else if (k === "tv") state.tvSel = id;
     else if (k === "ak") { state.tab = "akce"; state.akView = "detail"; state.akSel = id; state.akHist = []; }
     else if (k === "st") { state.tab = "stavby"; state.stView = "detail"; state.stSel = id; state.stHist = []; }
     else if (k === "rz") { state.tab = "stavby"; state.stView = "rizeni"; state.stSel = id; state.stHist = []; }
     else { state.tab = "stavby"; state.stView = "eia"; state.stSel = id; state.stHist = []; }
   }
   function sdilKonec() {
-    state.sdil = null; state.vodaSel = null; state.elSel = null; state.patSel = null; state.stView = "list"; state.stSel = null; state.stHist = []; state.akView = "list"; state.akHist = [];
+    state.sdil = null; state.vodaSel = null; state.elSel = null; state.patSel = null; state.uzSel = null; state.tvSel = null; state.stView = "list"; state.stSel = null; state.stHist = []; state.akView = "list"; state.akHist = [];
     if (!state.address) state.tab = "domu";
     else if (state.tab === "stavby" || state.tab === "akce") state.tab = "domu";
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
@@ -2271,6 +2332,8 @@
   // detail pro příjemce bez adresy + pozvánka
   function sdilHtml() {
     var h = state.patSel && patById(state.patSel) ? viewPatraniDetail(patById(state.patSel)) :
+      state.uzSel && uzById(state.uzSel) ? viewUzDetail(uzById(state.uzSel)) :
+      state.tvSel && tvById(state.tvSel) ? viewTvDetail(tvById(state.tvSel)) :
       state.vodaSel && vodaById(state.vodaSel) ? viewVodaDetail(vodaById(state.vodaSel)) :
       state.elSel && elById(state.elSel) ? viewElDetail(elById(state.elSel)) :
       state.stView === "eia" && eiaById(state.stSel) ? viewEiaDetail(eiaById(state.stSel)) :
@@ -2294,7 +2357,7 @@
     if (o) {
       var dn = Math.round((new Date(o.from + "T00:00:00") - ted) / 864e5);
       r.push({ cls: dn <= 0 ? "now" : dn <= 2 ? "plan" : "info", ic: DROP, fg: dn <= 0 ? "#a23a30" : dn <= 2 ? "#9a6a12" : "#b8582a",
-        t: (dn <= 0 ? "Teď bez teplé vody" : "Odstávka teplé vody " + (dn === 1 ? "zítra" : "od " + dden(o.from).toLowerCase())), s: outageRange(o) + " · " + o.name, act: "tab:odpad" });
+        t: (dn <= 0 ? "Teď bez teplé vody" : "Odstávka teplé vody " + (dn === 1 ? "zítra" : "od " + dden(o.from).toLowerCase())), s: outageRange(o) + " · " + o.name, act: "tv:" + tvId(o) });
     }
     var c = cisteniPro(a);
     if (c && dnu(c.d) <= 7) {
@@ -2309,7 +2372,7 @@
       s: rz.z.n + " · " + (RZ_FAZE[rz.z.faze] || RZ_FAZE.info)[1].toLowerCase() + " " + rzDat(rz.z.d), act: "rz:" + rz.z.id });
     if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
       s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "dop:nehody" });
-    if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n) + " · " + akVzdTxt(uz.d), s: obdobi(uz.x.od, uz.x.do), act: "tab:doprava" });
+    if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n) + " · " + akVzdTxt(uz.d), s: obdobi(uz.x.od, uz.x.do), act: "uz:" + uzId(uz.x) });
     var p = { help: -1, now: 0, plan: 1, found: 1.5, info: 2 };
     return r.sort(function (x, y) { return p[x.cls] - p[y.cls]; });
   }
@@ -2384,6 +2447,8 @@
     var p = String(act).split(":"), t = p[0], v = p.slice(1).join(":");
     if (t === "voda") { openVoda(v); return; }
     if (t === "el") { openEl(v); return; }
+    if (t === "uz") { openDet("uz", v); return; }
+    if (t === "tv") { openDet("tv", v); return; }
     if (t === "pat") { openPatrani(v); return; }
     if (t === "eia") { var z2 = state.tab; state.stView = "list"; state.stHist = []; openEia(v, z2); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "rz") { var z1 = state.tab; state.stView = "list"; state.stHist = []; openRizeni(v, z1); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
@@ -2400,7 +2465,7 @@
   function prepniTab(t) {
     if (t === "okoli") t = state.okSeg || "doktori";
     if (t === "doktori" || t === "skoly" || t === "stavby") state.okSeg = t;
-    state.tab = t; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.stView = "list"; state.stHist = [];
+    state.tab = t; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.uzSel = null; state.tvSel = null; state.stView = "list"; state.stHist = [];
     render(); window.scrollTo(0, 0);
   }
   // přepínač Lékaři / Školy v záložce Okolí
@@ -2433,7 +2498,7 @@
   }
   function naSekci() {
     return data && state.address && !window.__err &&
-      !state.vodaSel && !state.patSel && !state.elSel && !state.zav && (state.tab === "domu" || state.tab === "odpad" || state.tab === "doprava" ||
+      !state.vodaSel && !state.patSel && !state.elSel && !state.zav && !state.uzSel && !state.tvSel && (state.tab === "domu" || state.tab === "odpad" || state.tab === "doprava" ||
        (state.tab === "skoly" && state.skView === "list") ||
        (state.tab === "doktori" && state.dkView === "list") ||
        (state.tab === "stavby" && state.stView === "list") ||
@@ -2449,6 +2514,8 @@
     else if (state.patSel && patById(state.patSel)) html = viewPatraniDetail(patById(state.patSel));
     else if (state.vodaSel && vodaById(state.vodaSel)) html = viewVodaDetail(vodaById(state.vodaSel));
     else if (state.elSel && elById(state.elSel)) html = viewElDetail(elById(state.elSel));
+    else if (state.uzSel && uzById(state.uzSel)) html = viewUzDetail(uzById(state.uzSel));
+    else if (state.tvSel && tvById(state.tvSel)) html = viewTvDetail(tvById(state.tvSel));
     else if (state.zav === "par") html = viewPar();
     else if (state.zav) html = viewZavada();
     else if (state.tab === "skoly" && data.skoly && state.skView === "detail" && skById(state.skSel)) html = viewSkolaDetail(skById(state.skSel));
@@ -2520,6 +2587,8 @@
     var elv = document.getElementById("elvse");
     if (elv) elv.addEventListener("click", function () { var y = window.scrollY; state.elVse = !state.elVse; render(); window.scrollTo(0, y); });
     app.querySelectorAll("[data-okseg]").forEach(function (b) { b.addEventListener("click", function () { state.okSeg = b.getAttribute("data-okseg"); prepniTab(state.okSeg); }); });
+    app.querySelectorAll("[data-uz]").forEach(function (b) { b.addEventListener("click", function () { openDet("uz", b.getAttribute("data-uz")); }); });
+    app.querySelectorAll("[data-tv]").forEach(function (b) { b.addEventListener("click", function () { openDet("tv", b.getAttribute("data-tv")); }); });
     var zs = document.getElementById("zavstart");
     if (zs) zs.addEventListener("click", function () { openZav(); });
     var ps = document.getElementById("parstart");
@@ -2601,7 +2670,7 @@
     var akx = document.getElementById("akback");
     if (akx) akx.addEventListener("click", function () { akBack(); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "domu"; state.zav = null; state.vodaSel = null; state.patSel = null; state.elSel = null; state.stView = "list"; state.stHist = []; state.domuVse = false; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "domu"; state.zav = null; state.uzSel = null; state.tvSel = null; state.vodaSel = null; state.patSel = null; state.elSel = null; state.stView = "list"; state.stHist = []; state.domuVse = false; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }

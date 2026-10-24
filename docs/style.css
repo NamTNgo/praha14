@@ -473,3 +473,7 @@ a.vkarta{text-decoration:none}
 .umt.hotovo .umtn{color:#4d5a4f}
 .umtn b{color:var(--ink)}
 .umtzrus{margin-top:8px;font-size:12.5px}
+button.uzk{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;align-items:flex-start}
+button.uzk .t1,button.uzk .t2,button.uzk .t3,button.uzk .dsrc,button.uzk .note,button.uzk .dhead{display:block}
+button.uzk .dhead{display:flex}
+button.uzk > svg:last-child{align-self:center;flex-shrink:0}
