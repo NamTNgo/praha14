@@ -1,4 +1,5 @@
-projektů v databázi CAMP: 1277
+projektů v databázi CAMP: 1282
+  prodej: Metropolis Tower → https://novostavby.com/property/metropolis-tower/ (V prodeji)
   prodej: EcoCare Residence → https://novostavby.com/property/ecocare-residence/ (V prodeji)
   prodej: MiDO Harfa → https://novostavby.com/property/mido-harfa/ (V prodeji)
   prodej: Delarg → https://novostavby.com/property/delarg/ (V prodeji)
@@ -15,6 +16,7 @@ projektů v databázi CAMP: 1277
   prodej: Konhefrovy domy → https://novostavby.com/property/konhefrovy-domy/ (V prodeji)
   prodej: Karlínské náměstí 5 → https://novostavby.com/property/karlinske-namesti-5/ (V prodeji)
   prodej: Pod Vlachovkou → https://novostavby.com/property/residence-pod-vlachovkou/ (V prodeji)
+  prodej: Vršovická 44 → https://novostavby.com/property/vrsovicka-44/ (V prodeji)
   prodej: Bytový dům Moskevská → https://novostavby.com/property/rezidence-moskevska/ (V prodeji)
   prodej: Bydlení mezi vrchy → https://novostavby.com/property/bydleni-mezi-vrchy/ (V prodeji)
   prodej: Rezidenční projekt Michelské údolí → https://novostavby.com/property/michelske-udoli/ (V prodeji)
@@ -124,5 +126,5 @@ projektů v databázi CAMP: 1277
   prodej: Kbeličky → https://novostavby.com/property/bydleni-kbelicky/ (V prodeji)
   prodej: Rezidence V Údolí → https://novostavby.com/property/v-udoli/ (V prodeji)
   prodej: Tesla Hloubětín → https://novostavby.com/property/tesla-hloubetin/ (V prodeji)
-novostavby.com: 1084 prodávaných projektů, spárováno 125
-v okolí Prahy 9 a 14: 459 ({'stavi': 148, 'povoluje': 66, 'planuje': 154, 'hotovo': 91}); doplněno popisů: 0; obrázky: {'foto': 404, 'žádný': 36, 'plan': 19}
+novostavby.com: 1087 prodávaných projektů, spárováno 127
+v okolí Prahy 9 a 14: 460 ({'stavi': 149, 'povoluje': 66, 'planuje': 154, 'hotovo': 91}); doplněno popisů: 1; obrázky: {'foto': 405, 'žádný': 36, 'plan': 19}
