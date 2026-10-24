@@ -657,22 +657,22 @@
     return "termín neuveden";
   }
   function probiha(x) {
-    var d = den0().toISOString().slice(0, 10);
+    var d = isoDen(den0());
     return (!x.od || x.od <= d) && (!x.do || x.do >= d);
   }
 
   function cisteniPro(a) {
     if (!data.doprava || !a || !a.street) return null;
-    var u = plain(a.street), d = den0().toISOString().slice(0, 10);
+    var u = plain(a.street), d = isoDen(den0());
     // jarní kolo bývá v rozpisu půl roku dopředu; tak daleko je to ještě zpráva, ne upozornění
-    var konec = new Date(den0().getTime() + 60 * 86400000).toISOString().slice(0, 10);
+    var konec = isoDen(pricti(den0(), 60));
     return (data.doprava.cisteni || []).filter(function (c) {
       return plain(c.u) === u && c.mc === a.mc && c.d >= d && c.d <= konec;
     }).sort(function (x, y) { return x.d < y.d ? -1 : 1; })[0] || null;
   }
   function uzavirkyPro(a) {
     if (!data.doprava || !a) return [];
-    var dnesIso = den0().toISOString().slice(0, 10);
+    var dnesIso = isoDen(den0());
     // opatření úřadů (přechodné úpravy provozu): ze stavebních řízení i z dopravních odborů; stejný odkaz jen jednou
     var vid = {}, oop = (data.opatreni && data.opatreni.oop || []).concat(data.rizeni && data.rizeni.oop || []).filter(function (x) {
       if (vid[x.u] || (x.do && x.do < dnesIso)) return false;
@@ -694,7 +694,7 @@
   // nehody mají vlastní soubor, obnovovaný každých 10 minut
   function nehodyPro(a) {
     if (!data.nehody || !data.nehody.ndic || !a) return [];
-    var d = den0().toISOString().slice(0, 10);
+    var d = isoDen(den0());
     return (data.nehody.nehody || []).filter(function (x) {
       if (x.mc !== a.mc && x.mc2 !== a.mc) return false;
       if (x.do && x.do < d) return false;
@@ -2445,7 +2445,7 @@
       akVse(ted).forEach(function (x) {
         var dz = akVzd(x); if (x.z || x.lat == null || dz == null || dz > 3000) return;
         var sa = akD(x.od); if (!akProbiha(x, ted) && (sa < den0() || sa > pricti(den0(), 7))) return;
-        r.push({ lat: x.lat, lon: x.lon, ic: I_T_CAL, bg: "#2f6fb0", soft: "#dce8fb", t: x.t, tag: akProbiha(x, ted) ? ["now", "Probíhá"] : ["plan", HDAYS[sa.getDay()] + " " + dm(sa)], s: (akMisto(x, true) || "") + " · " + akVzdTxt(dz) + " od vás", act: "akce:" + x.id, sd: ["ak", x.id] });
+        r.push({ lat: x.lat, lon: x.lon, ic: I_T_CAL, bg: "#2f6fb0", soft: "#dce8fb", t: x.t, tag: akProbiha(x, ted) ? ["now", "Probíhá"] : ["plan", HDAYS[sa.getDay()] + " " + dm(sa)], s: (x.m || x.a || "Praha " + x.mc) + " · " + akVzdTxt(dz) + " od vás", act: "akce:" + x.id, sd: ["ak", x.id] });
       });
     }
     if (f === "kont") {
@@ -2545,7 +2545,7 @@
     }
     if (k === "uz") {
       var uz = uzById(id); if (!uz || (uz.do && dnu(uz.do) < 0)) return null;
-      var kde = "uzavírka " + (uz.ul && uz.ul.length ? uz.ul.join(", ") : uz.n), co = uz.ul && uz.ul.length ? " – " + uz.n.charAt(0).toLowerCase() + uz.n.slice(1) : "";
+      var kde = "uzavírka " + (uz.ul && uz.ul.length ? uz.ul.join(", ") : uz.n), nn = uz.n.replace(/\s*–\s*.*$/, ""), co = uz.ul && uz.ul.length ? " – " + nn.charAt(0).toLowerCase() + nn.slice(1) : "";
       if (probiha(uz)) return kde.charAt(0).toUpperCase() + kde.slice(1) + (uz.do ? " až do " + detDen(uz.do)[0] : "") + co + ". Podrobnosti:";
       return "Od " + (dnu(uz.od) <= 6 ? DNY_GEN[new Date(uz.od + "T00:00:00").getDay()] + " " : "") + detDen(uz.od)[0] + (uz.do ? " do " + detDen(uz.do)[0] : "") + " " + kde + co + ". Podrobnosti:";
     }
@@ -2557,7 +2557,7 @@
     if (k === "ak") {
       var ak = akById(id); if (!ak) return null;
       var ka = akD(ak.do || ak.od); if (ka && akDen(ka) < akDen(ted)) return null;      // proběhlé akce nesdílíme
-      var sa = akD(ak.od), ca = akCasTxt(ak), mi = akMisto(ak);
+      var sa = akD(ak.od), ca = akCasTxt(ak), mi = (akMisto(ak) || "").replace(/\s*·\s*[\d,]+\s*k?m$/, "");
       return "Akce v okolí: " + ak.t + " – " + (akDlouha(ak) ? "do " + akDatumTxt(akD(ak.do), true) : DNY_CELE[sa.getDay()] + " " + akDatumTxt(sa) + (ca ? " " + ca : "")) + (mi ? ", " + mi : "") + ". Podrobnosti:";
     }
     if (k === "st") {
