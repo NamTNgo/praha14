@@ -512,3 +512,33 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .card.adrup{display:flex;gap:12px;align-items:center;padding:12px 14px;cursor:pointer}
 .adrup input{width:22px;height:22px;accent-color:var(--green)}
 #adruloz:disabled{opacity:.45}
+/* mapa čtvrti */
+.body.mapabody{padding-bottom:0}
+.mapawrap{position:relative;margin:0 -20px;height:calc(100vh - 212px);height:calc(100dvh - 212px);min-height:380px}
+.mapa{position:absolute;inset:0;background:#eeebe2;z-index:1}
+.mapachips{position:absolute;left:0;right:0;top:10px;z-index:500;display:flex;gap:8px;padding:0 14px;overflow-x:auto;scrollbar-width:none}
+.mapachips::-webkit-scrollbar{display:none}
+.mapachip{flex-shrink:0;display:flex;gap:6px;align-items:center;border:none;border-radius:20px;padding:8px 13px;font:inherit;font-weight:700;font-size:13.5px;background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.14);cursor:pointer}
+.mapachip.on{background:var(--green);color:#fff}
+.mapaloc{position:absolute;right:14px;bottom:22px;z-index:500;width:42px;height:42px;border:none;border-radius:12px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.mpinw{background:none;border:none}
+.mpin{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.28);box-sizing:border-box;margin:2px 0 0 1px}
+.mpin > span{transform:rotate(45deg);display:flex}
+.mpin.sel{width:42px;height:42px;margin:-6px 0 0 -3px}
+.mja{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 0 0 6px rgba(31,77,54,.18);box-sizing:border-box}
+.mcl{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#b0581f;color:#fff;font-weight:800;font-size:14px;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);box-sizing:border-box}
+#mapakarta{position:absolute;left:12px;right:12px;bottom:12px;z-index:600}
+.mkarta{position:relative;background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 4px 18px rgba(0,0,0,.2)}
+.mkx{position:absolute;right:10px;top:10px;border:none;background:#f0eee6;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
+.mkhead{display:flex;gap:12px;align-items:flex-start;padding-right:28px}
+.mkt{display:block;font-weight:800;font-size:15.5px}
+.mks{display:block;font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4}
+.mktag{font-size:11px;font-weight:700;border-radius:20px;padding:2px 8px;margin-left:4px;white-space:nowrap;background:#efece2;color:#6b6652;vertical-align:2px}
+.mktag.now{background:#fbe5e3;color:#a23a30}.mktag.plan{background:#fdf3dc;color:#9a6a12}
+.mkbtn{display:flex;gap:8px;margin-top:12px}
+.mkbtn .btn{flex:1;margin:0}
+.mkbtn .mksd{background:#f0eee6;color:var(--ink)}
+.mktypy{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.mktypy span{font-size:12.5px;font-weight:700;border-radius:20px;padding:4px 10px}
+.mprazdno{position:absolute;left:14px;right:14px;top:58px;z-index:500;background:#fff;border-radius:14px;padding:12px 14px;font-size:14px;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.mapawrap .leaflet-control-attribution{font-size:10px}
