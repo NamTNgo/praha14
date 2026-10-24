@@ -1,3 +1,3 @@
 Praha 9: opatření na desce 10
 Praha 14: přechodných úprav provozu na desce 2
-výstup: 10 platných opatření
+výstup: 8 platných opatření
