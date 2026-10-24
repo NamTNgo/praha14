@@ -461,3 +461,15 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .parf .pt{font-size:12.5px;color:var(--muted)}
 .parted{font-size:11px;background:#e1ece4;color:var(--green);padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700}
 a.vkarta{text-decoration:none}
+/* U mě taky */
+.umt{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.umt.hotovo{background:#eef4ea;border-color:#cfe0c6}
+.umtq{font-weight:800;font-size:15.5px}
+.umth{display:flex;gap:8px;align-items:center;font-weight:800;font-size:15.5px;color:var(--green)}
+.umtb{display:flex;gap:8px;margin-top:10px}
+.umtb .btn{flex:1;margin:0;padding:12px 8px;font-weight:800}
+.umtb .umtne{background:#f0eee6;color:var(--ink);font-weight:700}
+.umtn{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);margin-top:8px;line-height:1.35}
+.umt.hotovo .umtn{color:#4d5a4f}
+.umtn b{color:var(--ink)}
+.umtzrus{margin-top:8px;font-size:12.5px}

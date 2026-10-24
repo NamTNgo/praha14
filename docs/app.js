@@ -1431,7 +1431,7 @@
       '<div class="body" style="gap:12px;padding-bottom:28px">' + chip +
       '<h1 style="margin:4px 0 0;font-size:23px">' + (f === "pozdeji" || f === "brzy" ? "Odstávka pitné vody" : "Přerušená dodávka vody") + "</h1>" +
       '<div class="skadr" style="font-size:15px">' + (moje ? "Týká se vaší adresy " + esc(a.label) : a ? "V okolí vaší adresy · " + esc(((u.adresy[0] || [0, 0, ""])[2])) : "Týká se ulic " + esc(ulicePrvni(u.adresy, 3))) + "</div>" +
-      '<div class="dlinks"><a class="btn-ext" href="' + esc(pvkOdkaz(u, a)) + '" target="_blank" rel="noopener">Otevřít na mapě PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("voda", u.id) + "</div>" +
+      '<div class="dlinks"><a class="btn-ext" href="' + esc(pvkOdkaz(u, a)) + '" target="_blank" rel="noopener">Otevřít na mapě PVK ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("voda", u.id) + "</div>" + (f === "probiha" || f === "po" ? umtBlok("voda:" + u.id, "voda") : "") +
       '<div class="card dcard"><div class="vtime">' +
       '<div><div class="k">Od</div><div class="v">' + (od ? vHod(od) : "–") + '</div><div class="s">' + (od ? vDen(od, ted) + (Math.abs(akDen(od) - akDen(ted)) <= 864e5 ? ", " + HDAYS[od.getDay()].toLowerCase() + " " + od.getDate() + ". " + (od.getMonth() + 1) + "." : "") : "") + "</div></div>" +
       '<div><div class="k">Do</div><div class="v">' + (dd ? "kolem " + vHod(dd) : "neznámo") + '</div><div class="s">' + (dd ? vDen(dd, ted) + (Math.abs(akDen(dd) - akDen(ted)) <= 864e5 ? ", " + HDAYS[dd.getDay()].toLowerCase() + " " + dd.getDate() + ". " + (dd.getMonth() + 1) + "." : "") : "PVK konec zatím neuvedly") + "</div></div></div>" +
@@ -1986,7 +1986,7 @@
       '<h1 style="margin:4px 0 0;font-size:23px">Plánované vypnutí elektřiny</h1>' +
       '<div class="skadr" style="font-size:15px">' + (moje ? "Týká se vaší adresy " + esc(a.label) : a ? "V okolí vaší adresy · " + esc(elUlice(u).slice(0, 2).join(", ")) + (nej ? " · " + akVzdTxt(nej.d) : "") : "Týká se ulic " + esc(elUlice(u).slice(0, 3).join(", "))) + "</div>" +
       '<div class="dlinks">' + (gm ? '<a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
-      '<a class="btn-ext" href="' + esc(u.u) + '" target="_blank" rel="noopener">Oznámení na úřední desce ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("el", u.id) + "</div>" +
+      '<a class="btn-ext" href="' + esc(u.u) + '" target="_blank" rel="noopener">Oznámení na úřední desce ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("el", u.id) + "</div>" + (f === "probiha" ? umtBlok("el:" + u.id, "el") : "") +
       '<div class="card dcard"><div class="vtime">' +
       '<div><div class="k">Od</div><div class="v">' + (u.od ? u.od.replace(/^0/, "") : "–") + '</div><div class="s">' + vDen(x.od, ted) + (Math.abs(akDen(x.od) - akDen(ted)) <= 864e5 ? ", " + HDAYS[x.od.getDay()].toLowerCase() + " " + x.od.getDate() + ". " + (x.od.getMonth() + 1) + "." : "") + "</div></div>" +
       '<div><div class="k">Do</div><div class="v">' + (u.do ? u.do.replace(/^0/, "") : "neuvedeno") + '</div><div class="s">tentýž den</div></div></div>' +
@@ -2114,6 +2114,63 @@
         return '<div class="parf' + (on ? " on" : "") + '"><i></i><div><div class="pn">' + esc(x.n) + (on ? ' <span class="parted">teď</span>' : "") + '</div><div class="pt">' + esc(x.t) + "</div></div></div>";
       }).join("") + "</div>" +
       '<div class="note">Až začne hlasování, připomeneme ho tady i na Domů.</div></div>';
+  }
+  // ---- „U mě taky“: anonymní potvrzení probíhajícího výpadku sousedy (API na Cloudflare, adresa v data/api.json) ----
+  var I_USERS = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>';
+  var umtApi = null, umtData = {};
+  function umtUrl() {
+    if (!umtApi) umtApi = getJSON("data/api.json").then(function (j) { return j && j.url; }).catch(function () { return null; });
+    return umtApi;
+  }
+  function umtZarizeni() {
+    var d = null;
+    try { d = localStorage.getItem("podokny-zarizeni"); } catch (e) {}
+    if (!d) {
+      d = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()).replace(/[^\w-]/g, "");
+      try { localStorage.setItem("podokny-zarizeni", d); } catch (e) {}
+    }
+    return d;
+  }
+  function umtSousede(n) { return n + (n === 1 ? " soused" : n >= 2 && n <= 4 ? " sousedé" : " sousedů"); }
+  function umtObsah(k, co) {
+    var r = umtData[k];
+    if (r && r.ja === "ano") return '<div class="umt hotovo"><div class="umth">' + SVG('<path d="M20 6 9 17l-5-5"/>', 18, "var(--green)", 2.4) + "Díky, zapsáno</div>" +
+      '<div class="umtn">' + SVG(I_USERS, 15, "#4d5a4f") + "<span><b>" + umtSousede(r.ano) + "</b> z okolí " + (r.ano >= 2 && r.ano <= 4 ? "jsou" : "je") + " na tom stejně</span></div>" +
+      '<button type="button" class="link umtzrus" data-umt="zrus">Zrušit</button></div>';
+    if (r && r.ja === "ne") return '<div class="umt hotovo"><div class="umth">' + SVG('<path d="M20 6 9 17l-5-5"/>', 18, "var(--green)", 2.4) + "Díky, zapsáno, že " + (co === "voda" ? "vodu máte" : "proud máte") + "</div>" +
+      '<button type="button" class="link umtzrus" data-umt="zrus">Zrušit</button></div>';
+    return '<div class="umt"><div class="umtq">' + (co === "voda" ? "Jste teď bez vody?" : "Jste teď bez proudu?") + "</div>" +
+      '<div class="umtb"><button type="button" class="btn" data-umt="ano">U mě taky</button><button type="button" class="btn umtne" data-umt="ne">' + (co === "voda" ? "Mám vodu" : "Mám proud") + "</button></div>" +
+      '<div class="umtn">' + (r ? (r.ano ? SVG(I_USERS, 15, "#726c5a") + "<span><b>" + umtSousede(r.ano) + "</b> z okolí to " + (r.ano === 1 ? "potvrdil" : r.ano <= 4 ? "potvrdili" : "potvrdilo") + " za poslední hodinu</span>" : "Zatím to nikdo z okolí nepotvrdil.") : "&nbsp;") + "</div></div>";
+  }
+  function umtBlok(k, co) { return '<div id="umtbox" data-k="' + esc(k) + '" data-co="' + co + '">' + umtObsah(k, co) + "</div>"; }
+  function umtNapoj() {
+    var box = document.getElementById("umtbox");
+    if (!box) return;
+    var k = box.getAttribute("data-k"), co = box.getAttribute("data-co"), d = umtZarizeni();
+    function prekresli() { var b = document.getElementById("umtbox"); if (b && b.getAttribute("data-k") === k) { b.innerHTML = umtObsah(k, co); umtTlacitka(); } }
+    function umtTlacitka() {
+      document.querySelectorAll("#umtbox [data-umt]").forEach(function (t) {
+        t.addEventListener("click", function () {
+          var a = t.getAttribute("data-umt"), r = umtData[k] || { ano: 0, ne: 0, ja: null };
+          // hned ukázat výsledek, server pak pošle přesná čísla
+          if (r.ja) r[r.ja] = Math.max(0, r[r.ja] - 1);
+          if (a !== "zrus") r[a] = (r[a] || 0) + 1;
+          r.ja = a === "zrus" ? null : a; umtData[k] = r; prekresli();
+          umtUrl().then(function (u) {
+            if (!u) return;
+            return fetch(u + "/umetaky", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ k: k, d: d, a: a }) })
+              .then(function (x) { return x.ok ? x.json() : null; }).then(function (j) { if (j) { umtData[k] = j; prekresli(); } });
+          }).catch(function () {});
+        });
+      });
+    }
+    umtTlacitka();
+    umtUrl().then(function (u) {
+      if (!u) return;
+      return fetch(u + "/umetaky?k=" + encodeURIComponent(k) + "&d=" + encodeURIComponent(d)).then(function (x) { return x.ok ? x.json() : null; })
+        .then(function (j) { if (j && j[k]) { umtData[k] = j[k]; prekresli(); } });
+    }).catch(function () {});
   }
   function openEl(id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };
@@ -2457,6 +2514,7 @@
       navigator.geolocation.getCurrentPosition(function (g) { state.zavPoz = [g.coords.latitude, g.coords.longitude]; render(); },
         function () { zp.textContent = "Polohu se nepodařilo zjistit"; }, { enableHighAccuracy: true, timeout: 10000 });
     });
+    umtNapoj();
     var vb = document.getElementById("vodaback");
     if (vb) vb.addEventListener("click", function () { vodaBack(); });
     var dmv = document.getElementById("domuvic");
