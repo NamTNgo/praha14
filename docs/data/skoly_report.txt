@@ -1,8 +1,8 @@
-záznamů: 92
-podle typu: {"ms": 35, "ss": 35, "zs": 22}
-podle MČ: {"9": 58, "14": 34}
+záznamů: 91
+podle typu: {"ms": 34, "ss": 35, "zs": 22}
+podle MČ: {"9": 58, "14": 33}
 podle zřizovatele (s/p/c/?): {"p": 46, "s": 67}
-s webem: 78, s e-mailem: 92
+s webem: 77, s e-mailem: 91
 právní forma zřizovatele | sektor | název (kontrola třídění):
   21x 811|s|Městská část Praha 14
   20x 811|s|Městská část Praha 9
@@ -51,7 +51,7 @@ právní forma zřizovatele | sektor | název (kontrola třídění):
   1x 112|p|Bezpečnostně právní akademie Praha, s.r.
   1x 112|p|Mateřská škola Little FLOW s.r.o.
 bez zřizovatele: 
-mimo Prahu 9/14 (nespárováno): 15350
+mimo Prahu 9/14 (nespárováno): 15351
 Praha 9/14 bez shody adresy: 93
   MŠ BERUŠKA, s.r.o. | K železnici 307/ | Praha 9 Běchovice
   Obch. akademie Praha, s.r.o. | Vinořská 163/17 | Praha 9 Satalice
@@ -116,7 +116,7 @@ Praha 9/14 bez shody adresy: 93
 přeskočené druhy:
   5851x L11|Školní jídelna
   4279x G21|Školní družina
-  3026x L13|Školní jídelna - výdejna
+  3025x L13|Školní jídelna - výdejna
   798x G22|Školní klub
   532x F10|Základní umělecká škola
   379x H22|Domov mládeže
