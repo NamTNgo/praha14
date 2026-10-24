@@ -44,6 +44,16 @@
   function load() { try { var v = JSON.parse(localStorage.getItem(KEY)); if (v && typeof v.lat === "number") return v; } catch (e) {} return null; }
   function save(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
   function clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+  // víc uložených adres: {list: [{...adresa, nazev, upoz}], akt}; starší jedna adresa se převede na „Domov“
+  var KEY_ADR = "podokny-adresy", ADR_MAX = 5;
+  function adrNacti() {
+    var v = null;
+    try { v = JSON.parse(localStorage.getItem(KEY_ADR)); } catch (e) {}
+    if (!v || !v.list || !v.list.length) { var a = load(); v = a ? { list: [Object.assign({ nazev: "Domov", upoz: true }, a)], akt: 0 } : { list: [], akt: 0 }; }
+    if (v.akt >= v.list.length) v.akt = 0;
+    return v;
+  }
+  function adrUloz(v) { try { localStorage.setItem(KEY_ADR, JSON.stringify(v)); } catch (e) {} if (v.list[v.akt]) save(v.list[v.akt]); }
 
   // ---- hledání adres ----
   var index = null;
@@ -117,8 +127,10 @@
 
   function viewSearch() {
     var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
-    var h = '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Pod okny</h1>' +
-      '<div class="sub">Zadejte adresu a uvidíte, co se u vás děje: odstávky vody, svoz odpadu, uzavírky, akce, lékaře a školy v okolí.</div></div><div class="body">' +
+    var h = (state.adrPridat ? '<div class="head"><button type="button" class="btn-edit" id="adrzpet" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
+      '<div class="eyebrow" style="margin-top:12px">Moje adresy</div><h1>Přidat adresu</h1><div class="sub">Rodiče, práce, škola dětí… Najděte adresu v Praze 9 nebo 14.</div></div><div class="body">' :
+      '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Pod okny</h1>' +
+      '<div class="sub">Zadejte adresu a uvidíte, co se u vás děje: odstávky vody, svoz odpadu, uzavírky, akce, lékaře a školy v okolí.</div></div><div class="body">') +
       '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#8a8572", 2.2) +
       '<input id="q" class="input' + (none ? " bad" : "") + (q.trim().length >= 2 ? " has-clear" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '">' +
       '<button type="button" class="clear-btn" id="clr" aria-label="Vymazat text"' + (q.trim().length >= 2 ? "" : " hidden") + '><span class="clear-dot">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 10, "#fff", 3.2) + "</span></button></div>";
@@ -251,7 +263,8 @@
 
   function viewResult() {
     var a = state.address, r = results(a);
-    var h = '<div class="head addr"><div><div class="eyebrow">Vaše adresa</div><div class="addr-name">' + esc(a.label) + '</div></div>' +
+    var av = adrNacti(), vic = av.list.length > 1, nz = vic && av.list[av.akt] ? av.list[av.akt].nazev : "Vaše adresa";
+    var h = '<div class="head addr"><div><div class="eyebrow">' + esc(nz) + '</div>' + (vic ? '<button type="button" class="addr-name adrsw" id="adrsw">' + esc(a.label) + SVG('<path d="m6 9 6 6 6-6"/>', 20, "currentColor", 2.4) + "</button>" : '<div class="addr-name">' + esc(a.label) + "</div>") + "</div>" +
       '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div>";
     if (state.tab === "domu") return h + '<div class="body" style="gap:12px">' + domuBody(a) + "</div>" + FOOT_DOMU;
     if (state.tab === "skoly") return h + '<div class="body">' + okoliSeg() + skolyBody(a) + "</div>" + FOOT_SK;
@@ -2278,15 +2291,15 @@
   }
   function tydenKarta(a) {
     var t = tydPolozky(a, new Date()), w = t.w, r = t.r, konec = pricti(w.do, -1);
-    var rozsah = (w.pristi ? "příští týden · " : "") + dm(w.od) + " – " + dm(konec);
+    var rozsah = dm(w.od) + " – " + dm(konec);
     var zob = state.tydVse ? r : r.slice(0, TYD_N);
-    var h = '<div class="hsec"><b>Tento týden u vás</b><span class="tydr">' + rozsah + "</span></div><div class=\"card tyd\">";
+    var h = '<div class="hsec"><b>' + (w.pristi ? "Příští týden u vás" : "Tento týden u vás") + '</b><span class="tydr">' + rozsah + "</span></div><div class=\"card tyd\">";
     if (!r.length) h += '<div class="tydklid">' + SVG('<path d="M20 6 9 17l-5-5"/>', 18, "#2f6b45", 2.4) + "<span><b>Klidný týden</b><span>Na vaší adrese se nic neplánuje. Kdyby se něco změnilo, uvidíte to tady.</span></span></div>";
     h += zob.map(function (x) {
       return '<button type="button" class="tydr1" data-act="' + esc(x.act) + '"><span class="tydd"><b>' + (x.dn || (x.trva ? "od " : "") + HDAYS[x.d.getDay()]) + "</b><small>" + dm(x.d) + "</small></span>" +
         '<span class="tydi">' + SVG(x.ic, 16, x.fg, 2.2) + '</span><span class="grow"><span class="tydt">' + esc(x.t) + '</span><span class="tyds">' + esc(x.s) + "</span></span></button>";
     }).join("");
-    if (r.length > TYD_N) h += '<button type="button" class="tydvic" id="tydvic">' + (state.tydVse ? "Zobrazit méně" : "Další " + (r.length - TYD_N) + " v tomto týdnu") + "</button>";
+    if (r.length > TYD_N) h += '<button type="button" class="tydvic" id="tydvic">' + (state.tydVse ? "Zobrazit méně" : "Další " + (r.length - TYD_N) + (w.pristi ? " v příštím týdnu" : " v tomto týdnu")) + "</button>";
     h += '<div id="ctvrt" data-part="' + esc(a.part || "Praha " + a.mc) + '"></div></div>';
     return h;
   }
@@ -2318,6 +2331,61 @@
       return fetch(u + "/ctvrt?part=" + encodeURIComponent(part) + "&od=" + od.getTime() + "&do=" + dO.getTime()).then(function (x) { return x.ok ? x.json() : null; })
         .then(function (j) { komNacti.c = komNacti.c || {}; komNacti.c[k] = j; vypis(j); });
     }).catch(function () {});
+  }
+  // ---- víc adres: panel, přidání, upozornění z dalších adres ----
+  var ADR_IC = { "Domov": '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>',
+    "Rodiče": '<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>',
+    "Práce": '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    "Škola": '<path d="M2 9 12 4l10 5-10 5Z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+    "Chata": '<path d="M12 3 4 15h5l-3 5h12l-3-5h5Z"/>' };
+  var ADR_BARVY = { "Domov": ["#e7efe5", "#1f4d36"], "Rodiče": ["#fbe9ef", "#a83a5c"], "Práce": ["#e3edf8", "#2f6fb0"], "Škola": ["#f1ebfa", "#6a4aa8"], "Chata": ["#eef4e2", "#4f6b1f"] };
+  var ADR_NAZVY = ["Domov", "Rodiče", "Práce", "Škola", "Chata"];
+  function adrIkona(n) { var b = ADR_BARVY[n] || ["#efece2", "#6b6652"]; return '<span class="adric" style="background:' + b[0] + '">' + SVG(ADR_IC[n] || PIN, 18, b[1], 2.2) + "</span>"; }
+  function adrProblem(x) {
+    var al = domuUpozorneni(x).filter(function (u) { return u.cls === "now" || u.cls === "plan"; });
+    return al[0] || null;
+  }
+  function adrJinde() {
+    var av = adrNacti(), r = [];
+    av.list.forEach(function (x, i) { if (i !== av.akt && x.upoz !== false) { var p = adrProblem(x); if (p) r.push({ i: i, x: x, p: p }); } });
+    if (!r.length) return "";
+    return '<div class="hsub">Na dalších adresách</div>' + r.slice(0, 2).map(function (y) {
+      return '<button type="button" class="card adrj" data-adr="' + y.i + '"><span class="badge" style="background:' + (y.p.cls === "now" ? "#fbe5e3" : "#fdf3dc") + '">' + SVG(y.p.ic, 18, y.p.fg) + "</span>" +
+        '<span class="grow"><span class="vt">' + esc(y.x.nazev) + " · " + esc(y.p.t.charAt(0).toLowerCase() + y.p.t.slice(1)) + '</span><span class="vs">' + esc(y.x.label) + " · " + esc(y.p.s) + "</span></span>" + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+    }).join("");
+  }
+  function adrPanel() {
+    var av = adrNacti();
+    var h = '<div class="sheet-bg" data-adrclose="1"></div><div class="sheet" role="dialog" aria-label="Moje adresy"><div class="grab"></div>' +
+      '<div class="shhead"><div class="shh">Moje adresy</div><button type="button" class="shx" data-adrclose="1" aria-label="Zavřít">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 16, "currentColor", 2.4) + "</button></div>";
+    h += av.list.map(function (x, i) {
+      var p = i !== av.akt ? adrProblem(x) : null, otev = state.adrMenu === i;
+      return '<div class="adrr"><button type="button" class="adrrb" data-adr="' + i + '">' + adrIkona(x.nazev) + '<span class="grow"><span class="vt">' + esc(x.nazev) +
+        (p ? ' <span class="adrtag ' + p.cls + '">' + esc(p.t.split(" · ")[0].toLowerCase()) + "</span>" : "") + '</span><span class="vs">' + esc(x.label) + (x.part ? " · " + esc(x.part) : "") + "</span></span>" +
+        (i === av.akt ? SVG('<path d="M20 6 9 17l-5-5"/>', 20, "var(--green)", 2.6) : "") + "</button>" +
+        '<button type="button" class="adrdots" data-adrmenu="' + i + '" aria-label="Upravit">' + SVG('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>', 18, "#9a9484", 2) + "</button></div>" +
+        (otev ? '<div class="adrakce"><button type="button" class="btn-ext" data-adrren="' + i + '">Přejmenovat</button><button type="button" class="btn-ext adrdel" data-adrdel="' + i + '">Odebrat</button></div>' : "");
+    }).join("");
+    h += av.list.length < ADR_MAX ? '<button type="button" class="adradd" id="adradd">' + SVG('<path d="M12 5v14M5 12h14"/>', 20, "var(--green)", 2.4) + "Přidat adresu</button>" :
+      '<div class="note" style="padding:12px 0 0">Máte uložených ' + ADR_MAX + " adres. Pro novou nějakou odeberte.</div>";
+    return h + '<div class="note" style="margin-top:10px">Uložit můžete až ' + ADR_MAX + " adres v Praze 9 a 14. Zůstávají jen ve vašem telefonu.</div></div>";
+  }
+  function viewPojmenuj() {
+    var x = state.adrNova, ren = state.adrRen != null, n = state.adrNazev || (ren ? x.nazev : "");
+    var jine = n && ADR_NAZVY.indexOf(n) < 0;
+    return '<div class="head"><button type="button" class="btn-edit" id="adrzpet" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
+      '<div class="body" style="gap:12px;padding-bottom:28px"><div class="eyebrow">' + (ren ? "Přejmenovat adresu" : "Přidat adresu") + '</div><h1 style="margin:0;font-size:24px">' + esc(x.label) + "</h1>" +
+      '<div class="note" style="margin:-6px 0 4px">' + esc((x.part ? x.part + " · " : "") + "Praha " + x.mc) + '</div><div class="t1">Jak ji pojmenujeme?</div><div class="adrchips">' +
+      ADR_NAZVY.map(function (c) { return '<button type="button" class="adrchip' + (n === c ? " on" : "") + '" data-adrnaz="' + c + '">' + c + "</button>"; }).join("") +
+      '<button type="button" class="adrchip' + (jine || state.adrJine ? " on" : "") + '" data-adrnaz="">Jiné…</button></div>' +
+      (jine || state.adrJine ? '<input id="adrvlastni" class="input" type="text" maxlength="20" placeholder="Např. Babička" value="' + esc(jine ? n : "") + '">' : "") +
+      '<label class="card adrup"><span class="grow"><b>Upozorňovat i na tuto adresu</b><span class="vs">Odstávky a výpadky uvidíte na Domů u hlavní adresy</span></span><input type="checkbox" id="adrupoz"' + (x.upoz === false ? "" : " checked") + "></label>" +
+      '<button type="button" class="btn zavbtn" id="adruloz"' + (n ? "" : " disabled") + ">" + (ren ? "Uložit" : "Uložit adresu") + "</button></div>";
+  }
+  function adrPrepni(i) {
+    var av = adrNacti(); if (!av.list[i]) return;
+    av.akt = i; adrUloz(av); state.address = av.list[i]; state.adrPanel = false; state.adrMenu = null; state.tab = "domu"; state.domuVse = false;
+    render(); window.scrollTo(0, 0);
   }
   function openEl(id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };
@@ -2518,6 +2586,7 @@
       h += '<div class="hok">' + SVG('<path d="M20 6 9 17l-5-5"/>', 22, "#1f4d36", 2.6) + "<span><b>U vás je klid</b><span>" +
         (st === "ok" ? "Žádná odstávka vody ani blokové čištění ve vaší ulici." : "Žádné blokové čištění ani uzavírka u vás. Stav vody se teď nepodařilo ověřit.") + "</span></span></div>";
     }
+    h += adrJinde();
     var dn = domuDnes(a);
     h += '<div class="hsec"><b>Dnes a zítra</b><button type="button" class="hlink" data-act="tab:akce">Kalendář akcí</button></div>';
     if (dn.length) h += '<div class="hday">' + dn.map(function (x) {
@@ -2609,7 +2678,8 @@
     var html;
     if (!data) html = window.__err ? viewOffline() : viewLoading();
     else if (!state.address && state.sdil && sdilHtml()) html = sdilHtml();
-    else if (!state.address) html = viewSearch();
+    else if (state.adrNova) html = viewPojmenuj();
+    else if (!state.address || state.adrPridat) html = viewSearch();
     else if (state.patSel && patById(state.patSel)) html = viewPatraniDetail(patById(state.patSel));
     else if (state.vodaSel && vodaById(state.vodaSel)) html = viewVodaDetail(vodaById(state.vodaSel));
     else if (state.elSel && elById(state.elSel)) html = viewElDetail(elById(state.elSel));
@@ -2630,7 +2700,8 @@
     else html = viewResult();
     if (state.sheet && html.indexOf('data-sheet="' + state.sheet + '"') >= 0) html += fSheet(state.sheet); else state.sheet = null;
     if (data && state.address && state.tab === "akce" && state.akView === "list" && state.akKal) html += akKalendar();
-    if (naSekci()) html += bottomNav();
+    if (state.adrPanel && state.address && !state.adrNova && !state.adrPridat) html += adrPanel();
+    if (naSekci() && !state.adrPridat && !state.adrNova) html += bottomNav();
     app.innerHTML = html;
     var q = document.getElementById("q");
     if (q) {
@@ -2772,7 +2843,35 @@
     var akx = document.getElementById("akback");
     if (akx) akx.addEventListener("click", function () { akBack(); });
     var e = document.getElementById("edit");
-    if (e) e.addEventListener("click", function () { clear(); state.address = null; state.query = ""; state.tab = "domu"; state.zav = null; state.uzSel = null; state.tvSel = null; state.vodaSel = null; state.patSel = null; state.elSel = null; state.stView = "list"; state.stHist = []; state.domuVse = false; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; render(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (e) e.addEventListener("click", function () { state.adrPanel = true; state.adrMenu = null; render(); });
+    var asw = document.getElementById("adrsw");
+    if (asw) asw.addEventListener("click", function () { state.adrPanel = true; state.adrMenu = null; render(); });
+    app.querySelectorAll("[data-adrclose]").forEach(function (b) { b.addEventListener("click", function () { state.adrPanel = false; state.adrMenu = null; render(); }); });
+    app.querySelectorAll("[data-adr]").forEach(function (b) { b.addEventListener("click", function () { adrPrepni(+b.getAttribute("data-adr")); }); });
+    app.querySelectorAll("[data-adrmenu]").forEach(function (b) { b.addEventListener("click", function () { var i = +b.getAttribute("data-adrmenu"); state.adrMenu = state.adrMenu === i ? null : i; render(); }); });
+    app.querySelectorAll("[data-adrdel]").forEach(function (b) { b.addEventListener("click", function () {
+      var av = adrNacti(), i = +b.getAttribute("data-adrdel"), byla = av.list[av.akt];
+      av.list.splice(i, 1); state.adrMenu = null;
+      if (!av.list.length) { try { localStorage.removeItem(KEY_ADR); } catch (e) {} clear(); state.address = null; state.adrPanel = false; state.query = ""; state.tab = "domu"; render(); return; }
+      av.akt = Math.max(0, av.list.indexOf(byla)); adrUloz(av); state.address = av.list[av.akt]; render();
+    }); });
+    app.querySelectorAll("[data-adrren]").forEach(function (b) { b.addEventListener("click", function () {
+      var av = adrNacti(), i = +b.getAttribute("data-adrren"); state.adrRen = i; state.adrNova = Object.assign({}, av.list[i]); state.adrNazev = av.list[i].nazev; state.adrJine = ADR_NAZVY.indexOf(av.list[i].nazev) < 0; state.adrPanel = false; render(); window.scrollTo(0, 0);
+    }); });
+    var aad = document.getElementById("adradd");
+    if (aad) aad.addEventListener("click", function () { state.adrPanel = false; state.adrPridat = true; state.query = ""; render(); window.scrollTo(0, 0); var q = document.getElementById("q"); if (q) q.focus(); });
+    var azp = document.getElementById("adrzpet");
+    if (azp) azp.addEventListener("click", function () { state.adrPridat = false; state.adrNova = null; state.adrRen = null; state.query = ""; state.adrPanel = true; render(); });
+    app.querySelectorAll("[data-adrnaz]").forEach(function (b) { b.addEventListener("click", function () { var n = b.getAttribute("data-adrnaz"); state.adrJine = !n; state.adrNazev = n; render(); if (!n) { var v = document.getElementById("adrvlastni"); if (v) v.focus(); } }); });
+    var avl = document.getElementById("adrvlastni");
+    if (avl) avl.addEventListener("input", function () { state.adrNazev = avl.value.trim(); var u = document.getElementById("adruloz"); if (u) u.disabled = !state.adrNazev; });
+    var aul = document.getElementById("adruloz");
+    if (aul) aul.addEventListener("click", function () {
+      var av = adrNacti(), x = state.adrNova, up = document.getElementById("adrupoz");
+      x.nazev = state.adrNazev || "Adresa"; x.upoz = up ? up.checked : true;
+      if (state.adrRen != null) { av.list[state.adrRen] = x; } else { av.list.push(x); av.akt = av.list.length - 1; }
+      adrUloz(av); state.address = av.list[av.akt]; state.adrNova = null; state.adrRen = null; state.tab = "domu"; render(); window.scrollTo(0, 0);
+    });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
@@ -2781,7 +2880,21 @@
   }
   function pick(a) {
     if (!a) return;
-    state.address = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14", street: a[0], cp: a[1], co: a[2] || "", part: a[6] || "" };
+    var nova = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14", street: a[0], cp: a[1], co: a[2] || "", part: a[6] || "" };
+    if (state.adrPridat) {
+      var av0 = adrNacti(), j = -1;
+      av0.list.forEach(function (x, i) { if (x.label === nova.label) j = i; });
+      state.adrPridat = false; state.query = "";
+      if (j >= 0) { adrPrepni(j); return; }          // už uložená – jen přepnout
+      state.adrNova = Object.assign(nova, { upoz: true }); state.adrNazev = ""; state.adrJine = false; state.adrRen = null;
+      render(); window.scrollTo(0, 0); return;
+    }
+    state.address = nova;
+    var av1 = adrNacti();
+    av1.list = av1.list.filter(function (x) { return x.label !== nova.label; });
+    if (!av1.list.length) av1.list.push(Object.assign({ nazev: "Domov", upoz: true }, nova)); else av1.list[av1.akt] = Object.assign({}, av1.list[av1.akt] || { nazev: "Domov", upoz: true }, nova);
+    if (av1.akt >= av1.list.length) av1.akt = 0;
+    adrUloz(av1); state.address = av1.list[av1.akt];
     save(state.address);
     state.tab = "domu";   // po zadání adresy ukázat přehled pro adresu
     render();
@@ -2806,7 +2919,7 @@
       data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17], elektrina: v[18], opatreni: v[19], zps: v[20], eia: v[21], vyzvy: v[22] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
-      state.address = load();
+      var av = adrNacti(); state.address = av.list[av.akt] || null; if (av.list.length) adrUloz(av);
       sdilZHash();
       render();
     }).catch(function () { window.__err = true; render(); });

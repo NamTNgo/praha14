@@ -493,3 +493,22 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .tydklid > span > span{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
 .tydkom{display:flex;gap:10px;align-items:center;padding:12px 0 8px;border-top:1px solid var(--line);font-size:13px;color:#4d5a4f;line-height:1.4}
 .tydkom svg{flex-shrink:0}
+/* víc adres */
+.adrsw{display:flex;align-items:center;gap:6px;font:inherit;font-size:22px;font-weight:800;color:inherit;background:none;border:none;padding:0;margin-top:3px;cursor:pointer;text-align:left}
+.hsub{font-size:12.5px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin:4px 2px -4px}
+.card.adrj{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;padding:12px 14px;background:#fff}
+.adric{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.adrr{display:flex;align-items:center;border-top:1px solid var(--line)}
+.adrrb{flex:1;display:flex;gap:12px;align-items:center;font:inherit;color:inherit;background:none;border:none;padding:12px 0;text-align:left;cursor:pointer;min-width:0}
+.adrdots{background:none;border:none;padding:10px 4px 10px 10px;cursor:pointer}
+.adrtag{font-size:11.5px;border-radius:20px;padding:2px 8px;margin-left:4px;font-weight:700;background:#fdf3dc;color:#9a6a12}
+.adrtag.now{background:#fbe5e3;color:#a23a30}
+.adrakce{display:flex;gap:8px;padding:0 0 12px 50px}
+.adrdel{color:#a23a30}
+.adradd{display:flex;gap:12px;align-items:center;width:100%;font:inherit;font-weight:800;color:var(--green);background:none;border:none;border-top:1px solid var(--line);padding:14px 0 4px;cursor:pointer}
+.adrchips{display:flex;flex-wrap:wrap;gap:8px}
+.adrchip{font:inherit;font-weight:700;font-size:14px;border-radius:20px;padding:9px 14px;background:#fff;border:1px solid #ddd8c8;color:var(--ink);cursor:pointer}
+.adrchip.on{background:var(--green);border-color:var(--green);color:#fff}
+.card.adrup{display:flex;gap:12px;align-items:center;padding:12px 14px;cursor:pointer}
+.adrup input{width:22px;height:22px;accent-color:var(--green)}
+#adruloz:disabled{opacity:.45}
