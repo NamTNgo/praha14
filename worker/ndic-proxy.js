@@ -18,6 +18,9 @@ const UPSTREAM = "https://mobilitydata.rsd.cz/Resources/Dynamic/CommonTIDatex/";
 const KEY = "latest.xml";
 const GH_REPO = "NamTNgo/praha14";
 const GH_WORKFLOW = "nehody.yml";
+const GH_VODA = "voda.yml";
+// živá data aplikace (voda, nehody): GitHub Actions je sem nahraje, aplikace je čte bez nasazování webu
+const ZIVA = ["voda.json", "nehody.json"];
 
 const STATUS = "status.json";
 
@@ -116,6 +119,21 @@ async function test() {
 export default {
   // GitHub Actions čte hotovou kopii z R2
   async fetch(request, env, ctx) {
+    const cesta = new URL(request.url).pathname, m = /^\/data\/([a-z]+\.json)$/.exec(cesta);
+    if (m && ZIVA.includes(m[1])) {
+      const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Access-Control-Allow-Methods": "GET, PUT, OPTIONS" };
+      if (request.method === "OPTIONS") return new Response(null, { headers: cors });
+      if (request.method === "PUT") {
+        if (request.headers.get("Authorization") !== "Bearer " + env.PROXY_TOKEN) return new Response("Forbidden\n", { status: 403, headers: cors });
+        const t = await request.text();
+        try { JSON.parse(t); } catch (e) { return new Response("neplatný JSON\n", { status: 400, headers: cors }); }
+        await env.NDIC_BUCKET.put("app/" + m[1], t, { httpMetadata: { contentType: "application/json; charset=utf-8" } });
+        return new Response("ok\n", { headers: cors });
+      }
+      const o = await env.NDIC_BUCKET.get("app/" + m[1]);
+      if (!o) return new Response("{}", { status: 404, headers: { ...cors, "Content-Type": "application/json" } });
+      return new Response(o.body, { headers: { ...cors, "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=60" } });
+    }
     if (new URL(request.url).pathname === "/test") return new Response(await test(), { headers: { "Content-Type": "text/plain; charset=utf-8" } });
     if (request.headers.get("Authorization") !== "Bearer " + env.PROXY_TOKEN) {
       return new Response("Forbidden\n", { status: 403 });
@@ -143,6 +161,7 @@ export default {
   },
   // cron: stáhne ŘSD do R2 a hned spustí parsování na GitHubu (spolehlivý plánovač)
   async scheduled(event, env, ctx) {
+    ctx.waitUntil(spustGithub(env, GH_VODA));        // voda nezávisle na ŘSD
     ctx.waitUntil((async () => {
       const r = await stahovac(env).fetch("https://stahovac/refresh");
       if (!r.ok) {
@@ -154,9 +173,9 @@ export default {
   },
 };
 
-async function spustGithub(env) {
+async function spustGithub(env, wf) {
   if (!env.GH_TOKEN) return;
-  await fetch("https://api.github.com/repos/" + GH_REPO + "/actions/workflows/" + GH_WORKFLOW + "/dispatches", {
+  await fetch("https://api.github.com/repos/" + GH_REPO + "/actions/workflows/" + (wf || GH_WORKFLOW) + "/dispatches", {
     method: "POST",
     headers: {
       Authorization: "Bearer " + env.GH_TOKEN,

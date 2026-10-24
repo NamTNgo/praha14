@@ -28,6 +28,14 @@ jobs:
           NDIC_URL: ${{ secrets.NDIC_URL }}
           NDIC_TOKEN: ${{ secrets.NDIC_TOKEN }}
         run: python scripts/build_nehody.py
+      - name: Nahrát živá data (aplikace je čte z Cloudflare)
+        if: always()
+        env:
+          NDIC_URL: ${{ secrets.NDIC_URL }}
+          NDIC_TOKEN: ${{ secrets.NDIC_TOKEN }}
+        run: |
+          [ -s docs/data/nehody.json ] || exit 0
+          curl -sS -f -m 30 -X PUT -H "Authorization: Bearer $NDIC_TOKEN" -H "Content-Type: application/json" --data-binary @docs/data/nehody.json "${NDIC_URL%/}/data/nehody.json"
       - name: Uložit změny
         if: always()
         run: |
@@ -35,6 +43,9 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
           git add docs/data/nehody.json docs/data/nehody_report.txt
           git diff --cached --quiet && exit 0
+          # do repozitáře jen záloha jednou za hodinu (živá data jdou přes Cloudflare, web se tak nenasazuje každých 5 minut)
+          stari=$(git show HEAD:docs/data/nehody.json 2>/dev/null | python3 -c "import json,sys,datetime as d; g=json.load(sys.stdin).get('gen'); print(int((d.datetime.now(d.timezone.utc)-d.datetime.fromisoformat(g)).total_seconds()))" 2>/dev/null || echo 99999)
+          [ "${stari:-99999}" -lt 3300 ] && exit 0
           git commit -m "Aktualizace nehod"
           # denní úloha mohla mezitím commitnout dopravu; rebase, ať push projde
           for i in 1 2 3; do

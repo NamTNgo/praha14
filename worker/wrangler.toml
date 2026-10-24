@@ -19,7 +19,7 @@ tag = "v1"
 new_sqlite_classes = ["Stahovac"]
 
 [triggers]
-crons = ["*/10 * * * *"]
+crons = ["*/5 * * * *"]
 
 [observability]
 enabled = true

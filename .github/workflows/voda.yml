@@ -2,7 +2,7 @@ name: Voda (odstávky PVK)
 
 on:
   schedule:
-    - cron: "*/15 * * * *"   # havárie se mění rychle
+    - cron: "*/30 * * * *"   # jen záloha; hlavně spouští Worker v Cloudflare každých 5 minut
   workflow_dispatch: {}
 
 permissions:
@@ -23,6 +23,14 @@ jobs:
           python-version: "3.12"
       - name: Stáhnout odstávky PVK
         run: python scripts/build_voda.py
+      - name: Nahrát živá data (aplikace je čte z Cloudflare)
+        if: always()
+        env:
+          NDIC_URL: ${{ secrets.NDIC_URL }}
+          NDIC_TOKEN: ${{ secrets.NDIC_TOKEN }}
+        run: |
+          [ -s docs/data/voda.json ] || exit 0
+          curl -sS -f -m 30 -X PUT -H "Authorization: Bearer $NDIC_TOKEN" -H "Content-Type: application/json" --data-binary @docs/data/voda.json "${NDIC_URL%/}/data/voda.json"
       - name: Uložit změny
         if: always()
         run: |
@@ -30,6 +38,9 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
           git add docs/data/voda.json docs/data/voda_report.txt 2>/dev/null || true
           git diff --cached --quiet && exit 0
+          # do repozitáře jen záloha jednou za hodinu (živá data jdou přes Cloudflare, web se tak nenasazuje každých 5 minut)
+          stari=$(git show HEAD:docs/data/voda.json 2>/dev/null | python3 -c "import json,sys,datetime as d; g=json.load(sys.stdin).get('gen'); print(int((d.datetime.now(d.timezone.utc)-d.datetime.fromisoformat(g)).total_seconds()))" 2>/dev/null || echo 99999)
+          [ "${stari:-99999}" -lt 3300 ] && exit 0
           git commit -m "Aktualizace odstávek vody"
           for i in 1 2 3 4 5; do
             git pull --rebase --autostash origin main && git push && exit 0
