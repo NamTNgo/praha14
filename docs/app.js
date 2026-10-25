@@ -128,7 +128,7 @@
   function viewSearch() {
     var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
     var h = (state.adrPridat ? '<div class="head"><button type="button" class="btn-edit" id="adrzpet" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
-      '<div class="eyebrow" style="margin-top:12px">Moje adresy</div><h1>Přidat adresu</h1><div class="sub">Rodiče, práce, škola dětí… Najděte adresu v Praze 9 nebo 14.</div></div><div class="body">' :
+      '<div class="eyebrow" style="margin-top:12px">Moje adresy</div><h1>' + (state.adrZmen != null ? "Změnit adresu" : "Přidat adresu") + '</h1><div class="sub">' + (state.adrZmen != null ? "Najděte novou adresu pro „" + esc((adrNacti().list[state.adrZmen] || {}).nazev || "") + "“. Název i upozornění zůstanou." : "Rodiče, práce, škola dětí… Najděte adresu v Praze 9 nebo 14.") + '</div></div><div class="body">' :
       '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Pod okny</h1>' +
       '<div class="sub">Zadejte adresu a uvidíte, co se u vás děje: odstávky vody, svoz odpadu, uzavírky, akce, lékaře a školy v okolí.</div></div><div class="body">') +
       '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#8a8572", 2.2) +
@@ -2365,7 +2365,7 @@
         (p ? ' <span class="adrtag ' + p.cls + '">' + esc(p.t.split(" · ")[0].toLowerCase()) + "</span>" : "") + '</span><span class="vs">' + esc(x.label) + (x.part ? " · " + esc(x.part) : "") + "</span></span>" +
         (i === av.akt ? SVG('<path d="M20 6 9 17l-5-5"/>', 20, "var(--green)", 2.6) : "") + "</button>" +
         '<button type="button" class="adrdots" data-adrmenu="' + i + '" aria-label="Upravit">' + SVG('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>', 18, "#9a9484", 2) + "</button></div>" +
-        (otev ? '<div class="adrakce"><button type="button" class="btn-ext" data-adrren="' + i + '">Přejmenovat</button><button type="button" class="btn-ext adrdel" data-adrdel="' + i + '">Odebrat</button></div>' : "");
+        (otev ? '<div class="adrakce"><button type="button" class="btn-ext" data-adrzmen="' + i + '">Změnit adresu</button><button type="button" class="btn-ext" data-adrren="' + i + '">Přejmenovat</button><button type="button" class="btn-ext adrdel" data-adrdel="' + i + '">Odebrat</button></div>' : "");
     }).join("");
     h += av.list.length < ADR_MAX ? '<button type="button" class="adradd" id="adradd">' + SVG('<path d="M12 5v14M5 12h14"/>', 20, "var(--green)", 2.4) + "Přidat adresu</button>" :
       '<div class="note" style="padding:12px 0 0">Máte uložených ' + ADR_MAX + " adres. Pro novou nějakou odeberte.</div>";
@@ -3011,13 +3011,17 @@
       if (!av.list.length) { try { localStorage.removeItem(KEY_ADR); } catch (e) {} clear(); state.address = null; state.adrPanel = false; state.query = ""; state.tab = "domu"; render(); return; }
       av.akt = Math.max(0, av.list.indexOf(byla)); adrUloz(av); state.address = av.list[av.akt]; render();
     }); });
+    app.querySelectorAll("[data-adrzmen]").forEach(function (b) { b.addEventListener("click", function () {
+      state.adrZmen = +b.getAttribute("data-adrzmen"); state.adrMenu = null; state.adrPanel = false; state.adrPridat = true; state.query = ""; render(); window.scrollTo(0, 0);
+      var q = document.getElementById("q"); if (q) q.focus();
+    }); });
     app.querySelectorAll("[data-adrren]").forEach(function (b) { b.addEventListener("click", function () {
       var av = adrNacti(), i = +b.getAttribute("data-adrren"); state.adrRen = i; state.adrNova = Object.assign({}, av.list[i]); state.adrNazev = av.list[i].nazev; state.adrJine = ADR_NAZVY.indexOf(av.list[i].nazev) < 0; state.adrPanel = false; render(); window.scrollTo(0, 0);
     }); });
     var aad = document.getElementById("adradd");
     if (aad) aad.addEventListener("click", function () { state.adrPanel = false; state.adrPridat = true; state.query = ""; render(); window.scrollTo(0, 0); var q = document.getElementById("q"); if (q) q.focus(); });
     var azp = document.getElementById("adrzpet");
-    if (azp) azp.addEventListener("click", function () { state.adrPridat = false; state.adrNova = null; state.adrRen = null; state.query = ""; state.adrPanel = true; render(); });
+    if (azp) azp.addEventListener("click", function () { state.adrPridat = false; state.adrZmen = null; state.adrNova = null; state.adrRen = null; state.query = ""; state.adrPanel = true; render(); });
     app.querySelectorAll("[data-adrnaz]").forEach(function (b) { b.addEventListener("click", function () { var n = b.getAttribute("data-adrnaz"); state.adrJine = !n; state.adrNazev = n; render(); if (!n) { var v = document.getElementById("adrvlastni"); if (v) v.focus(); } }); });
     var avl = document.getElementById("adrvlastni");
     if (avl) avl.addEventListener("input", function () { state.adrNazev = avl.value.trim(); var u = document.getElementById("adruloz"); if (u) u.disabled = !state.adrNazev; });
@@ -3037,6 +3041,17 @@
   function pick(a) {
     if (!a) return;
     var nova = { label: label(a), lat: a[3], lon: a[4], mc: a[5] || "14", street: a[0], cp: a[1], co: a[2] || "", part: a[6] || "" };
+    if (state.adrPridat && state.adrZmen != null) {
+      var avz = adrNacti(), iz = state.adrZmen, puv = avz.list[iz];
+      state.adrPridat = false; state.adrZmen = null; state.query = "";
+      if (puv) {
+        avz.list[iz] = Object.assign({}, nova, { nazev: puv.nazev, upoz: puv.upoz });
+        avz.list = avz.list.filter(function (x, i) { return i === iz || x.label !== nova.label; });   // stejná adresa dvakrát ne
+        avz.akt = avz.list.indexOf(avz.list.filter(function (x) { return x.label === nova.label; })[0]);
+        adrUloz(avz); state.address = avz.list[avz.akt];
+      }
+      state.tab = "domu"; render(); window.scrollTo(0, 0); return;
+    }
     if (state.adrPridat) {
       var av0 = adrNacti(), j = -1;
       av0.list.forEach(function (x, i) { if (x.label === nova.label) j = i; });
