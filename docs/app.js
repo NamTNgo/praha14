@@ -716,11 +716,12 @@
 
   // Google Mapy se špendlíkem a co největším přiblížením (u nehod a uzavírek záleží na křižovatce)
   function gmBod(lat, lon) { return "https://www.google.com/maps/place/" + lat + "," + lon + "/@" + lat + "," + lon + ",20z"; }
-  function dkarta(icon, bg, fg, titul, tag, telo, zdroj, odkaz, text) {
+  function dkarta(icon, bg, fg, titul, tag, telo, zdroj, odkaz, text, odkaz2, text2) {
     return '<div class="card row top"><span class="badge" style="background:' + bg + '">' + SVG(icon, 18, fg) + "</span>" +
       '<div class="grow"><div class="dhead"><div class="t1">' + titul + "</div>" + (tag || "") + "</div>" + telo +
       (zdroj ? '<div class="dsrc">' + esc(zdroj) + "</div>" : "") +
-      (odkaz ? '<div class="links"><a class="link" href="' + esc(odkaz) + '" target="_blank" rel="noopener">' + esc(text) + " " + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>" : "") +
+      (odkaz ? '<div class="links"><a class="link" href="' + esc(odkaz) + '" target="_blank" rel="noopener">' + esc(text) + " " + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" +
+        (odkaz2 ? '<a class="link" href="' + esc(odkaz2) + '" target="_blank" rel="noopener">' + esc(text2) + " " + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" : "") + "</div>" : "") +
       "</div></div>";
   }
   function dtag(x) {
@@ -782,7 +783,8 @@
           esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), null,
           '<div class="t2">' + esc(x.n) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
           (x.p ? '<div class="t3">' + esc(zkrat(datumy(x.p), 150)) + "</div>" : ""),
-          "Evidence dopravních informací (NDIC)", x.lat != null ? gmBod(x.lat, x.lon) : x.u, x.lat != null ? "Otevřít v Google Mapách" : "Mapa dopravních informací");
+          "Evidence dopravních informací (NDIC)", x.lat != null ? gmBod(x.lat, x.lon) : x.u, x.lat != null ? "Otevřít v Google Mapách" : "Mapa dopravních informací",
+          x.lat != null && x.u ? x.u : null, "Mapa dopravních informací");
       }).join("") + "</div>";
     }
     if (!uz.length) {
