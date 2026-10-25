@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 39171974 B za 2 s (pokus 1)
-DATEX: 5197 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5047 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 55 prošlé
-  jiné druhy událostí: [('publicevent', 26), ('environmentalobstruction', 13), ('carparks', 13), ('authorityoperation', 10), ('conditions', 8), ('abnormaltraffic', 5), ('roadsideservicedisruption', 2), ('nonweatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1), ('disturbanceactivity', 1)]
+DATEX: staženo 39634665 B za 1 s (pokus 1)
+DATEX: 5208 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5043 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 56 prošlé
+  jiné druhy událostí: [('publicevent', 25), ('environmentalobstruction', 16), ('abnormaltraffic', 14), ('carparks', 13), ('conditions', 11), ('authorityoperation', 9), ('roadsideservicedisruption', 2), ('nonweatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1), ('equipmentorsystemfault', 1), ('disturbanceactivity', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -17,7 +17,7 @@ uzavírky P14 strana 1: 15 bloků
 sloučení: 8 z NDIC + 6 z aktualit MČ (1 duplicit zahozeno)
 uzavirky: 14 záznamů
 zastavky: 260 záznamů
-výluky PID: 1 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 3 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "high", "display_type": "inline", "text": "Havárie inženýrských sítí - přerušen provoz TRAM v obratišti Zvonařka. Více na www.DPP.cz.", "text_en": "Infrastructure network failure - no TRAM service at Zvonařka turning loop. More at www.DPP.cz.", "related_stops": [{"id": "U209Z1P", "name": "Jiřího z Poděbrad", "platform_code": "A"}, {"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}, {"id": "U400Z4P", "name": "Muzeum", "platform_code": "D"}, {"id": "U515Z1P", "name": "Olšanské hřbitovy", "platform_code": "A"}], "valid_from": "2026-10-17T20:55:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "c59e1287-1b58-4be0-8613-69a99b3ebd8b"}
+    {"priority": "high", "display_type": "inline", "text": "Havárie inženýrských sítí - přerušen provoz TRAM v obratišti Zvonařka. Více na www.DPP.cz.", "text_en": "Infrastructure network failure - no TRAM service at Zvonařka turning loop. More at www.DPP.cz.", "related_stops": [{"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}, {"id": "U400Z4P", "name": "Muzeum", "platform_code": "D"}, {"id": "U515Z1P", "name": "Olšanské hřbitovy", "platform_code": "A"}, {"id": "U209Z1P", "name": "Jiřího z Poděbrad", "platform_code": "A"}], "valid_from": "2026-10-17T20:55:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "c59e1287-1b58-4be0-8613-69a99b3ebd8b"}
 pid: 0 záznamů
