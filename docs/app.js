@@ -2409,7 +2409,7 @@
   function mapaDo7(od) { if (!od) return true; var d = new Date(String(od).slice(0, 10) + "T00:00:00"); return d <= pricti(den0(), 7); }
   function mapaPolozky(a, f) {
     var r = [], ted = new Date(), d0 = isoDen(den0());
-    var chce = function (k) { return f === k || (f === "vse" && k !== "kont"); };
+    var chce = function (k) { return f.indexOf(k) >= 0; };
     if (chce("doprava")) {
       uzavirkyPro(a).forEach(function (x) {
         if (x.x.lat == null || x.d > 3000 || !(probiha(x.x) || mapaDo7(x.x.od))) return;
@@ -2453,7 +2453,7 @@
         r.push({ lat: x.lat, lon: x.lon, ic: I_T_CAL, bg: "#2f6fb0", soft: "#dce8fb", t: x.t, tag: akProbiha(x, ted) ? ["now", "Probíhá"] : ["plan", HDAYS[sa.getDay()] + " " + dm(sa)], s: (x.m || x.a || "Praha " + x.mc) + " · " + akVzdTxt(dz) + " od vás", act: "akce:" + x.id, sd: ["ak", x.id] });
       });
     }
-    if (f === "kont") {
+    if (chce("kont")) {
       results(a).near.forEach(function (x) {
         r.push({ lat: x.s.lat, lon: x.s.lon, ic: BI_ODPAD, bg: "#3d7a52", soft: "#e6f2ea", t: "Kontejnery · " + x.s.name, s: meters(x.d) + " od vás", kont: x.s });
       });
@@ -2461,10 +2461,15 @@
     void d0;
     return r;
   }
+  // filtry mapy fungují jako zaškrtávátka; „Vše“ = všechno kromě kontejnerů
+  var MAPA_VSE = ["doprava", "voda", "stavby", "akce"];
+  function mapaVyber() { return state.mapaSet && state.mapaSet.length ? state.mapaSet : MAPA_VSE; }
+  function mapaJeVse(f) { return f.length === MAPA_VSE.length && MAPA_VSE.every(function (k) { return f.indexOf(k) >= 0; }); }
   function mapaView(a) {
-    var f = state.mapaF || "vse";
+    var f = mapaVyber(), vse = mapaJeVse(f);
     return okoliSeg() + '<div class="mapawrap"><div id="mapa" class="mapa"></div><div class="mapachips">' + MAPA_F().map(function (x) {
-      return '<button type="button" class="mapachip' + (f === x[0] ? " on" : "") + '" data-mapaf="' + x[0] + '">' + (x[2] ? SVG(x[2], 14, f === x[0] ? "#fff" : "#6b6652", 2.2) : "") + x[1] + "</button>";
+      var on = x[0] === "vse" ? vse : !vse && f.indexOf(x[0]) >= 0;
+      return '<button type="button" class="mapachip' + (on ? " on" : "") + '" data-mapaf="' + x[0] + '" aria-pressed="' + on + '">' + (x[2] ? SVG(x[2], 14, on ? "#fff" : "#6b6652", 2.2) : "") + x[1] + "</button>";
     }).join("") + '</div><button type="button" class="mapaloc" id="mapaloc" aria-label="Moje poloha">' + SVG('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', 20, "#1f241f", 2.2) + '</button><div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
   }
   function mapaPin(x, sel) {
@@ -2489,7 +2494,7 @@
   }
   function mapaInit() {
     var el = document.getElementById("mapa"); if (!el) { mapaMap = null; return; }
-    var a = state.address, f = state.mapaF || "vse";
+    var a = state.address, f = mapaVyber();
     mapaNacti().then(function () {
       if (!document.getElementById("mapa") || el !== document.getElementById("mapa")) return;
       var v = state.mapaPohled && state.mapaPohled.adr === a.label ? state.mapaPohled : { c: [a.lat, a.lon], z: 15 };
@@ -2511,7 +2516,7 @@
       m.addLayer(cl);
       m.on("moveend", function () { state.mapaPohled = { adr: a.label, c: [m.getCenter().lat, m.getCenter().lng], z: m.getZoom() }; });
       var pr = document.getElementById("mapaprazdno");
-      if (pr) pr.innerHTML = pol.length ? "" : '<div class="mprazdno">' + ({ akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery." }[f] || "V okolí teď nic není.") + "</div>";
+      if (pr) pr.innerHTML = pol.length ? "" : '<div class="mprazdno">' + ({ akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery." }[f.length === 1 ? f[0] : ""] || "V okolí teď nic z vybraného není.") + "</div>";
     }).catch(function (chyba) {
       try { console.error("mapa:", chyba && chyba.stack || chyba); } catch (e) {}
       var e2 = document.getElementById("mapa"); if (e2) e2.innerHTML = '<div class="mprazdno" style="position:static;margin:40px 20px">Mapu se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.</div>';
@@ -2927,7 +2932,18 @@
     umtNapoj();
     var vb = document.getElementById("vodaback");
     if (vb) vb.addEventListener("click", function () { vodaBack(); });
-    app.querySelectorAll("[data-mapaf]").forEach(function (b) { b.addEventListener("click", function () { state.mapaF = b.getAttribute("data-mapaf"); render(); }); });
+    app.querySelectorAll("[data-mapaf]").forEach(function (b) { b.addEventListener("click", function () {
+      var k = b.getAttribute("data-mapaf"), f = mapaVyber().slice(), ch = document.querySelector(".mapachips");
+      state.mapaChipsX = ch ? ch.scrollLeft : 0;
+      if (k === "vse") f = MAPA_VSE.slice();
+      else if (mapaJeVse(f)) f = [k];                         // z „Vše“ první klepnutí vybere jen tuto vrstvu
+      else if (f.indexOf(k) >= 0) f.splice(f.indexOf(k), 1);  // další klepnutí přidávají a ubírají
+      else f.push(k);
+      state.mapaSet = f.length ? f : MAPA_VSE.slice();
+      render();
+    }); });
+    var mch = document.querySelector(".mapachips");
+    if (mch && state.mapaChipsX) mch.scrollLeft = state.mapaChipsX;
     var ml = document.getElementById("mapaloc");
     if (ml) ml.addEventListener("click", function () {
       if (!navigator.geolocation || !mapaMap) return;

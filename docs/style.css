@@ -552,3 +552,4 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .adrakce{flex-wrap:wrap}
 .adrakce{gap:6px!important;padding-left:0!important;flex-wrap:nowrap!important}
 .adrakce .btn-ext{padding:8px 12px;min-height:38px;font-size:13px;white-space:nowrap}
+.mpinw:focus,.mpinw:focus-visible{outline:none}
