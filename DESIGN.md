@@ -141,6 +141,7 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | primární akce (mapa, web, odeslat) | **Tlačítko** `.link`, `.btn-ext` | Pilulka, `--brand` pozadí, bílý text, ikona šipky ven u externích odkazů. Max. 2 vedle sebe. |
 | vedlejší akce v nadpisu sekce | **Odkaz sekce** `.hlink` | Bílá pilulka, text `--brand`. |
 | změnit adresu | **Změnit** `.btn-edit` | Jen v hlavičce; bílá pilulka, text `--brand`, jemný fialový stín (na fialovém přechodu by tint splynul). |
+| přepnout pohled (Vše / Dnes a zítra…, Mapa / Seznam) | **Přepínač** `.akseg`, `.seg2`, `.tabs` | Průsvitná fialová dráha `rgba(236,229,252,.65)` s rozmazáním a bílým vnitřním okrajem; nevybrané `#5d5880`; vybraná bílá, text `--brand`, fialový stín. |
 | filtrovat | **Chipy** `.chiprow` / `.chips` | Pilulky; zapnutý = `--brand` pozadí. Fungují jako zaškrtávátka, drží pozici scrollu. |
 | přepínat hlavní oblasti | **Navigace** `.bnav` | Plovoucí bílá lišta 14 px od okrajů a spodu, `--radius-pill`, aktivní položka `--brand` na `--brand-tint`. 5 položek: Domů, Doprava, Bydlení, Akce, Okolí. |
 | nic se neděje | **Prázdný stav** `.card-dashed` | Krátká vlídná věta (viz 8), žádná ikona navíc. |
