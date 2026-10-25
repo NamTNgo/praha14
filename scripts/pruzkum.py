@@ -1,29 +1,19 @@
-# jak dopravniinfo.gov.cz zpracovává show-point (hledáme parametr pro přiblížení)
-import re, urllib.request
+# jaké druhy kontejnerů vrací Golemio v okolí Prahy 9 a 14 (hledáme textil)
+import json, os
+from collections import Counter
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+import requests
 Path("diag").mkdir(exist_ok=True)
-out = []
-with sync_playwright() as pw:
-    b = pw.chromium.launch()
-    p = b.new_page(viewport={"width": 390, "height": 844})
-    js = []
-    p.on("response", lambda r: js.append(r.url) if r.url.endswith(".js") or ".js?" in r.url else None)
-    p.goto("https://dopravniinfo.gov.cz/Praha?do=show-point&x=-737375&y=-1042750", wait_until="load", timeout=60000); p.wait_for_timeout(8000)
-    out.append("URL po načtení: " + p.url)
-    out.append("JS: " + " ".join(js[:30]))
-    p.screenshot(path="diag/a_vychozi.png")
-    for u in js:
-        if "dopravniinfo" not in u: continue
-        try:
-            t = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=30).read().decode("utf-8", "replace")
-        except Exception as e:
-            out.append("chyba %s %s" % (u, e)); continue
-        for m in re.finditer(r"show-point|showPoint|zoom|scale", t):
-            if "show" in m.group(0).lower():
-                out.append("%s: …%s…" % (u.rsplit("/", 1)[-1][:40], t[max(0, m.start() - 300):m.end() + 400].replace("\n", " ")))
-    for q in ["&zoom=19", "&z=19", "&scale=500", "&level=19"]:
-        p.goto("https://dopravniinfo.gov.cz/Praha?do=show-point&x=-737375&y=-1042750" + q, wait_until="load", timeout=60000); p.wait_for_timeout(6000)
-        p.screenshot(path="diag/b%s.png" % re.sub(r"\W", "_", q))
-    b.close()
-Path("diag/pruzkum.txt").write_text("\n\n".join(out)[:60000], encoding="utf-8")
+r = requests.get("https://api.golemio.cz/v2/sortedwastestations", headers={"X-Access-Token": os.environ["GOLEMIO_API_KEY"]},
+                 params={"latlng": "50.1050,14.5350", "range": 8000, "limit": 10000}, timeout=90)
+f = r.json().get("features", [])
+typy, pristup, ukazka = Counter(), Counter(), []
+for x in f:
+    p = x["properties"]
+    for c in p.get("containers", []):
+        d = (c.get("trash_type") or {}).get("description", "")
+        typy[d] += 1
+        pristup[(d, (p.get("accessibility") or {}).get("description"))] += 1
+        if "extil" in d and len(ukazka) < 5:
+            ukazka.append({"name": p.get("name"), "acc": p.get("accessibility"), "c": c})
+Path("diag/pruzkum.txt").write_text(json.dumps({"stanovist": len(f), "typy": typy.most_common(), "pristup": [[list(k), v] for k, v in pristup.most_common()], "textil": ukazka}, ensure_ascii=False, indent=1), encoding="utf-8")
