@@ -2397,7 +2397,12 @@
     var js = function (src) { return new Promise(function (ok, ko) { var x = document.createElement("script"); x.src = src; x.onload = ok; x.onerror = ko; document.head.appendChild(x); }); };
     css("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css");
     css("https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css");
-    mapaLib = js("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js").then(function () { return js("https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"); });
+    css("https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.css");
+    mapaLib = js("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js").then(function () {
+      return Promise.all([js("https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"),
+        // vektorový podklad OpenFreeMap (Positron); když se nenačte, zůstane rastrová OSM
+        js("https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js").then(function () { return js("https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js"); }).catch(function () {})]);
+    });
     mapaLib.catch(function () { mapaLib = null; });
     return mapaLib;
   }
@@ -2488,9 +2493,12 @@
     mapaNacti().then(function () {
       if (!document.getElementById("mapa") || el !== document.getElementById("mapa")) return;
       var v = state.mapaPohled && state.mapaPohled.adr === a.label ? state.mapaPohled : { c: [a.lat, a.lon], z: 15 };
-      var m = L.map(el, { zoomControl: false, attributionControl: true }).setView(v.c, v.z);
+      var m = L.map(el, { zoomControl: false, attributionControl: true, maxZoom: 19 }).setView(v.c, v.z);
       mapaMap = m; m.attributionControl.setPrefix(false);
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }).addTo(m);
+      var osm = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+      var webgl = (function () { try { var cv = document.createElement("canvas"); return !!(cv.getContext("webgl") || cv.getContext("experimental-webgl")); } catch (e) { return false; } })();
+      if (L.maplibreGL && webgl) L.maplibreGL({ style: "https://tiles.openfreemap.org/styles/positron", attribution: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> ' + osm }).addTo(m);
+      else L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, className: "mapaosm", attribution: osm }).addTo(m);
       L.circle([a.lat, a.lon], { radius: RADIUS, color: "#1f4d36", weight: 1.5, dashArray: "6 6", fillColor: "#1f4d36", fillOpacity: 0.05, interactive: false }).addTo(m);
       L.marker([a.lat, a.lon], { interactive: false, icon: L.divIcon({ className: "mpinw", iconSize: [36, 36], iconAnchor: [18, 18], html: '<span class="mja">' + SVG(BI_DOMU, 16, "#fff", 2.4) + "</span>" }) }).addTo(m);
       var cl = L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 40, iconCreateFunction: function (c) { return L.divIcon({ className: "mpinw", iconSize: [38, 38], html: '<span class="mcl">' + c.getChildCount() + "</span>" }); } });
@@ -2504,7 +2512,8 @@
       m.on("moveend", function () { state.mapaPohled = { adr: a.label, c: [m.getCenter().lat, m.getCenter().lng], z: m.getZoom() }; });
       var pr = document.getElementById("mapaprazdno");
       if (pr) pr.innerHTML = pol.length ? "" : '<div class="mprazdno">' + ({ akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery." }[f] || "V okolí teď nic není.") + "</div>";
-    }).catch(function () {
+    }).catch(function (chyba) {
+      try { console.error("mapa:", chyba && chyba.stack || chyba); } catch (e) {}
       var e2 = document.getElementById("mapa"); if (e2) e2.innerHTML = '<div class="mprazdno" style="position:static;margin:40px 20px">Mapu se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.</div>';
     });
   }
