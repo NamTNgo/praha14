@@ -2493,7 +2493,7 @@
     mapaNacti().then(function () {
       if (!document.getElementById("mapa") || el !== document.getElementById("mapa")) return;
       var v = state.mapaPohled && state.mapaPohled.adr === a.label ? state.mapaPohled : { c: [a.lat, a.lon], z: 15 };
-      var m = L.map(el, { zoomControl: false, attributionControl: true }).setView(v.c, v.z);
+      var m = L.map(el, { zoomControl: false, attributionControl: true, maxZoom: 19 }).setView(v.c, v.z);
       mapaMap = m; m.attributionControl.setPrefix(false);
       var osm = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
       var webgl = (function () { try { var cv = document.createElement("canvas"); return !!(cv.getContext("webgl") || cv.getContext("experimental-webgl")); } catch (e) { return false; } })();
