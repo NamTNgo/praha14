@@ -132,7 +132,7 @@ Barvy štítků („Probíhá“, „Zítra“…) a ikon kategorií zůstávaj�
 ## 8. Tón textů – vřelejší
 
 Pravidla:
-- **Vykáme**, ale mluvíme jako soused, ne jako úřad.
+- **Vykáme** (rozhodnuto), ale mluvíme jako soused, ne jako úřad.
 - Nejdřív **co to znamená pro člověka**, potom zdroj.
 - Krátké věty. Žádné „ohlášené“, „předmětné“, „dotčené“.
 - Dobrou zprávu řekneme s úsměvem, špatnou klidně a s tím, co dělat.
@@ -200,5 +200,4 @@ Na těchto zadáních ověříme, že DESIGN.md stačí k tomu, aby agent uděla
 ## 12. Otevřené otázky
 
 - **Logo a ikona aplikace** – řešíme až s nativní aplikací.
-- **Vykání vs. tykání** – zatím vykáme; vřelejší tón jde i s vykáním. Potvrdit.
-- **Barvy štítků a ikon kategorií** – zůstávají z produkce; sladit s fialovou až po nasazení faceliftu?
+- **Sladění štítků a ikon s fialovou** – rozhodnuto ano; návrh na plátně čeká na schválení, pak se doplní do 6.1.
