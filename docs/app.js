@@ -714,6 +714,8 @@
     return { v: v, z: blizke.length };
   }
 
+  // Google Mapy se špendlíkem a co největším přiblížením (u nehod a uzavírek záleží na křižovatce)
+  function gmBod(lat, lon) { return "https://www.google.com/maps/place/" + lat + "," + lon + "/@" + lat + "," + lon + ",20z"; }
   function dkarta(icon, bg, fg, titul, tag, telo, zdroj, odkaz, text) {
     return '<div class="card row top"><span class="badge" style="background:' + bg + '">' + SVG(icon, 18, fg) + "</span>" +
       '<div class="grow"><div class="dhead"><div class="t1">' + titul + "</div>" + (tag || "") + "</div>" + telo +
@@ -772,7 +774,7 @@
     var neh = nehodyPro(a);
     if (neh.length) {
       h += '<div class="label" id="nehody" style="scroll-margin-top:16px">Nehody a mimořádné události</div>';
-      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každých 10 minut, ' +
+      h += '<div class="note" style="margin:-2px 2px 8px">Evidenci kontrolujeme každých 5 minut, ' +
         nehCas() + " — nehoda už přesto může být odklizená.</div>";
       h += '<div class="list">' + neh.map(function (r) {
         var x = r.x;
@@ -780,7 +782,7 @@
           esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n), null,
           '<div class="t2">' + esc(x.n) + (r.d != null ? " · " + meters(r.d) : "") + "</div>" +
           (x.p ? '<div class="t3">' + esc(zkrat(datumy(x.p), 150)) + "</div>" : ""),
-          "Evidence dopravních informací (NDIC)", x.u, "Mapa dopravních informací");
+          "Evidence dopravních informací (NDIC)", x.lat != null ? gmBod(x.lat, x.lon) : x.u, x.lat != null ? "Otevřít v Google Mapách" : "Mapa dopravních informací");
       }).join("") + "</div>";
     }
     if (!uz.length) {
@@ -2210,7 +2212,7 @@
   function detHlava() { return '<div class="head"><button type="button" class="btn-edit" id="vodaback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>"; }
   function viewUzDetail(x) {
     var a = state.address, d = a && x.lat != null ? dist(a.lat, a.lon, x.lat, x.lon) : null, ndic = x.z === "ndic", ted = probiha(x);
-    var gm = x.lat != null ? "https://www.google.com/maps/search/?api=1&query=" + x.lat + "," + x.lon : "";
+    var gm = x.lat != null ? gmBod(x.lat, x.lon) : "";
     var p = datumy(x.p || "");
     return detHlava() + '<div class="body" style="gap:12px;padding-bottom:28px">' + (ted ? '<span class="vchip now"><i></i>Probíhá</span>' : '<span class="vchip plan"><i></i>Plánovaná uzavírka</span>') +
       '<h1 style="margin:4px 0 0;font-size:23px">' + esc(x.ul && x.ul.length ? "Uzavírka " + x.ul.join(", ") : x.n) + "</h1>" +
@@ -2219,7 +2221,7 @@
       (x.u ? '<a class="btn-ext" href="' + esc(x.u) + '" target="_blank" rel="noopener">' + (ndic ? "Dopravní info " : "Opatření na úřední desce ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + sdilBtn("uz", uzId(x)) + "</div>" +
       detCas(x.od, x.do, x.do ? "Konec je plánovaný termín silničního úřadu, uzavírka může skončit dřív." : "") +
       (p ? '<div class="card dcard"><div class="dtitle">Co se děje</div><div class="ptext" style="font-size:14.5px">' + esc(p) + "</div></div>" : "") +
-      '<div class="note" style="padding:0 4px">' + (ndic ? "Zdroj: Národní dopravní informační centrum (NDIC), aktualizace každých 10 minut." : "Zdroj: úřední deska MČ Praha " + esc(x.mc) + ", kontrolujeme dvakrát denně.") + "</div></div>";
+      '<div class="note" style="padding:0 4px">' + (ndic ? "Zdroj: Národní dopravní informační centrum (NDIC), aktualizace každých 5 minut." : "Zdroj: úřední deska MČ Praha " + esc(x.mc) + ", kontrolujeme dvakrát denně.") + "</div></div>";
   }
   function viewTvDetail(o) {
     var t0 = den0(), f = new Date(o.from + "T00:00:00"), ted = f <= t0;
