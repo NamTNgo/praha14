@@ -1,19 +1,15 @@
-# jaké druhy kontejnerů vrací Golemio v okolí Prahy 9 a 14 (hledáme textil)
-import json, os
-from collections import Counter
+# kontejnery na textil v OpenStreetMap (recycling:clothes=yes) v okolí Prahy 9 a 14
+import json
 from pathlib import Path
 import requests
 Path("diag").mkdir(exist_ok=True)
-r = requests.get("https://api.golemio.cz/v2/sortedwastestations", headers={"X-Access-Token": os.environ["GOLEMIO_API_KEY"]},
-                 params={"latlng": "50.1050,14.5350", "range": 8000, "limit": 10000}, timeout=90)
-f = r.json().get("features", [])
-typy, pristup, ukazka = Counter(), Counter(), []
-for x in f:
-    p = x["properties"]
-    for c in p.get("containers", []):
-        d = (c.get("trash_type") or {}).get("description", "")
-        typy[d] += 1
-        pristup[(d, (p.get("accessibility") or {}).get("description"))] += 1
-        if "extil" in d and len(ukazka) < 5:
-            ukazka.append({"name": p.get("name"), "acc": p.get("accessibility"), "c": c})
-Path("diag/pruzkum.txt").write_text(json.dumps({"stanovist": len(f), "typy": typy.most_common(), "pristup": [[list(k), v] for k, v in pristup.most_common()], "textil": ukazka}, ensure_ascii=False, indent=1), encoding="utf-8")
+q = """[out:json][timeout:60];
+(node["amenity"="recycling"]["recycling:clothes"="yes"](50.06,14.44,50.16,14.66);
+ way["amenity"="recycling"]["recycling:clothes"="yes"](50.06,14.44,50.16,14.66););
+out center tags;"""
+r = requests.post("https://overpass-api.de/api/interpreter", data={"data": q}, timeout=120, headers={"User-Agent": "pod-okny-bot (github.com/NamTNgo/praha14)"})
+el = r.json().get("elements", [])
+ops = {}
+for e in el:
+    o = e.get("tags", {}).get("operator", "?"); ops[o] = ops.get(o, 0) + 1
+Path("diag/pruzkum.txt").write_text(json.dumps({"pocet": len(el), "provozovatele": ops, "ukazka": [e.get("tags") for e in el[:8]], "check_date": sorted({e.get("tags", {}).get("check_date", "") for e in el})[-10:]}, ensure_ascii=False, indent=1), encoding="utf-8")
