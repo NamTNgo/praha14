@@ -138,7 +138,7 @@
       '<div class="eyebrow" style="margin-top:12px">Moje adresy</div><h1>' + (state.adrZmen != null ? "Změnit adresu" : "Přidat adresu") + '</h1><div class="sub">' + (state.adrZmen != null ? "Najděte novou adresu pro „" + esc((adrNacti().list[state.adrZmen] || {}).nazev || "") + "“. Název i upozornění zůstanou." : "Rodiče, práce, škola dětí… Najděte adresu v Praze 9 nebo 14.") + '</div></div><div class="body">' :
       '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Pod okny</h1>' +
       '<div class="sub">Zadejte adresu a uvidíte, co se u vás děje: odstávky vody, svoz odpadu, uzavírky, akce, lékaře a školy v okolí.</div></div><div class="body">') +
-      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#8a8572", 2.2) +
+      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#7c808a", 2.2) +
       '<input id="q" class="input' + (none ? " bad" : "") + (q.trim().length >= 2 ? " has-clear" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '">' +
       '<button type="button" class="clear-btn" id="clr" aria-label="Vymazat text"' + (q.trim().length >= 2 ? "" : " hidden") + '><span class="clear-dot">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 10, "#fff", 3.2) + "</span></button></div>";
     h += '<div id="sres" class="list">' + searchRes(res, none) + "</div></div>" + FOOT;
@@ -148,7 +148,7 @@
     var h = "";
     if (res.length) {
       h += '<div class="card sugg" role="list">' + res.map(function (a, i) {
-        return '<button type="button" data-i="' + i + '"><span class="pin">' + SVG(PIN, 16, "#1f4d36", 2.1) + '</span><span><span class="p">' + esc(label(a)) + '</span><span class="s">Praha ' + (a[5] || "14") + '</span></span></button>';
+        return '<button type="button" data-i="' + i + '"><span class="pin">' + SVG(PIN, 16, "#6f41bc", 2.1) + '</span><span><span class="p">' + esc(label(a)) + '</span><span class="s">Praha ' + (a[5] || "14") + '</span></span></button>';
       }).join("") + "</div>";
     } else if (none) {
       h += '<div class="card center"><span class="big-badge" style="background:#fbeadb">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M9 9l4 4m0-4-4 4"/>', 26, "#b5631f") +
@@ -259,12 +259,12 @@
     var chip = days <= 0 ? "Právě probíhá" : days === 1 ? "Zítra" : days <= 4 ? "Za " + days + " dny" : "Za " + days + " dní";
     return '<button type="button" class="card row top uzk" data-tv="' + tvId(o) + '" style="background:#fff8ec;border-color:#f0d9a8"><span class="badge" style="background:#fbe3d4">' + SVG(DROP, 18, "#b8582a") + '</span><span class="grow">' +
       '<span class="t1">Odstávka teplé vody <span class="chip">' + chip + '</span></span><span class="t2">' + esc(o.name) + " · " + outageRange(o) + '</span>' +
-      '<span class="note">Dodávku teplé vody přerušuje Pražská teplárenská kvůli plánovaným pracím.</span></span>' + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+      '<span class="note">Dodávku teplé vody přerušuje Pražská teplárenská kvůli plánovaným pracím.</span></span>' + SVG(I_CHEV, 16, "#8b8f98", 2.4) + "</button>";
   }
   function outageNone(addr) {
     if (!data.outages || outageFor(addr)) return "";
-    return '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(DROP, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Odstávka teplé vody</div>' +
-      '<div class="note" style="margin-top:2px">Pro vaši lokalitu teď žádná plánovaná odstávka není. Letní odstávky bývají v červenci a srpnu.</div>' +
+    return '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(DROP, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Odstávka teplé vody</div>' +
+      '<div class="note" style="margin-top:2px">Teplá voda poteče jako obvykle. Letní odstávky bývají v červenci a srpnu.</div>' +
       '<div class="links"><a class="link" href="https://udalosti.vecr.cz/udalosti/pte.html" target="_blank" rel="noopener">Aktuální poruchy ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
   }
 
@@ -284,13 +284,13 @@
     h += cisteniPruh(a);
     h += '<div class="label">Voda, elektřina a teplo</div>' + vodaKarta(a) + elKarta(a) + outageTop(a) + outageNone(a);
     if (!r.near.length) {
-      h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652") +
+      h += '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#686c76") +
         '</span><div class="grow"><div class="t1">V okruhu 1 km jsme nenašli žádné stanoviště tříděného odpadu</div><div class="note">Další stanoviště můžete hledat v mapě KSNKO.</div>' +
         '<div class="links"><a class="link" href="https://ksnko.praha.eu/map-bulky/" target="_blank" rel="noopener">Mapa KSNKO ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
     } else {
       var n = r.near[0], types = TYPES.filter(function (t) { return n.s.t[t.id]; }).map(function (t) { return t.name.split(" a ")[0].toLowerCase(); });
-      h += '<div class="label" style="margin-top:6px">Odpad a kontejnery</div><div class="card row near"><span class="badge" style="background:#e9f0e9">' + SVG(PIN, 19, "#1f4d36", 2.1) + '</span><div><div class="eyebrow">Nejbližší kontejner</div>' +
-        '<div class="big">' + esc(n.s.name) + " · " + meters(n.d) + '</div><div class="t3" style="font-size:12.5px;color:#6b6652">' + esc(types.join(", ")) + "</div></div></div>";
+      h += '<div class="label" style="margin-top:6px">Odpad a kontejnery</div><div class="card row near"><span class="badge" style="background:#f0ebff">' + SVG(PIN, 19, "#6f41bc", 2.1) + '</span><div><div class="eyebrow">Nejbližší kontejner</div>' +
+        '<div class="big">' + esc(n.s.name) + " · " + meters(n.d) + '</div><div class="t3" style="font-size:12.5px;color:#686c76">' + esc(types.join(", ")) + "</div></div></div>";
       h += '<div class="list"><div class="label">V okruhu 1 km od adresy</div>';
       TYPES.forEach(function (t) {
         var f = r.byType[t.id];
@@ -305,16 +305,16 @@
           h += '<div class="card row" id="svoz-' + t.id + '"><span class="badge" style="background:' + t.bg + '">' + SVG(t.icon, 18, t.fg) + '</span><div class="grow"><div class="t1">' + t.name +
             '</div><div class="t2">' + esc(f.s.name) + " · " + meters(f.d) + "</div>" + (sch ? '<div class="t3">' + sch + "</div>" : "") + "</div></div>";
         } else if (t.core) {
-          h += '<div class="card-dashed row"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652") +
-            '</span><div class="grow"><div class="t1" style="color:#6b6557">' + t.name + '</div><div class="note" style="margin-top:1px">v okruhu 1 km jsme nic nenašli</div></div></div>';
+          h += '<div class="card-dashed row"><span class="badge" style="background:#eceef2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#686c76") +
+            '</span><div class="grow"><div class="t1" style="color:#686c76">' + t.name + '</div><div class="note" style="margin-top:1px">v okruhu 1 km jsme nic nenašli</div></div></div>';
         }
       });
       h += "</div>";
     }
     h += vokCard(a);
     h += hazardCard(a);
-    h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' +
-      SVG('<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>', 18, "#5b5b54") +
+    h += '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' +
+      SVG('<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>', 18, "#5b5e66") +
       '</span><div class="grow"><div class="t1">Popelnice (směsný odpad)</div><div class="note" style="margin-top:2px">Svoz popelnic se liší podle domu. Termín zjistíte u správce domu nebo SVJ.</div></div></div>';
     return h + "</div>" + FOOT;
   }
@@ -440,7 +440,7 @@
     var ulice = data.spad.s[izoOf(s)], a = state.address;
     var h = '<div class="card dcard"><div class="dtitle">Spádová oblast</div>';
     if (!ulice || !ulice.length) {     // obvody má jen škola zřízená městskou částí
-      return h + '<p class="spadstav">' + SVG(I_INFO, 17, "#8a8572", 2.2) +
+      return h + '<p class="spadstav">' + SVG(I_INFO, 17, "#7c808a", 2.2) +
         "<b>Tato škola nemá spádový obvod.</b> Přijímá žáky bez ohledu na adresu bydliště.</p>" +
         '<div class="dnote">Spádové obvody stanovuje ' + esc(data.spad.v) + " jen u škol zřízených městskou částí.</div></div>";
     }
@@ -448,7 +448,7 @@
       "<b>" + esc(a.label) + " sem spadá.</b> Děti z této adresy mají při zápisu přednost.</p>";
     else if (a) {
       var jina = spadSkola();
-      h += '<p class="spadstav">' + SVG(I_INFO, 17, "#8a8572", 2.2) + "<b>" + esc(a.label) + " sem nespadá.</b> " +
+      h += '<p class="spadstav">' + SVG(I_INFO, 17, "#7c808a", 2.2) + "<b>" + esc(a.label) + " sem nespadá.</b> " +
         (jina ? 'Spádová je <a class="spadlink" href="#" data-sk="' + esc(jina.id) + '">' + esc(zkratka(jina.n)) + SVG(I_CHEV, 13, "currentColor", 2.6) + "</a>"
               : "Vyhláška tuto adresu neuvádí, ověřte ji na městské části.") + "</p>";
     }
@@ -524,7 +524,7 @@
       '<div class="sknm"><span class="cl">' + esc(s.n) + "</span></div>" +
       '<div class="skadr">' + esc(p.a) + "</div>" +
       (tags ? '<div class="sktags">' + tags + "</div>" : "") +
-      "</div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      "</div>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
   }
   function skolyBody(a) {
     if (!data.skoly) return '<div class="card-dashed row top"><div class="grow"><div class="t1">Seznam škol se připravuje</div><div class="note" style="margin-top:2px">Data z rejstříku škol se právě doplňují. Zkuste to prosím později.</div></div></div>';
@@ -543,7 +543,7 @@
   function viewSkolyFull() {
     return '<div class="head"><button type="button" class="btn-edit" id="skback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
       '<h1 style="margin-top:10px">Školy a školky</h1><div class="eyebrow">Praha 9 a 14</div></div><div class="body">' +
-      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#726c5a", 2) +
+      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#5f636c", 2) +
       '<input id="skq" class="input" type="search" placeholder="Název školy nebo ulice" autocomplete="off" value="' + esc(state.skQ) + '"></div>' +
       filterBar() + '<div class="list" id="sklist">' + skolyListHtml() + "</div></div>" + FOOT_SK;
   }
@@ -571,12 +571,12 @@
       '<div class="body" style="gap:12px"><div class="dbadges"><span class="tp tp-' + s.t + ' lg">' + SK_T[s.t] + "</span>" +
       (z ? '<span class="stag lg">' + SVG(z[0], 12, "currentColor", 2.2) + z[1] + "</span>" : "") + "</div>" +
       '<h1 class="dname">' + esc(s.n) + "</h1>" +
-      '<div class="daddr">' + SVG(PIN, 15, "#6b6652", 2) + esc(s.a) + " · Praha " + esc(s.mc) + "</div>" +
+      '<div class="daddr">' + SVG(PIN, 15, "#686c76", 2) + esc(s.a) + " · Praha " + esc(s.mc) + "</div>" +
       '<div class="dlinks"><a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
       '<a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>";
     var hasTerms = !!(ex.dod || ex.zap || ex.pz);
     if (!ex.tel && !hasTerms) h += '<div class="dinfo warn">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#a9791a", 2.2) + "<span>U této školy nemáme všechny údaje. Chybějící informace zjistíte na webu školy.</span></div>";
-    if (s.z === "c") h += '<div class="dinfo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652", 2.2) + "<span>Církevní škola, výuka podle stejného vzdělávacího programu jako veřejné školy. Může mít duchovní zaměření.</span></div>";
+    if (s.z === "c") h += '<div class="dinfo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#686c76", 2.2) + "<span>Církevní škola, výuka podle stejného vzdělávacího programu jako veřejné školy. Může mít duchovní zaměření.</span></div>";
     if (s.z === "p" || s.z === "c") h += dcard("Školné a poplatky", drow("Školné", ex.sk), ex.sk ? "Údaj z webu školy, částky se mohou měnit. Aktuální výši ověřte u školy." : "");
     // Veřejná MŠ školné nemá, ale vybírá úplatu za předškolní vzdělávání; veřejná ZŠ neplatí nic.
     else if (s.z === "s" && s.t === "ms" && ex.sk) h += dcard("Úplata za předškolní vzdělávání", drow("Měsíční úplata", ex.sk.replace(/\s*\/\s*měsíc$/, "").replace(/\d{4,}/g, function (n) { return n.replace(/\B(?=(\d{3})+$)/g, " "); })), "Údaj z webu školy, výši schvaluje zřizovatel. Předškoláci a děti s odkladem ji neplatí.");
@@ -597,19 +597,19 @@
       rr += drow(zapLabel, zapVal);
       h += dcard("Termíny", rr, termNote);
     } else {
-      h += '<div class="card-dashed row top" style="flex-direction:column;align-items:stretch;gap:12px"><div style="display:flex;align-items:center;gap:10px"><span class="badge" style="background:#efece2">' + I_CAL.replace('width="14" height="14"', 'width="18" height="18"') + '</span><div><div class="t1" style="color:#6b6557">Termíny zatím nemáme</div><div class="note" style="margin-top:2px">Den otevřených dveří a zápis zjistíte na webu školy.</div></div></div>' +
+      h += '<div class="card-dashed row top" style="flex-direction:column;align-items:stretch;gap:12px"><div style="display:flex;align-items:center;gap:10px"><span class="badge" style="background:#eceef2">' + I_CAL.replace('width="14" height="14"', 'width="18" height="18"') + '</span><div><div class="t1" style="color:#686c76">Termíny zatím nemáme</div><div class="note" style="margin-top:2px">Den otevřených dveří a zápis zjistíte na webu školy.</div></div></div>' +
         '<div><a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
     }
     var prac = s.p && s.p.length ? '<div class="dgrp">' + s.p.map(function (p, i) { return drow(i ? "" : "Další pracoviště", p.a); }).join("") + "</div>" : "";
     h += dcard("O škole", drow("Zřizovatel", s.zn) + (s.pf ? drow("Právní forma", s.pf) : "") + drow("Ředitel/ka", s.rd) + prac + drow(kapLabel(s), s.k ? s.k + " " + (s.t === "ms" ? "dětí" : "žáků") : null) + (s.j ? drow("Vyučovací jazyk", s.j) : ""));
-    h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z"/>', 18, "#6b6652", 2) +
-      '</span><div class="grow"><div class="t1" style="color:#6b6557">Hodnocení od rodičů</div><div class="note" style="margin-top:2px">Brzy: hodnotit školu budou moct rodiče z appky.</div></div></div>';
+    h += '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + SVG('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z"/>', 18, "#686c76", 2) +
+      '</span><div class="grow"><div class="t1" style="color:#686c76">Hodnocení od rodičů</div><div class="note" style="margin-top:2px">Brzy: hodnotit školu budou moct rodiče z appky.</div></div></div>';
     return h + "</div>" + FOOT_SK;
   }
 
   function viewOffline() {
-    return '<div class="full"><span class="big-badge" style="width:64px;height:64px;border-radius:20px;background:#ececea">' +
-      SVG('<path d="M1 9a16 16 0 0 1 22 0"/><path d="M5 12.5a10.8 10.8 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><path d="M12 20h.01"/><path d="M2 2l20 20"/>', 30, "#6b6557") +
+    return '<div class="full"><span class="big-badge" style="width:64px;height:64px;border-radius:20px;background:#ececef">' +
+      SVG('<path d="M1 9a16 16 0 0 1 22 0"/><path d="M5 12.5a10.8 10.8 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><path d="M12 20h.01"/><path d="M2 2l20 20"/>', 30, "#686c76") +
       '</span><h2>Nejste připojeni k internetu</h2><p>Pro zobrazení stanovišť a termínů potřebuje appka internetové připojení. Zkontrolujte prosím Wi-Fi nebo mobilní data.</p>' +
       '<button type="button" class="btn" id="retry">Zkusit znovu</button></div>';
   }
@@ -746,7 +746,7 @@
   function cisteniKarta(a) {
     var c = cisteniPro(a);
     if (!c) {
-      return dkarta(I_SWEEP, "#efece2", "#6b6652", '<span style="color:#6b6557">Blokové čištění</span>', null,
+      return dkarta(I_SWEEP, "#eceef2", "#686c76", '<span style="color:#686c76">Blokové čištění</span>', null,
         '<div class="note" style="margin-top:2px">' + (a.street ? "V " + esc(sklon(a.street)) : "Ve vaší ulici") +
         " v nejbližších týdnech čištění nemáme. Další kolo TSK zveřejňuje zhruba měsíc dopředu.</div>", null, null, null);
     }
@@ -764,7 +764,7 @@
   function dopravaBody(a) {
     var c = cisteniPro(a), uz = uzavirkyPro(a), pi = pidPro(a), h = "";
     if (!data.doprava) {
-      return '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
+      return '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + SVG(I_INFO, 18, "#686c76") +
         '</span><div class="grow"><div class="t1">Dopravní omezení se připravují</div>' +
         '<div class="note" style="margin-top:2px">Data se právě doplňují. Zkuste to prosím později.</div></div></div>';
     }
@@ -802,8 +802,8 @@
     }
     if (!uz.length) {
       h += '<div class="label">Uzavírky a práce v Praze ' + esc(a.mc) + "</div>";
-      h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
-        '</span><div class="grow"><div class="t1" style="color:#6b6557">V Praze ' + esc(a.mc) + " teď nic neevidujeme</div>" +
+      h += '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + SVG(I_INFO, 18, "#686c76") +
+        '</span><div class="grow"><div class="t1" style="color:#686c76">V Praze ' + esc(a.mc) + " teď nic neevidujeme</div>" +
         '<div class="note" style="margin-top:2px">' + hlidame() + ' Úplně čerstvé události se sem můžou dostat s malým zpožděním.</div>' +
         genNote() + "</div></div>";
     } else {
@@ -811,14 +811,14 @@
         '</div><div class="lblcnt">' + (uz.length === 1 ? "1 aktivní" : uz.length + " aktivních") + "</div></div>";
       var zob = state.dopVse ? uz : uz.slice(0, DOP_N);
       h += '<div class="list">' + zob.map(function (r) {
-        var x = r.x, bg = probiha(x) ? "#f7dede" : "#efece2", fg = probiha(x) ? "#b03a3a" : "#6b6652";
+        var x = r.x, bg = probiha(x) ? "#f7dede" : "#eceef2", fg = probiha(x) ? "#b03a3a" : "#686c76";
         var ndic = x.z === "ndic";
         return '<button type="button" class="card row top uzk" data-uz="' + uzId(x) + '"><span class="badge" style="background:' + bg + '">' + SVG(I_CONE, 18, fg) + "</span>" +
           '<span class="grow"><span class="dhead"><span class="t1">' + esc(x.ul && x.ul.length ? vyjmenuj(x.ul) : x.n) + "</span>" + dtag(x) + "</span>" +
           '<span class="t2">' + obdobi(x.od, x.do) + (r.d != null ? " · " + meters(r.d) : "") + "</span>" +
           (x.ul && x.ul.length ? '<span class="t3">' + esc(x.n) + "</span>" : "") +
           (popis(x) ? '<span class="t3">' + esc(zkrat(datumy(popis(x)), 150)) + "</span>" : "") +
-          (ndic ? '<span class="dsrc">Evidence dopravních informací (NDIC)</span>' : "") + "</span>" + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+          (ndic ? '<span class="dsrc">Evidence dopravních informací (NDIC)</span>' : "") + "</span>" + SVG(I_CHEV, 16, "#8b8f98", 2.4) + "</button>";
       }).join("") + "</div>";
       if (uz.length > DOP_N) h += '<button type="button" class="spadvic" id="dopvic">' +
         (state.dopVse ? "Zobrazit méně" : "Zobrazit všech " + uz.length + " " + sklonCount(uz.length)) +
@@ -833,8 +833,8 @@
   function mhdSekce(pi) {
     var h = '<div class="label">MHD v okolí</div>';
     if (!pi.v.length) {
-      h += '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_BUS2, 18, "#6b6652") +
-        '</span><div class="grow"><div class="t1" style="color:#6b6557">Žádná výluka na zastávkách do 1 km</div>' +
+      h += '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + SVG(I_BUS2, 18, "#686c76") +
+        '</span><div class="grow"><div class="t1" style="color:#686c76">Žádná výluka na zastávkách do 1 km</div>' +
         '<div class="note" style="margin-top:2px">Sledujeme ' + pi.z + " zastávek v okolí vaší adresy.</div></div></div>";
     } else {
       h += '<div class="list">' + pi.v.map(function (p) {
@@ -866,7 +866,7 @@
       ? "Hlídáme celostátní evidenci dopravních informací a aktuality Prahy 9 a Prahy 14."
       : "Hlídáme aktuality Prahy 9 a Prahy 14.";
   }
-  function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#8a8572", 2.2) + "<div>" + text + "</div></div>"; }
+  function sledr(icon, text) { return '<div class="sledr">' + SVG(icon, 15, "#7c808a", 2.2) + "<div>" + text + "</div></div>"; }
   // u nehod je zajímavé, jak je to čerstvé v minutách, ne ve dnech
   function nehCas() {
     if (!data.nehody || !data.nehody.gen) return "stav z poslední kontroly";
@@ -883,8 +883,8 @@
       " v " + d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2) + "</div>";
   }
   function mimoDosah() {
-    return '<div class="card-dashed row top"><span class="badge" style="background:#efece2">' + SVG(I_INFO, 18, "#6b6652") +
-      '</span><div class="grow"><div class="t1" style="color:#6b6557">Ještě než vyrazíte</div>' +
+    return '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + SVG(I_INFO, 18, "#686c76") +
+      '</span><div class="grow"><div class="t1" style="color:#686c76">Ještě než vyrazíte</div>' +
       '<div class="note" style="margin-top:2px">Oficiální evidenci ŘSD i aktuality městských částí kontrolujeme průběžně, ale ne v reálném čase — úplně čerstvá nehoda nebo krátká uzavírka se sem může dostat s odstupem. Aktuální stav ukáže živá mapa.</div>' +
       '<div class="links"><a class="link" href="https://www.dopravniinfo.cz/" target="_blank" rel="noopener">Živá dopravní mapa ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
   }
@@ -919,7 +919,7 @@
     return '<button type="button" class="card skcard" data-dk="' + esc(s.id) + '"><div class="skl">' +
       '<div class="skmeta">' + dkChip(s.o) + '<span class="skmisto">' + (d == null ? "Praha " + esc(s.mc) : meters(d)) + "</span></div>" +
       '<div class="sknm"><span class="cl">' + esc(s.n) + "</span></div>" +
-      '<div class="skadr">' + esc(s.a) + "</div></div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      '<div class="skadr">' + esc(s.a) + "</div></div>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
   }
   // Posuvná filtrační lišta – jeden řádek, obory se doscrollují (varianta A).
   function dkFilterBar() { return fBar("dk"); }
@@ -942,7 +942,7 @@
   function viewDoktoriFull() {
     return '<div class="head"><button type="button" class="btn-edit" id="dkback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
       '<h1 style="margin-top:10px">Lékaři</h1><div class="eyebrow">Praha 9 a 14</div></div><div class="body" style="padding-bottom:28px">' +
-      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#726c5a", 2) +
+      '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#5f636c", 2) +
       '<input id="dkq" class="input" type="search" placeholder="Jméno lékaře, obor nebo ulice" autocomplete="off" value="' + esc(state.dkQ) + '"></div>' +
       dkFilterBar() + '<div class="list" id="dklist">' + dkListHtml() + "</div></div>" + FOOT_DK;
   }
@@ -1130,7 +1130,7 @@
     return h;
   }
   function akNic() {
-    return '<div class="card-dashed akempty">' + SVG('<path d="M3 3l18 18"/><path d="M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.6M15 10.3a10 10 0 0 1 4 2.6M12 20h.01"/>', 28, "#6b6652", 2) +
+    return '<div class="card-dashed akempty">' + SVG('<path d="M3 3l18 18"/><path d="M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.6M15 10.3a10 10 0 0 1 4 2.6M12 20h.01"/>', 28, "#686c76", 2) +
       '<div class="t1">Akce se teď nepodařilo načíst</div><div class="note">Zkuste to za chvíli. Mezitím najdete akce přímo v kalendářích městských částí.</div>' +
       '<div class="dlinks"><a class="btn-ext" href="' + AK_SRC.p9[2] + '" target="_blank" rel="noopener">Kalendář Prahy 9 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
       '<a class="btn-ext" href="' + AK_SRC.p14[2] + '" target="_blank" rel="noopener">Kalendář Prahy 14 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
@@ -1216,7 +1216,7 @@
     var vk = fVyber("akK"), co = !vk.length ? "" : vk.length === 1 ? " v kategorii " + AK_K[vk[0]][0].toLowerCase() : " ve vybraných kategoriích";
     var dalsi = akVOkne("vse", state.akK, ted, state.akM).filter(function (a) { return !state.akDay || a.od.slice(0, 10) > state.akDay; }), nej = dalsi[0];
     var vsech = state.akK === "all" ? 0 : akVOkne(state.akF, "all", ted, state.akM).length;
-    var h = '<div class="card-dashed akempty">' + SVG('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', 28, "#6b6652", 2) +
+    var h = '<div class="card-dashed akempty">' + SVG('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', 28, "#686c76", 2) +
       '<div class="t1">' + kdy + co + " nic nemáme</div>";
     if (nej) h += '<div class="note">Nejbližší je ' + DNY_CELE[akD(nej.od).getDay()] + " " + akDatumTxt(akD(nej.od)) + ".</div>";
     h += '<div class="dlinks">' + (nej && (state.akF !== "vse" || state.akDay) ? '<button type="button" class="btn akbtn" data-akday="' + akIso(akDen(akD(nej.od) < akDen(ted) ? ted : akD(nej.od))) + '">Zobrazit nejbližší</button>' : "") +
@@ -1232,7 +1232,7 @@
       h += '<button type="button" class="card akrow" id="akbezi"><div class="akbody">' +
         '<div class="akrowt"><span class="akdot"></span>Právě probíhá</div>' +
         '<div class="akm">' + bezi.length + " " + (bezi.length === 1 ? "výstava nebo kurz" : bezi.length < 5 ? "výstavy a kurzy" : "výstav a kurzů") +
-        " · nejblíž " + esc(n.t) + (d ? ", " + d : "") + "</div></div>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+        " · nejblíž " + esc(n.t) + (d ? ", " + d : "") + "</div></div>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
     }
     var list = akSeznam(ted);
     if (!list.length) return h + akPrazdno(ted);
@@ -1261,7 +1261,7 @@
     var rows = bezi.map(function (a) {
       return '<button type="button" class="akbrow" data-ak="' + esc(a.id) + '"><div class="akbody"><div class="akt">' + esc(a.t) + "</div>" +
         '<div class="akm">' + I_LIVE + " · do " + akDatumTxt(akD(a.do)) + (akMisto(a, true) ? " · " + esc(akMisto(a, true)) : "") + "</div></div>" +
-        akFoto(a, "akimg") + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+        akFoto(a, "akimg") + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
     }).join("");
     return akHlava("Právě probíhá", "Výstavy a kurzy v Praze 9 a 14, nejbližší první") +
       '<div class="body" style="padding-bottom:28px">' + (rows ? '<div class="card akblist">' + rows + "</div>" :
@@ -1289,7 +1289,7 @@
       '<div class="dbadges">' + akChips(a, true) + "</div>" +
       '<h1 class="dname">' + esc(a.t) + "</h1>" +
       '<div class="akkdy">' + esc(kdy) + "</div>" +
-      (misto ? '<div class="daddr">' + SVG(PIN, 15, "#6b6652", 2) + esc(misto) + "</div>" : "") +
+      (misto ? '<div class="daddr">' + SVG(PIN, 15, "#686c76", 2) + esc(misto) + "</div>" : "") +
       '<div class="dlinks">' + (gm ? '<a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") +
       '<a class="btn-ext" href="' + esc(a.u) + '" target="_blank" rel="noopener">Web akce ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("ak", a.id) + "</div>" +
       (a.z ? '<div class="dinfo warn">' + SVG(I_INFO, 18, "#a9791a", 2.2) + "<span>Pořadatel akci zrušil.</span></div>" : "") +
@@ -1435,7 +1435,7 @@
       var k = vodaKdy(x), now = x.f === "probiha" || x.f === "po", brzy = x.f === "brzy";
       h += '<button type="button" class="card vkarta' + (now ? " now" : brzy ? " plan" : "") + '" data-voda="' + x.u.id + '"><span class="badge" style="background:' + (now ? "#fbe5e3" : brzy ? "#fdf3dc" : "#e3edf8") + '">' +
         SVG(I_NOWATER, 18, now ? "#a23a30" : brzy ? "#9a6a12" : "#2f6fb0", 2) + '</span><span class="grow"><span class="t1">' + (now ? "Přerušená dodávka vody" : "Odstávka pitné vody") + "</span>" +
-        '<span class="t2">' + esc(k.t) + "</span><span class=\"t3\">" + esc(k.s) + (x.u.nz ? " · náhradní zásobování" : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+        '<span class="t2">' + esc(k.t) + "</span><span class=\"t3\">" + esc(k.s) + (x.u.nz ? " · náhradní zásobování" : "") + "</span></span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
     });
     if (moje.length && st === "ok") return h;
     var okoli = moje.length ? [] : vodaVOkoli(a), txt;
@@ -1444,9 +1444,9 @@
     else if (moje.length) return h;
     else if (okoli.length) {
       var ul = []; okoli.forEach(function (x) { var n = (x.u.adresy[0] || [0, 0, ""])[2].replace(/\s+\d.*$/, ""); if (n && ul.indexOf(n) < 0) ul.push(n); });
-      txt = "Vaší adresy se teď nic netýká. V okolí do " + VODA_OKOLI + " m PVK " + (okoli.length === 1 ? "hlásí 1 odstávku" : "hlásí " + okoli.length + (okoli.length < 5 ? " odstávky" : " odstávek")) + (ul.length ? " (" + esc(ul.slice(0, 3).join(", ")) + ")" : "") + "." + kdyOk;
+      txt = "U vás je teď všechno v pořádku. V okolí do " + VODA_OKOLI + " m PVK " + (okoli.length === 1 ? "hlásí 1 odstávku" : "hlásí " + okoli.length + (okoli.length < 5 ? " odstávky" : " odstávek")) + (ul.length ? " (" + esc(ul.slice(0, 3).join(", ")) + ")" : "") + "." + kdyOk;
     } else txt = "Pro vaši adresu teď žádná odstávka ani havárie není." + kdyOk;
-    return h + '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(DROP, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Pitná voda</div>' +
+    return h + '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(DROP, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Pitná voda</div>' +
       '<div class="note" style="margin-top:2px">' + txt + '</div><div class="links"><a class="link" href="' + PVK_MAPA + '" target="_blank" rel="noopener">Mapa odstávek PVK ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
   }
   function viewVodaDetail(u) {
@@ -1454,7 +1454,7 @@
     var chip = f === "probiha" ? '<span class="vchip now"><i></i>Probíhá</span>' : f === "po" ? '<span class="vchip now"><i></i>Mělo skončit</span>' : '<span class="vchip plan"><i></i>Plánovaná odstávka</span>';
     var cis = a ? vodaCisterny(a).slice(0, 3) : [];
     var nz = cis.length ? cis.map(function (x) {
-      return '<a class="vcis" href="https://www.google.com/maps/search/?api=1&query=' + x.c.lat + "," + x.c.lon + '" target="_blank" rel="noopener"><span class="ci">' + SVG(I_TRUCK, 16, "#1f4d36", 2) + '</span><span class="cn">' + esc(x.c.a || "Cisterna") + '</span><span class="cd">' + akVzdTxt(x.d) + "</span></a>";
+      return '<a class="vcis" href="https://www.google.com/maps/search/?api=1&query=' + x.c.lat + "," + x.c.lon + '" target="_blank" rel="noopener"><span class="ci">' + SVG(I_TRUCK, 16, "#6f41bc", 2) + '</span><span class="cn">' + esc(x.c.a || "Cisterna") + '</span><span class="cd">' + akVzdTxt(x.d) + "</span></a>";
     }).join("") + '<div class="dnote">Cisterny s pitnou vodou. Vezměte si vlastní nádobu.</div>' :
       '<div class="dnote" style="margin-top:0">' + (u.nz ? "Pražské vodovody a kanalizace náhradní zásobování zajistí, místa cisteren zatím nezveřejnily. Objeví se tu, jakmile je zveřejní." : "U této odstávky PVK náhradní zásobování neuvádějí.") + "</div>";
     var gen = data.voda && data.voda.gen ? new Date(data.voda.gen) : null;
@@ -1515,7 +1515,7 @@
     return patraniVse().map(function (p) {
       var m = (p.mista || []).slice(0, 2).join(", ");
       if (p.stav === "nalezen") return { cls: "found", ic: I_NALEZEN, fg: "#2f7a4a", t: "Pátrání odvoláno", s: patTitulek(p) + " · děkujeme za pomoc", act: "pat:" + p.id };
-      return { cls: p.zona === "blizko" ? "help" : "info", ic: I_HLEDANY, fg: p.zona === "blizko" ? "#2a5b9a" : "#5b5b54",
+      return { cls: p.zona === "blizko" ? "help" : "info", ic: I_HLEDANY, fg: p.zona === "blizko" ? "#2a5b9a" : "#5b5e66",
         t: (/^p[áa]tr/i.test(patTitulek(p)) ? "" : "Pátrání: ") + patTitulek(p), s: (m ? m + " · " : "") + "vyhlášeno " + patKdy(p.pub), act: "pat:" + p.id };
     });
   }
@@ -1592,7 +1592,7 @@
   }
   function stUlice(p) { var a = p.adr || []; return a.slice(1).filter(Boolean)[0] || a[0] || ""; }
   function stThumb(p, cls, vcetnePlanu) {
-    var ic = '<span class="sticon">' + SVG(ST_KAT[stKat(p)][1], cls === "stimg lg" ? 40 : 26, "#8a8572", 1.8) + "</span>";
+    var ic = '<span class="sticon">' + SVG(ST_KAT[stKat(p)][1], cls === "stimg lg" ? 40 : 26, "#7c808a", 1.8) + "</span>";
     var ok = p.obr && (p.obrK === "foto" || (vcetnePlanu && p.obrK));
     return '<span class="' + cls + '">' + ic + (ok ? '<img src="' + esc(data.stavby.img + p.obr) + '" alt="" loading="lazy" onerror="this.remove()">' : "") + "</span>";
   }
@@ -1602,7 +1602,7 @@
     var p = x.p, m = stMeta(p);
     return '<button type="button" class="card stc" data-st="' + esc(p.id) + '">' + stThumb(p, "stimg") + '<span class="stt"><span class="stfz">' + stFz(p) + stProdej(p) + "</span>" +
       '<span class="stn">' + esc(p.n) + "</span>" + (m ? '<span class="stm">' + esc(m) + "</span>" : "") +
-      '<span class="sta">' + esc(stUlice(p)) + (x.d != null ? " · " + akVzdTxt(x.d) : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      '<span class="sta">' + esc(stUlice(p)) + (x.d != null ? " · " + akVzdTxt(x.d) : "") + "</span></span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
   }
   function stFiltr(xs) {
     return xs.filter(function (x) { return fIn(state.stF, stKat(x.p)) && (state.stM === "all" || x.p.mc === state.stM); });
@@ -1636,8 +1636,8 @@
   }
   function stStav() {
     var d = data.stavby;
-    if (!d || !d.projekty) return '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(I_JERAB, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Seznam staveb se nepodařilo načíst</div><div class="note" style="margin-top:2px">Zkuste to prosím později.</div></div></div>';
-    if (d.ok === false) return '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(I_JERAB, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Seznam staveb může být starší</div><div class="note" style="margin-top:2px">Databázi CAMP se teď nepodařilo načíst, ukazujeme poslední známý stav. Stavby se mění pomalu, údaje nejspíš pořád platí.</div></div></div>';
+    if (!d || !d.projekty) return '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(I_JERAB, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Seznam staveb se nepodařilo načíst</div><div class="note" style="margin-top:2px">Zkuste to prosím později.</div></div></div>';
+    if (d.ok === false) return '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(I_JERAB, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Seznam staveb může být starší</div><div class="note" style="margin-top:2px">Databázi CAMP se teď nepodařilo načíst, ukazujeme poslední známý stav. Stavby se mění pomalu, údaje nejspíš pořád platí.</div></div></div>';
     return "";
   }
   function stavbyBody(a) {
@@ -1646,7 +1646,7 @@
     var vse = stOkoli(a), xs = stFiltr(vse), h = st + stChips() + rzSekce(a);
     if (!vse.length) {
       var nej = stOkoli(a, 1e6)[0];
-      h += '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(I_JERAB, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Do 3 km se teď nic nestaví ani neplánuje</div>' +
+      h += '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(I_JERAB, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Do 3 km se teď nic nestaví ani neplánuje</div>' +
         (nej ? '<div class="note" style="margin-top:2px">Nejbližší projekt: ' + esc(nej.p.n) + ", " + akVzdTxt(nej.d) + ".</div>" : "") + "</div></div>";
     } else if (!xs.length) {
       h += '<div class="card-dashed row"><div class="grow"><div class="note" style="margin:0">V tomhle filtru do 3 km nic není.</div></div></div>';
@@ -1655,9 +1655,9 @@
     }
     h += eiaSekce(a);
     var uz = uzavirkyPro(a);
-    h += '<button type="button" class="rdlink" data-act="tab:doprava">' + SVG(ST_KAT.dop[1], 20, "#6b6652", 2) + '<span class="grow"><b>Opravy silnic a chodníků</b>' +
+    h += '<button type="button" class="rdlink" data-act="tab:doprava">' + SVG(ST_KAT.dop[1], 20, "#686c76", 2) + '<span class="grow"><b>Opravy silnic a chodníků</b>' +
       (uz.length ? "V Praze " + esc(a.mc) + " teď " + (uz.length === 1 ? "běží 1 uzavírka nebo práce" : "běží " + uz.length + " " + sklonCount(uz.length)) + ". Najdete je v záložce Doprava." : "Uzavírky a práce na silnicích najdete v záložce Doprava.") +
-      "</span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      "</span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
     var n = data.stavby.projekty.filter(function (p) { return p.mc === "9" || p.mc === "14"; }).length;
     h += '<button type="button" class="btn-link" id="stfull">Celý seznam Prahy 9 a 14 (' + n + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     return h;
@@ -1723,7 +1723,7 @@
     if (!xs.length) return "";
     return '<div class="hsec"><b>Staví se kolem vás</b><button type="button" class="hlink" data-act="tab:stavby">Všechny stavby</button></div><div class="hcar">' + xs.map(function (x) {
       var p = x.p, ok = p.obr && p.obrK === "foto";
-      return '<button type="button" class="hcc" data-act="st:' + esc(p.id) + '"><span class="ci">' + '<span class="sticon">' + SVG(ST_KAT[stKat(p)][1], 30, "#8a8572", 1.8) + "</span>" +
+      return '<button type="button" class="hcc" data-act="st:' + esc(p.id) + '"><span class="ci">' + '<span class="sticon">' + SVG(ST_KAT[stKat(p)][1], 30, "#7c808a", 1.8) + "</span>" +
         (ok ? '<img src="' + esc(data.stavby.img + p.obr) + '" alt="" loading="lazy" onerror="this.remove()">' : "") + '</span><span class="cb">' + stFz(p) +
         '<span class="cn">' + esc(p.n) + '</span><span class="cm">' + esc([stTermin(p), akVzdTxt(x.d)].filter(Boolean).join(" · ")) + "</span></span></button>";
     }).join("") + "</div>";
@@ -1769,9 +1769,9 @@
   }
   function rzKarta(x) {
     var z = x.z;
-    return '<button type="button" class="card stc" data-rz="' + esc(z.id) + '"><span class="rzi">' + SVG(RZ_IKONY[z.druh] || I_DOC, 24, "#6b6652", 1.8) + "</span>" +
+    return '<button type="button" class="card stc" data-rz="' + esc(z.id) + '"><span class="rzi">' + SVG(RZ_IKONY[z.druh] || I_DOC, 24, "#686c76", 1.8) + "</span>" +
       '<span class="stt"><span class="stfz">' + rzFz(z) + '</span><span class="stn">' + esc(z.n) + '</span><span class="stm">' + esc(z.druh) + " · vyvěšeno " + rzDat(z.d) + "</span>" +
-      '<span class="sta">' + esc(rzMisto(z)) + (x.d != null ? " · " + akVzdTxt(x.d) : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      '<span class="sta">' + esc(rzMisto(z)) + (x.d != null ? " · " + akVzdTxt(x.d) : "") + "</span></span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
   }
   function rzSekce(a) {
     if (!data.rizeni) return "";
@@ -1843,7 +1843,7 @@
     return '<button type="button" class="card stc" data-eia="' + esc(z.kod) + '"><span class="rzi">' + SVG(I_LEAF, 24, "#3d6b4a", 1.8) + "</span>" +
       '<span class="stt"><span class="stfz">' + eiaStav(z) + '</span><span class="stn">' + esc(z.n.replace(/^"|"$/g, "")) + "</span>" +
       '<span class="stm">' + (eiaOtevrena(z) ? "Vyjádření do " + rzDat(z.lhuta) + " · " : "") + esc(z.stav) + "</span>" +
-      '<span class="sta">' + esc(z.ku.join(", ")) + (z.kuVse > z.ku.length ? " a další území" : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      '<span class="sta">' + esc(z.ku.join(", ")) + (z.kuVse > z.ku.length ? " a další území" : "") + "</span></span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
   }
   function eiaSekce(a) {
     if (!data.eia || state.stF !== "all") return "";
@@ -1918,7 +1918,7 @@
     }
     var nove = z.nove.map(function (n) { return '<div class="dnote" style="margin-top:8px"><b>Rozšíření zóny od ' + dden(n.od).toLowerCase() + ":</b> " + esc(n.ulice.slice(0, 5).join(", ")) + (n.ulice.length > 5 ? " a další" : "") + "</div>"; }).join("");
     var zpr = z.zpravy.slice(0, 3).map(function (x) { return '<a class="zpr" href="' + esc(x.u) + '" target="_blank" rel="noopener"><span>' + esc(x.t) + "</span><small>" + (x.d ? rzDat(x.d) : "") + " " + SVG(I_EXT, 11, "currentColor", 2.4) + "</small></a>"; }).join("");
-    h += '<div class="card' + (z.v ? "" : "-dashed") + ' row top"><span class="badge" style="background:' + (z.v ? "#e3edf8" : "#ececea") + '">' + SVG(I_PARK, 18, z.v ? "#2f6fb0" : "#5b5b54", 2) + "</span>" +
+    h += '<div class="card' + (z.v ? "" : "-dashed") + ' row top"><span class="badge" style="background:' + (z.v ? "#e3edf8" : "#ececef") + '">' + SVG(I_PARK, 18, z.v ? "#2f6fb0" : "#5b5e66", 2) + "</span>" +
       '<div class="grow"><div class="t1">' + t1 + '</div><div class="note" style="margin-top:2px">' + txt + "</div>" + nove +
       '<div class="links">' + (z.v ? '<a class="link" href="https://portal.zpspraha.cz/" target="_blank" rel="noopener">Parkovací oprávnění ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a>" : "") +
       '<a class="link" href="https://parking.praha.eu/cs/mapa/" target="_blank" rel="noopener">Mapa zón ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>" +
@@ -1993,15 +1993,15 @@
       var k = elKdy(x), now = x.f === "probiha", brzy = x.f === "brzy";
       h += '<button type="button" class="card vkarta' + (now ? " now" : brzy ? " plan" : "") + '" data-el="' + x.u.id + '"><span class="badge" style="background:' + (now ? "#fbe5e3" : brzy ? "#fdf3dc" : "#e3edf8") + '">' +
         SVG(I_NOPOWER, 18, now ? "#a23a30" : brzy ? "#9a6a12" : "#2f6fb0", 2) + '</span><span class="grow"><span class="t1">Plánované vypnutí elektřiny</span>' +
-        '<span class="t2">' + esc(k.t) + '</span><span class="t3">' + esc(k.s.replace(/ · plánované vypnutí elektřiny$/, "").replace(/^plánované vypnutí elektřiny$/, "")) + (x.u.dny.length > 1 ? " · " + x.u.dny.length + " dny" : "") + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+        '<span class="t2">' + esc(k.t) + '</span><span class="t3">' + esc(k.s.replace(/ · plánované vypnutí elektřiny$/, "").replace(/^plánované vypnutí elektřiny$/, "")) + (x.u.dny.length > 1 ? " · " + x.u.dny.length + " dny" : "") + "</span></span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
     });
     if (moje.length) return h;
     var okoli = elVOkoli(a), ul = [];
     okoli.forEach(function (x) { elUlice(x.u).forEach(function (n) { if (ul.indexOf(n) < 0) ul.push(n); }); });
     var txt = okoli.length ? "Pro vaši adresu není ohlášené žádné vypnutí. V okolí do " + EL_OKOLI + " m " + (okoli.length === 1 ? "je ohlášené 1 vypnutí" : "je ohlášeno " + okoli.length + " vypnutí") + " (" + esc(ul.slice(0, 3).join(", ")) + ")." :
-      "Pro vaši adresu není ohlášené žádné plánované vypnutí.";
-    return '<div class="card-dashed row top"><span class="badge" style="background:#ececea">' + SVG(I_POWER, 18, "#5b5b54") + '</span><div class="grow"><div class="t1">Elektřina</div>' +
-      '<div class="note" style="margin-top:2px">' + txt + " Hlídáme oznámení PREdistribuce na úředních deskách.</div>" +
+      "Elektřina u vás pojede bez přerušení.";
+    return '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(I_POWER, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Elektřina</div>' +
+      '<div class="note" style="margin-top:2px">' + txt + " Oznámení PREdistribuce hlídáme za vás.</div>" +
       (okoli.length ? '<div class="links"><button type="button" class="link" data-el="' + okoli[0].u.id + '">Nejbližší vypnutí ' + SVG(I_CHEV, 12, "currentColor", 2.6) + "</button></div>" : "") + "</div></div>";
   }
   function viewElDetail(u) {
@@ -2055,7 +2055,7 @@
   function zavKam(z) { var a = state.address; return z.vse || z[a && a.mc === "9" ? "9" : "14"]; }
   function zavKarta() {
     return '<button type="button" class="card vkarta zavkarta" id="zavstart"><span class="badge" style="background:#fbe9dc">' + SVG(I_FLAG, 20, "#a2501c") + "</span>" +
-      '<span class="grow"><span class="vt">Něco tu není v pořádku?</span><span class="vs">Nahlaste nepořádek, rozbitou lampu nebo díru v silnici</span></span>' + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+      '<span class="grow"><span class="vt">Všimli jste si něčeho?</span><span class="vs">Nepořádek, rozbitá lampa, díra v silnici – pomůžeme vám to nahlásit</span></span>' + SVG(I_CHEV, 16, "#8b8f98", 2.4) + "</button>";
   }
   function zavHlav(t) {
     return '<div class="head"><button type="button" class="btn-edit" id="vodaback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
@@ -2067,7 +2067,7 @@
       return zavHlav("Co se děje?") + '<div class="card zavlist">' + ZAV.map(function (x) {
         var k = zavKam(x);
         return '<button type="button" class="zavrow" data-zav="' + x.k + '"><span class="grow"><span class="vt">' + esc(x.n) + '</span><span class="vs">' + esc(k.kdo) +
-          (k.tel ? " · telefon" : k.web ? " · formulář" : " · e-mail") + "</span></span>" + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+          (k.tel ? " · telefon" : k.web ? " · formulář" : " · e-mail") + "</span></span>" + SVG(I_CHEV, 16, "#8b8f98", 2.4) + "</button>";
       }).join("") + "</div></div>";
     }
     var k = zavKam(z), h = zavHlav(z.n);
@@ -2178,7 +2178,7 @@
       '<button type="button" class="link umtzrus" data-umt="zrus">Zrušit</button></div>';
     return '<div class="umt"><div class="umtq">' + (co === "voda" ? "Jste teď bez vody?" : "Jste teď bez proudu?") + "</div>" +
       '<div class="umtb"><button type="button" class="btn" data-umt="ano">U mě taky</button><button type="button" class="btn umtne" data-umt="ne">' + (co === "voda" ? "Mám vodu" : "Mám proud") + "</button></div>" +
-      '<div class="umtn">' + (r ? (r.ano ? SVG(I_USERS, 15, "#726c5a") + "<span><b>" + umtSousede(r.ano) + "</b> z okolí to " + (r.ano === 1 ? "potvrdil" : r.ano <= 4 ? "potvrdili" : "potvrdilo") + " za poslední hodinu</span>" : "Zatím to nikdo z okolí nepotvrdil.") : "&nbsp;") + "</div></div>";
+      '<div class="umtn">' + (r ? (r.ano ? SVG(I_USERS, 15, "#5f636c") + "<span><b>" + umtSousede(r.ano) + "</b> z okolí to " + (r.ano === 1 ? "potvrdil" : r.ano <= 4 ? "potvrdili" : "potvrdilo") + " za poslední hodinu</span>" : "Zatím to nikdo z okolí nepotvrdil.") : "&nbsp;") + "</div></div>";
   }
   function umtBlok(k, co) { return '<div id="umtbox" data-k="' + esc(k) + '" data-co="' + co + '">' + umtObsah(k, co) + "</div>"; }
   function umtNapoj() {
@@ -2344,7 +2344,7 @@
       if (j.umt) c.push("potvrdili " + pl(j.umt, "výpadek", "výpadky", "výpadků"));
       if (j.sdileni) c.push("poslali dál " + pl(j.sdileni, "upozornění", "upozornění", "upozornění"));
       if (!c.length) { e.innerHTML = ""; return; }
-      e.innerHTML = '<div class="tydkom">' + SVG(I_T_USERS, 18, "#1f4d36", 2) + "<span><b>" + esc(part) + " minulý týden:</b> sousedé " + (c.length > 1 ? c.slice(0, -1).join(", ") + " a " + c[c.length - 1] : c[0]) + ".</span></div>";
+      e.innerHTML = '<div class="tydkom">' + SVG(I_T_USERS, 18, "#6f41bc", 2) + "<span><b>" + esc(part) + " minulý týden:</b> sousedé " + (c.length > 1 ? c.slice(0, -1).join(", ") + " a " + c[c.length - 1] : c[0]) + ".</span></div>";
     };
     var k = part + od.getTime();
     if (komNacti.c && komNacti.c[k]) { vypis(komNacti.c[k]); return; }
@@ -2362,7 +2362,7 @@
     "Chata": '<path d="M12 3 4 15h5l-3 5h12l-3-5h5Z"/>' };
   var ADR_BARVY = { "Domov": ["#e7efe5", "#1f4d36"], "Rodiče": ["#fbe9ef", "#a83a5c"], "Práce": ["#e3edf8", "#2f6fb0"], "Škola": ["#f1ebfa", "#6a4aa8"], "Chata": ["#eef4e2", "#4f6b1f"] };
   var ADR_NAZVY = ["Domov", "Rodiče", "Práce", "Škola", "Chata"];
-  function adrIkona(n) { var b = ADR_BARVY[n] || ["#efece2", "#6b6652"]; return '<span class="adric" style="background:' + b[0] + '">' + SVG(ADR_IC[n] || PIN, 18, b[1], 2.2) + "</span>"; }
+  function adrIkona(n) { var b = ADR_BARVY[n] || ["#eceef2", "#686c76"]; return '<span class="adric" style="background:' + b[0] + '">' + SVG(ADR_IC[n] || PIN, 18, b[1], 2.2) + "</span>"; }
   function adrProblem(x) {
     var al = domuUpozorneni(x).filter(function (u) { return u.cls === "now" || u.cls === "plan"; });
     return al[0] || null;
@@ -2373,7 +2373,7 @@
     if (!r.length) return "";
     return '<div class="hsub">Na dalších adresách</div>' + r.slice(0, 2).map(function (y) {
       return '<button type="button" class="card adrj" data-adr="' + y.i + '"><span class="badge" style="background:' + (y.p.cls === "now" ? "#fbe5e3" : "#fdf3dc") + '">' + SVG(y.p.ic, 18, y.p.fg) + "</span>" +
-        '<span class="grow"><span class="vt">' + esc(y.x.nazev) + " · " + esc(y.p.t.charAt(0).toLowerCase() + y.p.t.slice(1)) + '</span><span class="vs">' + esc(y.x.label) + " · " + esc(y.p.s) + "</span></span>" + SVG(I_CHEV, 16, "#9a9484", 2.4) + "</button>";
+        '<span class="grow"><span class="vt">' + esc(y.x.nazev) + " · " + esc(y.p.t.charAt(0).toLowerCase() + y.p.t.slice(1)) + '</span><span class="vs">' + esc(y.x.label) + " · " + esc(y.p.s) + "</span></span>" + SVG(I_CHEV, 16, "#8b8f98", 2.4) + "</button>";
     }).join("");
   }
   function adrPanel() {
@@ -2385,7 +2385,7 @@
       return '<div class="adrr"><button type="button" class="adrrb" data-adr="' + i + '">' + adrIkona(x.nazev) + '<span class="grow"><span class="vt">' + esc(x.nazev) +
         (p ? ' <span class="adrtag ' + p.cls + '">' + esc(p.t.split(" · ")[0].toLowerCase()) + "</span>" : "") + '</span><span class="vs">' + esc(x.label) + (x.part ? " · " + esc(x.part) : "") + "</span></span>" +
         (i === av.akt ? SVG('<path d="M20 6 9 17l-5-5"/>', 20, "var(--green)", 2.6) : "") + "</button>" +
-        '<button type="button" class="adrdots" data-adrmenu="' + i + '" aria-label="Upravit">' + SVG('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>', 18, "#9a9484", 2) + "</button></div>" +
+        '<button type="button" class="adrdots" data-adrmenu="' + i + '" aria-label="Upravit">' + SVG('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>', 18, "#8b8f98", 2) + "</button></div>" +
         (otev ? '<div class="adrakce"><button type="button" class="btn-ext" data-adrzmen="' + i + '">Změnit adresu</button><button type="button" class="btn-ext" data-adrren="' + i + '">Přejmenovat</button><button type="button" class="btn-ext adrdel" data-adrdel="' + i + '">Odebrat</button></div>' : "");
     }).join("");
     h += av.list.length < ADR_MAX ? '<button type="button" class="adradd" id="adradd">' + SVG('<path d="M12 5v14M5 12h14"/>', 20, "var(--green)", 2.4) + "Přidat adresu</button>" :
@@ -2460,11 +2460,11 @@
     if (chce("stavby")) {
       stOkoli(a, 2000).forEach(function (x) {
         var b = x.p.body && x.p.body[0]; if (!b || stKat(x.p) === "uzemi") return;
-        r.push({ lat: b[0], lon: b[1], ic: BI_BYDLENI, bg: "#6b6652", soft: "#efece2", t: x.p.n, tag: ["info", { planuje: "Plánuje se", povoluje: "Povoluje se", stavi: "Staví se", hotovo: "Hotovo" }[x.p.faze] || "Stavba"], s: akVzdTxt(x.d) + " od vás" + (x.p.do ? " · dokončení " + x.p.do : ""), act: "st:" + x.p.id, sd: ["st", x.p.id] });
+        r.push({ lat: b[0], lon: b[1], ic: BI_BYDLENI, bg: "#686c76", soft: "#eceef2", t: x.p.n, tag: ["info", { planuje: "Plánuje se", povoluje: "Povoluje se", stavi: "Staví se", hotovo: "Hotovo" }[x.p.faze] || "Stavba"], s: akVzdTxt(x.d) + " od vás" + (x.p.do ? " · dokončení " + x.p.do : ""), act: "st:" + x.p.id, sd: ["st", x.p.id] });
       });
       if (data.rizeni) rzOkoli(a, 1000, true).forEach(function (x) {
         if (x.z.lat == null || x.z.presnost === "ku") return;
-        r.push({ lat: x.z.lat, lon: x.z.lon, ic: RZ_IKONY[x.z.druh] || I_DOC, bg: "#8a8572", soft: "#efece2", t: x.z.n, tag: ["info", x.z.druh], s: akVzdTxt(x.d) + " od vás", act: "rz:" + x.z.id, sd: ["rz", x.z.id] });
+        r.push({ lat: x.z.lat, lon: x.z.lon, ic: RZ_IKONY[x.z.druh] || I_DOC, bg: "#7c808a", soft: "#eceef2", t: x.z.n, tag: ["info", x.z.druh], s: akVzdTxt(x.d) + " od vás", act: "rz:" + x.z.id, sd: ["rz", x.z.id] });
       });
     }
     if (chce("akce") && data.akce) {
@@ -2495,8 +2495,8 @@
     var f = mapaVyber(), vse = mapaJeVse(f);
     return okoliSeg() + '<div class="mapawrap"><div id="mapa" class="mapa"></div><div class="mapachips">' + MAPA_F().map(function (x) {
       var on = x[0] === "vse" ? vse : !vse && f.indexOf(x[0]) >= 0;
-      return '<button type="button" class="mapachip' + (on ? " on" : "") + '" data-mapaf="' + x[0] + '" aria-pressed="' + on + '">' + (x[2] ? SVG(x[2], 14, on ? "#fff" : "#6b6652", 2.2) : "") + x[1] + "</button>";
-    }).join("") + '</div><button type="button" class="mapaloc" id="mapaloc" aria-label="Moje poloha">' + SVG('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', 20, "#1f241f", 2.2) + '</button><div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
+      return '<button type="button" class="mapachip' + (on ? " on" : "") + '" data-mapaf="' + x[0] + '" aria-pressed="' + on + '">' + (x[2] ? SVG(x[2], 14, on ? "#fff" : "#686c76", 2.2) : "") + x[1] + "</button>";
+    }).join("") + '</div><button type="button" class="mapaloc" id="mapaloc" aria-label="Moje poloha">' + SVG('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', 20, "#1c1c1e", 2.2) + '</button><div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
   }
   function mapaPin(x, sel) {
     return L.divIcon({ className: "mpinw", iconSize: [36, 36], iconAnchor: [18, 36], html: '<span class="mpin' + (sel ? " sel" : "") + '" style="background:' + x.bg + '"><span>' + SVG(x.ic, sel ? 18 : 15, "#fff", 2.2) + "</span></span>" });
@@ -2533,7 +2533,7 @@
       var webgl = (function () { try { var cv = document.createElement("canvas"); return !!(cv.getContext("webgl") || cv.getContext("experimental-webgl")); } catch (e) { return false; } })();
       if (L.maplibreGL && webgl) L.maplibreGL({ style: "https://tiles.openfreemap.org/styles/positron", attribution: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> ' + osm }).addTo(m);
       else L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, className: "mapaosm", attribution: osm }).addTo(m);
-      L.circle([a.lat, a.lon], { radius: RADIUS, color: "#1f4d36", weight: 1.5, dashArray: "6 6", fillColor: "#1f4d36", fillOpacity: 0.05, interactive: false }).addTo(m);
+      L.circle([a.lat, a.lon], { radius: RADIUS, color: "#6f41bc", weight: 1.5, dashArray: "6 6", fillColor: "#6f41bc", fillOpacity: 0.05, interactive: false }).addTo(m);
       L.marker([a.lat, a.lon], { interactive: false, icon: L.divIcon({ className: "mpinw", iconSize: [36, 36], iconAnchor: [18, 18], html: '<span class="mja">' + SVG(BI_DOMU, 16, "#fff", 2.4) + "</span>" }) }).addTo(m);
       var cl = L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 40, iconCreateFunction: function (c) { return L.divIcon({ className: "mpinw", iconSize: [38, 38], html: '<span class="mcl">' + c.getChildCount() + "</span>" }); } });
       var pol = mapaPolozky(a, f);
@@ -2692,13 +2692,13 @@
     var c = cisteniPro(a);
     if (c && dnu(c.d) <= 7) {
       var n = dnu(c.d);
-      r.push({ cls: n <= 1 ? "plan" : "info", ic: I_SWEEP, fg: n <= 1 ? "#9a6a12" : "#6b6652",
+      r.push({ cls: n <= 1 ? "plan" : "info", ic: I_SWEEP, fg: n <= 1 ? "#9a6a12" : "#686c76",
         t: (n <= 0 ? "Dnes" : n === 1 ? "Zítra" : dden(c.d)) + " blokové čištění", s: "v " + sklon(c.u) + (c.od ? " · " + c.od + "–" + (c.do || "") : "") + " · přeparkujte", act: "tab:doprava" });
     }
     var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 5000; })[0];
     var uz = uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 1000 && probiha(x.x); })[0];   // nejbližší probíhající do 1 km
     var rz = data.rizeni ? rzOkoli(a, RZ_DOMU, true)[0] : null;
-    if (rz) r.push({ cls: "info", ic: RZ_IKONY[rz.z.druh] || I_DOC, fg: "#5b5b54", t: rz.z.druh + " · " + akVzdTxt(rz.d) + " od vás",
+    if (rz) r.push({ cls: "info", ic: RZ_IKONY[rz.z.druh] || I_DOC, fg: "#5b5e66", t: rz.z.druh + " · " + akVzdTxt(rz.d) + " od vás",
       s: rz.z.n + " · " + (RZ_FAZE[rz.z.faze] || RZ_FAZE.info)[1].toLowerCase() + " " + rzDat(rz.z.d), act: "rz:" + rz.z.id });
     if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
       s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "dop:nehody" });
@@ -2708,7 +2708,7 @@
   }
   function domuAlert(x) {
     return '<button type="button" class="hal ' + x.cls + '" data-act="' + esc(x.act) + '"><span class="hi">' + SVG(x.ic, 20, x.fg, 2.1) + "</span>" +
-      '<span class="grow"><span class="ht">' + esc(x.t) + '</span><span class="hs">' + esc(x.s) + "</span></span>" + SVG(I_CHEV, 18, "#8a8572", 2.4) + "</button>";
+      '<span class="grow"><span class="ht">' + esc(x.t) + '</span><span class="hs">' + esc(x.s) + "</span></span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
   }
   function domuDnes(a) {
     var r = [], ted = new Date(), dnes = akDen(ted), r0 = results(a);
@@ -2738,12 +2738,12 @@
   var SVOZ = { papir: "Svoz papíru", plast: "Svoz plastu", sklo: "Svoz skla", kovy: "Svoz kovů", oleje: "Svoz jedlých olejů", elektro: "Svoz elektrozařízení" };
   function pl(n, a, b, c) { return n + " " + (n === 1 ? a : n >= 2 && n <= 4 ? b : c); }
   function domuTile(id, ic, nadpis, v, s) {
-    return '<button type="button" class="htile" data-act="tab:' + id + '"><span class="tt">' + SVG(ic, 16, "#1f4d36", 2.2) + nadpis + '</span><span class="tv">' + v + '</span><span class="ts">' + s + "</span></button>";
+    return '<button type="button" class="htile" data-act="tab:' + id + '"><span class="tt">' + SVG(ic, 16, "#6f41bc", 2.2) + nadpis + '</span><span class="tv">' + v + '</span><span class="ts">' + s + "</span></button>";
   }
   function domuBody(a) {
     var al = domuUpozorneni(a), h = "", st = vodaStav();
     if (al.length) {
-      h += '<div class="hsec"><b>Upozornění pro vaši adresu</b></div>';
+      h += '<div class="hsec"><b>Co se děje u vás</b></div>';
       al.slice(0, state.domuVse ? al.length : DOMU_MAX).forEach(function (x) { h += domuAlert(x); });
       if (al.length > DOMU_MAX && !state.domuVse) h += '<button type="button" class="btn-link" id="domuvic" style="align-self:flex-start">Další upozornění (' + (al.length - DOMU_MAX) + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     } else {
@@ -2756,7 +2756,7 @@
     if (dn.length) h += '<div class="hday">' + dn.map(function (x) {
       return '<button type="button" class="hrw" data-act="' + esc(x.act) + '"><span class="hw">' + esc(x.h || (x.w === "dnes" ? "Dnes" : "Zítra")) + "<small>" + (x.h ? x.w : "") + '</small></span><span class="grow"><span class="hn">' + esc(x.n) + '</span><span class="hm">' + esc(x.m) + "</span></span></button>";
     }).join("") + "</div>";
-    else h += '<div class="card-dashed row"><div class="grow"><div class="note" style="margin:0">Dnes ani zítra u vás nic naplánovaného nevidíme. Víc akcí najdete v kalendáři.</div></div></div>';
+    else h += '<div class="card-dashed row"><div class="grow"><div class="note" style="margin:0">Dnes ani zítra se u vás nic neplánuje – užijte si klid. Víc akcí najdete v kalendáři.</div></div></div>';
     // rozcestník
     var uz = uzavirkyPro(a), uzb = uz.filter(function (x) { return probiha(x.x) && x.d != null; })[0];
     var r0 = results(a), kont = r0.near[0];

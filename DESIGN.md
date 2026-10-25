@@ -2,7 +2,7 @@
 
 > Zdroj pravdy pro vzhled a texty aplikace **Pod okny**. Platí pro lidi i pro AI agenty, kteří na aplikaci pracují.
 > Vychází z facelift varianty **N** (plátno „Moje čtvrť“, stránka *Facelift — varianty*) a hlavní barvy **#6f41bc**.
-> Stav: **návrh** – facelift zatím není nasazený v `docs/style.css`. Do nasazení platí produkční vzhled, tento soubor popisuje cílový stav.
+> Stav: **nasazeno 26. 10. 2026** (`docs/style.css` – tokeny v `:root`, vrstva „Facelift N“ na konci souboru).
 
 ---
 
@@ -163,9 +163,9 @@ Pravidla:
 | Dnes ani zítra u vás nic naplánovaného nevidíme. | Dnes ani zítra se u vás nic neplánuje – užijte si klid. |
 | Pro vaši lokalitu teď žádná plánovaná odstávka není. | Teplá voda poteče jako obvykle. |
 | Upozornění pro vaši adresu | Co se děje u vás |
-| Něco tu není v pořádku? | Všimli jste si něčeho? Dejte vědět, předáme to dál. |
+| Něco tu není v pořádku? Nahlaste nepořádek, rozbitou lampu nebo díru v silnici | Všimli jste si něčeho? Nepořádek, rozbitá lampa, díra v silnici – pomůžeme vám to nahlásit |
 
-*(Nové texty jsou návrh – nasazují se spolu s faceliftem.)*
+*(Nasazeno spolu s faceliftem.)*
 
 ## 9. Do / Don't
 
