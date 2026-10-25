@@ -542,3 +542,7 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .mktypy span{font-size:12.5px;font-weight:700;border-radius:20px;padding:4px 10px}
 .mprazdno{position:absolute;left:14px;right:14px;top:58px;z-index:500;background:#fff;border-radius:14px;padding:12px 14px;font-size:14px;box-shadow:0 1px 4px rgba(0,0,0,.14)}
 .mapawrap .leaflet-control-attribution{font-size:10px}
+/* Okolí › Seznam: záložky Lékaři / Školy / Stavby */
+.oktaby{display:flex;gap:22px;border-bottom:1px solid #e3dfd2;margin:2px 2px 14px}
+.oktaby button{font:inherit;font-size:15px;font-weight:600;color:#8a8572;background:none;border:none;border-bottom:2.5px solid transparent;padding:8px 0 10px;margin-bottom:-1px;cursor:pointer}
+.oktaby button.on{font-weight:800;color:var(--green);border-bottom-color:var(--green)}

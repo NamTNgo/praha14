@@ -2754,16 +2754,24 @@
   function prepniTab(t) {
     if (t === "okoli") t = state.okSeg || "mapa";
     if (t === "mapa" || t === "doktori" || t === "skoly" || t === "stavby") state.okSeg = t;
+    if (t === "doktori" || t === "skoly" || t === "stavby") state.okList = t;
     state.tab = t; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.uzSel = null; state.tvSel = null; state.stView = "list"; state.stHist = [];
     render(); window.scrollTo(0, 0);
   }
   // přepínač Lékaři / Školy v záložce Okolí
   function okoliSeg() {
-    return '<div class="seg2" role="tablist" aria-label="Okolí">' + [["mapa", "Mapa"], ["doktori", "Lékaři"], ["skoly", "Školy"], ["stavby", "Stavby"]].map(function (x) {
+    var mapa = state.tab === "mapa";
+    var h = '<div class="seg2" role="tablist" aria-label="Okolí">' + [["mapa", "Mapa"], [state.okList || "doktori", "Seznam"]].map(function (x, i) {
+      var on = i === 0 ? mapa : !mapa;
+      return '<button type="button" role="tab" data-okseg="' + x[0] + '" class="' + (on ? "on" : "") + '" aria-selected="' + on + '">' + x[1] + "</button>";
+    }).join("") + "</div>";
+    if (!mapa) h += '<div class="oktaby" role="tablist" aria-label="Seznam">' + [["doktori", "Lékaři"], ["skoly", "Školy"], ["stavby", "Stavby"]].map(function (x) {
       var on = state.tab === x[0];
       return '<button type="button" role="tab" data-okseg="' + x[0] + '" class="' + (on ? "on" : "") + '" aria-selected="' + on + '">' + x[1] + "</button>";
     }).join("") + "</div>";
+    return h;
   }
+
 
   // ---- spodní navigace ----
   var BI_ODPAD = '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>';
