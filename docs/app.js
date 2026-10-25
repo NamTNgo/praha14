@@ -205,7 +205,7 @@
   function vokBlock(x, cls, label) {
     if (!x) return "";
     var d = x.date;
-    return '<div class="hbox ' + cls + '"><div class="eyebrow">' + label + '</div><div class="hname">' + esc(x.r.n) + " · " + meters(x.dist) + "</div>" +
+    return '<div class="hbox ' + cls + '" id="vok-' + cls + '"><div class="eyebrow">' + label + '</div><div class="hname">' + esc(x.r.n) + " · " + meters(x.dist) + "</div>" +
       '<div class="hdate">' + HDAYS[d.getDay()] + " " + d.getDate() + ". " + (d.getMonth() + 1) + "." + (x.r.h ? " · " + x.r.h : "") + "</div></div>";
   }
   function vokCard(addr) {
@@ -289,7 +289,7 @@
         var f = r.byType[t.id];
         if (f) {
           var sch = schedule(f.info);
-          h += '<div class="card row"><span class="badge" style="background:' + t.bg + '">' + SVG(t.icon, 18, t.fg) + '</span><div class="grow"><div class="t1">' + t.name +
+          h += '<div class="card row" id="svoz-' + t.id + '"><span class="badge" style="background:' + t.bg + '">' + SVG(t.icon, 18, t.fg) + '</span><div class="grow"><div class="t1">' + t.name +
             '</div><div class="t2">' + esc(f.s.name) + " · " + meters(f.d) + "</div>" + (sch ? '<div class="t3">' + sch + "</div>" : "") + "</div></div>";
         } else if (t.core) {
           h += '<div class="card-dashed row"><span class="badge" style="background:#efece2">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#6b6652") +
@@ -2683,7 +2683,7 @@
       var f = r0.byType[t.id];
       if (!f || !f.info.n) return;
       var d = akD(f.info.n), n = Math.round((d - dnes) / 864e5);
-      if (n === 0 || n === 1) r.push({ k: n * 1440 + 360, w: n ? "zítra" : "dnes", h: "", n: SVOZ[t.id] || "Svoz", m: f.s.name + " · " + meters(f.d), act: "tab:odpad" });
+      if (n === 0 || n === 1) r.push({ k: n * 1440 + 360, w: n ? "zítra" : "dnes", h: "", n: SVOZ[t.id] || "Svoz", m: f.s.name + " · " + meters(f.d), act: "byd:svoz-" + t.id });
     });
     // velkoobjemové kontejnery
     var list = a.mc === "9" ? (data.vok9 && data.vok9.mista) : data.vok;
@@ -2691,7 +2691,7 @@
       var x = vokNearest(a, v[0], list || []);
       if (!x || x.dist > 1000) return;
       var n = Math.round((x.date - dnes) / 864e5);
-      if (n === 0 || n === 1) r.push({ k: n * 1440 + 600, w: n ? "zítra" : "dnes", h: x.r.h || "", n: v[1], m: x.r.n + " · " + meters(x.dist), act: "tab:odpad" });
+      if (n === 0 || n === 1) r.push({ k: n * 1440 + 600, w: n ? "zítra" : "dnes", h: x.r.h || "", n: v[1], m: x.r.n + " · " + meters(x.dist), act: "byd:vok-h" + v[0] });
     });
     // akce dnes a zítra – nejbližší časově, do 3 km
     if (data.akce) akVOkne("dny", "all", ted).filter(function (x) { var d = akVzd(x); return !x.z && (d == null || d <= 3000); }).slice(0, 4).forEach(function (x) {
@@ -2751,6 +2751,16 @@
     if (t === "eia") { var z2 = state.tab; state.stView = "list"; state.stHist = []; openEia(v, z2); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "rz") { var z1 = state.tab; state.stView = "list"; state.stHist = []; openRizeni(v, z1); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
     if (t === "st") { var z0 = state.tab; state.stView = "list"; state.stHist = []; openStavba(v, z0); state.tab = "stavby"; render(); window.scrollTo(0, 0); return; }
+    if (t === "byd") {   // na konkrétní kartu v Bydlení (svoz, kontejner) a krátce ji zvýraznit
+      prepniTab("odpad");
+      var cil = document.getElementById(v);
+      if (cil) {
+        var y = cil.getBoundingClientRect().top + window.scrollY - 16;
+        window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+        cil.classList.add("zvyrazni"); setTimeout(function () { cil.classList.remove("zvyrazni"); }, 1600);
+      }
+      return;
+    }
     if (t === "dop") {   // rovnou na konkrétní sekci v Dopravě (např. nehody)
       prepniTab("doprava");
       var el = document.getElementById(v);

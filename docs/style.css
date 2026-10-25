@@ -547,3 +547,5 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .oktaby button{font:inherit;font-size:15px;font-weight:600;color:#8a8572;background:none;border:none;border-bottom:2.5px solid transparent;padding:8px 0 10px;margin-bottom:-1px;cursor:pointer}
 .oktaby button.on{font-weight:800;color:var(--green);border-bottom-color:var(--green)}
 .mapaosm{filter:saturate(.35) sepia(.12) contrast(.92) brightness(1.06)}
+.zvyrazni{animation:zvyrazni 1.6s ease-out}
+@keyframes zvyrazni{0%,35%{box-shadow:0 0 0 3px rgba(31,77,54,.45)}100%{box-shadow:0 0 0 3px rgba(31,77,54,0)}}
