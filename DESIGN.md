@@ -51,12 +51,12 @@ Hodnoty z varianty N + hlavní barva #6f41bc. Kontrasty jsou proti bílé (#fff)
 | Token | Hodnota | Role | Použití | Zákaz |
 |---|---|---|---|---|
 | `--brand` | `#6f41bc` | Hlavní barva značky | Primární tlačítka (`.link`, `.btn-ext`), aktivní položka navigace, text tlačítka Změnit, odkazy (`.hlink`, `a`), časy v „Dnes a zítra“, zapnuté chipy, ikony v dlaždicích, focus ring. Kontrast s bílou 6,65 : 1. | Nikdy pro stavy (probíhá / plánováno / OK), nikdy jako plocha pozadí větší než tlačítko. |
-| `--brand-tint` | `#f0ebff` | Světlý podklad značky | Pozadí aktivní položky navigace, pozadí tlačítka Změnit. Text `--brand` na něm má 5,71 : 1. | Nepoužívat jako pozadí karet ani sekcí. |
+| `--brand-tint` | `#f0ebff` | Světlý podklad značky | Pozadí aktivní položky navigace. Text `--brand` na něm má 5,71 : 1. | Nepoužívat jako pozadí karet ani sekcí. |
 | `--ink` | `#1c1c1e` | Hlavní text | Nadpisy, názvy v kartách, text v tlačítkách bez barvy. 17 : 1. | Nepoužívat čistou černou `#000`. |
 | `--muted` | `#5f636c` | Vedlejší text | Popisy v kartách, adresy, podtitulky. 6,0 : 1. | Ne pro nadpisy a ne pro klikatelný text. |
 | `--faint` | `#686c76` | Nejslabší text | Eyebrow, poznámky, zdroje, patička. 4,7 : 1 na `--bg`. | Nesvětlit – světlejší odstín (`#767a84`) na `--bg` nesplní AA. |
 | `--bg` | `#f1f2f5` | Pozadí aplikace | Celá plocha za kartami. | Nepoužívat bílou jako pozadí aplikace (karty by zmizely). |
-| `--bg-glow` | `radial-gradient(120% 360px at 85% -80px, #dcdcff 0, #dcf5fd 45%, rgba(241,242,245,0) 78%)` | Jemný přechod nahoře | Jen horní část `.app` (pod hlavičkou). | Nikde jinde; nepřidávat další přechody. |
+| `--bg-glow` | `radial-gradient(150% 500px at 85% -100px, #e1d7ff 0, #f1edff 50%, rgba(241,242,245,0) 85%)` – jen odstíny značky | Jemný přechod nahoře | Jen horní část `.app` (pod hlavičkou). | Nikde jinde; nepřidávat další přechody. |
 | `--surface` | `#ffffff` | Karta | Všechny karty, dlaždice, řádky dne. | – |
 | `--line` | `#eceef2` | Oddělovač | Linky mezi řádky uvnitř karty (`.hrw`, `.tydr1`). | Nepoužívat jako rámeček karty – karty jsou bez rámečku. |
 
@@ -140,7 +140,7 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | ukázat stavby kolem | **Karusel staveb** `.hcar` / `.hcc` | Obrázek je obsah, ne dekorace. |
 | primární akce (mapa, web, odeslat) | **Tlačítko** `.link`, `.btn-ext` | Pilulka, `--brand` pozadí, bílý text, ikona šipky ven u externích odkazů. Max. 2 vedle sebe. |
 | vedlejší akce v nadpisu sekce | **Odkaz sekce** `.hlink` | Bílá pilulka, text `--brand`. |
-| změnit adresu | **Změnit** `.btn-edit` | Jen v hlavičce, `--brand` na `--brand-tint`. |
+| změnit adresu | **Změnit** `.btn-edit` | Jen v hlavičce; bílá pilulka, text `--brand`, jemný fialový stín (na fialovém přechodu by tint splynul). |
 | filtrovat | **Chipy** `.chiprow` / `.chips` | Pilulky; zapnutý = `--brand` pozadí. Fungují jako zaškrtávátka, drží pozici scrollu. |
 | přepínat hlavní oblasti | **Navigace** `.bnav` | Plovoucí bílá lišta 14 px od okrajů a spodu, `--radius-pill`, aktivní položka `--brand` na `--brand-tint`. 5 položek: Domů, Doprava, Bydlení, Akce, Okolí. |
 | nic se neděje | **Prázdný stav** `.card-dashed` | Krátká vlídná věta (viz 8), žádná ikona navíc. |

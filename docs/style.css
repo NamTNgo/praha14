@@ -556,7 +556,7 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 
 
 /* ===== Facelift N (DESIGN.md) – písmo Plus Jakarta Sans, pozadí L+J, karty bez rámečku, plovoucí navigace ===== */
-.app{background:radial-gradient(120% 360px at 85% -80px,#dcdcff 0,#dcf5fd 45%,rgba(241,242,245,0) 78%) no-repeat,var(--bg)}
+.app{background:radial-gradient(150% 500px at 85% -100px,#e1d7ff 0,#f1edff 50%,rgba(241,242,245,0) 85%) no-repeat,var(--bg)}
 .hsec{margin-top:10px}
 .hsec b{font-size:19px;font-weight:700;letter-spacing:-.02em}
 .hlink{font-weight:600;background:#fff;border-radius:999px;padding:7px 13px;min-height:34px;align-self:center}
@@ -573,7 +573,7 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .link,.btn-ext{background:var(--brand);color:#fff;border-radius:999px}
 .link:active,.btn-ext:active{background:#5d34a3}
 .link svg,.btn-ext svg{stroke:#fff}
-.btn-edit{background:var(--brand-tint);color:var(--brand)}
+.btn-edit{background:#fff;color:var(--brand);box-shadow:0 1px 2px rgba(28,28,30,.05),0 4px 12px rgba(111,65,188,.12)}
 .chiprow .chip,.chips .chip{border-radius:999px;border-color:#e3e5ea;background:#fff}
 .chipfade{background:linear-gradient(90deg,rgba(241,242,245,0),var(--bg))}
 .bnav{left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:calc(100% - 28px);max-width:402px;border-radius:30px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:none;box-shadow:0 10px 30px rgba(28,28,30,.12);padding:6px}
