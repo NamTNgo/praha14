@@ -560,7 +560,7 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .hsec{margin-top:10px}
 .hsec b{font-size:19px;font-weight:700;letter-spacing:-.02em}
 .hlink{font-weight:600;background:#fff;border-radius:999px;padding:7px 13px;min-height:34px;align-self:center}
-.card,.hday,.hal,.htile,.hcc,.card.tyd,.card-dashed,.card.adrj{border:none!important;border-radius:22px;background:#fff;box-shadow:0 1px 2px rgba(28,28,30,.04),0 6px 20px rgba(28,28,30,.05)}
+.card,.hday,.hal,.htile,.hcc,.card.tyd,.card-dashed,.card.adrj{border:none!important;border-radius:22px;background:#fff;box-shadow:0 1px 2px rgba(111,65,188,.06),0 6px 20px rgba(111,65,188,.08)}
 .hal.now{background:#ffeaea;box-shadow:none}
 .hal.plan{background:#fff3e2;box-shadow:none}
 .hal.help{background:#e7eef8;box-shadow:none}

@@ -122,7 +122,7 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | `--radius-card` | `22px` | karty, dlaždice, upozornění, řádek dne | Nemíchat s ostrými rohy. |
 | `--radius-pill` | `999px` | tlačítka, chipy, „Kalendář akcí“, aktivní položka navigace | – |
 | `--radius-icon` | `50%` | podklad ikon v kartách (`.hi`, `.tydi`, `.badge`) | Ne čtvercové podklady ikon. |
-| `--shadow-card` | `0 1px 2px rgba(28,28,30,.04), 0 6px 20px rgba(28,28,30,.05)` | všechny bílé karty | Karty nemají rámeček (`border:none`). Stavové karty (`now`, `plan`) jsou **bez stínu**. |
+| `--shadow-card` | `0 1px 2px rgba(111,65,188,.06), 0 6px 20px rgba(111,65,188,.08)` – tónovaný do značky | všechny bílé karty | Karty nemají rámeček (`border:none`). Stavové karty (`now`, `plan`) jsou **bez stínu**. |
 | `--shadow-nav` | `0 10px 30px rgba(28,28,30,.12)` | plovoucí navigace | – |
 | `--space-page` | `20px` | boční okraj obsahu | – |
 | `--space-stack` | `16px` | mezera mezi bloky | – |
