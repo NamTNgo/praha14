@@ -2032,7 +2032,11 @@
     { k: "silnice", n: "Díra v silnici, značka, semafor", vse: { kdo: "Technická správa komunikací (TSK)", web: "https://zavady.tsk-praha.cz/" } },
     { k: "voda", n: "Voda, kanalizace", vse: { kdo: "Pražské vodovody a kanalizace", t: "840 111 112", tel: 1, pozn: "Poruchy vodovodu a kanalizace přijímá dispečink nonstop po telefonu." } },
     { k: "el", n: "Elektřina", vse: { kdo: "PREdistribuce", t: "800 823 823", tel: 1, pozn: "Poruchy dodávky elektřiny přijímá poruchová linka nonstop." } },
-    { k: "plyn", n: "Plyn – cítíte plyn", vse: { kdo: "Pražská plynárenská – pohotovost", t: "1239", tel: 1, pozn: "Cítíte-li plyn, nezapínejte elektrické spotřebiče ani světla, otevřete okna, odejděte a volejte." } }
+    { k: "plyn", n: "Plyn – cítíte plyn", vse: { kdo: "Pražská plynárenská – pohotovost", t: "1239", tel: 1, pozn: "Cítíte-li plyn, nezapínejte elektrické spotřebiče ani světla, otevřete okna, odejděte a volejte." } },
+    // když člověk neví, kam problém patří: úřad MČ ho předá správnému odboru nebo organizaci
+    { k: "jine", n: "Něco jiného / nevím, kam to patří", p: "Popište, co se děje – úřad hlášení předá tomu, kdo ho řeší",
+      "9": { kdo: "Úřad MČ Praha 9", m: "podatelna@praha9.cz", t: "283 091 111" },
+      "14": { kdo: "Informační kancelář ÚMČ Praha 14", m: "informace@praha14.cz", t: "225 295 270" } }
   ];
   function zavKat(k) { return ZAV.filter(function (z) { return z.k === k; })[0]; }
   function zavKam(z) { var a = state.address; return z.vse || z[a && a.mc === "9" ? "9" : "14"]; }
