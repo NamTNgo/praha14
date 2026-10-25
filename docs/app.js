@@ -87,6 +87,13 @@
   }
 
   // ---- výpočet výsledků ----
+  // kontejnery na textil a obuv (OpenStreetMap, provozují charity a firmy – bez termínů svozu)
+  var I_SHIRT = '<path d="M16 3l5 3-2 5-3-1v11H8V10l-3 1-2-5 5-3c0 2 2 3 4 3s4-1 4-3Z"/>';
+  function textilPro(a, r) {
+    if (!data.textil || !a) return [];
+    return (data.textil.k || []).map(function (x) { return { x: x, d: dist(a.lat, a.lon, x[0], x[1]) }; })
+      .filter(function (y) { return y.d <= (r || RADIUS); }).sort(function (p, q) { return p.d - q.d; });
+  }
   function results(addr) {
     var near = [];
     data.stations.forEach(function (s) {
@@ -113,7 +120,7 @@
   function meters(d) { return Math.round(d / 10) * 10 + " m"; }
 
   // ---- šablony ----
-  var FOOT = '<div class="foot">Zdroj dat: Golemio (Operátor ICT) · Adresy: ČÚZK (RÚIAN)</div>';
+  var FOOT = '<div class="foot">Zdroj dat: Golemio (Operátor ICT) · Adresy: ČÚZK (RÚIAN) · Kontejnery na textil: © přispěvatelé OpenStreetMap</div>';
   var MC_URL = {
     "14": ["praha14.cz", "https://www.praha14.cz/urad-mestske-casti/hledam-informaci/zivotni-prostredi/odpady/"],
     "9": ["praha9.cz", "https://www.praha9.cz/urad-a-samosprava/zivotni-prostredi"]
@@ -287,6 +294,12 @@
       h += '<div class="list"><div class="label">V okruhu 1 km od adresy</div>';
       TYPES.forEach(function (t) {
         var f = r.byType[t.id];
+        if (t.id === "kovy") {   // textil hned za sklem (před kovy)
+          var tx = textilPro(a)[0];
+          if (tx) h += '<div class="card row" id="svoz-textil"><span class="badge" style="background:#f1e6f7">' + SVG(I_SHIRT, 18, "#7a4a9a") + '</span><div class="grow"><div class="t1">Textil' + (tx.x[4] ? " a obuv" : "") + "</div>" +
+            '<div class="t2">' + esc(tx.x[2] ? tx.x[2].replace(/^u /, "") : "Kontejner na textil") + " · " + meters(tx.d) + '</div><div class="t3">' + (tx.x[3] ? "Provozuje " + esc(tx.x[3]) + " · " : "") + "bez termínu svozu</div>" +
+            '<div class="t3" style="font-size:11.5px;margin-top:3px">Data z OpenStreetMap, nemusí být úplná.</div></div></div>';
+        }
         if (f) {
           var sch = schedule(f.info);
           h += '<div class="card row" id="svoz-' + t.id + '"><span class="badge" style="background:' + t.bg + '">' + SVG(t.icon, 18, t.fg) + '</span><div class="grow"><div class="t1">' + t.name +
@@ -2465,6 +2478,11 @@
       results(a).near.forEach(function (x) {
         r.push({ lat: x.s.lat, lon: x.s.lon, ic: BI_ODPAD, bg: "#3d7a52", soft: "#e6f2ea", t: "Kontejnery · " + x.s.name, s: meters(x.d) + " od vás", kont: x.s });
       });
+      textilPro(a).forEach(function (y) {
+        var x = y.x;
+        r.push({ lat: x[0], lon: x[1], ic: I_SHIRT, bg: "#7a4a9a", soft: "#f1e6f7", t: (x[4] ? "Textil a obuv" : "Textil") + (x[2] ? " · " + x[2].replace(/^u /, "") : ""),
+          s: meters(y.d) + " od vás" + (x[3] ? " · provozuje " + x[3] : ""), textil: x });
+      });
     }
     void d0;
     return r;
@@ -2488,7 +2506,10 @@
     if (!x) { el.innerHTML = ""; return; }
     var obs = '<div class="mkhead"><span class="badge" style="background:' + x.soft + '">' + SVG(x.ic, 18, x.bg, 2.2) + '</span><span class="grow"><span class="mkt">' + esc(x.t) +
       (x.tag ? ' <span class="mktag ' + x.tag[0] + '">' + esc(x.tag[1]) + "</span>" : "") + '</span><span class="mks">' + esc(x.s).replace("\n", "<br>") + "</span></span></div>";
-    if (x.kont) {
+    if (x.textil) {
+      obs += '<div class="mktypy"><span style="background:#f1e6f7;color:#7a4a9a">Textil</span>' + (x.textil[4] ? '<span style="background:#f1e6f7;color:#7a4a9a">Obuv</span>' : "") + "</div>" +
+        '<div class="mks" style="margin-top:8px">Bez termínu svozu. Data z OpenStreetMap, nemusí být úplná.</div>';
+    } else if (x.kont) {
       obs += '<div class="mktypy">' + TYPES.filter(function (t) { return x.kont.t[t.id]; }).map(function (t) { return '<span style="background:' + t.bg + ";color:" + t.fg + '">' + esc(t.name.split(" ")[0]) + "</span>"; }).join("") + "</div>";
       var dal = TYPES.filter(function (t) { return x.kont.t[t.id] && x.kont.t[t.id].n; }).map(function (t) { return { t: t, n: x.kont.t[t.id].n }; }).sort(function (p, q) { return p.n < q.n ? -1 : 1; })[0];
       if (dal) obs += '<div class="mks" style="margin-top:8px">Nejbližší svoz: ' + esc(dal.t.name.split(" ")[0].toLowerCase()) + " " + vDen(new Date(dal.n + "T00:00:00"), new Date()) + "</div>";
@@ -3110,8 +3131,8 @@
   }
   function boot() {
     window.__err = false; data = null; render();
-    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getZive("nehody.json"), getJSON("data/akce.json").catch(function () { return null; }), getZive("voda.json"), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; }), getJSON("data/rizeni.json").catch(function () { return null; }), getJSON("data/elektrina.json").catch(function () { return null; }), getJSON("data/opatreni.json").catch(function () { return null; }), getJSON("data/zps.json").catch(function () { return null; }), getJSON("data/eia.json").catch(function () { return null; }), getJSON("data/vyzvy.json").catch(function () { return null; })]).then(function (v) {
-      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17], elektrina: v[18], opatreni: v[19], zps: v[20], eia: v[21], vyzvy: v[22] };
+    Promise.all([getJSON("data/stations.json"), getJSON("data/addresses.json"), getJSON("data/hazard.json").catch(function () { return null; }), getJSON("data/vok.json").catch(function () { return null; }), getJSON("data/vok9.json").catch(function () { return null; }), getJSON("data/outages.json").catch(function () { return null; }), getJSON("data/skoly.json").catch(function () { return null; }), getJSON("data/skoly_extra.json").catch(function () { return null; }), getJSON("data/skoly_web.json").catch(function () { return null; }), getJSON("data/spadovost.json").catch(function () { return null; }), getJSON("data/doprava.json").catch(function () { return null; }), getJSON("data/doktori.json").catch(function () { return null; }), getZive("nehody.json"), getJSON("data/akce.json").catch(function () { return null; }), getZive("voda.json"), getJSON("data/patrani.json").catch(function () { return null; }), getJSON("data/stavby.json").catch(function () { return null; }), getJSON("data/rizeni.json").catch(function () { return null; }), getJSON("data/elektrina.json").catch(function () { return null; }), getJSON("data/opatreni.json").catch(function () { return null; }), getJSON("data/zps.json").catch(function () { return null; }), getJSON("data/eia.json").catch(function () { return null; }), getJSON("data/vyzvy.json").catch(function () { return null; }), getJSON("data/textil.json").catch(function () { return null; })]).then(function (v) {
+      data = { stations: v[0], addresses: v[1], hazard: v[2], vok: v[3], vok9: v[4], outages: v[5], skoly: v[6], skolyExtra: v[7], skolyWeb: v[8], spad: v[9], doprava: v[10], doktori: v[11], nehody: v[12], akce: v[13], voda: v[14], patrani: v[15], stavby: v[16], rizeni: v[17], elektrina: v[18], opatreni: v[19], zps: v[20], eia: v[21], vyzvy: v[22], textil: v[23] };
       if (data.skoly) data.skoly.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
       buildIndex();
       var av = adrNacti(); state.address = av.list[av.akt] || null; if (av.list.length) adrUloz(av);
