@@ -2512,7 +2512,8 @@
       m.on("moveend", function () { state.mapaPohled = { adr: a.label, c: [m.getCenter().lat, m.getCenter().lng], z: m.getZoom() }; });
       var pr = document.getElementById("mapaprazdno");
       if (pr) pr.innerHTML = pol.length ? "" : '<div class="mprazdno">' + ({ akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery." }[f] || "V okolí teď nic není.") + "</div>";
-    }).catch(function () {
+    }).catch(function (chyba) {
+      try { console.error("mapa:", chyba && chyba.stack || chyba); } catch (e) {}
       var e2 = document.getElementById("mapa"); if (e2) e2.innerHTML = '<div class="mprazdno" style="position:static;margin:40px 20px">Mapu se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.</div>';
     });
   }
