@@ -74,6 +74,24 @@ Stavy mají přednost před značkou. Fialová se ve stavech nikdy neobjevuje.
 
 Barvy štítků („Probíhá“, „Zítra“…) a ikon kategorií zůstávají z produkce – nejsou součástí faceliftu.
 
+### 6.2a Fialová vs. zelená – sladění (schváleno)
+
+Všechna místa, kde produkce používá zelenou **jako barvu značky**, přechází na `--brand` (`#6f41bc`) a `--brand-tint` (`#f0ebff`). V kódu to znamená `--green: var(--brand)` a nahrazení natvrdo zapsaných `#1f4d36` / `#e9f0e9` / `#2f8a57`, pokud nenesou význam.
+
+| Na fialovou (značka) | Zůstává zelená (význam) |
+|---|---|
+| časy v „Dnes a zítra“ a v Akcích (`.hrw .hw`, `.aktime`) | „U vás je klid“ (`.hok`) a karta „Teď se vás nic netýká“ |
+| ikony v dlaždicích, špendlíky (`.htile`, `.pin`, `.near`) | „Nalezen“ (`.hal.found`, `.vchip.found`) |
+| štítek „dnes“ (`.hdnes`), „Zdarma“ (`.akfree`), `.spadtag`, `.parted` | BIO (`.hbio`) |
+| vybraný den a tečky akcí v kalendáři (`.akdb`, `.akkd`, `.akkleg`) | hotové stavby (`.f-hot`) |
+| záložky, segmenty, filtry, chipy (`.tab.on`, `.akseg`, `.seg2`, `.fopt`, `.chip.on`, `.mapachip.on`, `.adrchip.on`, `.oktaby`) | tečka „Právě probíhá“ (`.akdot`) |
+| šipky kalendáře (`.akkalnav`), odkazy (`.aklink`, `.aktxt`, `.tydvic`, `.adradd`, `.vlink`, `.spadlink`) | barvy typů odpadu, stavy (6.2), kategorie lékařů a akcí |
+| postup řízení a časová osa (`.krok`, `.tl`) | |
+| tlačítko 158 (`.btn-158`), cisterny (`.vcis`), „U mě taky“ (`.umth`) | |
+| kruh okruhu na mapě a mapové ovládání (`.mja`) | |
+
+Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste / tohle jste vybrali“ → fialová. Říká to „je to v pořádku / je to hotové / je to živé“ → zelená.**
+
 ### 6.3 Typografie
 
 | Token | Hodnota |
@@ -163,7 +181,7 @@ Pravidla:
 - Neměnit hlavičku ani pořadí sekcí na Domů.
 - Nepřidávat řadu kategorií, pozdrav („Dobrý večer…“) ani souhrnné widgety nad obsah.
 - Nepřidávat ilustrace, fotky ani dekorativní přechody (kromě `--bg-glow`).
-- Nepoužít fialovou na stav ani zelenou jako barvu značky.
+- Nepoužít fialovou na stav ani zelenou jako barvu značky (rozdělení viz 6.2a).
 - Nedávat rámečky a stíny zároveň; nemíchat ostré a kulaté rohy.
 - Nepsat úředně, nestrašit, nepoužívat vykřičníky.
 
@@ -200,4 +218,4 @@ Na těchto zadáních ověříme, že DESIGN.md stačí k tomu, aby agent uděla
 ## 12. Otevřené otázky
 
 - **Logo a ikona aplikace** – řešíme až s nativní aplikací.
-- **Sladění štítků a ikon s fialovou** – rozhodnuto ano; návrh na plátně čeká na schválení, pak se doplní do 6.1.
+
