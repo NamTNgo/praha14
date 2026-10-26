@@ -2526,7 +2526,7 @@
   var MAPA_PRAZDNO = { akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery.", lekari: "Do 1 km nejsou žádní lékaři.", skoly: "Do 1 km nejsou žádné školy." };
   function mapaView(a) {
     void a;
-    return '<div class="mapawrap"><div id="mapa" class="mapa"></div>' + okKatChips("mapachip", "mapachips") + '<button type="button" class="mapaloc" id="mapaloc" aria-label="Moje poloha">' + SVG('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', 20, "#1c1c1e", 2.2) + '</button><div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
+    return '<div class="mapawrap"><div id="mapa" class="mapa"></div>' + okKatChips("mapachip", "mapachips") + '<div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
   }
   function mapaPin(x, sel) {
     return L.divIcon({ className: "mpinw", iconSize: [36, 36], iconAnchor: [18, 36], html: '<span class="mpin' + (sel ? " sel" : "") + '" style="background:' + x.bg + '"><span>' + SVG(x.ic, sel ? 18 : 15, "#fff", 2.2) + "</span></span>" });
@@ -2954,7 +2954,7 @@
   function naSekci() {
     return data && state.address && !window.__err &&
       !state.vodaSel && !state.patSel && !state.elSel && !state.zav && !state.uzSel && !state.tvSel && (state.tab === "domu" || state.tab === "odpad" || state.tab === "doprava" ||
-       state.tab === "mapa" ||
+       state.tab === "mapa" || state.tab === "oklist" ||
        (state.tab === "skoly" && state.skView === "list") ||
        (state.tab === "doktori" && state.dkView === "list") ||
        (state.tab === "stavby" && state.stView === "list") ||
@@ -3081,11 +3081,6 @@
     umtNapoj();
     var vb = document.getElementById("vodaback");
     if (vb) vb.addEventListener("click", function () { vodaBack(); });
-    var ml = document.getElementById("mapaloc");
-    if (ml) ml.addEventListener("click", function () {
-      if (!navigator.geolocation || !mapaMap) return;
-      navigator.geolocation.getCurrentPosition(function (g) { if (mapaMap) mapaMap.setView([g.coords.latitude, g.coords.longitude], 16); }, function () { toast("Polohu se nepodařilo zjistit"); }, { enableHighAccuracy: true, timeout: 10000 });
-    });
     mapaInit();
     var tv = document.getElementById("tydvic");
     if (tv) tv.addEventListener("click", function () { var y = window.scrollY; state.tydVse = !state.tydVse; render(); window.scrollTo(0, y); });

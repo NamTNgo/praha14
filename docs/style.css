@@ -520,7 +520,6 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .mapachips::-webkit-scrollbar{display:none}
 .mapachip{flex-shrink:0;display:flex;gap:6px;align-items:center;border:none;border-radius:20px;padding:8px 13px;font:inherit;font-weight:700;font-size:13.5px;background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.14);cursor:pointer}
 .mapachip.on{background:var(--green);color:#fff}
-.mapaloc{position:absolute;right:14px;bottom:22px;z-index:500;width:42px;height:42px;border:none;border-radius:12px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .mpinw{background:none;border:none}
 .mpin{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.28);box-sizing:border-box;margin:2px 0 0 1px}
 .mpin > span{transform:rotate(45deg);display:flex}
@@ -645,3 +644,10 @@ div.okli{cursor:default}
 .dlinks.lk-pills .btn-ext{gap:6px;max-width:100%;white-space:normal;text-align:left;line-height:1.25;padding-top:10px;padding-bottom:10px}
 .dlinks.lk-pills .btn-ext svg{flex:none}
 .dlinks.lk-pills .btn-sec .lk-pdf{background:#fff}
+
+/* Okolí › Mapa: mapa až pod spodní lištu, přepínač Seznam plave přímo na mapě, bez tlačítka polohy */
+.mapawrap{height:calc(100vh - 128px);height:calc(100dvh - 128px)}
+.body.mapabody{padding-bottom:0}
+.app:has(.mapawrap) .okpill{bottom:calc(104px + env(safe-area-inset-bottom))}
+.mapawrap .leaflet-bottom{bottom:calc(92px + env(safe-area-inset-bottom))}
+.mapawrap #mapakarta .mkarta{margin-bottom:calc(92px + env(safe-area-inset-bottom))}
