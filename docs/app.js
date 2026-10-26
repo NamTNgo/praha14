@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "domu", okSeg: "mapa", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", sheet: null, spadVse: false, dopVse: false,
+  var state = { address: null, query: "", tab: "domu", okKat: "vse", okPohled: "mapa", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", sheet: null, spadVse: false, dopVse: false,
     dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkM: "all", dkQ: "",
     akView: "list", akHist: [], akSel: null, akF: "vse", akK: "all", akM: "all", akDenVse: {}, akDay: null, akKal: false, akKalM: null, akKalSel: null };
 
@@ -273,12 +273,13 @@
     var av = adrNacti(), vic = av.list.length > 1, nz = vic && av.list[av.akt] ? av.list[av.akt].nazev : "Vaše adresa";
     var h = '<div class="head addr"><div><div class="eyebrow">' + esc(nz) + '</div><button type="button" class="addr-name adrsw" id="adrsw" aria-label="' + esc(a.label) + ' – změnit adresu">' + esc(a.label) + SVG('<path d="m6 9 6 6 6-6"/>', 20, "currentColor", 2.4) + "</button></div></div>";
     if (state.tab === "domu") return h + '<div class="body" style="gap:12px">' + domuBody(a) + "</div>" + FOOT_DOMU;
-    if (state.tab === "skoly") return h + '<div class="body">' + okoliSeg() + skolyBody(a) + "</div>" + FOOT_SK;
+    if (state.tab === "skoly") return h + '<div class="body">' + okoliSeg() + skolyBody(a) + "</div>" + FOOT_SK + okPill();
     if (state.tab === "doprava") return h + '<div class="body">' + dopravaBody(a) + "</div>" + FOOT_DO;
-    if (state.tab === "doktori") return h + '<div class="body">' + okoliSeg() + doktoriBody(a) + "</div>" + FOOT_DK;
+    if (state.tab === "doktori") return h + '<div class="body">' + okoliSeg() + doktoriBody(a) + "</div>" + FOOT_DK + okPill();
     if (state.tab === "akce") return h + '<div class="body">' + akceBody() + "</div>" + FOOT_AK;
-    if (state.tab === "mapa") return h + '<div class="body mapabody">' + mapaView(a) + "</div>";
-    if (state.tab === "stavby") return h + '<div class="body">' + okoliSeg() + stavbyBody(a) + "</div>" + FOOT_ST;
+    if (state.tab === "mapa") return h + '<div class="body mapabody">' + mapaView(a) + "</div>" + okPill();
+    if (state.tab === "stavby") return h + '<div class="body">' + okoliSeg() + stavbyBody(a) + "</div>" + FOOT_ST + okPill();
+    if (state.tab === "oklist") return h + '<div class="body">' + okoliSeg() + okListBody(a) + "</div>" + okPill();
     h += '<div class="body">';
     h += cisteniPruh(a);
     h += '<div class="label">Voda, elektřina a teplo</div>' + vodaKarta(a) + elKarta(a) + outageTop(a) + outageNone(a);
@@ -2409,7 +2410,30 @@
     render(); window.scrollTo(0, 0);
   }
   // ---- mapa čtvrti (Okolí › Mapa): Leaflet + OpenStreetMap, načítá se až při otevření ----
-  function MAPA_F() { return [["vse", "Vše", null], ["doprava", "Doprava", I_T_CONE], ["voda", "Voda a proud", I_T_DROP], ["stavby", "Stavby", BI_BYDLENI], ["akce", "Akce", I_T_CAL], ["kont", "Kontejnery", BI_ODPAD]]; }
+  // Okolí: nejdřív kategorie, pak pohled (mapa / seznam) – DESIGN.md 7
+  function MAPA_F() { return [["vse", "Vše", null], ["lekari", "Lékaři", BI_LEKARI], ["skoly", "Školy", BI_SKOLY], ["stavby", "Stavby", BI_BYDLENI], ["doprava", "Doprava", I_T_CONE], ["voda", "Voda a proud", I_T_DROP], ["akce", "Akce", I_T_CAL], ["kont", "Kontejnery", BI_ODPAD]]; }
+  function okTab(k, pohled) { return pohled === "mapa" ? "mapa" : k === "lekari" ? "doktori" : k === "skoly" ? "skoly" : k === "stavby" ? "stavby" : "oklist"; }
+  function okKatChips(cls, wrap) {
+    var k0 = state.okKat || "vse";
+    return '<div class="' + wrap + '" role="tablist" aria-label="Co hledáte">' + MAPA_F().map(function (x) {
+      var on = x[0] === k0;
+      return '<button type="button" role="tab" class="' + cls + (on ? " on" : "") + '" data-okkat="' + x[0] + '" aria-selected="' + on + '">' + (x[2] ? SVG(x[2], 14, on ? "#fff" : "#686c76", 2.2) : "") + x[1] + "</button>";
+    }).join("") + "</div>";
+  }
+  function okPill() {
+    var mapa = state.tab === "mapa";
+    return '<button type="button" class="okpill" id="okpill">' + SVG(mapa ? '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>' : '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>', 16, "currentColor", 2.2) + (mapa ? "Seznam" : "Mapa") + "</button>";
+  }
+  function okListBody(a) {
+    var f = mapaVyber(), xs = mapaPolozky(a, f).map(function (x) { x.d = dist(a.lat, a.lon, x.lat, x.lon); return x; }).sort(function (p, q) { return p.d - q.d; });
+    var nazvy = { vse: "V okolí", doprava: "Doprava v okolí", voda: "Voda a proud v okolí", akce: "Akce v okolí", kont: "Kontejnery do 1 km" };
+    if (!xs.length) return '<div class="card-dashed row top"><div class="grow"><div class="note" style="margin:0">' + (MAPA_PRAZDNO[state.okKat] || "V okolí teď nic z vybraného není.") + "</div></div></div>";
+    return '<div class="list"><div class="label">' + (nazvy[state.okKat] || "V okolí") + " · " + xs.length + "</div>" + xs.slice(0, 40).map(function (x) {
+      var vnitrek = '<span class="badge" style="background:' + x.soft + '">' + SVG(x.ic, 18, x.bg, 2.2) + '</span><span class="grow"><span class="t1" style="display:block">' + esc(x.t) +
+        (x.tag ? ' <span class="mktag ' + x.tag[0] + '">' + esc(x.tag[1]) + "</span>" : "") + '</span><span class="t3" style="display:block">' + esc(x.s.split("\n")[0]) + "</span></span>";
+      return x.act ? '<button type="button" class="card row okli" data-okact="' + esc(x.act) + '">' + vnitrek + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>" : '<div class="card row okli">' + vnitrek + "</div>";
+    }).join("") + "</div>";
+  }
   var mapaLib = null, mapaMap = null;
   function mapaNacti() {
     if (mapaLib) return mapaLib;
@@ -2456,6 +2480,16 @@
         r.push({ lat: b[0], lon: b[1], ic: I_T_BOLT, bg: "#9a6a12", soft: "#fdf3dc", t: "Vypnutá elektřina", tag: [elFaze(x, ted) === "probiha" ? "now" : "plan", vDen(x.od, ted)], s: elUlice(u).slice(0, 2).join(", ") + (u.od ? " · " + hm(u.od) + (u.do ? "–" + hm(u.do) : "") : ""), act: "el:" + u.id, sd: ["el", u.id] });
       });
     }
+    if (chce("lekari") && data.doktori) {
+      dkNear(a).forEach(function (x) {
+        r.push({ lat: x.s.lat, lon: x.s.lon, ic: BI_LEKARI, bg: "#0f766e", soft: "#dff4f1", t: x.s.n, s: meters(x.d) + " · " + x.s.a, act: "dk:" + x.s.id });
+      });
+    }
+    if (chce("skoly") && data.skoly) {
+      skNear(a).forEach(function (x) {
+        r.push({ lat: x.p.lat, lon: x.p.lon, ic: BI_SKOLY, bg: "#a86a10", soft: "#fdf1cb", t: x.s.n, s: meters(x.d) + " · " + (x.p.a || x.s.a), act: "sk:" + x.s.id });
+      });
+    }
     if (chce("stavby")) {
       stOkoli(a, 2000).forEach(function (x) {
         var b = x.p.body && x.p.body[0]; if (!b || stKat(x.p) === "uzemi") return;
@@ -2488,20 +2522,18 @@
   }
   // filtry mapy fungují jako zaškrtávátka; „Vše“ = všechno kromě kontejnerů
   var MAPA_VSE = ["doprava", "voda", "stavby", "akce"];
-  function mapaVyber() { return state.mapaSet && state.mapaSet.length ? state.mapaSet : MAPA_VSE; }
-  function mapaJeVse(f) { return f.length === MAPA_VSE.length && MAPA_VSE.every(function (k) { return f.indexOf(k) >= 0; }); }
+  function mapaVyber() { return !state.okKat || state.okKat === "vse" ? MAPA_VSE : [state.okKat]; }
+  var MAPA_PRAZDNO = { akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery.", lekari: "Do 1 km nejsou žádní lékaři.", skoly: "Do 1 km nejsou žádné školy." };
   function mapaView(a) {
-    var f = mapaVyber(), vse = mapaJeVse(f);
-    return okoliSeg() + '<div class="mapawrap"><div id="mapa" class="mapa"></div><div class="mapachips">' + MAPA_F().map(function (x) {
-      var on = x[0] === "vse" ? vse : !vse && f.indexOf(x[0]) >= 0;
-      return '<button type="button" class="mapachip' + (on ? " on" : "") + '" data-mapaf="' + x[0] + '" aria-pressed="' + on + '">' + (x[2] ? SVG(x[2], 14, on ? "#fff" : "#686c76", 2.2) : "") + x[1] + "</button>";
-    }).join("") + '</div><button type="button" class="mapaloc" id="mapaloc" aria-label="Moje poloha">' + SVG('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', 20, "#1c1c1e", 2.2) + '</button><div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
+    void a;
+    return '<div class="mapawrap"><div id="mapa" class="mapa"></div>' + okKatChips("mapachip", "mapachips") + '<button type="button" class="mapaloc" id="mapaloc" aria-label="Moje poloha">' + SVG('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', 20, "#1c1c1e", 2.2) + '</button><div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
   }
   function mapaPin(x, sel) {
     return L.divIcon({ className: "mpinw", iconSize: [36, 36], iconAnchor: [18, 36], html: '<span class="mpin' + (sel ? " sel" : "") + '" style="background:' + x.bg + '"><span>' + SVG(x.ic, sel ? 18 : 15, "#fff", 2.2) + "</span></span>" });
   }
   function mapaKarta(x) {
     var el = document.getElementById("mapakarta"); if (!el) return;
+    document.body.classList.toggle("mk-open", !!x);
     if (!x) { el.innerHTML = ""; return; }
     var obs = '<div class="mkhead"><span class="badge" style="background:' + x.soft + '">' + SVG(x.ic, 18, x.bg, 2.2) + '</span><span class="grow"><span class="mkt">' + esc(x.t) +
       (x.tag ? ' <span class="mktag ' + x.tag[0] + '">' + esc(x.tag[1]) + "</span>" : "") + '</span><span class="mks">' + esc(x.s).replace("\n", "<br>") + "</span></span></div>";
@@ -2542,9 +2574,13 @@
         cl.addLayer(mk);
       });
       m.addLayer(cl);
+      if (!(state.mapaPohled && state.mapaPohled.adr === a.label) && state.okKat && state.okKat !== "vse" && pol.length) {   // jedna kategorie: ukaž všechny její body
+        var bb = L.latLngBounds([[a.lat, a.lon]]); pol.forEach(function (x) { bb.extend([x.lat, x.lon]); });
+        m.fitBounds(bb, { padding: [50, 50], maxZoom: 16 });
+      }
       m.on("moveend", function () { state.mapaPohled = { adr: a.label, c: [m.getCenter().lat, m.getCenter().lng], z: m.getZoom() }; });
       var pr = document.getElementById("mapaprazdno");
-      if (pr) pr.innerHTML = pol.length ? "" : '<div class="mprazdno">' + ({ akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery." }[f.length === 1 ? f[0] : ""] || "V okolí teď nic z vybraného není.") + "</div>";
+      if (pr) pr.innerHTML = pol.length ? "" : '<div class="mprazdno">' + (MAPA_PRAZDNO[f.length === 1 ? f[0] : ""] || "V okolí teď nic z vybraného není.") + "</div>";
     }).catch(function (chyba) {
       try { console.error("mapa:", chyba && chyba.stack || chyba); } catch (e) {}
       var e2 = document.getElementById("mapa"); if (e2) e2.innerHTML = '<div class="mprazdno" style="position:static;margin:40px 20px">Mapu se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.</div>';
@@ -2850,27 +2886,16 @@
     }
     if (t === "akce") { var z = state.tab; state.akView = "list"; state.akHist = []; openAkce("detail", v, z); state.tab = "akce"; render(); window.scrollTo(0, 0); return; }
     if (t === "tab") { prepniTab(v); }
+    if (t === "dk") { state.okKat = "lekari"; state.tab = "doktori"; state.dkView = "list"; state.dkHist = []; openDoktor(v); return; }
+    if (t === "sk") { state.okKat = "skoly"; state.tab = "skoly"; state.skView = "list"; state.skHist = []; openSkola(v); return; }
   }
   function prepniTab(t) {
-    if (t === "okoli") t = state.okSeg || "mapa";
-    if (t === "mapa" || t === "doktori" || t === "skoly" || t === "stavby") state.okSeg = t;
-    if (t === "doktori" || t === "skoly" || t === "stavby") state.okList = t;
+    if (t === "okoli") t = okTab(state.okKat || "vse", state.okPohled || "mapa");
     state.tab = t; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.uzSel = null; state.tvSel = null; state.stView = "list"; state.stHist = [];
     render(); window.scrollTo(0, 0);
   }
   // přepínač Lékaři / Školy v záložce Okolí
-  function okoliSeg() {
-    var mapa = state.tab === "mapa";
-    var h = '<div class="seg2" role="tablist" aria-label="Okolí">' + [["mapa", "Mapa"], [state.okList || "doktori", "Seznam"]].map(function (x, i) {
-      var on = i === 0 ? mapa : !mapa;
-      return '<button type="button" role="tab" data-okseg="' + x[0] + '" class="' + (on ? "on" : "") + '" aria-selected="' + on + '">' + x[1] + "</button>";
-    }).join("") + "</div>";
-    if (!mapa) h += '<div class="oktaby" role="tablist" aria-label="Seznam">' + [["doktori", "Lékaři"], ["skoly", "Školy"], ["stavby", "Stavby"]].map(function (x) {
-      var on = state.tab === x[0];
-      return '<button type="button" role="tab" data-okseg="' + x[0] + '" class="' + (on ? "on" : "") + '" aria-selected="' + on + '">' + x[1] + "</button>";
-    }).join("") + "</div>";
-    return h;
-  }
+  function okoliSeg() { return okKatChips("chip", "okkat"); }
 
 
   // ---- spodní navigace ----
@@ -2883,7 +2908,7 @@
   var BI_BYDLENI = '<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h1.5M13.5 7H15M9 11h1.5M13.5 11H15M9 15h1.5M13.5 15H15"/><path d="M10.5 21v-2.5h3V21"/>';
   var BI_OKOLI = PIN;
   var NAV = [["domu", "Domů", BI_DOMU], ["doprava", "Doprava", BI_DOPRAVA], ["odpad", "Bydlení", BI_BYDLENI], ["akce", "Akce", BI_AKCE], ["okoli", "Okolí", BI_OKOLI]];
-  function navOn(id) { return id === "okoli" ? (state.tab === "mapa" || state.tab === "doktori" || state.tab === "skoly" || state.tab === "stavby") : state.tab === id; }
+  function navOn(id) { return id === "okoli" ? (state.tab === "mapa" || state.tab === "doktori" || state.tab === "skoly" || state.tab === "stavby" || state.tab === "oklist") : state.tab === id; }
   function bottomNav() {
     // nové naléhavé upozornění, když jste mimo Domů → tečka na záložce
     var tecka = false;   // tečku na záložce Domů nepoužíváme
@@ -2933,6 +2958,7 @@
     if (state.adrPanel && state.address && !state.adrNova && !state.adrPridat) html += adrPanel();
     if (naSekci() && !state.adrPridat && !state.adrNova) html += bottomNav();
     app.innerHTML = html;
+    document.body.classList.remove("mk-open");
     hmapa();
     (function () {   // sdílení do hlavičky detailu
       var sb = app.querySelector(".btn-share-ic"), hd = app.querySelector(".head"), zp = hd && hd.querySelector("button.btn-edit");
@@ -2992,7 +3018,14 @@
     app.querySelectorAll("[data-el]").forEach(function (b) { b.addEventListener("click", function () { openEl(b.getAttribute("data-el")); }); });
     var elv = document.getElementById("elvse");
     if (elv) elv.addEventListener("click", function () { var y = window.scrollY; state.elVse = !state.elVse; render(); window.scrollTo(0, y); });
-    app.querySelectorAll("[data-okseg]").forEach(function (b) { b.addEventListener("click", function () { state.okSeg = b.getAttribute("data-okseg"); prepniTab(state.okSeg); }); });
+    app.querySelectorAll("[data-okkat]").forEach(function (b) { b.addEventListener("click", function () {
+      var ch = b.parentNode; state.okChipsX = ch ? ch.scrollLeft : 0;
+      state.okKat = b.getAttribute("data-okkat"); state.mapaPohled = null; prepniTab(okTab(state.okKat, state.okPohled));
+    }); });
+    app.querySelectorAll(".okkat, .mapachips").forEach(function (ch) { if (state.okChipsX) ch.scrollLeft = state.okChipsX; });
+    var okp = document.getElementById("okpill");
+    if (okp) okp.addEventListener("click", function () { state.okPohled = state.tab === "mapa" ? "seznam" : "mapa"; prepniTab(okTab(state.okKat || "vse", state.okPohled)); });
+    app.querySelectorAll("[data-okact]").forEach(function (b) { b.addEventListener("click", function () { domuAkce(b.getAttribute("data-okact")); }); });
     app.querySelectorAll("[data-uz]").forEach(function (b) { b.addEventListener("click", function () { openDet("uz", b.getAttribute("data-uz")); }); });
     app.querySelectorAll("[data-tv]").forEach(function (b) { b.addEventListener("click", function () { openDet("tv", b.getAttribute("data-tv")); }); });
     var zs = document.getElementById("zavstart");
@@ -3014,18 +3047,6 @@
     umtNapoj();
     var vb = document.getElementById("vodaback");
     if (vb) vb.addEventListener("click", function () { vodaBack(); });
-    app.querySelectorAll("[data-mapaf]").forEach(function (b) { b.addEventListener("click", function () {
-      var k = b.getAttribute("data-mapaf"), f = mapaVyber().slice(), ch = document.querySelector(".mapachips");
-      state.mapaChipsX = ch ? ch.scrollLeft : 0;
-      if (k === "vse") f = MAPA_VSE.slice();
-      else if (mapaJeVse(f)) f = [k];                         // z „Vše“ první klepnutí vybere jen tuto vrstvu
-      else if (f.indexOf(k) >= 0) f.splice(f.indexOf(k), 1);  // další klepnutí přidávají a ubírají
-      else f.push(k);
-      state.mapaSet = f.length ? f : MAPA_VSE.slice();
-      render();
-    }); });
-    var mch = document.querySelector(".mapachips");
-    if (mch && state.mapaChipsX) mch.scrollLeft = state.mapaChipsX;
     var ml = document.getElementById("mapaloc");
     if (ml) ml.addEventListener("click", function () {
       if (!navigator.geolocation || !mapaMap) return;
