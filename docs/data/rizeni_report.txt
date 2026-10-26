@@ -1,4 +1,5 @@
-Praha 9: na desce 61 vyhlášek
+Praha 9: na desce 62 vyhlášek
 Praha 14: vyhlášek odboru výstavby 2
-nových stavebních vyhlášek ke zpracování: 0
-záměrů v datech: 9 (s polohou 8), dopravních opatření: 3
+nových stavebních vyhlášek ke zpracování: 1
+  + [oop] blokové čištění na komunikacích ve správě MČ (podzim) - OOP · Komunikace · Modrého 1107/5 (adresa)
+záměrů v datech: 9 (s polohou 8), dopravních opatření: 4
