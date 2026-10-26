@@ -1,14 +1,13 @@
 p9: 5 akcí
-p14: 16 akcí
+p14: 15 akcí
 mkp: 74 akcí
 
-celkem 92 akcí; kategorie: {'sport': 4, 'vzd': 13, 'vys': 7, 'deti': 42, 'sen': 16, 'kult': 9, 'sous': 1}
-s fotkou: 88, se souřadnicemi: 89, zdarma: 77, zrušeno: 0
+celkem 91 akcí; kategorie: {'sport': 4, 'vzd': 13, 'vys': 7, 'deti': 41, 'sen': 16, 'kult': 9, 'sous': 1}
+s fotkou: 87, se souřadnicemi: 88, zdarma: 77, zrušeno: 0
   [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
-  [p14 deti] 2026-10-25T15:00 → 2026-10-25T15:00 | Pohádka: Bruncvík aneb Jak lev do Čech přišel | KD Kyje a Restaurace Šimanda | Šimanovská 📷
   [mkp deti] 2026-10-27T09:00 → 2026-10-27T13:00 | Konzultace s mediátorkou | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-10-27T10:00 → 2026-10-27T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-10-27T16:00 → 2026-10-27T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
