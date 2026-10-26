@@ -1,23 +1,35 @@
-# vzhled webu molecula.cz – barvy, písma, screenshot
-import re
+# ulice, zeleň, voda a koleje v Praze 9 a 14 z OpenStreetMap (pro podkladovou mapu hlavičky)
+import json
 from pathlib import Path
 import requests
-from playwright.sync_api import sync_playwright
 Path("diag").mkdir(exist_ok=True)
-U = "https://www.molecula.cz/"
-h = requests.get(U, timeout=30, headers={"User-Agent": "Mozilla/5.0"}).text
-css = ""
-for href in re.findall(r'href="([^"]+\.css[^"]*)"', h)[:10]:
-    try: css += requests.get(requests.compat.urljoin(U, href), timeout=30).text
-    except Exception: pass
-css += "".join(re.findall(r"<style[^>]*>(.*?)</style>", h, re.S))
+B = "50.07,14.45,50.15,14.65"
+q = f"""[out:json][timeout:180];
+(way["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|pedestrian|service)$"]({B});
+ way["railway"="rail"]({B});
+ way["waterway"~"^(river|stream)$"]({B});
+ way["leisure"="park"]({B}); way["landuse"~"^(forest|grass|meadow|recreation_ground|cemetery|allotments)$"]({B}); way["natural"~"^(wood|water)$"]({B});
+ way["building"]({B});
+);
+out geom;"""
+r = requests.post("https://overpass-api.de/api/interpreter", data={"data": q}, timeout=300, headers={"User-Agent": "pod-okny-bot (github.com/NamTNgo/praha14)"})
+el = r.json().get("elements", [])
+def kind(t):
+    h = t.get("highway")
+    if h in ("motorway", "trunk", "primary"): return "h1"
+    if h in ("secondary", "tertiary"): return "h2"
+    if h == "service": return "h4"
+    if h: return "h3"
+    if t.get("railway"): return "rail"
+    if t.get("waterway"): return "river"
+    if t.get("natural") == "water": return "water"
+    if t.get("building"): return "bld"
+    return "green"
+out = []
+for e in el:
+    g = e.get("geometry") or []
+    if len(g) < 2: continue
+    out.append([kind(e.get("tags", {}))] + [v for p in g for v in (round(p["lat"] * 1e5) - 5000000, round(p["lon"] * 1e5) - 1400000)])
+Path("diag/mapa.json").write_text(json.dumps(out, separators=(",", ":")))
 from collections import Counter
-cols = Counter(c.lower() for c in re.findall(r"#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b|rgba?\([^)]+\)", css))
-fonts = Counter(re.findall(r"font-family:\s*([^;}]+)", css))
-Path("diag/molecula.txt").write_text("BARVY\n" + "\n".join(f"{n} {c}" for c, n in cols.most_common(40)) + "\n\nPISMA\n" + "\n".join(f"{n} {f}" for f, n in fonts.most_common(10)), encoding="utf-8")
-with sync_playwright() as pw:
-    b = pw.chromium.launch()
-    for w, hgt, n in ((390, 844, "m"), (1440, 900, "d")):
-        p = b.new_page(viewport={"width": w, "height": hgt}); p.goto(U, wait_until="networkidle", timeout=60000); p.wait_for_timeout(1500)
-        p.screenshot(path=f"diag/molecula_{n}.png", full_page=True)
-    b.close()
+Path("diag/mapa.txt").write_text(json.dumps(Counter(o[0] for o in out)) + " " + str(len(json.dumps(out))))
