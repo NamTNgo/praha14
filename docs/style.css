@@ -599,3 +599,11 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .adrakce{align-items:center}
 .adrakce .btn-danger-ic{margin-left:auto}
 .adrdots{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
+
+/* detail: sdílení jako ikona vpravo nahoře, v řádku odkazů je plný jen první (DESIGN.md 7) */
+.headrow{display:flex;justify-content:space-between;align-items:center;align-self:stretch;gap:12px}
+.headrow .btn-edit{align-self:auto!important}
+.btn-share-ic{flex:none;width:44px;height:44px;border-radius:50%;border:none;background:#fff;color:var(--brand);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:0 1px 2px rgba(28,28,30,.05),0 4px 12px rgba(111,65,188,.12)}
+.btn-share-ic:active{background:var(--brand-tint)}
+.dlinks > .btn-ext ~ .btn-ext{background:var(--brand-tint);color:var(--brand)}
+.dlinks > .btn-ext ~ .btn-ext svg{stroke:var(--brand)}

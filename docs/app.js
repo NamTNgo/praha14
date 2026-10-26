@@ -2618,7 +2618,8 @@
     return null;
   }
   function sdilBtn(k, id) {
-    return sdilText(k, id) ? '<button type="button" class="btn-ext btn-share" data-share="' + k + ":" + esc(String(id)) + '">' + SVG(I_SHARE, 14, "currentColor", 2.2) + "Sdílet sousedům</button>" : "";
+    // ikona sdílení; po vykreslení se přesune do hlavičky detailu vedle „Zpět“ (DESIGN.md 7)
+    return sdilText(k, id) ? '<button type="button" class="btn-share-ic" data-share="' + k + ":" + esc(String(id)) + '" aria-label="Sdílet sousedům" title="Sdílet sousedům">' + SVG(I_SHARE, 20, "currentColor", 2.2) + "</button>" : "";
   }
   function toast(t) {
     var el = document.createElement("div");
@@ -2886,6 +2887,11 @@
     if (state.adrPanel && state.address && !state.adrNova && !state.adrPridat) html += adrPanel();
     if (naSekci() && !state.adrPridat && !state.adrNova) html += bottomNav();
     app.innerHTML = html;
+    (function () {   // sdílení do hlavičky detailu
+      var sb = app.querySelector(".btn-share-ic"), hd = app.querySelector(".head"), zp = hd && hd.querySelector("button.btn-edit");
+      if (!sb || !zp) return;
+      var r = document.createElement("div"); r.className = "headrow"; zp.parentNode.insertBefore(r, zp); r.appendChild(zp); r.appendChild(sb);
+    })();
     var q = document.getElementById("q");
     if (q) {
       if (keepFocus) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); }

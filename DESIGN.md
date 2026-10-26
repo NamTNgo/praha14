@@ -144,6 +144,8 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | vedlejší akce vedle hlavní (Změnit adresu, Přejmenovat) | **Sekundární tlačítko** `.btn-ext.btn-sec` | Pilulka, `--brand-tint` pozadí, text `--brand`. Když je víc akcí vedle sebe, plná je nejvýš jedna – ostatní sekundární. |
 | odebrat / smazat | **Destruktivní tlačítko** `.btn-danger-ic` (ikona koše, kruh 44 px) nebo `.btn-danger` (pilulka s textem) | `--danger` na `--danger-tint`. Vždy **poslední** v řádku/skupině (`margin-left:auto`), ikonková varianta vždy s `aria-label` („Odebrat adresu Domov“). Nikdy plná červená, nikdy jako hlavní akce. Akce bez potvrzení musí jít snadno zopakovat/vrátit. |
 | vedlejší akce v nadpisu sekce | **Odkaz sekce** `.hlink` | Bílá pilulka, text `--brand`. |
+| sdílet detail sousedům | **Sdílení** `.btn-share-ic` | Kulaté bílé tlačítko 44 px s ikonou sdílení v `--brand` a fialovým stínem, **vpravo nahoře v hlavičce detailu naproti „Zpět“** (`.headrow`). Vždy s `aria-label="Sdílet sousedům"`. Stejné ve všech detailech (voda, elektřina, teplá voda, uzavírka, akce, stavba, řízení, EIA, pátrání). Nedávat do řádku odkazů ani jako plné tlačítko s textem. |
+| odkazy v detailu | **Řádek odkazů** `.dlinks` | První odkaz (mapa) plný `--brand`, všechny další automaticky sekundární (`--brand-tint`). |
 | rozbalit úpravy položky v seznamu | **Chevron** `.adrdots` | Šipka dolů = sbaleno, šipka nahoru = rozbaleno; `aria-expanded`. Nepoužívat tři tečky. |
 | změnit adresu | **Změnit** `.btn-edit` | Jen v hlavičce; bílá pilulka, text `--brand`, jemný fialový stín (na fialovém přechodu by tint splynul). |
 | přepnout pohled (Vše / Dnes a zítra…, Mapa / Seznam) | **Přepínač** `.akseg`, `.seg2`, `.tabs` | Průsvitná fialová dráha `rgba(236,229,252,.65)` s rozmazáním a bílým vnitřním okrajem; nevybrané `#5d5880`; vybraná bílá, text `--brand`, fialový stín. |
@@ -190,6 +192,7 @@ Pravidla:
 - Nepoužít fialovou na stav ani zelenou jako barvu značky (rozdělení viz 6.2a).
 - Nedávat rámečky a stíny zároveň; nemíchat ostré a kulaté rohy.
 - Nedávat vedle sebe víc plných tlačítek; destruktivní akci nikdy jako text uprostřed řady.
+- Sdílení nedávat do obsahu ani jako velké tlačítko – patří do hlavičky detailu jako ikona.
 - Nepsat úředně, nestrašit, nepoužívat vykřičníky.
 
 ## 10. Agent prompt guide
