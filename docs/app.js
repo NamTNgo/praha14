@@ -2716,7 +2716,7 @@
   function odkazyUprav() {
     app.querySelectorAll(".links").forEach(function (L) {
       var a = [].slice.call(L.children);
-      if (a.length < 2 || a.some(function (x) { return x.tagName !== "A"; })) return;
+      if (!a.length || a.length < (state.tab === "odpad" ? 1 : 2) || a.some(function (x) { return x.tagName !== "A"; })) return;   // v Bydlení i jediný odkaz jako řádek
       lkMapaPrvni(L, a); L.className = "lk-rows";
       a.forEach(function (x) {
         var t = x.textContent.trim(), k = lkDruh(t);
