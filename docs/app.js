@@ -4,7 +4,7 @@
   var KEY = "praha14.address";
   var app = document.getElementById("app");
   var data = null;       // {stations, addresses}
-  var state = { address: null, query: "", tab: "domu", okKat: "vse", okPohled: "mapa", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", sheet: null, spadVse: false, dopVse: false,
+  var state = { address: null, query: "", tab: "domu", okSet: [], okPohled: "mapa", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", sheet: null, spadVse: false, dopVse: false,
     dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkM: "all", dkQ: "",
     akView: "list", akHist: [], akSel: null, akF: "vse", akK: "all", akM: "all", akDenVse: {}, akDay: null, akKal: false, akKalM: null, akKalSel: null };
 
@@ -573,7 +573,7 @@
       '<h1 class="dname">' + esc(s.n) + "</h1>" +
       '<div class="daddr">' + SVG(PIN, 15, "#686c76", 2) + esc(s.a) + " · Praha " + esc(s.mc) + "</div>" +
       '<div class="dlinks"><a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
-      '<a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>";
+      '<a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("sk", s.id) + "</div>";
     var hasTerms = !!(ex.dod || ex.zap || ex.pz);
     if (!ex.tel && !hasTerms) h += '<div class="dinfo warn">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#a9791a", 2.2) + "<span>U této školy nemáme všechny údaje. Chybějící informace zjistíte na webu školy.</span></div>";
     if (s.z === "c") h += '<div class="dinfo">' + SVG('<circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/>', 18, "#686c76", 2.2) + "<span>Církevní škola, výuka podle stejného vzdělávacího programu jako veřejné školy. Může mít duchovní zaměření.</span></div>";
@@ -963,7 +963,7 @@
       "Převzato z " + zdroj + ". Kvůli dovoleným a zástupům se hodiny mění, před návštěvou je radši ověřte.");
   }
   function viewDoktorDetail(s) {
-    var d = dist(state.address.lat, state.address.lon, s.lat, s.lon);
+    var d = state.address ? dist(state.address.lat, state.address.lon, s.lat, s.lon) : null;
     var kont = drow("Telefon", s.tel || null, s.tel ? { href: "tel:" + s.tel.replace(/\s/g, ""), icon: I_PH } : null) +
       drow("E-mail", s.e || null, s.e ? { href: "mailto:" + s.e, icon: I_MA } : null);
     var gm = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(s.n + ", " + s.a + ", Praha");
@@ -972,9 +972,9 @@
     return '<div class="head"><button type="button" class="btn-edit" id="dkback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button></div>" +
       '<div class="body" style="gap:12px;padding-bottom:28px"><div class="dbadges"><span class="tp tp-dok-' + s.o + ' lg">' + DK_T[s.o] + "</span></div>" +
       '<h1 style="margin:4px 0 0;font-size:23px">' + esc(s.n) + "</h1>" +
-      '<div class="skadr" style="font-size:15px">' + esc(s.a) + ", Praha " + esc(s.mc) + " · " + meters(d) + "</div>" +
+      '<div class="skadr" style="font-size:15px">' + esc(s.a) + ", Praha " + esc(s.mc) + (d != null ? " · " + meters(d) : "") + "</div>" +
       '<div class="dlinks"><a class="btn-ext" href="' + gm + '" target="_blank" rel="noopener">Otevřít v Google Mapách ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
-      '<a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div>" +
+      '<a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" + sdilBtn("dk", s.id) + "</div>" +
       dcard("Kontakt", kont) +
       hodinyCard(s) +
       dcard("Obor a zařízení", drow("Obory", obory) + drow("Druh zařízení", s.dr || null), "Zdroj: ÚZIS ČR – NRPZS, aktualizace měsíčně.") +
@@ -2412,12 +2412,13 @@
   // ---- mapa čtvrti (Okolí › Mapa): Leaflet + OpenStreetMap, načítá se až při otevření ----
   // Okolí: nejdřív kategorie, pak pohled (mapa / seznam) – DESIGN.md 7
   function MAPA_F() { return [["vse", "Vše", null], ["lekari", "Lékaři", BI_LEKARI], ["skoly", "Školy", BI_SKOLY], ["stavby", "Stavby", BI_BYDLENI], ["doprava", "Doprava", I_T_CONE], ["voda", "Voda a proud", I_T_DROP], ["akce", "Akce", I_T_CAL], ["kont", "Kontejnery", BI_ODPAD]]; }
-  function okTab(k, pohled) { return pohled === "mapa" ? "mapa" : k === "lekari" ? "doktori" : k === "skoly" ? "skoly" : k === "stavby" ? "stavby" : "oklist"; }
+  // filtry v Okolí fungují jako zaškrtávátka (prázdný výběr = Vše); vlastní seznam mají jen samotní Lékaři / Školy / Stavby
+  function okTab(pohled) { var f = state.okSet || []; if (pohled === "mapa") return "mapa"; if (f.length === 1) return { lekari: "doktori", skoly: "skoly", stavby: "stavby" }[f[0]] || "oklist"; return "oklist"; }
   function okKatChips(cls, wrap) {
-    var k0 = state.okKat || "vse";
-    return '<div class="' + wrap + '" role="tablist" aria-label="Co hledáte">' + MAPA_F().map(function (x) {
-      var on = x[0] === k0;
-      return '<button type="button" role="tab" class="' + cls + (on ? " on" : "") + '" data-okkat="' + x[0] + '" aria-selected="' + on + '">' + (x[2] ? SVG(x[2], 14, on ? "#fff" : "#686c76", 2.2) : "") + x[1] + "</button>";
+    var f = state.okSet || [];
+    return '<div class="' + wrap + '" role="group" aria-label="Co hledáte">' + MAPA_F().map(function (x) {
+      var on = x[0] === "vse" ? !f.length : f.indexOf(x[0]) >= 0;
+      return '<button type="button" class="' + cls + (on ? " on" : "") + '" data-okkat="' + x[0] + '" aria-pressed="' + on + '">' + (x[2] ? SVG(x[2], 14, on ? "#fff" : "#686c76", 2.2) : "") + x[1] + "</button>";
     }).join("") + "</div>";
   }
   function okPill() {
@@ -2427,8 +2428,8 @@
   function okListBody(a) {
     var f = mapaVyber(), xs = mapaPolozky(a, f).map(function (x) { x.d = dist(a.lat, a.lon, x.lat, x.lon); return x; }).sort(function (p, q) { return p.d - q.d; });
     var nazvy = { vse: "V okolí", doprava: "Doprava v okolí", voda: "Voda a proud v okolí", akce: "Akce v okolí", kont: "Kontejnery do 1 km" };
-    if (!xs.length) return '<div class="card-dashed row top"><div class="grow"><div class="note" style="margin:0">' + (MAPA_PRAZDNO[state.okKat] || "V okolí teď nic z vybraného není.") + "</div></div></div>";
-    return '<div class="list"><div class="label">' + (nazvy[state.okKat] || "V okolí") + " · " + xs.length + "</div>" + xs.slice(0, 40).map(function (x) {
+    if (!xs.length) return '<div class="card-dashed row top"><div class="grow"><div class="note" style="margin:0">' + ((state.okSet || []).length === 1 && MAPA_PRAZDNO[state.okSet[0]] || "V okolí teď nic z vybraného není.") + "</div></div></div>";
+    return '<div class="list"><div class="label">' + ((state.okSet || []).length === 1 && nazvy[state.okSet[0]] || ((state.okSet || []).length ? "Vybrané v okolí" : "V okolí")) + " · " + xs.length + "</div>" + xs.slice(0, 40).map(function (x) {
       var vnitrek = '<span class="badge" style="background:' + x.soft + '">' + SVG(x.ic, 18, x.bg, 2.2) + '</span><span class="grow"><span class="t1" style="display:block">' + esc(x.t) +
         (x.tag ? ' <span class="mktag ' + x.tag[0] + '">' + esc(x.tag[1]) + "</span>" : "") + '</span><span class="t3" style="display:block">' + esc(x.s.split("\n")[0]) + "</span></span>";
       return x.act ? '<button type="button" class="card row okli" data-okact="' + esc(x.act) + '">' + vnitrek + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>" : '<div class="card row okli">' + vnitrek + "</div>";
@@ -2522,7 +2523,7 @@
   }
   // filtry mapy fungují jako zaškrtávátka; „Vše“ = všechno kromě kontejnerů
   var MAPA_VSE = ["doprava", "voda", "stavby", "akce"];
-  function mapaVyber() { return !state.okKat || state.okKat === "vse" ? MAPA_VSE : [state.okKat]; }
+  function mapaVyber() { return state.okSet && state.okSet.length ? state.okSet : MAPA_VSE; }
   var MAPA_PRAZDNO = { akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery.", lekari: "Do 1 km nejsou žádní lékaři.", skoly: "Do 1 km nejsou žádné školy." };
   function mapaView(a) {
     void a;
@@ -2574,7 +2575,7 @@
         cl.addLayer(mk);
       });
       m.addLayer(cl);
-      if (!(state.mapaPohled && state.mapaPohled.adr === a.label) && state.okKat && state.okKat !== "vse" && pol.length) {   // jedna kategorie: ukaž všechny její body
+      if (!(state.mapaPohled && state.mapaPohled.adr === a.label) && state.okSet && state.okSet.length && pol.length) {   // vybrané kategorie: ukaž všechny jejich body
         var bb = L.latLngBounds([[a.lat, a.lon]]); pol.forEach(function (x) { bb.extend([x.lat, x.lon]); });
         m.fitBounds(bb, { padding: [50, 50], maxZoom: 16 });
       }
@@ -2604,6 +2605,8 @@
   }
   function sdilText(k, id) {
     var ted = new Date();
+    if (k === "sk") { var sk = skById(id); return sk ? sk.n + ", " + sk.a + ", Praha " + sk.mc + " – kontakt, termíny a další podrobnosti:" : null; }
+    if (k === "dk") { var dk = dkById(id); return dk ? dk.n + " (" + (DK_T[dk.o] || "lékař").toLowerCase() + "), " + dk.a + ", Praha " + dk.mc + " – kontakt a ordinační hodiny:" : null; }
     if (k === "voda") {
       var u = vodaById(id); if (!u) return null;
       var f = vodaFaze(u, ted), od = vCas(u.od), dd = vCas(u.do);
@@ -2724,6 +2727,17 @@
         x.innerHTML = '<span class="lk-ic">' + SVG(LK_IK[k], 18, "currentColor", 2.1) + '</span><span class="grow">' + esc(t.replace(/\s*\(PDF\)$/i, "")) + (k === "pdf" ? ' <span class="lk-pdf">PDF</span>' : "") + "</span>" + SVG(ARROW, 13, "currentColor", 2.4);
       });
     });
+    var rodice = [];
+    app.querySelectorAll(".card a.btn-ext, .card-dashed a.btn-ext, .card a.link, .card-dashed a.link").forEach(function (x) { if (rodice.indexOf(x.parentNode) < 0) rodice.push(x.parentNode); });
+    rodice.forEach(function (L) {
+      var a = [].slice.call(L.children).filter(function (x) { return x.tagName === "A" && (x.classList.contains("btn-ext") || x.classList.contains("link")); });
+      lkMapaPrvni(L, a); L.classList.remove("dlinks", "links"); L.classList.add("lk-rows");
+      a.forEach(function (x) {
+        var t = x.textContent.trim(), k = lkDruh(t);
+        x.className = "lk-row"; x.removeAttribute("style");
+        x.innerHTML = '<span class="lk-ic">' + SVG(LK_IK[k], 18, "currentColor", 2.1) + '</span><span class="grow">' + esc(t.replace(/\s*\(PDF\)$/i, "")) + (k === "pdf" ? ' <span class="lk-pdf">PDF</span>' : "") + "</span>" + SVG(ARROW, 13, "currentColor", 2.4);
+      });
+    });
     app.querySelectorAll(".dlinks").forEach(function (L) {
       var a = [].slice.call(L.children).filter(function (x) { return x.tagName === "A" && x.classList.contains("btn-ext"); });
       if (!a.length) return;
@@ -2753,10 +2767,10 @@
   }
   // příchod přes sdílený odkaz
   function sdilZHash() {
-    var m = /^#(voda|el|pat|eia|ak|st|rz|uz|tv)=(.+)$/.exec(location.hash || "");
+    var m = /^#(voda|el|pat|eia|ak|st|rz|uz|tv|sk|dk)=(.+)$/.exec(location.hash || "");
     if (!m) return;
     var k = m[1], id = decodeURIComponent(m[2]);
-    if (!(k === "voda" ? vodaById(id) : k === "el" ? elById(id) : k === "pat" ? patById(id) : k === "ak" ? akById(id) : k === "st" ? stById(id) : k === "rz" ? rzById(id) : k === "uz" ? uzById(id) : k === "tv" ? tvById(id) : eiaById(id))) return;
+    if (!(k === "sk" ? skById(id) : k === "dk" ? dkById(id) : k === "voda" ? vodaById(id) : k === "el" ? elById(id) : k === "pat" ? patById(id) : k === "ak" ? akById(id) : k === "st" ? stById(id) : k === "rz" ? rzById(id) : k === "uz" ? uzById(id) : k === "tv" ? tvById(id) : eiaById(id))) return;
     state.sdil = k;
     if (k === "voda") state.vodaSel = id;
     else if (k === "el") state.elSel = id;
@@ -2764,6 +2778,8 @@
     else if (k === "uz") state.uzSel = id;
     else if (k === "tv") state.tvSel = id;
     else if (k === "ak") { state.tab = "akce"; state.akView = "detail"; state.akSel = id; state.akHist = []; }
+    else if (k === "sk") { state.tab = "skoly"; state.skView = "detail"; state.skSel = id; state.skHist = []; }
+    else if (k === "dk") { state.tab = "doktori"; state.dkView = "detail"; state.dkSel = id; state.dkHist = []; }
     else if (k === "st") { state.tab = "stavby"; state.stView = "detail"; state.stSel = id; state.stHist = []; }
     else if (k === "rz") { state.tab = "stavby"; state.stView = "rizeni"; state.stSel = id; state.stHist = []; }
     else { state.tab = "stavby"; state.stView = "eia"; state.stSel = id; state.stHist = []; }
@@ -2771,7 +2787,8 @@
   function sdilKonec() {
     state.sdil = null; state.vodaSel = null; state.elSel = null; state.patSel = null; state.uzSel = null; state.tvSel = null; state.stView = "list"; state.stSel = null; state.stHist = []; state.akView = "list"; state.akHist = [];
     if (!state.address) state.tab = "domu";
-    else if (state.tab === "stavby" || state.tab === "akce") state.tab = "domu";
+    else if (state.tab === "stavby" || state.tab === "akce" || state.tab === "skoly" || state.tab === "doktori") state.tab = "domu";
+    state.skView = "list"; state.skSel = null; state.skHist = []; state.dkView = "list"; state.dkSel = null; state.dkHist = [];
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
     render(); window.scrollTo(0, 0);
   }
@@ -2785,7 +2802,9 @@
       state.stView === "eia" && eiaById(state.stSel) ? viewEiaDetail(eiaById(state.stSel)) :
       state.stView === "rizeni" && rzById(state.stSel) ? viewRizeniDetail(rzById(state.stSel)) :
       state.stView === "detail" && data.stavby && stById(state.stSel) ? viewStavbaDetail(stById(state.stSel)) :
-      state.akView === "detail" && akById(state.akSel) ? viewAkceDetail(akById(state.akSel)) : null;
+      state.akView === "detail" && akById(state.akSel) ? viewAkceDetail(akById(state.akSel)) :
+      state.sdil === "sk" && skById(state.skSel) ? viewSkolaDetail(skById(state.skSel)) :
+      state.sdil === "dk" && dkById(state.dkSel) ? viewDoktorDetail(dkById(state.dkSel)) : null;
     if (!h) return null;
     return h + '<div class="body" style="padding-top:0;padding-bottom:32px"><div class="card sdcta"><div class="t1">Co dalšího se děje u vás?</div>' +
       '<div class="note" style="margin-top:4px">Pod okny hlídá pro vaši adresu v Praze 9 a 14 odstávky vody a elektřiny, uzavírky, svoz odpadu, akce v okolí a další.</div>' +
@@ -2919,11 +2938,11 @@
     }
     if (t === "akce") { var z = state.tab; state.akView = "list"; state.akHist = []; openAkce("detail", v, z); state.tab = "akce"; render(); window.scrollTo(0, 0); return; }
     if (t === "tab") { prepniTab(v); }
-    if (t === "dk") { state.okKat = "lekari"; state.tab = "doktori"; state.dkView = "list"; state.dkHist = []; openDoktor(v); return; }
-    if (t === "sk") { state.okKat = "skoly"; state.tab = "skoly"; state.skView = "list"; state.skHist = []; openSkola(v); return; }
+    if (t === "dk") { state.okSet = ["lekari"]; state.tab = "doktori"; state.dkView = "list"; state.dkHist = []; openDoktor(v); return; }
+    if (t === "sk") { state.okSet = ["skoly"]; state.tab = "skoly"; state.skView = "list"; state.skHist = []; openSkola(v); return; }
   }
   function prepniTab(t) {
-    if (t === "okoli") t = okTab(state.okKat || "vse", state.okPohled || "mapa");
+    if (t === "okoli") t = okTab(state.okPohled || "mapa");
     state.tab = t; state.skView = "list"; state.skHist = []; state.dkView = "list"; state.dkHist = []; state.akView = "list"; state.akHist = []; state.vodaSel = null; state.patSel = null; state.elSel = null; state.zav = null; state.uzSel = null; state.tvSel = null; state.stView = "list"; state.stHist = [];
     render(); window.scrollTo(0, 0);
   }
@@ -3054,11 +3073,15 @@
     if (elv) elv.addEventListener("click", function () { var y = window.scrollY; state.elVse = !state.elVse; render(); window.scrollTo(0, y); });
     app.querySelectorAll("[data-okkat]").forEach(function (b) { b.addEventListener("click", function () {
       var ch = b.parentNode; state.okChipsX = ch ? ch.scrollLeft : 0;
-      state.okKat = b.getAttribute("data-okkat"); state.mapaPohled = null; prepniTab(okTab(state.okKat, state.okPohled));
+      var k = b.getAttribute("data-okkat"), f = (state.okSet || []).slice();
+      if (k === "vse") f = [];
+      else if (f.indexOf(k) >= 0) f.splice(f.indexOf(k), 1);   // klepnutí přidává a ubírá
+      else f.push(k);
+      state.okSet = f; state.mapaPohled = null; prepniTab(okTab(state.okPohled));
     }); });
     app.querySelectorAll(".okkat, .mapachips").forEach(function (ch) { if (state.okChipsX) ch.scrollLeft = state.okChipsX; });
     var okp = document.getElementById("okpill");
-    if (okp) okp.addEventListener("click", function () { state.okPohled = state.tab === "mapa" ? "seznam" : "mapa"; prepniTab(okTab(state.okKat || "vse", state.okPohled)); });
+    if (okp) okp.addEventListener("click", function () { state.okPohled = state.tab === "mapa" ? "seznam" : "mapa"; prepniTab(okTab(state.okPohled)); });
     app.querySelectorAll("[data-okact]").forEach(function (b) { b.addEventListener("click", function () { domuAkce(b.getAttribute("data-okact")); }); });
     app.querySelectorAll("[data-uz]").forEach(function (b) { b.addEventListener("click", function () { openDet("uz", b.getAttribute("data-uz")); }); });
     app.querySelectorAll("[data-tv]").forEach(function (b) { b.addEventListener("click", function () { openDet("tv", b.getAttribute("data-tv")); }); });
