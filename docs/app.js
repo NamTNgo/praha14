@@ -2327,7 +2327,26 @@
     return h;
   }
   // komunita: anonymní počty za čtvrť (hlášení, „U mě taky“, sdílení) přes API Pod okny
+  // ---- anonymní měření bez cookies: denní počty obrazovek a akcí, žádné ID zařízení (api/worker.js /m) ----
+  var MER_POSL = null;
+  function mer(co) {
+    try {
+      if (navigator.doNotTrack === "1" || navigator.globalPrivacyControl) return;
+      if (/^v:|^d:/.test(co)) { if (MER_POSL === co) return; MER_POSL = co; }
+      var mc = state.address && (state.address.mc === "9" || state.address.mc === "14") ? state.address.mc : "-";
+      umtUrl().then(function (u) {
+        if (u) fetch(u + "/m", { method: "POST", body: JSON.stringify({ co: co, mc: mc }), keepalive: true, headers: { "Content-Type": "text/plain" } }).catch(function () {});
+      });
+    } catch (e) {}
+  }
+  function merObrazovka() {
+    var d = state.sdil ? "sdileny-" + state.sdil : state.vodaSel ? "voda" : state.elSel ? "elektrina" : state.uzSel ? "uzavirka" : state.tvSel ? "tepla-voda" : state.patSel ? "patrani" : state.zav ? "nahlaseni" :
+      state.tab === "akce" && state.akView === "detail" ? "akce" : state.tab === "doktori" && state.dkView === "detail" ? "lekar" : state.tab === "skoly" && state.skView === "detail" ? "skola" :
+      state.tab === "stavby" && state.stView !== "list" ? "stavba" : null;
+    mer(d ? "d:" + d : "v:" + (!state.address ? "start" : state.tab === "odpad" ? "bydleni" : state.tab === "mapa" ? "okoli-mapa" : /^(doktori|skoly|stavby|oklist)$/.test(state.tab) ? "okoli-seznam" : state.tab));
+  }
   function komZapis(typ) {
+    mer("a:" + (typ === "umt" ? "u-me-taky" : typ));
     var a = state.address; if (!a) return;
     umtUrl().then(function (u) {
       if (!u) return;
@@ -2813,7 +2832,7 @@
   }
 
   // ---- Domů: co se týká vaší adresy ----
-  var FOOT_DOMU = '<div class="foot">' + NDIC_ZDROJ + " · Zdroj dat: Pražské vodovody a kanalizace · Policie ČR · CAMP Praha zítra · úřední desky MČ · PTAS · TSK · Golemio · praha9.cz · praha14.cz · Městská knihovna v Praze</div>";
+  var FOOT_DOMU = '<div class="foot">' + NDIC_ZDROJ + " · Návštěvnost měříme anonymně, bez cookies a bez sledování. · Zdroj dat: Pražské vodovody a kanalizace · Policie ČR · CAMP Praha zítra · úřední desky MČ · PTAS · TSK · Golemio · praha9.cz · praha14.cz · Městská knihovna v Praze</div>";
   var DOMU_MAX = 3;
   function domuUpozorneni(a) {
     var r = vodaUpozorneni(a).concat(elUpozorneni(a), zpsUpozorneni(a), patUpozorneni()), ted = den0();
@@ -3013,6 +3032,7 @@
     app.innerHTML = html;
     document.body.classList.remove("mk-open");
     odkazyUprav();
+    merObrazovka();
     hmapa();
     (function () {   // sdílení do hlavičky detailu
       var sb = app.querySelector(".btn-share-ic"), hd = app.querySelector(".head"), zp = hd && hd.querySelector("button.btn-edit");

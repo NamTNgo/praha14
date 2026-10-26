@@ -1,6 +1,7 @@
 // API aplikace Pod okny – anonymní potvrzení výpadku sousedy („U mě taky“).
 // Data drží jeden Durable Object (SQLite). Ukládá se jen: událost, náhodné ID zařízení
 // (z localStorage, ne osobní údaj), odpověď, čas a hash IP pro omezení zneužití.
+// Měření návštěvnosti (/m): bez cookies a bez ID zařízení – jen denní počty obrazovek a akcí.
 import { DurableObject } from "cloudflare:workers";
 
 const ORIGINS = ["https://namtngo.github.io", "http://localhost:8788", "http://localhost:8790"];
@@ -16,6 +17,29 @@ export class Hlasy extends DurableObject {
     // komunita: anonymní počty za čtvrť (bez zařízení, jen typ, čtvrť, čas a otisk IP kvůli limitu)
     this.sql.exec("CREATE TABLE IF NOT EXISTS u (t INTEGER, typ TEXT, part TEXT, ip TEXT)");
     this.sql.exec("CREATE INDEX IF NOT EXISTS u_p ON u (part, t)");
+    // měření návštěvnosti bez cookies: jen denní souhrnné počty; otisk návštěvníka (hash IP + prohlížeč + den) se maže po 2 dnech
+    this.sql.exec("CREATE TABLE IF NOT EXISTS s (den TEXT, co TEXT, mc TEXT, n INTEGER, PRIMARY KEY (den, co, mc))");
+    this.sql.exec("CREATE TABLE IF NOT EXISTS v (den TEXT, h TEXT, PRIMARY KEY (den, h))");
+  }
+  pricti(den, co, mc) {
+    this.sql.exec("INSERT INTO s (den, co, mc, n) VALUES (?, ?, ?, 1) ON CONFLICT (den, co, mc) DO UPDATE SET n = n + 1", den, co, mc);
+  }
+  zaznam(den, co, mc, vh) {
+    this.sql.exec("DELETE FROM v WHERE den < ?", new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10));
+    if (![...this.sql.exec("SELECT 1 FROM v WHERE den = ? AND h = ?", den, vh)].length) {
+      this.sql.exec("INSERT INTO v (den, h) VALUES (?, ?)", den, vh);
+      this.pricti(den, "navstevnik", mc);
+    }
+    this.pricti(den, co, mc);
+  }
+  statistiky(od) {
+    const r = {};
+    for (const x of this.sql.exec("SELECT den, co, mc, n FROM s WHERE den >= ? ORDER BY den", od)) {
+      const d = (r[x.den] = r[x.den] || {});
+      d[x.co] = (d[x.co] || 0) + x.n;
+      if (x.co === "navstevnik") d["navstevnik:p" + x.mc] = (d["navstevnik:p" + x.mc] || 0) + x.n;
+    }
+    return r;
   }
   pocty(klice, d) {
     const od = Date.now() - OKNO, out = {};
@@ -88,6 +112,19 @@ export default {
       if (!["hlaseni", "umt", "sdileni"].includes(b.typ) || !okPart(b.part)) return json({ chyba: "vstup" }, 400);
       const ip = await hash(request.headers.get("CF-Connecting-IP") || "?");
       return (await stub.udalost(b.typ, b.part, ip)) ? json({ ok: true }) : json({ chyba: "limit" }, 429);
+    }
+    if (url.pathname === "/m" && request.method === "POST") {
+      let b;
+      try { b = JSON.parse(await request.text()); } catch (e) { return json({ chyba: "json" }, 400); }
+      if (typeof b.co !== "string" || !/^(v|d|a):[a-z0-9-]{1,24}$/.test(b.co) || !["9", "14", "-"].includes(b.mc)) return json({ chyba: "vstup" }, 400);
+      const den = new Date(Date.now() + 36e5).toISOString().slice(0, 10);   // přibližně pražský den
+      const vh = await hash(den + "|" + (request.headers.get("CF-Connecting-IP") || "?") + "|" + (request.headers.get("User-Agent") || ""));
+      await stub.zaznam(den, b.co, b.mc, vh);
+      return json({ ok: true });
+    }
+    if (url.pathname === "/statistiky" && request.method === "GET") {
+      const dni = Math.min(400, Math.max(1, +url.searchParams.get("dni") || 30));
+      return json(await stub.statistiky(new Date(Date.now() - dni * 864e5).toISOString().slice(0, 10)));
     }
     if (url.pathname === "/ctvrt" && request.method === "GET") {
       const part = url.searchParams.get("part"), od = +url.searchParams.get("od"), dO = +url.searchParams.get("do");
