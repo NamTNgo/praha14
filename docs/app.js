@@ -2360,7 +2360,7 @@
     "Práce": '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
     "Škola": '<path d="M2 9 12 4l10 5-10 5Z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
     "Chata": '<path d="M12 3 4 15h5l-3 5h12l-3-5h5Z"/>' };
-  var ADR_BARVY = { "Domov": ["#e7efe5", "#1f4d36"], "Rodiče": ["#fbe9ef", "#a83a5c"], "Práce": ["#e3edf8", "#2f6fb0"], "Škola": ["#f1ebfa", "#6a4aa8"], "Chata": ["#eef4e2", "#4f6b1f"] };
+  var ADR_BARVY = { "Domov": ["#f0ebff", "#6f41bc"], "Rodiče": ["#fbe9ef", "#a83a5c"], "Práce": ["#e3edf8", "#2f6fb0"], "Škola": ["#f1ebfa", "#6a4aa8"], "Chata": ["#eef4e2", "#4f6b1f"] };
   var ADR_NAZVY = ["Domov", "Rodiče", "Práce", "Škola", "Chata"];
   function adrIkona(n) { var b = ADR_BARVY[n] || ["#eceef2", "#686c76"]; return '<span class="adric" style="background:' + b[0] + '">' + SVG(ADR_IC[n] || PIN, 18, b[1], 2.2) + "</span>"; }
   function adrProblem(x) {
@@ -2385,8 +2385,8 @@
       return '<div class="adrr"><button type="button" class="adrrb" data-adr="' + i + '">' + adrIkona(x.nazev) + '<span class="grow"><span class="vt">' + esc(x.nazev) +
         (p ? ' <span class="adrtag ' + p.cls + '">' + esc(p.t.split(" · ")[0].toLowerCase()) + "</span>" : "") + '</span><span class="vs">' + esc(x.label) + (x.part ? " · " + esc(x.part) : "") + "</span></span>" +
         (i === av.akt ? SVG('<path d="M20 6 9 17l-5-5"/>', 20, "var(--green)", 2.6) : "") + "</button>" +
-        '<button type="button" class="adrdots" data-adrmenu="' + i + '" aria-label="Upravit">' + SVG('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>', 18, "#8b8f98", 2) + "</button></div>" +
-        (otev ? '<div class="adrakce"><button type="button" class="btn-ext" data-adrzmen="' + i + '">Změnit adresu</button><button type="button" class="btn-ext" data-adrren="' + i + '">Přejmenovat</button><button type="button" class="btn-ext adrdel" data-adrdel="' + i + '">Odebrat</button></div>' : "");
+        '<button type="button" class="adrdots" data-adrmenu="' + i + '" aria-expanded="' + (otev ? "true" : "false") + '" aria-label="' + (otev ? "Zavřít úpravy" : "Upravit") + '">' + SVG(otev ? '<path d="m6 15 6-6 6 6"/>' : '<path d="m6 9 6 6 6-6"/>', 20, "#8b8f98", 2.4) + "</button></div>" +
+        (otev ? '<div class="adrakce"><button type="button" class="btn-ext btn-sec" data-adrzmen="' + i + '">Změnit adresu</button><button type="button" class="btn-ext btn-sec" data-adrren="' + i + '">Přejmenovat</button><button type="button" class="btn-danger-ic" data-adrdel="' + i + '" aria-label="Odebrat adresu ' + esc(x.nazev) + '">' + SVG('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>', 20, "currentColor", 2.1) + '</button></div>' : "");
     }).join("");
     h += av.list.length < ADR_MAX ? '<button type="button" class="adradd" id="adradd">' + SVG('<path d="M12 5v14M5 12h14"/>', 20, "var(--green)", 2.4) + "Přidat adresu</button>" :
       '<div class="note" style="padding:12px 0 0">Máte uložených ' + ADR_MAX + " adres. Pro novou nějakou odeberte.</div>";

@@ -55,6 +55,8 @@ Hodnoty z varianty N + hlavní barva #6f41bc. Kontrasty jsou proti bílé (#fff)
 | `--ink` | `#1c1c1e` | Hlavní text | Nadpisy, názvy v kartách, text v tlačítkách bez barvy. 17 : 1. | Nepoužívat čistou černou `#000`. |
 | `--muted` | `#5f636c` | Vedlejší text | Popisy v kartách, adresy, podtitulky. 6,0 : 1. | Ne pro nadpisy a ne pro klikatelný text. |
 | `--faint` | `#686c76` | Nejslabší text | Eyebrow, poznámky, zdroje, patička. 4,7 : 1 na `--bg`. | Nesvětlit – světlejší odstín (`#767a84`) na `--bg` nesplní AA. |
+| `--danger` | `#b42318` | Destruktivní akce | Ikona/text destruktivního tlačítka (odebrat, smazat). Na `--danger-tint` 5,7 : 1, na bílé 6,6 : 1. | Nikdy pro stav „probíhá“ (to je pozadí `--state-now`), nikdy jako hlavní akce obrazovky. |
+| `--danger-tint` | `#ffeaea` | Podklad destruktivní akce | Pozadí destruktivního tlačítka. | Nepoužívat na karty – pro kartu „probíhá“ je `--state-now` (stejná hodnota, jiná role). |
 | `--bg` | `#f1f2f5` | Pozadí aplikace | Celá plocha za kartami. | Nepoužívat bílou jako pozadí aplikace (karty by zmizely). |
 | `--bg-glow` | `radial-gradient(150% 500px at 85% -100px, #e1d7ff 0, #f1edff 50%, rgba(241,242,245,0) 85%)` – jen odstíny značky | Jemný přechod nahoře | Jen horní část `.app` (pod hlavičkou). | Nikde jinde; nepřidávat další přechody. |
 | `--surface` | `#ffffff` | Karta | Všechny karty, dlaždice, řádky dne. | – |
@@ -139,7 +141,10 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | rozcestník do oblastí | **Dlaždice** `.htiles` / `.htile` | Mřížka 2×2 dole na Domů. Ikona v `--brand`, název, hodnota, podtext. Jinam nepřesouvat. |
 | ukázat stavby kolem | **Karusel staveb** `.hcar` / `.hcc` | Obrázek je obsah, ne dekorace. |
 | primární akce (mapa, web, odeslat) | **Tlačítko** `.link`, `.btn-ext` | Pilulka, `--brand` pozadí, bílý text, ikona šipky ven u externích odkazů. Max. 2 vedle sebe. |
+| vedlejší akce vedle hlavní (Změnit adresu, Přejmenovat) | **Sekundární tlačítko** `.btn-ext.btn-sec` | Pilulka, `--brand-tint` pozadí, text `--brand`. Když je víc akcí vedle sebe, plná je nejvýš jedna – ostatní sekundární. |
+| odebrat / smazat | **Destruktivní tlačítko** `.btn-danger-ic` (ikona koše, kruh 44 px) nebo `.btn-danger` (pilulka s textem) | `--danger` na `--danger-tint`. Vždy **poslední** v řádku/skupině (`margin-left:auto`), ikonková varianta vždy s `aria-label` („Odebrat adresu Domov“). Nikdy plná červená, nikdy jako hlavní akce. Akce bez potvrzení musí jít snadno zopakovat/vrátit. |
 | vedlejší akce v nadpisu sekce | **Odkaz sekce** `.hlink` | Bílá pilulka, text `--brand`. |
+| rozbalit úpravy položky v seznamu | **Chevron** `.adrdots` | Šipka dolů = sbaleno, šipka nahoru = rozbaleno; `aria-expanded`. Nepoužívat tři tečky. |
 | změnit adresu | **Změnit** `.btn-edit` | Jen v hlavičce; bílá pilulka, text `--brand`, jemný fialový stín (na fialovém přechodu by tint splynul). |
 | přepnout pohled (Vše / Dnes a zítra…, Mapa / Seznam) | **Přepínač** `.akseg`, `.seg2`, `.tabs` | Průsvitná fialová dráha `rgba(236,229,252,.65)` s rozmazáním a bílým vnitřním okrajem; nevybrané `#5d5880`; vybraná bílá, text `--brand`, fialový stín. |
 | filtrovat | **Chipy** `.chiprow` / `.chips` | Pilulky; zapnutý = `--brand` pozadí. Fungují jako zaškrtávátka, drží pozici scrollu. |
@@ -184,6 +189,7 @@ Pravidla:
 - Nepřidávat ilustrace, fotky ani dekorativní přechody (kromě `--bg-glow`).
 - Nepoužít fialovou na stav ani zelenou jako barvu značky (rozdělení viz 6.2a).
 - Nedávat rámečky a stíny zároveň; nemíchat ostré a kulaté rohy.
+- Nedávat vedle sebe víc plných tlačítek; destruktivní akci nikdy jako text uprostřed řady.
 - Nepsat úředně, nestrašit, nepoužívat vykřičníky.
 
 ## 10. Agent prompt guide
