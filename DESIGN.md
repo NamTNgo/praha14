@@ -50,8 +50,8 @@ Hodnoty z varianty N + hlavní barva #6f41bc. Kontrasty jsou proti bílé (#fff)
 
 | Token | Hodnota | Role | Použití | Zákaz |
 |---|---|---|---|---|
-| `--brand` | `#6f41bc` | Hlavní barva značky | Primární tlačítka (`.link`, `.btn-ext`), aktivní položka navigace, šipka u adresy v hlavičce, odkazy (`.hlink`, `a`), časy v „Dnes a zítra“, zapnuté chipy, ikony v dlaždicích, focus ring. Kontrast s bílou 6,65 : 1. | Nikdy pro stavy (probíhá / plánováno / OK), nikdy jako plocha pozadí větší než tlačítko. |
-| `--brand-tint` | `#f0ebff` | Světlý podklad značky | Pozadí aktivní položky navigace. Text `--brand` na něm má 5,71 : 1. | Nepoužívat jako pozadí karet ani sekcí. |
+| `--brand` | `#6f41bc` | Hlavní barva značky | Primární tlačítka (`.link`, `.btn-ext`), ikona a popisek aktivní položky navigace, šipka u adresy v hlavičce, odkazy (`.hlink`, `a`), časy v „Dnes a zítra“, zapnuté chipy, ikony v dlaždicích, focus ring. Kontrast s bílou 6,65 : 1. | Nikdy pro stavy (probíhá / plánováno / OK), nikdy jako plocha pozadí větší než tlačítko. |
+| `--brand-tint` | `#f0ebff` | Světlý podklad značky | Světlé podklady značky (štítky, přepínače). Text `--brand` na něm má 5,71 : 1. | Nepoužívat jako pozadí karet ani sekcí. |
 | `--ink` | `#1c1c1e` | Hlavní text | Nadpisy, názvy v kartách, text v tlačítkách bez barvy. 17 : 1. | Nepoužívat čistou černou `#000`. |
 | `--muted` | `#5f636c` | Vedlejší text | Popisy v kartách, adresy, podtitulky. 6,0 : 1. | Ne pro nadpisy a ne pro klikatelný text. |
 | `--faint` | `#686c76` | Nejslabší text | Eyebrow, poznámky, zdroje, patička. 4,7 : 1 na `--bg`. | Nesvětlit – světlejší odstín (`#767a84`) na `--bg` nesplní AA. |
@@ -125,7 +125,7 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | `--radius-pill` | `999px` | tlačítka, chipy, „Kalendář akcí“, aktivní položka navigace | – |
 | `--radius-icon` | `50%` | podklad ikon v kartách (`.hi`, `.tydi`, `.badge`) | Ne čtvercové podklady ikon. |
 | `--shadow-card` | `0 1px 2px rgba(111,65,188,.06), 0 6px 20px rgba(111,65,188,.08)` – tónovaný do značky | všechny bílé karty | Karty nemají rámeček (`border:none`). Stavové karty (`now`, `plan`) jsou **bez stínu**. |
-| `--shadow-nav` | `0 10px 30px rgba(28,28,30,.12)` | plovoucí navigace | – |
+| `--shadow-nav` | `0 12px 32px rgba(28,28,30,.16)` + bílý vnitřní odlesk | plovoucí skleněná navigace a tlačítko Mapa/Seznam | – |
 | `--space-page` | `20px` | boční okraj obsahu | – |
 | `--space-stack` | `16px` | mezera mezi bloky | – |
 | `--space-list` | `8px` | mezera mezi kartami v seznamu | – |
@@ -152,7 +152,7 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | přepnout pohled (Vše / Dnes a zítra…) | **Přepínač** `.akseg`, `.tabs` | Skoro neprůhledná bílá dráha `rgba(255,255,255,.82)` s vnitřním okrajem `#e6e0f8`; nevybrané `#4a4e57` (8 : 1); vybraná bílá, text `--brand`, fialový stín. |
 | najít něco v okolí (Okolí) | **Kategorie + plovoucí Mapa/Seznam** `.okkat`, `.mapachips`, `.okpill` | Nejdřív kategorie – **zaškrtávátka** (klepnutí přidává/ubírá, „Vše“ výběr zruší, prázdný výběr = Vše): Vše · Lékaři · Školy · Stavby · Doprava · Voda a proud · Akce · Kontejnery – stejné v mapě i v seznamu. Pohled přepíná černé plovoucí tlačítko dole („Mapa“ / „Seznam“). Výchozí: Mapa + Vše. Při výběru kategorií se mapa oddálí na všechny jejich body. Samotní Lékaři / Školy / Stavby mají v seznamu vlastní filtry, jiné kombinace obecný seznam podle vzdálenosti. Filtry i přepínač mají v mapě i seznamu stejný vzhled a polohu. Nepřidávat druhý přepínač Mapa/Seznam nahoře. |
 | filtrovat | **Chipy** `.chiprow` / `.chips` | Pilulky; zapnutý = `--brand` pozadí. Fungují jako zaškrtávátka, drží pozici scrollu. |
-| přepínat hlavní oblasti | **Navigace** `.bnav` | Plovoucí bílá lišta 14 px od okrajů a spodu, `--radius-pill`, aktivní položka `--brand` na `--brand-tint`. 5 položek: Domů, Doprava, Bydlení, Akce, Okolí. |
+| přepínat hlavní oblasti | **Navigace** `.bnav` | Varianta B1 „Kapka“: plovoucí lišta z tekutého skla (průhledná bílá, rozmazání 10 px, bílý okraj a odlesk) 14 px od okrajů a spodu, `--radius-pill`. Vybraná položka je bílá skleněná čočka `.bnlens`, která vystoupí o 12 px nad lištu (scale 1,08) s fialovým „stínem kapky“; ikona a text `--brand`, ikona silnější čára. Při přepnutí se čočka protáhne k nové záložce, přešvihne a usadí (350 ms); při „Omezit pohyb“ bez animace. Neaktivní položky `#3f434b`. Plovoucí tlačítko Mapa/Seznam ve stejném skle. Bez podpory rozmazání: bílá 96 %. 5 položek: Domů, Doprava, Bydlení, Akce, Okolí. |
 | nic se neděje | **Prázdný stav** `.card-dashed` | Krátká vlídná věta (viz 8), žádná ikona navíc. |
 | doplňkový výběr | **Sheet** `.sheet` | Vyjíždí zespodu, `--radius-card` nahoře. |
 | potvrzení akce | **Toast** `.toast` | Krátká věta, zmizí sám. |

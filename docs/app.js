@@ -2990,6 +2990,26 @@
         '<span class="bnic">' + SVG(t[2], 24, "currentColor", on ? 2.2 : 2) + (t[0] === "domu" && tecka ? '<i class="bndot"></i>' : "") + "</span><span>" + t[1] + "</span></button>";
     }).join("") + "</nav>";
   }
+  // Navigace „Kapka“: skleněná čočka pod vybranou záložkou; při přepnutí se protáhne, přešvihne a usadí
+  var navPred = null;
+  function navKapka() {
+    var n = app.querySelector(".bnav"), b = n && n.querySelector("button.on");
+    if (!n) return;
+    var l = document.createElement("i"); l.className = "bnlens"; l.setAttribute("aria-hidden", "true"); n.insertBefore(l, n.firstChild);
+    if (!b) { l.style.display = "none"; navPred = null; return; }
+    var x = b.offsetLeft, w = b.offsetWidth, pred = navPred;
+    l.style.left = x + "px"; l.style.width = w + "px";
+    navPred = { x: x, w: w };
+    if (!pred || pred.x === x || !l.animate || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    var a = Math.min(pred.x, x), z = Math.max(pred.x + pred.w, x + w), smer = x > pred.x ? 1 : -1;
+    l.animate([
+      { left: pred.x + "px", width: pred.w + "px", transform: "translateY(-12px) scale(1.08)" },
+      { left: a + (z - a - (z - a) * .75) / 2 + "px", width: (z - a) * .75 + "px", transform: "translateY(-4px) scale(.94)", offset: .45 },
+      { left: x + smer * 6 + "px", width: w + "px", transform: "translateY(-14px) scale(1.1)", offset: .8 },
+      { left: x + "px", width: w + "px", transform: "translateY(-12px) scale(1.08)" }
+    ], { duration: 350, easing: "cubic-bezier(.3,.7,.3,1)" });
+    b.animate([{ transform: "translateY(0) scale(1)" }, { transform: "translateY(-12px) scale(1.08)" }], { duration: 300, delay: 120, easing: "cubic-bezier(.3,1.4,.5,1)", fill: "backwards" });
+  }
   function naSekci() {
     return data && state.address && !window.__err &&
       !state.vodaSel && !state.patSel && !state.elSel && !state.zav && !state.uzSel && !state.tvSel && (state.tab === "domu" || state.tab === "odpad" || state.tab === "doprava" ||
@@ -3033,6 +3053,7 @@
     document.body.classList.remove("mk-open");
     odkazyUprav();
     merObrazovka();
+    navKapka();
     hmapa();
     (function () {   // sdílení do hlavičky detailu
       var sb = app.querySelector(".btn-share-ic"), hd = app.querySelector(".head"), zp = hd && hd.querySelector("button.btn-edit");
