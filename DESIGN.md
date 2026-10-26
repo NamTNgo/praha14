@@ -36,7 +36,7 @@ Všech šest platí současně:
 ## 5. Co design nikdy nesmí
 
 - Nepoužívat výrazné vizuální prvky: **ilustrace, fotky, maskoty, velké dekorace**. (Výjimka: obrázky staveb a akcí, které jsou obsahem.)
-- **Neměnit hlavičku** (eyebrow „Vaše adresa“, adresa, tlačítko Změnit).
+- **Neměnit hlavičku** (eyebrow s názvem adresy, adresa se šipkou jako jediné ovládání, mapa čtvrti v pozadí).
 - **Nepřidávat řadu kategorií / kulatých zkratek** pod hlavičku. Rozcestník zůstává jako dlaždice „Ve vašem okolí“ dole na Domů.
 - Žádný **tmavý režim** jako hlavní vzhled, žádný **novinový** styl (patkové nadpisy, linky místo karet), žádný **brutalismus** (černé obrysy, tvrdé stíny), žádné **křiklavé barvy** ani barevné bloky přes celou šířku.
 - Nepoužívat hlavní fialovou pro stavy (probíhá, plánováno, v pořádku) – stavy mají vlastní barvy (viz 6.2).
@@ -50,7 +50,7 @@ Hodnoty z varianty N + hlavní barva #6f41bc. Kontrasty jsou proti bílé (#fff)
 
 | Token | Hodnota | Role | Použití | Zákaz |
 |---|---|---|---|---|
-| `--brand` | `#6f41bc` | Hlavní barva značky | Primární tlačítka (`.link`, `.btn-ext`), aktivní položka navigace, text tlačítka Změnit, odkazy (`.hlink`, `a`), časy v „Dnes a zítra“, zapnuté chipy, ikony v dlaždicích, focus ring. Kontrast s bílou 6,65 : 1. | Nikdy pro stavy (probíhá / plánováno / OK), nikdy jako plocha pozadí větší než tlačítko. |
+| `--brand` | `#6f41bc` | Hlavní barva značky | Primární tlačítka (`.link`, `.btn-ext`), aktivní položka navigace, šipka u adresy v hlavičce, odkazy (`.hlink`, `a`), časy v „Dnes a zítra“, zapnuté chipy, ikony v dlaždicích, focus ring. Kontrast s bílou 6,65 : 1. | Nikdy pro stavy (probíhá / plánováno / OK), nikdy jako plocha pozadí větší než tlačítko. |
 | `--brand-tint` | `#f0ebff` | Světlý podklad značky | Pozadí aktivní položky navigace. Text `--brand` na něm má 5,71 : 1. | Nepoužívat jako pozadí karet ani sekcí. |
 | `--ink` | `#1c1c1e` | Hlavní text | Nadpisy, názvy v kartách, text v tlačítkách bez barvy. 17 : 1. | Nepoužívat čistou černou `#000`. |
 | `--muted` | `#5f636c` | Vedlejší text | Popisy v kartách, adresy, podtitulky. 6,0 : 1. | Ne pro nadpisy a ne pro klikatelný text. |
@@ -58,7 +58,7 @@ Hodnoty z varianty N + hlavní barva #6f41bc. Kontrasty jsou proti bílé (#fff)
 | `--danger` | `#b42318` | Destruktivní akce | Ikona/text destruktivního tlačítka (odebrat, smazat). Na `--danger-tint` 5,7 : 1, na bílé 6,6 : 1. | Nikdy pro stav „probíhá“ (to je pozadí `--state-now`), nikdy jako hlavní akce obrazovky. |
 | `--danger-tint` | `#ffeaea` | Podklad destruktivní akce | Pozadí destruktivního tlačítka. | Nepoužívat na karty – pro kartu „probíhá“ je `--state-now` (stejná hodnota, jiná role). |
 | `--bg` | `#f1f2f5` | Pozadí aplikace | Celá plocha za kartami. | Nepoužívat bílou jako pozadí aplikace (karty by zmizely). |
-| `--bg-glow` | `radial-gradient(150% 500px at 85% -100px, #e1d7ff 0, #f1edff 50%, rgba(241,242,245,0) 85%)` – jen odstíny značky | Jemný přechod nahoře | Jen horní část `.app` (pod hlavičkou). | Nikde jinde; nepřidávat další přechody. |
+| `--bg-map` | skutečná mapa okolí zvolené adresy (OpenStreetMap, dlaždice `docs/data/mapa/`), ulice linkami, domy jako světlé plochy `#e8e1fc`, celé na 40 % (ztlumeno o 60 %), bez špendlíku; pod ní `linear-gradient(180deg, #f5f2fe 0, #f1f2f5 380px)` | Pozadí hlavičky | Jen v horní části obrazovek s hlavičkou adresy (Domů, Doprava, Bydlení, Akce, Okolí), dolů plynule mizí. Mění se s přepnutím adresy. | Nezesilovat, nepřidávat špendlík ani popisky, nedávat do detailů; není interaktivní (na to je Okolí → Mapa). |
 | `--surface` | `#ffffff` | Karta | Všechny karty, dlaždice, řádky dne. | – |
 | `--line` | `#eceef2` | Oddělovač | Linky mezi řádky uvnitř karty (`.hrw`, `.tydr1`). | Nepoužívat jako rámeček karty – karty jsou bez rámečku. |
 
@@ -140,14 +140,14 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 | ukázat týden dopředu | **Týden** `.card.tyd` + `.tydr1` | Den vlevo, ikona, text. Max. 5 položek. |
 | rozcestník do oblastí | **Dlaždice** `.htiles` / `.htile` | Mřížka 2×2 dole na Domů. Ikona v `--brand`, název, hodnota, podtext. Jinam nepřesouvat. |
 | ukázat stavby kolem | **Karusel staveb** `.hcar` / `.hcc` | Obrázek je obsah, ne dekorace. |
-| primární akce (mapa, web, odeslat) | **Tlačítko** `.link`, `.btn-ext` | Pilulka, `--brand` pozadí, bílý text, ikona šipky ven u externích odkazů. Max. 2 vedle sebe. |
+| primární akce (mapa, web, odeslat) | **Tlačítko** `.link`, `.btn-ext` | Pilulka s jemným svislým přechodem `#7b4fd0 → #6237b0` (bílý text 5,4–7,8 : 1), **bez stínu**, ikona šipky ven u externích odkazů. Max. 2 vedle sebe, plné nejvýš jedno. |
 | vedlejší akce vedle hlavní (Změnit adresu, Přejmenovat) | **Sekundární tlačítko** `.btn-ext.btn-sec` | Pilulka, `--brand-tint` pozadí, text `--brand`. Když je víc akcí vedle sebe, plná je nejvýš jedna – ostatní sekundární. |
 | odebrat / smazat | **Destruktivní tlačítko** `.btn-danger-ic` (ikona koše, kruh 44 px) nebo `.btn-danger` (pilulka s textem) | `--danger` na `--danger-tint`. Vždy **poslední** v řádku/skupině (`margin-left:auto`), ikonková varianta vždy s `aria-label` („Odebrat adresu Domov“). Nikdy plná červená, nikdy jako hlavní akce. Akce bez potvrzení musí jít snadno zopakovat/vrátit. |
 | vedlejší akce v nadpisu sekce | **Odkaz sekce** `.hlink` | Bílá pilulka, text `--brand`. |
 | sdílet detail sousedům | **Sdílení** `.btn-share-ic` | Kulaté bílé tlačítko 44 px s ikonou sdílení v `--brand` a fialovým stínem, **vpravo nahoře v hlavičce detailu naproti „Zpět“** (`.headrow`). Vždy s `aria-label="Sdílet sousedům"`. Stejné ve všech detailech (voda, elektřina, teplá voda, uzavírka, akce, stavba, řízení, EIA, pátrání). Nedávat do řádku odkazů ani jako plné tlačítko s textem. |
 | odkazy v detailu | **Řádek odkazů** `.dlinks` | První odkaz (mapa) plný `--brand`, všechny další automaticky sekundární (`--brand-tint`). |
 | rozbalit úpravy položky v seznamu | **Chevron** `.adrdots` | Šipka dolů = sbaleno, šipka nahoru = rozbaleno; `aria-expanded`. Nepoužívat tři tečky. |
-| změnit adresu | **Změnit** `.btn-edit` | Jen v hlavičce; bílá pilulka, text `--brand`, jemný fialový stín (na fialovém přechodu by tint splynul). |
+| změnit / přepnout adresu | **Adresa v hlavičce** `#adrsw` | Adresa je jediné ovládání: text adresy + šipka dolů ve `--brand`, ťuknutí otevře panel Moje adresy. Samostatné tlačítko „Změnit“ už není (dělalo totéž). Šipka je vždy, i u jedné adresy. |
 | přepnout pohled (Vše / Dnes a zítra…, Mapa / Seznam) | **Přepínač** `.akseg`, `.seg2`, `.tabs` | Průsvitná fialová dráha `rgba(236,229,252,.65)` s rozmazáním a bílým vnitřním okrajem; nevybrané `#5d5880`; vybraná bílá, text `--brand`, fialový stín. |
 | filtrovat | **Chipy** `.chiprow` / `.chips` | Pilulky; zapnutý = `--brand` pozadí. Fungují jako zaškrtávátka, drží pozici scrollu. |
 | přepínat hlavní oblasti | **Navigace** `.bnav` | Plovoucí bílá lišta 14 px od okrajů a spodu, `--radius-pill`, aktivní položka `--brand` na `--brand-tint`. 5 položek: Domů, Doprava, Bydlení, Akce, Okolí. |
@@ -188,7 +188,7 @@ Pravidla:
 **Don't**
 - Neměnit hlavičku ani pořadí sekcí na Domů.
 - Nepřidávat řadu kategorií, pozdrav („Dobrý večer…“) ani souhrnné widgety nad obsah.
-- Nepřidávat ilustrace, fotky ani dekorativní přechody (kromě `--bg-glow`).
+- Nepřidávat ilustrace, fotky ani dekorativní přechody (jediná dekorace je ztlumená mapa čtvrti `--bg-map`).
 - Nepoužít fialovou na stav ani zelenou jako barvu značky (rozdělení viz 6.2a).
 - Nedávat rámečky a stíny zároveň; nemíchat ostré a kulaté rohy.
 - Nedávat vedle sebe víc plných tlačítek; destruktivní akci nikdy jako text uprostřed řady.
@@ -201,7 +201,7 @@ Když jako agent upravuješ UI Pod okny:
 
 1. **Nejdřív plátno.** Každou vizuální změnu nejdřív nakresli na existující plátno projektu (ne nové plátno, ne PNG) a počkej na schválení. Teprve potom měň `docs/style.css` / `docs/app.js`.
 2. **Tokeny, ne hodnoty.** Používej proměnné z kapitoly 6. Novou barvu, stín nebo radius nepřidávej – pokud chybí, zeptej se.
-3. **Hlavička je zamčená.** `.head.addr` neměň.
+3. **Hlavička je zamčená.** `.head.addr` ani mapu v pozadí (`.hmapa`) neměň.
 4. **Rozložení Domů je zamčené:** Upozornění → Dnes a zítra → Týden → Stavby → Ve vašem okolí (dlaždice) → zapojení/nahlášení.
 5. **Stav vs. značka.** Fialová = ovládání. Červená/oranžová/modrá/zelená = stavy (6.2).
 6. **Texty podle kapitoly 8**, česky, vykat, vlídně.

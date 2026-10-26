@@ -271,8 +271,7 @@
   function viewResult() {
     var a = state.address, r = results(a);
     var av = adrNacti(), vic = av.list.length > 1, nz = vic && av.list[av.akt] ? av.list[av.akt].nazev : "Vaše adresa";
-    var h = '<div class="head addr"><div><div class="eyebrow">' + esc(nz) + '</div>' + (vic ? '<button type="button" class="addr-name adrsw" id="adrsw">' + esc(a.label) + SVG('<path d="m6 9 6 6 6-6"/>', 20, "currentColor", 2.4) + "</button>" : '<div class="addr-name">' + esc(a.label) + "</div>") + "</div>" +
-      '<button type="button" class="btn-edit" id="edit" aria-label="Změnit adresu">' + SVG('<path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 13, "currentColor", 2.3) + "Změnit</button></div>";
+    var h = '<div class="head addr"><div><div class="eyebrow">' + esc(nz) + '</div><button type="button" class="addr-name adrsw" id="adrsw" aria-label="' + esc(a.label) + ' – změnit adresu">' + esc(a.label) + SVG('<path d="m6 9 6 6 6-6"/>', 20, "currentColor", 2.4) + "</button></div></div>";
     if (state.tab === "domu") return h + '<div class="body" style="gap:12px">' + domuBody(a) + "</div>" + FOOT_DOMU;
     if (state.tab === "skoly") return h + '<div class="body">' + okoliSeg() + skolyBody(a) + "</div>" + FOOT_SK;
     if (state.tab === "doprava") return h + '<div class="body">' + dopravaBody(a) + "</div>" + FOOT_DO;
@@ -2621,6 +2620,53 @@
     // ikona sdílení; po vykreslení se přesune do hlavičky detailu vedle „Zpět“ (DESIGN.md 7)
     return sdilText(k, id) ? '<button type="button" class="btn-share-ic" data-share="' + k + ":" + esc(String(id)) + '" aria-label="Sdílet sousedům" title="Sdílet sousedům">' + SVG(I_SHARE, 20, "currentColor", 2.2) + "</button>" : "";
   }
+  // ---- podkladová mapa čtvrti v hlavičce (DESIGN.md 6.1 „--bg-map“) ----
+  var HM = { key: null, el: null, t: {} };
+  var HM_STYL = { 1: 'stroke="#c7b9f4" stroke-width="3"', 2: 'stroke="#cdc1f5" stroke-width="2"', 3: 'stroke="#d6ccf7" stroke-width="1.2"', 4: 'stroke="#e1d9f9" stroke-width=".7"',
+    5: 'stroke="#d4c9f6" stroke-width="1" stroke-dasharray="4 3"', 6: 'stroke="#cbbff5" stroke-width="2"', 7: 'fill="#e3dcfb"', 8: 'fill="#e8e1fc"' };
+  function hmDlazdice(i, j) {
+    var k = i + "_" + j;
+    if (!HM.t[k]) HM.t[k] = fetch("data/mapa/" + k + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    return HM.t[k];
+  }
+  function hmapa() {
+    var a = state.address;
+    if (!a || !a.lat || !app.querySelector(".head.addr")) return;
+    var W = Math.round(app.clientWidth) || 390, H = 400, key = a.lat + "," + a.lon + "," + W;
+    if (HM.key === key) { if (HM.el && HM.el.parentNode !== app) app.insertBefore(HM.el, app.firstChild); return; }
+    HM.key = key; HM.el = null;
+    var px = 0.36, ax = W - 90, ay = 70, ky = 111320 * px, kx = 111320 * Math.cos(a.lat * Math.PI / 180) * px;
+    var lat1 = a.lat + ay / ky, lat0 = a.lat - (H - ay) / ky, lon0 = a.lon - ax / kx, lon1 = a.lon + (W - ax) / kx, sl = [];
+    for (var i = Math.floor((lat0 - 50) / 0.01); i <= Math.floor((lat1 - 50) / 0.01); i++)
+      for (var j = Math.floor((lon0 - 14) / 0.015); j <= Math.floor((lon1 - 14) / 0.015); j++) sl.push(hmDlazdice(i, j));
+    Promise.all(sl).then(function (dd) {
+      if (HM.key !== key) return;
+      var g = {}, y0 = a.lat * 1e5, x0 = a.lon * 1e5, sy = ky / 1e5, sx = kx / 1e5;
+      dd.forEach(function (d) {
+        if (!d) return;
+        d.w.forEach(function (w) {
+          var y = d.o[0] + w[1], x = d.o[1] + w[2], p = [], mnx = 1e9, mxx = -1e9, mny = 1e9, mxy = -1e9;
+          for (var k = 1; k < w.length; k += 2) {
+            if (k > 1) { y += w[k]; x += w[k + 1]; }
+            var X = ax + (x - x0) * sx, Y = ay - (y - y0) * sy;
+            p.push(X.toFixed(1) + " " + Y.toFixed(1));
+            if (X < mnx) mnx = X; if (X > mxx) mxx = X; if (Y < mny) mny = Y; if (Y > mxy) mxy = Y;
+          }
+          if (mxx < -10 || mnx > W + 10 || mxy < -10 || mny > H + 10) return;
+          (g[w[0]] = g[w[0]] || []).push("M" + p.join(" ") + (w[0] >= 7 ? "Z" : ""));
+        });
+      });
+      var t = "";
+      [7, 8, 6, 5, 4, 3, 2, 1].forEach(function (k) {
+        if (g[k]) t += '<path d="' + g[k].join("") + '" ' + HM_STYL[k] + (k < 7 ? ' fill="none" stroke-linecap="round" stroke-linejoin="round"' : "") + "/>";
+      });
+      var box = document.createElement("div");
+      box.innerHTML = '<svg class="hmapa" viewBox="0 0 ' + W + " " + H + '" aria-hidden="true" focusable="false"><defs><linearGradient id="hm-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+        '<mask id="hm-m"><rect width="' + W + '" height="' + H + '" fill="url(#hm-f)"/></mask></defs><g mask="url(#hm-m)" opacity=".4">' + t + "</g></svg>";
+      HM.el = box.firstChild;
+      if (app.querySelector(".head.addr")) app.insertBefore(HM.el, app.firstChild);
+    });
+  }
   function toast(t) {
     var el = document.createElement("div");
     el.className = "toast"; el.textContent = t; (document.getElementById("app") || document.body).appendChild(el);
@@ -2887,6 +2933,7 @@
     if (state.adrPanel && state.address && !state.adrNova && !state.adrPridat) html += adrPanel();
     if (naSekci() && !state.adrPridat && !state.adrNova) html += bottomNav();
     app.innerHTML = html;
+    hmapa();
     (function () {   // sdílení do hlavičky detailu
       var sb = app.querySelector(".btn-share-ic"), hd = app.querySelector(".head"), zp = hd && hd.querySelector("button.btn-edit");
       if (!sb || !zp) return;

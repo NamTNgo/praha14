@@ -556,7 +556,8 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 
 
 /* ===== Facelift N (DESIGN.md) – písmo Plus Jakarta Sans, pozadí L+J, karty bez rámečku, plovoucí navigace ===== */
-.app{background:radial-gradient(150% 500px at 85% -100px,#e1d7ff 0,#f1edff 50%,rgba(241,242,245,0) 85%) no-repeat,var(--bg)}
+.app{position:relative;isolation:isolate;background:linear-gradient(180deg,#f5f2fe 0,#f1f2f5 380px) no-repeat,var(--bg)}
+.hmapa{position:absolute;left:0;top:0;width:100%;height:400px;z-index:-1;pointer-events:none}
 .hsec{margin-top:10px}
 .hsec b{font-size:19px;font-weight:700;letter-spacing:-.02em}
 .hlink{font-weight:600;background:#fff;border-radius:999px;padding:7px 13px;min-height:34px;align-self:center}
@@ -607,3 +608,9 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .btn-share-ic:active{background:var(--brand-tint)}
 .dlinks > .btn-ext ~ .btn-ext{background:var(--brand-tint);color:var(--brand)}
 .dlinks > .btn-ext ~ .btn-ext svg{stroke:var(--brand)}
+
+/* hlavička H1: adresa je jediné ovládání; hlavní tlačítko P5 s jemným přechodem */
+.adrsw{gap:4px}
+.adrsw svg{color:var(--brand);margin-top:2px;flex:none}
+.link,.btn-ext{background:linear-gradient(180deg,#7b4fd0,#6237b0)}
+.link:active,.btn-ext:active{background:linear-gradient(180deg,#6d44bd,#55309a)}
