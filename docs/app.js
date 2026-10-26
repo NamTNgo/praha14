@@ -635,7 +635,7 @@
   }
   window.addEventListener("popstate", function () {
     if (state.zav && state.zav !== "list" && state.zav !== "par") { state.zav = "list"; render(); window.scrollTo(0, 0); }
-    else if (state.vodaSel || state.patSel || state.zav || state.uzSel || state.tvSel) vodaKrokZpet();
+    else if (state.vodaSel || state.patSel || state.elSel || state.zav || state.uzSel || state.tvSel) vodaKrokZpet();
     else if (state.tab === "akce" && state.akHist.length) akKrokZpet();
     else if (state.tab === "doktori" && state.dkHist.length) dkKrokZpet();
     else if (state.tab === "stavby" && state.stHist.length) stKrokZpet();
