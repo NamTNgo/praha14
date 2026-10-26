@@ -597,8 +597,9 @@
       rr += drow(zapLabel, zapVal);
       h += dcard("Termíny", rr, termNote);
     } else {
-      h += '<div class="card-dashed row top" style="flex-direction:column;align-items:stretch;gap:12px"><div style="display:flex;align-items:center;gap:10px"><span class="badge" style="background:#eceef2">' + I_CAL.replace('width="14" height="14"', 'width="18" height="18"') + '</span><div><div class="t1" style="color:#686c76">Termíny zatím nemáme</div><div class="note" style="margin-top:2px">Den otevřených dveří a zápis zjistíte na webu školy.</div></div></div>' +
-        '<div><a class="btn-ext" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
+      h += '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + I_CAL.replace('width="14" height="14"', 'width="18" height="18"') + '</span><div class="grow"><div class="t1">Termíny zatím nemáme</div>' +
+        '<div class="note" style="margin-top:2px">Den otevřených dveří a zápis zjistíte na webu školy.</div>' +
+        '<div class="links"><a class="link" href="' + esc(web[0]) + '" target="_blank" rel="noopener">' + web[1] + " " + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div></div></div>";
     }
     var prac = s.p && s.p.length ? '<div class="dgrp">' + s.p.map(function (p, i) { return drow(i ? "" : "Další pracoviště", p.a); }).join("") + "</div>" : "";
     h += dcard("O škole", drow("Zřizovatel", s.zn) + (s.pf ? drow("Právní forma", s.pf) : "") + drow("Ředitel/ka", s.rd) + prac + drow(kapLabel(s), s.k ? s.k + " " + (s.t === "ms" ? "dětí" : "žáků") : null) + (s.j ? drow("Vyučovací jazyk", s.j) : ""));
@@ -2483,12 +2484,12 @@
     }
     if (chce("lekari") && data.doktori) {
       dkNear(a).forEach(function (x) {
-        r.push({ lat: x.s.lat, lon: x.s.lon, ic: BI_LEKARI, bg: "#0f766e", soft: "#dff4f1", t: x.s.n, s: meters(x.d) + " · " + x.s.a, act: "dk:" + x.s.id });
+        r.push({ lat: x.s.lat, lon: x.s.lon, ic: BI_LEKARI, bg: "#0f766e", soft: "#dff4f1", t: x.s.n, s: meters(x.d) + " · " + x.s.a, act: "dk:" + x.s.id, sd: ["dk", x.s.id] });
       });
     }
     if (chce("skoly") && data.skoly) {
       skNear(a).forEach(function (x) {
-        r.push({ lat: x.p.lat, lon: x.p.lon, ic: BI_SKOLY, bg: "#a86a10", soft: "#fdf1cb", t: x.s.n, s: meters(x.d) + " · " + (x.p.a || x.s.a), act: "sk:" + x.s.id });
+        r.push({ lat: x.p.lat, lon: x.p.lon, ic: BI_SKOLY, bg: "#a86a10", soft: "#fdf1cb", t: x.s.n, s: meters(x.d) + " · " + (x.p.a || x.s.a), act: "sk:" + x.s.id, sd: ["sk", x.s.id] });
       });
     }
     if (chce("stavby")) {
