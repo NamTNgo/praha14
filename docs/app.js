@@ -1469,7 +1469,7 @@
       '<div class="dnote" style="margin-top:10px">' + (f === "po" ? "Podle plánu už mělo skončit, PVK obnovení dodávky zatím nepotvrdily. " : "Čas obnovení je odhad Pražských vodovodů a kanalizací. ") +
       (u.pocet > 1 ? "Odstávka zasahuje " + u.pocet.toLocaleString("cs-CZ") + " odběrných míst." : "") + "</div></div>" +
       '<div class="card dcard"><div class="dtitle">Náhradní zásobování' + (cis.length ? " · nejblíž vám" : "") + "</div>" + nz + "</div>" +
-      '<div class="note" style="padding:0 4px">Zdroj: Pražské vodovody a kanalizace' + (gen ? ", ověřeno " + vDen(gen, ted) + " v " + vHod(gen) : "") + ". Stav kontrolujeme každých 15 minut.</div></div>";
+      '<div class="note" style="padding:0 4px">Zdroj: Pražské vodovody a kanalizace' + (gen ? ", ověřeno " + vDen(gen, ted) + " v " + vHod(gen) : "") + ". Stav kontrolujeme každých 5 minut.</div></div>";
   }
   function openVoda(id) {
     state.vodaZ = { tab: state.tab, y: window.scrollY };
@@ -2240,7 +2240,7 @@
       (x.u ? '<a class="btn-ext" href="' + esc(x.u) + '" target="_blank" rel="noopener">' + (ndic ? "Dopravní info " : "Opatření na úřední desce ") + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" : "") + sdilBtn("uz", uzId(x)) + "</div>" +
       detCas(x.od, x.do, x.do ? "Konec je plánovaný termín silničního úřadu, uzavírka může skončit dřív." : "") +
       (p ? '<div class="card dcard"><div class="dtitle">Co se děje</div><div class="ptext" style="font-size:14.5px">' + esc(p) + "</div></div>" : "") +
-      '<div class="note" style="padding:0 4px">' + (ndic ? "Zdroj: Národní dopravní informační centrum (NDIC), aktualizace každých 5 minut." : "Zdroj: úřední deska MČ Praha " + esc(x.mc) + ", kontrolujeme dvakrát denně.") + "</div></div>";
+      '<div class="note" style="padding:0 4px">' + (ndic ? "Zdroj: Národní dopravní informační centrum (NDIC), uzavírky aktualizujeme jednou denně." : "Zdroj: úřední deska MČ Praha " + esc(x.mc) + ", kontrolujeme dvakrát denně.") + "</div></div>";
   }
   function viewTvDetail(o) {
     var t0 = den0(), f = new Date(o.from + "T00:00:00"), ted = f <= t0;

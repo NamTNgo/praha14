@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Nehody a mimořádné události z NDIC -> docs/data/nehody.json.
 
-Běží každou půlhodinu, zatímco uzavírky a zbytek dopravy se staví jednou denně
+Běží každých 5 minut (spouští ho Cloudflare Worker), zatímco uzavírky a zbytek dopravy se staví jednou denně
 (scripts/build_doprava.py). Důvod je věcný: uzavírka trvá týdny, nehoda desítky
 minut, a nehoda zobrazená o pět hodin později už jen mate. Vlastní soubor také
 znamená, že si oba běhy nepřepisují výsledky navzájem.
