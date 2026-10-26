@@ -2360,7 +2360,7 @@
     "Práce": '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
     "Škola": '<path d="M2 9 12 4l10 5-10 5Z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
     "Chata": '<path d="M12 3 4 15h5l-3 5h12l-3-5h5Z"/>' };
-  var ADR_BARVY = { "Domov": ["#f0ebff", "#6f41bc"], "Rodiče": ["#fbe9ef", "#a83a5c"], "Práce": ["#e3edf8", "#2f6fb0"], "Škola": ["#f1ebfa", "#6a4aa8"], "Chata": ["#eef4e2", "#4f6b1f"] };
+  var ADR_BARVY = { "Domov": ["#f0ebff", "#6f41bc"], "Rodiče": ["#fbe9ef", "#a83a5c"], "Práce": ["#e3edf8", "#2f6fb0"], "Škola": ["#dff4f1", "#0f766e"], "Chata": ["#eef4e2", "#4f6b1f"] };
   var ADR_NAZVY = ["Domov", "Rodiče", "Práce", "Škola", "Chata"];
   function adrIkona(n) { var b = ADR_BARVY[n] || ["#eceef2", "#686c76"]; return '<span class="adric" style="background:' + b[0] + '">' + SVG(ADR_IC[n] || PIN, 18, b[1], 2.2) + "</span>"; }
   function adrProblem(x) {
