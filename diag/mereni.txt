@@ -1,0 +1,15 @@
+{
+ "post": [
+  200,
+  "{\"ok\":true}",
+  "https://namtngo.github.io"
+ ],
+ "post_spatne": [
+  400,
+  "{\"chyba\":\"vstup\"}"
+ ],
+ "stat": [
+  200,
+  "{\"2026-10-26\":{\"navstevnik\":1,\"navstevnik:p-\":1,\"v:test-overeni\":1}}"
+ ]
+}
