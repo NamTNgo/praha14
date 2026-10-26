@@ -651,3 +651,7 @@ div.okli{cursor:default}
 .app:has(.mapawrap) .okpill{bottom:calc(104px + env(safe-area-inset-bottom))}
 .mapawrap .leaflet-bottom{bottom:calc(92px + env(safe-area-inset-bottom))}
 .mapawrap #mapakarta .mkarta{margin-bottom:calc(92px + env(safe-area-inset-bottom))}
+
+/* Okolí: filtry a přepínač Mapa/Seznam vypadají a sedí v obou pohledech stejně */
+.mapawrap .okkat.okkat-mapa{position:absolute;top:0;left:0;right:0;margin:0;z-index:500}
+.okpill,.app:has(.mapawrap) .okpill{bottom:calc(104px + env(safe-area-inset-bottom));min-width:124px;justify-content:center}

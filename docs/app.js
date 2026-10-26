@@ -2526,7 +2526,7 @@
   var MAPA_PRAZDNO = { akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery.", lekari: "Do 1 km nejsou žádní lékaři.", skoly: "Do 1 km nejsou žádné školy." };
   function mapaView(a) {
     void a;
-    return '<div class="mapawrap"><div id="mapa" class="mapa"></div>' + okKatChips("mapachip", "mapachips") + '<div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
+    return '<div class="mapawrap"><div id="mapa" class="mapa"></div>' + okKatChips("chip", "okkat okkat-mapa") + '<div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
   }
   function mapaPin(x, sel) {
     return L.divIcon({ className: "mpinw", iconSize: [36, 36], iconAnchor: [18, 36], html: '<span class="mpin' + (sel ? " sel" : "") + '" style="background:' + x.bg + '"><span>' + SVG(x.ic, sel ? 18 : 15, "#fff", 2.2) + "</span></span>" });
