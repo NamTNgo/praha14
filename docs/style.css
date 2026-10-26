@@ -632,3 +632,16 @@ body.mk-open .okpill{display:none}
 .hsec .tydr,.hsec span{color:#5f636c}
 .okli{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 div.okli{cursor:default}
+
+/* skupiny odkazů: řádky v kartách, pilulky v detailu (DESIGN.md 7) */
+.lk-rows{margin-top:10px;border-top:1px solid var(--line)}
+.lk-row{display:flex;align-items:center;gap:12px;min-height:48px;border-bottom:1px solid var(--line);color:var(--ink);font-weight:600;font-size:14.5px;text-decoration:none}
+.lk-row:last-child{border-bottom:none}
+.lk-row .grow{padding:12px 0;line-height:1.3}
+.lk-row>svg{flex:none;color:var(--brand)}
+.lk-row:active{background:var(--brand-tint)}
+.lk-ic{width:32px;height:32px;border-radius:50%;background:var(--brand-tint);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none}
+.lk-pdf{display:inline-block;font-size:10.5px;font-weight:800;color:#686c76;background:#eceef2;border-radius:6px;padding:1px 5px;vertical-align:1px;margin-left:2px;line-height:1.4}
+.dlinks.lk-pills .btn-ext{gap:6px;max-width:100%;white-space:normal;text-align:left;line-height:1.25;padding-top:10px;padding-bottom:10px}
+.dlinks.lk-pills .btn-ext svg{flex:none}
+.dlinks.lk-pills .btn-sec .lk-pdf{background:#fff}

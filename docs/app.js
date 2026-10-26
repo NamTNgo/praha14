@@ -2703,6 +2703,39 @@
       if (app.querySelector(".head.addr")) app.insertBefore(HM.el, app.firstChild);
     });
   }
+  // ---- skupiny odkazů (DESIGN.md 7): v kartách řádky, v detailu pilulky ----
+  var LK_IK = { pdf: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>', map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
+    doc: '<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>', web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>' };
+  var LK_KRATCE = [[/^Otevřít v Google Mapách$/, "Google Mapy"], [/^Otevřít na mapě PVK$/, "Mapa PVK"], [/^(Vyhláška|Oznámení|Opatření) na úřední desce.*$/, "$1"], [/^Dokumenty na portálu EIA$/, "Dokumenty EIA"],
+    [/^(Foto a popis|Zpráva) na webu policie$/, "Web policie"], [/^Oznámení MČ Praha \d+$/, "Oznámení MČ"], [/^Harmonogram (.*) \(PDF\)$/, "$1"]];
+  function lkDruh(t) { return /PDF/i.test(t) ? "pdf" : /mapě|mapa|Mapy|Google/i.test(t) ? "map" : /vyhláš|desce|Oznámení|Opatření|Dokument/i.test(t) ? "doc" : "web"; }
+  function lkKratce(t) { for (var i = 0; i < LK_KRATCE.length; i++) if (LK_KRATCE[i][0].test(t)) return t.replace(LK_KRATCE[i][0], LK_KRATCE[i][1]); return t; }
+  function lkMapaPrvni(L, a) {
+    for (var i = 1; i < a.length; i++) if (lkDruh(a[i].textContent) === "map") { L.insertBefore(a[i], a[0]); a.unshift(a.splice(i, 1)[0]); break; }
+  }
+  function odkazyUprav() {
+    app.querySelectorAll(".links").forEach(function (L) {
+      var a = [].slice.call(L.children);
+      if (a.length < 2 || a.some(function (x) { return x.tagName !== "A"; })) return;
+      lkMapaPrvni(L, a); L.className = "lk-rows";
+      a.forEach(function (x) {
+        var t = x.textContent.trim(), k = lkDruh(t);
+        x.className = "lk-row";
+        x.innerHTML = '<span class="lk-ic">' + SVG(LK_IK[k], 18, "currentColor", 2.1) + '</span><span class="grow">' + esc(t.replace(/\s*\(PDF\)$/i, "")) + (k === "pdf" ? ' <span class="lk-pdf">PDF</span>' : "") + "</span>" + SVG(ARROW, 13, "currentColor", 2.4);
+      });
+    });
+    app.querySelectorAll(".dlinks").forEach(function (L) {
+      var a = [].slice.call(L.children).filter(function (x) { return x.tagName === "A" && x.classList.contains("btn-ext"); });
+      if (!a.length) return;
+      lkMapaPrvni(L, a); L.classList.add("lk-pills");
+      a.forEach(function (x, i) {
+        var t = x.textContent.trim(), k = lkDruh(t);
+        if (i > 0) x.classList.add("btn-sec"); else x.classList.remove("btn-sec");
+        x.setAttribute("aria-label", t + " (otevře se mimo aplikaci)");
+        x.innerHTML = SVG(LK_IK[k], 15, "currentColor", 2.1) + "<span>" + esc(lkKratce(t.replace(/\s*\(PDF\)$/i, k === "pdf" ? " (PDF)" : ""))) + "</span>" + (k === "pdf" ? ' <span class="lk-pdf">PDF</span>' : "");
+      });
+    });
+  }
   function toast(t) {
     var el = document.createElement("div");
     el.className = "toast"; el.textContent = t; (document.getElementById("app") || document.body).appendChild(el);
@@ -2959,6 +2992,7 @@
     if (naSekci() && !state.adrPridat && !state.adrNova) html += bottomNav();
     app.innerHTML = html;
     document.body.classList.remove("mk-open");
+    odkazyUprav();
     hmapa();
     (function () {   // sdílení do hlavičky detailu
       var sb = app.querySelector(".btn-share-ic"), hd = app.querySelector(".head"), zp = hd && hd.querySelector("button.btn-edit");
