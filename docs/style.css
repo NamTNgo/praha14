@@ -694,8 +694,8 @@ div.okli{cursor:default}
 .hh-s{font-size:13px;font-weight:600;color:var(--muted);margin-top:3px;line-height:1.35}
 .hh-bt{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .hh-bt a,.hh-bt button{font:inherit;font-size:13.5px;font-weight:800;border:none;border-radius:999px;padding:10px 15px;min-height:40px;display:inline-flex;align-items:center;cursor:pointer;text-decoration:none}
-.hh-bt .p{background:var(--fg);color:#fff}
-.hh-bt .s{background:var(--tint);color:var(--fg)}
+.hh-bt .p{background:var(--tint);color:var(--fg)}
+.hh-bt .s{background:none;color:var(--fg);padding-left:8px;padding-right:8px}
 
 /* sjednocení: informační a prázdné karty = stejná bílá karta jako hlášky (DESIGN.md – Hláška) */
 .card-dashed .badge,.vkarta .badge,.card.klid .badge{width:42px;height:42px;border-radius:50%}
