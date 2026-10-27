@@ -1,3 +1,3 @@
-projektů v databázi CAMP: 1282
+projektů v databázi CAMP: 1284
 novostavby.com nedostupné (štítky prodeje vynechány): HTTP Error 404: Not Found
-v okolí Prahy 9 a 14: 460 ({'stavi': 149, 'povoluje': 66, 'planuje': 154, 'hotovo': 91}); doplněno popisů: 0; obrázky: {'foto': 405, 'žádný': 36, 'plan': 19}
+v okolí Prahy 9 a 14: 460 ({'stavi': 152, 'povoluje': 64, 'planuje': 153, 'hotovo': 91}); doplněno popisů: 1; obrázky: {'foto': 405, 'žádný': 36, 'plan': 19}
