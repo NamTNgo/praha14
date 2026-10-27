@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 43858950 B za 2 s (pokus 1)
-DATEX: 5397 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5203 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 54 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 41), ('publicevent', 24), ('authorityoperation', 19), ('environmentalobstruction', 13), ('carparks', 13), ('conditions', 11), ('roadsideservicedisruption', 2), ('generalinstructionormessagetoroadusers', 1), ('nonweatherrelatedroadconditions', 1), ('disturbanceactivity', 1)]
+DATEX: staženo 45760190 B za 1 s (pokus 1)
+DATEX: 5642 situačních záznamů -> 7 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5428 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 53 prošlé
+  jiné druhy událostí: [('abnormaltraffic', 39), ('publicevent', 26), ('conditions', 20), ('authorityoperation', 19), ('environmentalobstruction', 13), ('carparks', 13), ('nonweatherrelatedroadconditions', 4), ('weatherrelatedroadconditions', 4), ('disturbanceactivity', 4), ('roadsideservicedisruption', 3), ('equipmentorsystemfault', 2), ('generalinstructionormessagetoroadusers', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -14,8 +14,8 @@ uzavírky P9 strana 2: 12 bloků
 uzavírky P9 strana 3: 5 bloků
 uzavírky P14 strana 1: 7 bloků
 uzavírky P14 strana 1: 15 bloků
-sloučení: 8 z NDIC + 6 z aktualit MČ (1 duplicit zahozeno)
-uzavirky: 14 záznamů
+sloučení: 7 z NDIC + 6 z aktualit MČ (1 duplicit zahozeno)
+uzavirky: 13 záznamů
 zastavky: 260 záznamů
 výluky PID: 2 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
