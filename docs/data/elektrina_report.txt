@@ -1,3 +1,15 @@
-Praha 9: oznámení PRE na desce 6
-Praha 14: oznámení PRE na desce 6
-výstup: 11 plánovaných přerušení v Praze 9/14
+Praha 9: oznámení PRE na desce 8
+Praha 14: oznámení PRE na desce 7
+nové: PREdistribuce - oznámení o přerušení dodávky elektřiny dne 11.11.2026 8.00 - 16.00 hod
+    OCR: 1461 znaků
+    OCR: 1390 znaků
+    dny 2026-11-11 08:00–16:00 · adres 17 · ulic bez čísla -
+nové: PREdistribuce - oznámení o přerušení dodávky elektřiny dne 11.11.2026 8.00 - 16.00 hod
+    OCR: 1390 znaků
+    OCR: 1461 znaků
+    dny 2026-11-11 08:00–16:00 · adres 16 · ulic bez čísla -
+nové: 726, Oznámení o přerušení dodávky elektřiny v ul. Cidlinská,Maršovská,Knínická,V Chaloupká
+    OCR: 1390 znaků
+    OCR: 1461 znaků
+    dny 2026-11-11 08:00–16:00 · adres 16 · ulic bez čísla V chaloupkách
+výstup: 14 plánovaných přerušení v Praze 9/14
