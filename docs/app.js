@@ -132,16 +132,72 @@
       '<a class="link" href="' + m[1] + '" target="_blank" rel="noopener">Harmonogramy na ' + m[0] + ' ' + SVG(ARROW, 12, "currentColor", 2.4) + "</a></div>";
   }
 
+  // ---- úvod (O4), náhled adresy (O5) ----
+  var UVOD_BOD = { lat: 50.108863, lon: 14.525535 };
+  var UI_VODA = '<path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/>', UI_UZ = '<path d="M12 3 4 20h16z"/><path d="M8.5 13h7"/>',
+    UI_AUTO = '<path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/>', UI_AKCE = '<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    UI_EL = '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>';
+  function viewUvod() {
+    function bub(ic, bg, col, t, s, st) { return '<div class="uvbub" style="' + st + '"><span class="uvic" style="background:' + bg + '">' + SVG(ic, 18, col, 2) + "</span><span>" + t + "<small>" + s + "</small></span></div>"; }
+    return '<div class="uvodhero" aria-hidden="true">' +
+      bub(UI_VODA, "#e3eefc", "#2563b0", "Zítra bez vody", "8:00–15:00", "left:22px;top:70px;transform:rotate(-4deg)") +
+      bub(UI_UZ, "#ffeaea", "#b42318", "Uzavírka", "170 m od vás", "right:18px;top:150px;transform:rotate(5deg)") +
+      bub(UI_AUTO, "#eef0f3", "#5f636c", "Blokové čištění", "zítra 7:30", "left:46px;top:250px;transform:rotate(3deg)") +
+      bub(UI_AKCE, "#dff4f1", "#0f766e", "Farmářský trh", "sobota", "right:34px;top:330px;transform:rotate(-6deg)") +
+      bub(UI_EL, "#fff3d6", "#9a6200", "Vypnutý proud", "čtvrtek", "left:20px;top:410px;transform:rotate(-2deg)") + "</div>" +
+      '<div class="uvtxt"><h1>Vaše čtvrť<br>v jedné kapse.</h1><p>Praha 9 a 14 · zdarma, bez reklam</p></div>' +
+      '<div class="uvbot"><button type="button" class="btn uvgo" id="uvgo">Začít</button><p>Bez registrace</p></div>';
+  }
+  function nahledHtml(a) {
+    var rows = [], ted = new Date();
+    function rw(ic, bg, col, t, s) { return '<div class="card row nhrow"><span class="badge" style="background:' + bg + '">' + SVG(ic, 18, col, 2) + '</span><div class="grow"><div class="t1">' + t + '</div><div class="t2">' + s + "</div></div></div>"; }
+    var vm = data.voda ? vodaPro(a)[0] : null, st = vodaStav();
+    if (vm) { var k = vodaKdy(vm); rows.push(rw(UI_VODA, "#e3eefc", "#2563b0", esc(k.t), esc(k.s))); }
+    else if (st === "ok") rows.push(rw(UI_VODA, "#e3eefc", "#2563b0", "Voda bez odstávky", "PVK nic neplánuje"));
+    var uz = uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= RADIUS; }), nej = null;
+    uz.forEach(function (x) { if (nej == null || x.d < nej) nej = x.d; });
+    if (data.doprava) rows.push(uz.length ? rw(UI_UZ, "#ffeaea", "#b42318", uz.length + " " + sklonCount(uz.length) + " do 1 km", "nejbližší " + akVzdTxt(nej)) : rw(UI_UZ, "#ffeaea", "#b42318", "Bez uzavírek do 1 km", "doprava u vás jede"));
+    if (data.akce) { var n = akVOkne("tyden", "all", ted).length; if (n) rows.push(rw(UI_AKCE, "#dff4f1", "#0f766e", pl(n, "akce", "akce", "akcí") + " tento týden", "v Praze 9 a 14")); }
+    return '<div class="nhled"><div class="label">Teď u vás</div>' + rows.join("") + '</div><button type="button" class="btn nhgo" id="nhgo">Pokračovat</button>';
+  }
+  // ---- Nastavení (LG1) ----
+  var I_GEAR = '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>';
+  var KONTAKT = "";   // kontaktní e-mail provozovatele – doplnit; dokud je prázdný, řádky Kontakt a Nahlásit chybu se neukazují
+  var VERZE = (function () { var m = /app\.js\?v=([^"&]+)/.exec((document.querySelector('script[src*="app.js"]') || {}).src || ""); return m ? m[1] : ""; })();
+  var ZDROJE = [["Voda a teplá voda", "Pražské vodovody a kanalizace, Pražská teplárenská"], ["Elektřina", "PREdistribuce (oznámení na úředních deskách MČ)"], ["Doprava", "NDIC (ŘSD), PID (Golemio), TSK, praha9.cz, praha14.cz, parking.praha.eu"],
+    ["Odpad", "Golemio (Operátor ICT), harmonogramy MČ, © přispěvatelé OpenStreetMap"], ["Akce", "kalendáře MČ Praha 9 a 14, Městská knihovna v Praze"], ["Lékaři", "ÚZIS ČR – Národní registr poskytovatelů zdravotních služeb"],
+    ["Školy", "MŠMT – Rejstřík škol a školských zařízení, weby škol"], ["Stavby", "CAMP – Praha zítra (IPR), úřední desky MČ Praha 9 a 14"], ["Pátrání", "Policie ČR"], ["Adresy a mapa", "ČÚZK (RÚIAN), © přispěvatelé OpenStreetMap"]];
+  function nRow(k, ic, bg, col, t, s) {
+    return '<button type="button" class="nrow" data-nast="' + k + '"><span class="badge" style="background:' + bg + '">' + SVG(ic, 18, col, 2) + '</span><span class="grow"><span class="t1">' + t + "</span>" + (s ? '<span class="t2">' + s + "</span>" : "") + "</span>" + SVG(I_CHEV, 18, "#9a9ea7", 2.4) + "</button>";
+  }
+  function viewNastaveni() {
+    var zpet = '<div class="head"><button type="button" class="btn-edit" data-nast="zpet" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>";
+    var av = adrNacti(), I_SHIELD = '<path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/>', I_LIST = '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>';
+    if (state.nast === "soukromi") return zpet + '<h1>Pravidla a soukromí</h1><div class="sub">Lidsky a krátce.</div></div><div class="body">' +
+      '<div class="card dcard"><div class="dtitle">Co o vás víme</div><p class="ntext">Adresy, které zadáte, zůstávají jen ve vašem telefonu nebo prohlížeči. Na náš server je neposíláme – nanejvýš název čtvrti, když potvrdíte výpadek nebo něco sdílíte. Nepotřebujeme jméno, e-mail ani registraci.</p></div>' +
+      '<div class="card dcard"><div class="dtitle">Měření návštěvnosti</div><p class="ntext">Počítáme jen, kolik lidí denně otevře jednotlivé obrazovky, a to bez cookies a bez sledování. Pomocný otisk návštěvníka mažeme do dvou dnů. Když má váš prohlížeč zapnuté „Nesledovat“, neměříme vůbec.</p></div>' +
+      '<div class="card dcard"><div class="dtitle">„U mě taky“ a sdílení</div><p class="ntext">Když potvrdíte výpadek, uložíme náhodné číslo zařízení, odpověď a čas, abyste mohli hlasovat jen jednou. Proti zneužití ukládáme i otisk (hash) IP adresy, ne adresu samotnou. Hlasy mažeme po týdnu, souhrnné počty za čtvrť po 60 dnech.</p></div>' +
+      '<div class="card dcard"><div class="dtitle">Údaje v aplikaci</div><p class="ntext">Informace přebíráme z veřejných zdrojů (viz Zdroje dat). Kontrolujeme je automaticky, přesto se může stát, že něco nesedí – rozhodující je vždy oznámení původního zdroje.</p></div></div>' + FOOT;
+    if (state.nast === "zdroje") return zpet + '<h1>Zdroje dat</h1><div class="sub">Odkud informace v aplikaci bereme.</div></div><div class="body"><div class="card dcard">' +
+      ZDROJE.map(function (z) { return '<div class="drow"><span class="dl">' + z[0] + '</span><span class="dv"><span class="val">' + z[1] + "</span></span></div>"; }).join("") +
+      '</div><div class="note" style="padding:0 4px">' + NDIC_ZDROJ + ".</div></div>";
+    return zpet + "<h1>Nastavení</h1></div><div class=\"body\">" +
+      '<div class="label">Moje</div><div class="card nlist">' + nRow("adresy", BI_DOMU, "#dff4f1", "#0f766e", "Moje adresy", av.list.map(function (x) { return esc(x.nazev); }).join(", ")) + "</div>" +
+      '<div class="label">Pomoc a pravidla</div><div class="card nlist">' + nRow("soukromi", I_SHIELD, "#eef0f3", "#5f636c", "Pravidla a soukromí", "Co ukládáme a proč") +
+      (KONTAKT ? '<a class="nrow" href="mailto:' + KONTAKT + '"><span class="badge" style="background:#eef0f3">' + SVG('<path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>', 18, "#5f636c", 2) + '</span><span class="grow"><span class="t1">Kontakt</span><span class="t2">' + KONTAKT + "</span></span></a>" : "") + "</div>" +
+      '<div class="label">O aplikaci</div><div class="card nlist">' + nRow("zdroje", I_LIST, "#eef0f3", "#5f636c", "Zdroje dat", "Voda, doprava, lékaři, školy…") +
+      '<div class="nrow nstat"><span class="grow"><span class="t1">Verze</span></span><span class="t2">' + esc(VERZE || "web") + "</span></div></div></div>";
+  }
   function viewSearch() {
     var q = state.query, res = q.trim().length >= 2 ? search(q) : [], none = q.trim().length >= 2 && !res.length;
     var h = (state.adrPridat ? '<div class="head"><button type="button" class="btn-edit" id="adrzpet" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
       '<div class="eyebrow" style="margin-top:12px">Moje adresy</div><h1>' + (state.adrZmen != null ? "Změnit adresu" : "Přidat adresu") + '</h1><div class="sub">' + (state.adrZmen != null ? "Najděte novou adresu pro „" + esc((adrNacti().list[state.adrZmen] || {}).nazev || "") + "“. Název i upozornění zůstanou." : "Rodiče, práce, škola dětí… Najděte adresu v Praze 9 nebo 14.") + '</div></div><div class="body">' :
-      '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Pod okny</h1>' +
-      '<div class="sub">Zadejte adresu a uvidíte, co se u vás děje: odstávky vody, svoz odpadu, uzavírky, akce, lékaře a školy v okolí.</div></div><div class="body">') +
+      '<div class="head"><div class="eyebrow">Praha 9 a 14</div><h1>Kde bydlíte?</h1>' +
+      '<div class="sub">Hned uvidíte, co se u vás děje.</div></div><div class="body">') +
       '<div class="input-wrap">' + SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 18, "#7c808a", 2.2) +
       '<input id="q" class="input' + (none ? " bad" : "") + (q.trim().length >= 2 ? " has-clear" : "") + '" type="text" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Adresa" placeholder="Ulice a číslo" value="' + esc(q) + '">' +
       '<button type="button" class="clear-btn" id="clr" aria-label="Vymazat text"' + (q.trim().length >= 2 ? "" : " hidden") + '><span class="clear-dot">' + SVG('<path d="M6 6l12 12M18 6 6 18"/>', 10, "#fff", 3.2) + "</span></button></div>";
-    h += '<div id="sres" class="list">' + searchRes(res, none) + "</div></div>" + FOOT;
+    h += '<div id="sres" class="list">' + (state.nahled && !state.adrPridat ? nahledHtml(state.nahled) : searchRes(res, none)) + "</div></div>" + FOOT;
     return h;
   }
   function searchRes(res, none) {
@@ -271,7 +327,8 @@
   function viewResult() {
     var a = state.address, r = results(a);
     var av = adrNacti(), vic = av.list.length > 1, nz = vic && av.list[av.akt] ? av.list[av.akt].nazev : "Vaše adresa";
-    var h = '<div class="head addr"><div><div class="eyebrow">' + esc(nz) + '</div><button type="button" class="addr-name adrsw" id="adrsw" aria-label="' + esc(a.label) + ' – změnit adresu">' + esc(a.label) + SVG('<path d="m6 9 6 6 6-6"/>', 20, "currentColor", 2.4) + "</button></div></div>";
+    var h = '<div class="head addr"><div><div class="eyebrow">' + esc(nz) + '</div><button type="button" class="addr-name adrsw" id="adrsw" aria-label="' + esc(a.label) + ' – změnit adresu">' + esc(a.label) + SVG('<path d="m6 9 6 6 6-6"/>', 20, "currentColor", 2.4) + "</button></div>" +
+      '<button type="button" class="nastbtn" id="nastbtn" aria-label="Nastavení">' + SVG(I_GEAR, 21, "currentColor", 2) + "</button></div>";
     if (state.tab === "domu") return h + '<div class="body" style="gap:12px">' + domuBody(a) + "</div>" + FOOT_DOMU;
     if (state.tab === "skoly") return h + '<div class="body">' + okoliSeg() + skolyBody(a) + "</div>" + FOOT_SK + okPill();
     if (state.tab === "doprava") return h + '<div class="body">' + dopravaBody(a) + "</div>" + FOOT_DO;
@@ -635,6 +692,7 @@
     oKrokZpet();
   }
   window.addEventListener("popstate", function () {
+    if (state.nast) { state.nast = state.nast === "menu" ? null : "menu"; render(); window.scrollTo(0, 0); return; }
     if (state.zav && state.zav !== "list" && state.zav !== "par") { state.zav = "list"; render(); window.scrollTo(0, 0); }
     else if (state.vodaSel || state.patSel || state.elSel || state.zav || state.uzSel || state.tvSel) vodaKrokZpet();
     else if (state.tab === "akce" && state.akHist.length) akKrokZpet();
@@ -2340,10 +2398,10 @@
     } catch (e) {}
   }
   function merObrazovka() {
-    var d = state.sdil ? "sdileny-" + state.sdil : state.vodaSel ? "voda" : state.elSel ? "elektrina" : state.uzSel ? "uzavirka" : state.tvSel ? "tepla-voda" : state.patSel ? "patrani" : state.zav ? "nahlaseni" :
+    var d = state.nast ? "nastaveni-" + state.nast : state.sdil ? "sdileny-" + state.sdil : state.vodaSel ? "voda" : state.elSel ? "elektrina" : state.uzSel ? "uzavirka" : state.tvSel ? "tepla-voda" : state.patSel ? "patrani" : state.zav ? "nahlaseni" :
       state.tab === "akce" && state.akView === "detail" ? "akce" : state.tab === "doktori" && state.dkView === "detail" ? "lekar" : state.tab === "skoly" && state.skView === "detail" ? "skola" :
       state.tab === "stavby" && state.stView !== "list" ? "stavba" : null;
-    mer(d ? "d:" + d : "v:" + (!state.address ? "start" : state.tab === "odpad" ? "bydleni" : state.tab === "mapa" ? "okoli-mapa" : /^(doktori|skoly|stavby|oklist)$/.test(state.tab) ? "okoli-seznam" : state.tab));
+    mer(d ? "d:" + d : "v:" + (!state.address ? (app.querySelector(".uvodhero") ? "uvod" : "start") : state.tab === "odpad" ? "bydleni" : state.tab === "mapa" ? "okoli-mapa" : /^(doktori|skoly|stavby|oklist)$/.test(state.tab) ? "okoli-seznam" : state.tab));
   }
   function komZapis(typ) {
     mer("a:" + (typ === "umt" ? "u-me-taky" : typ));
@@ -2688,9 +2746,9 @@
     if (!HM.t[k]) HM.t[k] = fetch("data/mapa/" + k + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
     return HM.t[k];
   }
-  function hmapa() {
-    var a = state.address;
-    if (!a || !a.lat || !app.querySelector(".head.addr")) return;
+  function hmapa(pt) {
+    var a = pt || state.address;
+    if (!a || !a.lat || !app.querySelector(pt ? ".uvodhero" : ".head.addr")) return;
     var W = Math.round(app.clientWidth) || 390, H = 400, key = a.lat + "," + a.lon + "," + W;
     if (HM.key === key) { if (HM.el && HM.el.parentNode !== app) app.insertBefore(HM.el, app.firstChild); return; }
     HM.key = key; HM.el = null;
@@ -2723,7 +2781,7 @@
       box.innerHTML = '<svg class="hmapa" viewBox="0 0 ' + W + " " + H + '" aria-hidden="true" focusable="false"><defs><linearGradient id="hm-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
         '<mask id="hm-m"><rect width="' + W + '" height="' + H + '" fill="url(#hm-f)"/></mask></defs><g mask="url(#hm-m)" opacity=".4">' + t + "</g></svg>";
       HM.el = box.firstChild;
-      if (app.querySelector(".head.addr")) app.insertBefore(HM.el, app.firstChild);
+      if (app.querySelector(pt ? ".uvodhero" : ".head.addr")) app.insertBefore(HM.el, app.firstChild);
     });
   }
   // ---- skupiny odkazů (DESIGN.md 7): v kartách řádky, v detailu pilulky ----
@@ -2991,7 +3049,7 @@
     }).join("") + "</nav>";
   }
   function naSekci() {
-    return data && state.address && !window.__err &&
+    return data && state.address && !window.__err && !state.nast &&
       !state.vodaSel && !state.patSel && !state.elSel && !state.zav && !state.uzSel && !state.tvSel && (state.tab === "domu" || state.tab === "odpad" || state.tab === "doprava" ||
        state.tab === "mapa" || state.tab === "oklist" ||
        (state.tab === "skoly" && state.skView === "list") ||
@@ -3006,7 +3064,9 @@
     if (!data) html = window.__err ? viewOffline() : viewLoading();
     else if (!state.address && state.sdil && sdilHtml()) html = sdilHtml();
     else if (state.adrNova) html = viewPojmenuj();
+    else if (!state.address && !state.adrPridat && !state.uvodPryc) html = viewUvod();
     else if (!state.address || state.adrPridat) html = viewSearch();
+    else if (state.nast) html = viewNastaveni();
     else if (state.patSel && patById(state.patSel)) html = viewPatraniDetail(patById(state.patSel));
     else if (state.vodaSel && vodaById(state.vodaSel)) html = viewVodaDetail(vodaById(state.vodaSel));
     else if (state.elSel && elById(state.elSel)) html = viewElDetail(elById(state.elSel));
@@ -3030,10 +3090,11 @@
     if (state.adrPanel && state.address && !state.adrNova && !state.adrPridat) html += adrPanel();
     if (naSekci() && !state.adrPridat && !state.adrNova) html += bottomNav();
     app.innerHTML = html;
+    app.classList.toggle("uvod", !!app.querySelector(".uvodhero"));
     document.body.classList.remove("mk-open");
     odkazyUprav();
     merObrazovka();
-    hmapa();
+    hmapa(app.querySelector(".uvodhero") ? UVOD_BOD : null);
     (function () {   // sdílení do hlavičky detailu
       var sb = app.querySelector(".btn-share-ic"), hd = app.querySelector(".head"), zp = hd && hd.querySelector("button.btn-edit");
       if (!sb || !zp) return;
@@ -3044,6 +3105,7 @@
       if (keepFocus) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
       q.addEventListener("input", function () {
         state.query = q.value;
+        if (state.nahled) state.nahled = null;
         var t = q.value.trim(), res = t.length >= 2 ? search(q.value) : [], none = t.length >= 2 && !res.length;
         q.classList.toggle("bad", none);
         q.classList.toggle("has-clear", t.length >= 2);
@@ -3053,7 +3115,7 @@
       });
       bindSugg(state.query.trim().length >= 2 ? search(state.query) : []);
       document.getElementById("clr").addEventListener("click", function () {
-        state.query = ""; q.value = ""; q.classList.remove("bad", "has-clear"); this.hidden = true;
+        state.query = ""; q.value = ""; state.nahled = null; q.classList.remove("bad", "has-clear"); this.hidden = true;
         document.getElementById("sres").innerHTML = searchRes([], false);
         q.focus();
       });
@@ -3087,8 +3149,20 @@
     app.querySelectorAll("[data-act]").forEach(function (b) { b.addEventListener("click", function () { domuAkce(b.getAttribute("data-act")); }); });
     app.querySelectorAll("[data-voda]").forEach(function (b) { b.addEventListener("click", function () { openVoda(b.getAttribute("data-voda")); }); });
     app.querySelectorAll("[data-share]").forEach(function (b) { b.addEventListener("click", function () { var p = b.getAttribute("data-share").split(":"); sdilej(p[0], p.slice(1).join(":")); }); });
+    var uvg = document.getElementById("uvgo");
+    if (uvg) uvg.addEventListener("click", function () { state.uvodPryc = true; render(); window.scrollTo(0, 0); var i = document.getElementById("q"); if (i) i.focus(); });
+    var nhg = document.getElementById("nhgo");
+    if (nhg) nhg.addEventListener("click", function () { if (state.nahled) potvrdAdresu(state.nahled); });
+    var nst = document.getElementById("nastbtn");
+    if (nst) nst.addEventListener("click", function () { state.nast = "menu"; try { history.pushState({ nast: 1 }, ""); } catch (e) {} render(); window.scrollTo(0, 0); });
+    app.querySelectorAll("[data-nast]").forEach(function (b) { b.addEventListener("click", function () {
+      var k = b.getAttribute("data-nast");
+      if (k === "zpet") { history.back(); return; }
+      if (k === "adresy") { state.nast = null; state.adrPanel = true; render(); return; }
+      state.nast = k; try { history.pushState({ nast: 2 }, ""); } catch (e) {} render(); window.scrollTo(0, 0);
+    }); });
     var sds = document.getElementById("sdstart");
-    if (sds) sds.addEventListener("click", function () { sdilKonec(); var i = document.getElementById("q"); if (i) i.focus(); });
+    if (sds) sds.addEventListener("click", function () { state.uvodPryc = true; sdilKonec(); var i = document.getElementById("q"); if (i) i.focus(); });
     app.querySelectorAll("[data-el]").forEach(function (b) { b.addEventListener("click", function () { openEl(b.getAttribute("data-el")); }); });
     var elv = document.getElementById("elvse");
     if (elv) elv.addEventListener("click", function () { var y = window.scrollY; state.elVse = !state.elVse; render(); window.scrollTo(0, y); });
@@ -3252,6 +3326,11 @@
       state.adrNova = Object.assign(nova, { upoz: true }); state.adrNazev = ""; state.adrJine = false; state.adrRen = null;
       render(); window.scrollTo(0, 0); return;
     }
+    if (!state.nahled || state.nahled.label !== nova.label) { state.nahled = nova; state.query = nova.label; render(); window.scrollTo(0, 0); return; }
+    potvrdAdresu(nova);
+  }
+  function potvrdAdresu(nova) {
+    state.nahled = null; state.query = "";
     state.address = nova;
     var av1 = adrNacti();
     av1.list = av1.list.filter(function (x) { return x.label !== nova.label; });

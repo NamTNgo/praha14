@@ -663,3 +663,29 @@ div.okli{cursor:default}
 .okpill svg{stroke:var(--ink)}
 .app:has(.sheet) .okpill{display:none}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.bnav,.okpill{background:rgba(255,255,255,.96)}}
+/* Úvod (O4) a zadání adresy s náhledem (O5) */
+.app.uvod{min-height:100dvh}
+.uvod .hmapa{height:520px;-webkit-mask-image:linear-gradient(#000 0,#000 300px,transparent 500px);mask-image:linear-gradient(#000 0,#000 300px,transparent 500px)}
+.uvodhero{position:relative;height:500px;overflow:hidden}
+.uvbub{position:absolute;z-index:2;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:22px;background:#fff;box-shadow:0 10px 30px rgba(111,65,188,.16);font-size:13.5px;font-weight:700;line-height:1.25}
+.uvbub small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.uvic{flex:none;width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center}
+.uvtxt{position:relative;z-index:2;padding:0 24px;margin-top:4px}
+.uvtxt h1{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:0 0 12px}
+.uvtxt p{margin:0;font-size:16px;color:var(--muted)}
+.uvbot{padding:28px 24px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.uvbot .btn{width:100%;min-height:54px;font-size:16.5px;border-radius:16px;margin:0}
+.uvbot p{margin:0;text-align:center;font-size:14.5px;color:var(--muted)}
+.nhled{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.nhled .label{margin:6px 4px 2px}
+.nhrow{align-items:center}
+.nhgo{width:100%;min-height:52px;font-size:16px;border-radius:16px;margin-top:14px}
+/* Nastavení (LG1) */
+.nastbtn{flex:none;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#3f434b;background:rgba(255,255,255,.75);border:none;cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(111,65,188,.16),0 2px 8px rgba(111,65,188,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.nlist{padding:0;overflow:hidden}
+.nrow{display:flex;align-items:center;gap:13px;width:100%;padding:13px 16px;border:none;border-bottom:1px solid var(--line);background:none;font:inherit;text-align:left;color:inherit;text-decoration:none;cursor:pointer}
+.nrow:last-child{border-bottom:none}
+.nrow .grow{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nrow .t1{font-size:15.5px;font-weight:700}.nrow .t2{font-size:13px;color:var(--muted)}
+.nrow.nstat{cursor:default}
+.ntext{margin:4px 0 2px;font-size:14.5px;line-height:1.5;color:#3f434b}
