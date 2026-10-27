@@ -447,17 +447,6 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .parted{font-size:11px;background:var(--brand-tint);color:var(--green);padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700}
 a.vkarta{text-decoration:none}
 /* U mě taky */
-.umt{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
-.umt.hotovo{background:#eef4ea;border-color:#cfe0c6}
-.umtq{font-weight:800;font-size:15.5px}
-.umth{display:flex;gap:8px;align-items:center;font-weight:800;font-size:15.5px;color:var(--green)}
-.umtb{display:flex;gap:8px;margin-top:10px}
-.umtb .btn{flex:1;margin:0;padding:12px 8px;font-weight:800}
-.umtb .umtne{background:#eceef2;color:var(--ink);font-weight:700}
-.umtn{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);margin-top:8px;line-height:1.35}
-.umt.hotovo .umtn{color:#4d5a4f}
-.umtn b{color:var(--ink)}
-.umtzrus{margin-top:8px;font-size:12.5px}
 button.uzk{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;align-items:flex-start}
 button.uzk .t1,button.uzk .t2,button.uzk .t3,button.uzk .dsrc,button.uzk .note,button.uzk .dhead{display:block}
 button.uzk .dhead{display:flex}
@@ -706,3 +695,19 @@ div.okli{cursor:default}
 .card-dashed.row:not(.top){align-items:center}
 .vkarta.now,.vkarta.plan{background:#fff}
 .akempty>svg:first-child{box-sizing:content-box;width:22px;height:22px;padding:10px;border-radius:50%;background:var(--brand-tint);stroke:var(--brand)}
+
+/* Vývěska sousedů (DESIGN.md – Vývěska): obsah od sousedů = papír se špendlíkem, akce pod ním */
+.vyv{position:relative;padding-top:14px}
+.vyvp{position:relative;background:#fffdf7;border-radius:4px;padding:26px 18px 14px;box-shadow:0 1px 1px rgba(60,40,10,.08),0 10px 24px rgba(60,40,10,.14);background-image:repeating-linear-gradient(transparent 0 37px,#eef0f6 37px 38px);background-position:0 58px}
+.vyvpin{position:absolute;top:-18px;left:50%;margin-left:-15px;transform:rotate(-18deg);overflow:visible}
+.vyvp h5{margin:0 0 6px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7a6a45;text-align:center}
+.vyvq{font-size:16px;font-weight:800;line-height:1.3;padding:6px 0 4px}
+.vyvr{display:flex;gap:10px;align-items:center;font-size:16px;line-height:1.35;padding:8px 0}
+.vyvr svg{flex-shrink:0}.vyvr em{font-style:normal;font-size:12.5px;color:#8a7a52;white-space:nowrap}
+.vyvr.ja em{color:#7a6a45;font-weight:800;font-size:15px}
+.vyve{font-size:14.5px;color:#7a6a45;line-height:1.45;padding:6px 0 4px}
+.vyvf{font-size:12.5px;color:#8a7a52;margin-top:8px;line-height:1.4}
+.vyvlink{font:inherit;color:inherit;background:none;border:none;padding:0;text-decoration:underline;cursor:pointer}
+.vyvb{display:flex;gap:8px;margin-top:14px}
+.vyvb button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;border-radius:14px;border:1.5px solid #ddd3f3;color:var(--brand);font:inherit;font-size:14.5px;font-weight:800;background:#fff;cursor:pointer}
+.vyvb button:active{background:var(--brand-tint)}

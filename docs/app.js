@@ -694,7 +694,7 @@
     oKrokZpet();
   }
   window.addEventListener("popstate", function () {
-    if (state.nast) { state.nast = state.nast === "menu" ? null : "menu"; render(); window.scrollTo(0, 0); return; }
+    if (state.nast) { state.nast = state.nast === "menu" || state.nastPrimo ? null : "menu"; state.nastPrimo = false; render(); window.scrollTo(0, 0); return; }   // z odkazu „jak ověřujeme“ zpět rovnou do detailu
     if (state.zav && state.zav !== "list" && state.zav !== "par") { state.zav = "list"; render(); window.scrollTo(0, 0); }
     else if (state.vodaSel || state.patSel || state.elSel || state.zav || state.uzSel || state.tvSel) vodaKrokZpet();
     else if (state.tab === "akce" && state.akHist.length) akKrokZpet();
@@ -2236,24 +2236,40 @@
     return d;
   }
   function umtSousede(n) { return n + (n === 1 ? " soused" : n >= 2 && n <= 4 ? " sousedé" : " sousedů"); }
+  // „U mě taky“ jako Vývěska sousedů (DESIGN.md – Vývěska): na papíře jen počty, akce pod ním
+  var VYV_PIN = '<svg class="vyvpin" width="30" height="40" viewBox="0 0 30 40" aria-hidden="true"><ellipse cx="17" cy="37" rx="6" ry="1.6" fill="rgba(0,0,0,.18)"/>' +
+    '<line x1="15" y1="22" x2="15" y2="36" stroke="#8d929b" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="15" cy="21" rx="11" ry="3.6" fill="#5b2fa8"/>' +
+    '<path d="M10 8h10l-1.5 12h-7z" fill="#7b4fd0"/><ellipse cx="15" cy="8" rx="8" ry="3.2" fill="#7b4fd0"/><ellipse cx="15" cy="20" rx="11" ry="3.4" fill="#7b4fd0"/>' +
+    '<ellipse cx="12.5" cy="7.2" rx="3" ry="1.1" fill="rgba(255,255,255,.65)"/><rect x="12" y="10" width="1.6" height="8" rx=".8" fill="rgba(255,255,255,.35)"/></svg>';
+  function vyveska(h5, telo, pata) {
+    return '<div class="vyv"><div class="vyvp">' + VYV_PIN + "<h5>" + h5 + "</h5>" + telo + '<div class="vyvf">' + pata + "</div></div></div>";
+  }
+  function vyvRadek(ic, fg, t, n, ja) { return '<div class="vyvr' + (ja ? " ja" : "") + '">' + SVG(ic, 16, fg, 2.3) + '<span class="grow">' + t + "</span><em>" + n + "</em></div>"; }
   function umtObsah(k, co) {
-    var r = umtData[k];
-    if (r && r.ja === "ano") return '<div class="umt hotovo"><div class="umth">' + SVG('<path d="M20 6 9 17l-5-5"/>', 18, "var(--green)", 2.4) + "Díky, zapsáno</div>" +
-      '<div class="umtn">' + SVG(I_USERS, 15, "#4d5a4f") + "<span><b>" + umtSousede(r.ano) + "</b> z okolí " + (r.ano >= 2 && r.ano <= 4 ? "jsou" : "je") + " na tom stejně</span></div>" +
-      '<button type="button" class="link umtzrus" data-umt="zrus">Zrušit</button></div>';
-    if (r && r.ja === "ne") return '<div class="umt hotovo"><div class="umth">' + SVG('<path d="M20 6 9 17l-5-5"/>', 18, "var(--green)", 2.4) + "Díky, zapsáno, že " + (co === "voda" ? "vodu máte" : "proud máte") + "</div>" +
-      '<button type="button" class="link umtzrus" data-umt="zrus">Zrušit</button></div>';
-    return '<div class="umt"><div class="umtq">' + (co === "voda" ? "Jste teď bez vody?" : "Jste teď bez proudu?") + "</div>" +
-      '<div class="umtb"><button type="button" class="btn" data-umt="ano">U mě taky</button><button type="button" class="btn umtne" data-umt="ne">' + (co === "voda" ? "Mám vodu" : "Mám proud") + "</button></div>" +
-      '<div class="umtn">' + (r ? (r.ano ? SVG(I_USERS, 15, "#5f636c") + "<span><b>" + umtSousede(r.ano) + "</b> z okolí to " + (r.ano === 1 ? "potvrdil" : r.ano <= 4 ? "potvrdili" : "potvrdilo") + " za poslední hodinu</span>" : "Zatím to nikdo z okolí nepotvrdil.") : "&nbsp;") + "</div></div>";
+    var r = umtData[k] || { ano: 0, ne: 0, ja: null }, voda = co === "voda", ano = r.ano || 0, ne = r.ne || 0;
+    var icB = voda ? I_NOWATER : I_NOPOWER, icM = voda ? DROP : I_POWER, bez = voda ? "bez vody" : "bez proudu", ma = voda ? "Vodu má" : "Proud má";
+    var radky = "", jak = ' · 1 telefon = 1 hlas · <button type="button" class="vyvlink" data-umt-jak>jak ověřujeme</button>';
+    if (r.ja) {
+      var mojeAno = r.ja === "ano", ost = (mojeAno ? ano : ne) - 1;
+      radky = vyvRadek(mojeAno ? icB : icM, mojeAno ? "#a23a30" : "#2f6fb0", "<b>Vy</b>" + (ost > 0 ? " a " + umtSousede(ost) + (mojeAno ? " jste " + bez : " máte " + (voda ? "vodu" : "proud")) : mojeAno ? " jste " + bez : " máte " + (voda ? "vodu" : "proud")), mojeAno ? ano : ne, true) +
+        (mojeAno ? (ne ? vyvRadek(icM, "#2f6fb0", ma, umtSousede(ne)) : "") : (ano ? vyvRadek(icB, "#a23a30", "Bez " + bez.slice(4), umtSousede(ano)) : ""));
+      return vyveska("Vývěska sousedů", radky, "Připsáno" + (r.cas ? " v " + r.cas : "") + ' · <button type="button" class="vyvlink" data-umt="zrus">Změnit</button>');
+    }
+    var q = '<div class="vyvq">' + (voda ? "Jste teď bez vody?" : "Jste teď bez proudu?") + "</div>";
+    radky = ano || ne ? (ano ? vyvRadek(icB, "#a23a30", "Bez " + bez.slice(4), umtSousede(ano)) : "") + (ne ? vyvRadek(icM, "#2f6fb0", ma, umtSousede(ne)) : "") :
+      '<div class="vyve">Zatím se nikdo nepřipsal. Buďte první – sousedé uvidí, jak velký je výpadek.</div>';
+    return vyveska("Vývěska sousedů", q + radky, "Za poslední hodinu" + jak) +
+      '<div class="vyvb"><button type="button" data-umt="ano">' + SVG(icB, 17, "#6f41bc", 2.2) + "Jsem " + bez + '</button><button type="button" data-umt="ne">' + SVG(icM, 17, "#6f41bc", 2.2) + (voda ? "Vodu mám" : "Proud mám") + "</button></div>";
   }
   function umtBlok(k, co) { return '<div id="umtbox" data-k="' + esc(k) + '" data-co="' + co + '">' + umtObsah(k, co) + "</div>"; }
   function umtNapoj() {
     var box = document.getElementById("umtbox");
     if (!box) return;
-    var k = box.getAttribute("data-k"), co = box.getAttribute("data-co"), d = umtZarizeni();
+    var k = box.getAttribute("data-k"), co = box.getAttribute("data-co"), d = umtZarizeni(), hlasoval = false;
     function prekresli() { var b = document.getElementById("umtbox"); if (b && b.getAttribute("data-k") === k) { b.innerHTML = umtObsah(k, co); umtTlacitka(); } }
     function umtTlacitka() {
+      var jk = document.querySelector("#umtbox [data-umt-jak]");
+      if (jk) jk.addEventListener("click", function () { state.nast = "soukromi"; state.nastPrimo = true; try { history.pushState({ nast: 2 }, ""); } catch (e) {} render(); window.scrollTo(0, 0); });
       document.querySelectorAll("#umtbox [data-umt]").forEach(function (t) {
         t.addEventListener("click", function () {
           var a = t.getAttribute("data-umt"), r = umtData[k] || { ano: 0, ne: 0, ja: null };
@@ -2261,11 +2277,11 @@
           // hned ukázat výsledek, server pak pošle přesná čísla
           if (r.ja) r[r.ja] = Math.max(0, r[r.ja] - 1);
           if (a !== "zrus") r[a] = (r[a] || 0) + 1;
-          r.ja = a === "zrus" ? null : a; umtData[k] = r; prekresli();
+          r.ja = a === "zrus" ? null : a; r.cas = a === "zrus" ? null : vHod(new Date()); umtData[k] = r; hlasoval = true; prekresli();
           umtUrl().then(function (u) {
             if (!u) return;
             return fetch(u + "/umetaky", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ k: k, d: d, a: a }) })
-              .then(function (x) { return x.ok ? x.json() : null; }).then(function (j) { if (j) { umtData[k] = j; prekresli(); } });
+              .then(function (x) { return x.ok ? x.json() : null; }).then(function (j) { if (j) { j.cas = (umtData[k] || {}).cas; umtData[k] = j; prekresli(); } });
           }).catch(function () {});
         });
       });
@@ -2274,7 +2290,7 @@
     umtUrl().then(function (u) {
       if (!u) return;
       return fetch(u + "/umetaky?k=" + encodeURIComponent(k) + "&d=" + encodeURIComponent(d)).then(function (x) { return x.ok ? x.json() : null; })
-        .then(function (j) { if (j && j[k]) { umtData[k] = j[k]; prekresli(); } });
+        .then(function (j) { if (j && j[k] && !hlasoval) { umtData[k] = j[k]; prekresli(); } });   // nepřepsat čerstvé klepnutí starším stavem
     }).catch(function () {});
   }
   // ---- detail uzavírky a odstávky teplé vody (kvůli sdílení) ----
