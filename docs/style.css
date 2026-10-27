@@ -290,15 +290,6 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .hsec{display:flex;align-items:center;justify-content:space-between;padding:0 4px;margin-top:6px;min-height:36px}
 .hsec b{font-size:17px;font-weight:800}
 .hlink{font:inherit;font-size:13.5px;font-weight:700;color:var(--green);background:none;border:none;padding:10px 0 10px 10px;cursor:pointer;min-height:44px}
-.hal{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;border-radius:18px;padding:14px;cursor:pointer;min-height:64px}
-.hal.now{background:#fbe5e3;border:1.5px solid #e9b1ab}
-.hal.plan{background:#fdf3dc;border:1.5px solid #ecd39a}
-.hal.info{background:#fff;border:1px solid #eceef2}
-.hal .hi{width:38px;height:38px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff}
-.hal.info .hi{background:#f2f3f6}
-.hal .ht{font-size:15px;font-weight:800;line-height:1.25;display:block}
-.hal .hs{font-size:13px;font-weight:600;color:#4a4e57;margin-top:2px;line-height:1.35;display:block}
-.hal>svg:last-child{flex-shrink:0}
 .hday{background:#fff;border:1px solid #eceef2;border-radius:18px;padding:2px 15px}
 .hrw{display:flex;align-items:center;gap:12px;padding:11px 0;border:none;border-top:1px solid #eceef2;background:none;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;min-height:52px}
 .hrw:first-child{border-top:none}
@@ -311,10 +302,6 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .htile .tt{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;color:var(--brand)}
 .htile .tv{font-size:14px;font-weight:700;line-height:1.3}
 .htile .ts{font-size:12px;color:#686c76}
-.hok{display:flex;align-items:center;gap:12px;background:#e9f0e9;border-radius:18px;padding:14px}
-.hok svg{flex-shrink:0}
-.hok b{font-size:15px;font-weight:800;display:block}
-.hok span span{font-size:13px;color:#3d4a3f}
 .seg2{display:flex;gap:4px;background:#eceef2;border-radius:14px;padding:4px}
 .seg2 button{flex:1 1 0;min-width:0;font:inherit;font-size:13.5px;font-weight:700;color:#565a63;background:none;border:none;border-radius:10px;padding:9px 4px;min-height:40px;cursor:pointer}
 .seg2 button.on{background:#fff;color:var(--green);box-shadow:0 1px 3px rgba(31,36,31,.12)}
@@ -339,8 +326,6 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .vcis .cd{margin-left:auto;font-size:13.5px;font-weight:700;color:var(--brand);white-space:nowrap}
 
 /* pátrání po pohřešovaných */
-.hal.help{background:#e7eef8;border:1.5px solid #b8cbe6}
-.hal.found{background:#e6f1e9;border:1.5px solid #b5d4be}
 .vchip.help{background:#e7eef8;color:#234f8c}
 .vchip.found{background:#e6f1e9;color:#1f5a35}
 .pmista{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -561,13 +546,8 @@ button.uzk > svg:last-child{align-self:center;flex-shrink:0}
 .hsec b{font-size:19px;font-weight:700;letter-spacing:-.02em}
 .hlink{font-weight:600;background:#fff;border-radius:999px;padding:7px 13px;min-height:34px;align-self:center}
 .card,.hday,.hal,.htile,.hcc,.card.tyd,.card-dashed,.card.adrj{border:none!important;border-radius:22px;background:#fff;box-shadow:0 1px 2px rgba(111,65,188,.06),0 6px 20px rgba(111,65,188,.08)}
-.hal.now{background:#ffeaea;box-shadow:none}
-.hal.plan{background:#fff3e2;box-shadow:none}
-.hal.help{background:#e7eef8;box-shadow:none}
-.hal.found{background:#e6f1e9;box-shadow:none}
-.hal .hi,.hal.info .hi,.tydi,.badge{border-radius:50%}
-.hal.info .hi,.tydi{background:#f2f3f6}
-.hal .hs{color:var(--muted)}
+.tydi,.badge{border-radius:50%}
+.tydi{background:#f2f3f6}
 .hrw,.tydr1{border-top-color:var(--line)}
 .label{text-transform:none;letter-spacing:-.02em;font-size:19px;font-weight:700;color:var(--ink);padding:10px 4px 0}
 .link,.btn-ext{background:var(--brand);color:#fff;border-radius:999px}
@@ -689,3 +669,30 @@ div.okli{cursor:default}
 .nrow .t1{font-size:15.5px;font-weight:700}.nrow .t2{font-size:13px;color:var(--muted)}
 .nrow.nstat{cursor:default}
 .ntext{margin:4px 0 2px;font-size:14.5px;line-height:1.5;color:#3f434b}
+
+/* hlášky na Domů (DESIGN.md – Hlášky): bílá karta se štítkem + jedna hlavní karta s barevnou hlavičkou */
+.hal{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;padding:14px;cursor:pointer;min-height:64px;box-sizing:border-box}
+.hal .hi{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--tint,#f2f3f6)}
+.hal .hl{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--fg,#5b5e66);margin-bottom:3px;line-height:1.3}
+.hal .ht{font-size:15px;font-weight:800;line-height:1.25;display:block}
+.hal .hs{font-size:13px;font-weight:600;color:var(--muted);margin-top:2px;line-height:1.35;display:block}
+.hal>svg:last-child{flex-shrink:0}
+.hal-e{cursor:default}
+.hal:has(.hal-in){padding:0 10px 0 0;gap:4px}
+.hal-in{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;font:inherit;color:inherit;background:none;border:none;padding:14px;cursor:pointer}
+.hal .hx{width:36px;height:36px;border-radius:50%;background:#f2f3f6;border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.hdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 22%,transparent);animation:hdot 1.6s ease-in-out infinite}
+@keyframes hdot{50%{box-shadow:0 0 0 6px color-mix(in srgb,currentColor 0%,transparent)}}
+@media (prefers-reduced-motion:reduce){.hdot{animation:none}}
+.hhero{display:flex;flex-direction:column;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 1px 2px rgba(111,65,188,.06),0 8px 24px rgba(111,65,188,.10)}
+.hh-top{display:flex;align-items:center;gap:7px;background:var(--tint);color:var(--fg);padding:10px 16px;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.hh-top svg{flex-shrink:0}
+.hh-top .m{margin-left:auto;text-transform:none;letter-spacing:0;font-size:12.5px;font-weight:700;white-space:nowrap}
+.hh-b{display:flex;flex-direction:column;padding:14px 16px 16px}
+.hh-tx{display:flex;flex-direction:column;align-items:flex-start;text-align:left;font:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer}
+.hh-t{font-size:20px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
+.hh-s{font-size:13px;font-weight:600;color:var(--muted);margin-top:3px;line-height:1.35}
+.hh-bt{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.hh-bt a,.hh-bt button{font:inherit;font-size:13.5px;font-weight:800;border:none;border-radius:999px;padding:10px 15px;min-height:40px;display:inline-flex;align-items:center;cursor:pointer;text-decoration:none}
+.hh-bt .p{background:var(--fg);color:#fff}
+.hh-bt .s{background:var(--tint);color:var(--fg)}

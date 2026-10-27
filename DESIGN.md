@@ -68,10 +68,10 @@ Stavy mají přednost před značkou. Fialová se ve stavech nikdy neobjevuje.
 
 | Token | Pozadí | Role | Použití | Zákaz |
 |---|---|---|---|---|
-| `--state-now` | `#ffeaea` | Právě probíhá | `.hal.now` – odstávka, uzavírka, výpadek, který běží teď. Text `--muted` na něm 5,2 : 1. | Ne pro plánované věci, ne pro dekoraci. |
-| `--state-plan` | `#fff3e2` | Plánováno | `.hal.plan` – věc, která teprve přijde. 5,5 : 1. | Ne pro „pozor“ bez data. |
-| `--state-info` | `#ffffff` | Informace | `.hal.info` – stavba, řízení, nehoda v okolí bez přímého dopadu. | – |
-| `--state-help` | `#e7eef8` | Pátrání / prosba o pomoc | `.hal.help` (policie pátrá). | Ne pro běžné informace. |
+| `--state-now` | `#ffeaea` | Právě probíhá | Podklad hlavičky hlavní karty `.hhero.now` a ikony u `.hal.now` – voda nebo proud teď. Text `--fg` na něm min. 4,5 : 1. | Ne pro plánované věci, ne pro dekoraci. |
+| `--state-plan` | `#fff3e2` | Plánováno | Hlavička / ikona u plánované věci (`.hal.plan`, `.hhero.plan`). | Ne pro „pozor“ bez data. |
+| `--state-info` | `#ffffff` | Informace | `.hal.info` – stavba, řízení, nehoda v okolí; barva ikony a štítku podle tématu. | – |
+| `--state-help` | `#e7eef8` | Pátrání / prosba o pomoc | `.hal.help`, `.hhero.help` (policie pátrá). | Ne pro běžné informace. |
 | `--state-ok` | `#e6f1e9` | Vyřešeno / v pořádku | `.hal.found`, potvrzení. | Ne jako barva značky. |
 
 Barvy štítků („Probíhá“, „Zítra“…) a ikon kategorií zůstávají z produkce – nejsou součástí faceliftu.
@@ -135,7 +135,8 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 
 | Potřebuji… | Komponenta | Pravidla |
 |---|---|---|
-| upozornit na něco, co se týká adresy | **Upozornění** `.hal` (`now` / `plan` / `info` / `help` / `found`) | Ikona v kulatém podkladu vlevo, název 15/800, popis `--muted`, šipka vpravo. Stav určuje pozadí (6.2). Max. 2 řádky popisu. |
+| upozornit na něco, co se týká adresy | **Hláška** `.hal` (`now` / `plan` / `info` / `help` / `found`) | Vždy bílá karta. Ikona v kulatém tónovaném podkladu vlevo, nad názvem štítek 11,5/800 VERZÁLKAMI v barvě tématu (PRÁVĚ TEĎ, ODSTÁVKA VODY, DOPRAVA · 530 M…), u věcí, které běží teď, pulzující tečka. Název 15/800, popis `--muted`, šipka vpravo. Vyřešené (`found`) mají místo šipky křížek – skryje hlášku. Prázdné stavy (U vás je klid, Dnes a zítra nic) stejnou kartou bez šipky (`.hal-e`). |
+| upozornit na naléhavou věc | **Hlavní karta** `.hhero` | Jen jedna na Domů, vždy první. Dostane ji: pátrání blízko vás, voda / proud / teplá voda teď, plánovaná odstávka vody nebo proudu v den začátku. Bílá karta s barevnou hlavičkou (ikona, tečka, štítek, vpravo čas „obnovení za ~5 h“), název 20/800, popis, tlačítka: primární v barvě tématu (Cisterna, Popis osoby), sekundární tónované (Sdílet, Podrobnosti). Bez progress baru. Další naléhavé věci jsou běžné `.hal`. |
 | ukázat, co je dnes a zítra | **Den** `.hday` + řádky `.hrw` | Čas vlevo v `--brand` (54 px sloupec), název + místo vpravo. Max. 5 řádků, zbytek pod „Další“. |
 | ukázat týden dopředu | **Týden** `.card.tyd` + `.tydr1` | Den vlevo, ikona, text. Max. 5 položek. |
 | rozcestník do oblastí | **Dlaždice** `.htiles` / `.htile` | Mřížka 2×2 dole na Domů. Ikona v `--brand`, název, hodnota, podtext. Jinam nepřesouvat. |

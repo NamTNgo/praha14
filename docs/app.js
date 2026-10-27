@@ -1480,10 +1480,13 @@
   }
   function vodaUpozorneni(a) {
     return vodaPro(a).map(function (x) {
-      var k = vodaKdy(x), cis = vodaCisTxt(a, x.u);
-      return { cls: x.f === "probiha" || x.f === "po" ? "now" : x.f === "brzy" ? "plan" : "info", ic: I_NOWATER,
-        fg: x.f === "probiha" || x.f === "po" ? "#a23a30" : x.f === "brzy" ? "#9a6a12" : "#2f6fb0",
-        t: k.t, s: k.s + (cis ? " · " + cis : ""), act: "voda:" + x.u.id };
+      var k = vodaKdy(x), cis = vodaCisTxt(a, x.u), now = x.f === "probiha" || x.f === "po", od = vCas(x.u.od), dd = vCas(x.u.do);
+      var dnes = !now && od && akDen(od) - akDen(new Date()) === 0, c = vodaCisterny(a)[0];
+      return { cls: now ? "now" : x.f === "brzy" ? "plan" : "info", ic: I_NOWATER,
+        fg: now ? "#a23a30" : x.f === "brzy" ? "#9a6a12" : "#2f6fb0", lab: now ? "Právě teď" : "Odstávka vody",
+        t: k.t, s: k.s + (cis ? " · " + cis : ""), act: "voda:" + x.u.id, hero: now || dnes,
+        meta: x.f === "probiha" && dd ? "obnovení " + zaTxt(dd) : dnes ? "začíná " + zaTxt(od) : "",
+        bt: c ? { t: "Cisterna " + akVzdTxt(c.d), href: "https://www.google.com/maps/search/?api=1&query=" + c.c.lat + "," + c.c.lon } : null };
     });
   }
   // karta v Bydlení
@@ -1573,8 +1576,11 @@
   function patUpozorneni() {
     return patraniVse().map(function (p) {
       var m = (p.mista || []).slice(0, 2).join(", ");
-      if (p.stav === "nalezen") return { cls: "found", ic: I_NALEZEN, fg: "#2f7a4a", t: "Pátrání odvoláno", s: patTitulek(p) + " · děkujeme za pomoc", act: "pat:" + p.id };
+      if (p.stav === "nalezen") return { cls: "found", ic: I_NALEZEN, fg: "#2f7a4a", lab: "Vyřešeno", t: "Pátrání odvoláno", s: patTitulek(p) + " · děkujeme za pomoc", act: "pat:" + p.id, skryt: "pat:" + p.id };
+      var pub = p.pub ? new Date(p.pub) : null, min = pub && !isNaN(pub) ? Math.round((new Date() - pub) / 6e4) : -1;
       return { cls: p.zona === "blizko" ? "help" : "info", ic: I_HLEDANY, fg: p.zona === "blizko" ? "#2a5b9a" : "#5b5e66",
+        lab: p.zona === "blizko" ? "Pátrání v okolí" : "Pátrání", hero: p.zona === "blizko", meta: min >= 0 && min < 1440 ? "před " + (min < 60 ? Math.max(min, 1) + " min" : Math.round(min / 60) + " h") : "",
+        bt: p.url ? { t: "Popis osoby", href: p.url } : null, share: sdilText("pat", p.id) ? "pat:" + p.id : "",
         t: (/^p[áa]tr/i.test(patTitulek(p)) ? "" : "Pátrání: ") + patTitulek(p), s: (m ? m + " · " : "") + "vyhlášeno " + patKdy(p.pub), act: "pat:" + p.id };
     });
   }
@@ -1957,7 +1963,7 @@
     if (!z || !z.moje) return [];
     var dn = Math.round((new Date(z.moje.od + "T00:00:00") - den0()) / 864e5);
     if (dn < -14 || dn > 30) return [];
-    return [{ cls: dn <= 7 && dn >= 0 ? "plan" : "info", ic: I_PARK, fg: "#2f6fb0", t: (dn > 0 ? "Od " : "Nově od ") + dden(z.moje.od).toLowerCase() + " placené parkování ve vaší ulici",
+    return [{ cls: dn <= 7 && dn >= 0 ? "plan" : "info", ic: I_PARK, fg: "#2f6fb0", lab: "Parkování", t: (dn > 0 ? "Od " : "Nově od ") + dden(z.moje.od).toLowerCase() + " placené parkování ve vaší ulici",
       s: "zóna placeného stání · rezidenti potřebují parkovací oprávnění", act: "tab:doprava" }];
   }
   function parkovaniKarta(a) {
@@ -2033,9 +2039,9 @@
   }
   function elUpozorneni(a) {
     return elPro(a).filter(function (x) { return x.x.od - new Date() <= 7 * 864e5; }).map(function (x) {
-      var k = elKdy(x);
-      return { cls: x.f === "probiha" ? "now" : x.f === "brzy" ? "plan" : "info", ic: I_NOPOWER,
-        fg: x.f === "probiha" ? "#a23a30" : x.f === "brzy" ? "#9a6a12" : "#2f6fb0", t: k.t, s: k.s, act: "el:" + x.u.id };
+      var k = elKdy(x), now = x.f === "probiha", dnes = !now && akDen(x.x.od) - akDen(new Date()) === 0;
+      return { cls: now ? "now" : x.f === "brzy" ? "plan" : "info", ic: I_NOPOWER, lab: now ? "Právě teď" : "Vypnutí proudu",
+        fg: now ? "#a23a30" : x.f === "brzy" ? "#9a6a12" : "#2f6fb0", t: k.t, s: k.s, act: "el:" + x.u.id, hero: now || dnes, meta: dnes ? "začíná " + zaTxt(x.x.od) : "" };
     });
   }
   function elUlice(u) {
@@ -2895,33 +2901,63 @@
   function domuUpozorneni(a) {
     var r = vodaUpozorneni(a).concat(elUpozorneni(a), zpsUpozorneni(a), patUpozorneni()), ted = den0();
     var eia = data.eia ? (data.eia.zamery || []).filter(function (z) { return eiaOtevrena(z) && a.part && z.ku.indexOf(a.part) >= 0; })[0] : null;
-    if (eia) r.push({ cls: "info", ic: I_LEAF, fg: "#3d6b4a", t: "Můžete se vyjádřit k záměru · do " + rzDat(eia.lhuta), s: eia.n.replace(/^"|"$/g, "") + " · posuzování vlivů na prostředí", act: "eia:" + eia.kod });
+    if (eia) r.push({ cls: "info", ic: I_LEAF, fg: "#3d6b4a", lab: "Můžete se vyjádřit · do " + rzDat(eia.lhuta), t: eia.n.replace(/^"|"$/g, ""), s: "posuzování vlivů na prostředí", act: "eia:" + eia.kod });
     var o = outageFor(a);
     if (o) {
       var dn = Math.round((new Date(o.from + "T00:00:00") - ted) / 864e5);
-      r.push({ cls: dn <= 0 ? "now" : dn <= 2 ? "plan" : "info", ic: DROP, fg: dn <= 0 ? "#a23a30" : dn <= 2 ? "#9a6a12" : "#b8582a",
+      r.push({ cls: dn <= 0 ? "now" : dn <= 2 ? "plan" : "info", ic: DROP, fg: dn <= 0 ? "#a23a30" : dn <= 2 ? "#9a6a12" : "#b8582a", lab: dn <= 0 ? "Právě teď" : "Teplá voda", hero: dn <= 0,
         t: (dn <= 0 ? "Teď bez teplé vody" : "Odstávka teplé vody " + (dn === 1 ? "zítra" : "od " + dden(o.from).toLowerCase())), s: outageRange(o) + " · " + o.name, act: "tv:" + tvId(o) });
     }
     var c = cisteniPro(a);
     if (c && dnu(c.d) <= 7) {
       var n = dnu(c.d);
-      r.push({ cls: n <= 1 ? "plan" : "info", ic: I_SWEEP, fg: n <= 1 ? "#9a6a12" : "#686c76",
+      r.push({ cls: n <= 1 ? "plan" : "info", ic: I_SWEEP, fg: n <= 1 ? "#9a6a12" : "#686c76", lab: "Blokové čištění",
         t: (n <= 0 ? "Dnes" : n === 1 ? "Zítra" : dden(c.d)) + " blokové čištění", s: "v " + sklon(c.u) + (c.od ? " · " + c.od + "–" + (c.do || "") : "") + " · přeparkujte", act: "tab:doprava" });
     }
     var neh = nehodyPro(a).filter(function (x) { return x.d != null && x.d <= 5000; })[0];
     var uz = uzavirkyPro(a).filter(function (x) { return x.d != null && x.d <= 1000 && probiha(x.x); })[0];   // nejbližší probíhající do 1 km
     var rz = data.rizeni ? rzOkoli(a, RZ_DOMU, true)[0] : null;
-    if (rz) r.push({ cls: "info", ic: RZ_IKONY[rz.z.druh] || I_DOC, fg: "#5b5e66", t: rz.z.druh + " · " + akVzdTxt(rz.d) + " od vás",
-      s: rz.z.n + " · " + (RZ_FAZE[rz.z.faze] || RZ_FAZE.info)[1].toLowerCase() + " " + rzDat(rz.z.d), act: "rz:" + rz.z.id });
-    if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
+    if (rz) r.push({ cls: "info", ic: RZ_IKONY[rz.z.druh] || I_DOC, fg: "#5b5e66", lab: rz.z.druh + " · " + akVzdTxt(rz.d), t: rz.z.n,
+      s: (RZ_FAZE[rz.z.faze] || RZ_FAZE.info)[1] + " " + rzDat(rz.z.d), act: "rz:" + rz.z.id });
+    if (neh) r.push({ cls: "info", ic: I_CRASH, fg: "#a2600f", lab: "Nehoda · " + akVzdTxt(neh.d), t: "Nehoda " + (neh.x.ul && neh.x.ul.length ? vyjmenuj(neh.x.ul) : neh.x.n) + " · " + akVzdTxt(neh.d),
       s: (function (t) { var m = /Od\s+[\d:]+\s+(\d{1,2}:\d{2})(?:\s+Do\s+[\d:]+\s+(\d{1,2}:\d{2}))?/.exec(t || ""); return m ? "od " + m[1] + (m[2] ? ", odhad do " + m[2] : "") + " · může omezit provoz" : "může omezit provoz"; })(neh.x.p), act: "dop:nehody" });
-    if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n) + " · " + akVzdTxt(uz.d), s: obdobi(uz.x.od, uz.x.do), act: "uz:" + uzId(uz.x) });
-    var p = { help: -1, now: 0, plan: 1, found: 1.5, info: 2 };
-    return r.sort(function (x, y) { return p[x.cls] - p[y.cls]; });
+    if (uz) r.push({ cls: "info", ic: I_CONE, fg: "#b03a3a", lab: "Doprava · " + akVzdTxt(uz.d), t: "Uzavírka " + (uz.x.ul && uz.x.ul.length ? vyjmenuj(uz.x.ul) : uz.x.n), s: obdobi(uz.x.od, uz.x.do), act: "uz:" + uzId(uz.x) });
+    var p = { help: -1, now: 0, plan: 1, found: 1.5, info: 2 }, sk = skryte();
+    r = r.filter(function (x) { return !x.skryt || sk.indexOf(x.skryt) < 0; }).sort(function (x, y) { return p[x.cls] - p[y.cls]; });
+    var hi = -1; r.some(function (x, i) { if (x.hero) { hi = i; return true; } });
+    if (hi >= 0) { var hx = r.splice(hi, 1)[0]; hx.hlavni = true; r.unshift(hx); }   // jen jedna hlavní karta (DESIGN.md – hlášky)
+    return r;
   }
+  // skryté vyřešené hlášky (křížek na kartě)
+  var KEY_SKRYTE = "podokny.skryte";
+  function skryte() { try { var v = JSON.parse(localStorage.getItem(KEY_SKRYTE)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function skryj(id) { var v = skryte(); if (v.indexOf(id) < 0) v.push(id); try { localStorage.setItem(KEY_SKRYTE, JSON.stringify(v.slice(-30))); } catch (e) {} }
+  function zaTxt(d) {
+    var m = Math.round((d - new Date()) / 6e4);
+    if (m <= 0) return "brzy";
+    if (m < 60) return "za " + m + " min";
+    var h = Math.round(m / 60);
+    return h < 48 ? "za ~" + h + " h" : "za " + Math.round(h / 24) + " dny";
+  }
+  var HAL_TON = { help: ["#2a5b9a", "#e7eef8"], found: ["#2f7a4a", "#e6f1e9"], now: ["#b42318", "#ffeaea"], plan: ["#9a5a00", "#fff3e2"] };
   function domuAlert(x) {
-    return '<button type="button" class="hal ' + x.cls + '" data-act="' + esc(x.act) + '"><span class="hi">' + SVG(x.ic, 20, x.fg, 2.1) + "</span>" +
-      '<span class="grow"><span class="ht">' + esc(x.t) + '</span><span class="hs">' + esc(x.s) + "</span></span>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
+    var ton = HAL_TON[x.cls] || [x.fg, "#f2f3f6"], st = ' style="--fg:' + ton[0] + ";--tint:" + ton[1] + '"';
+    var dot = x.cls === "now" || x.cls === "help" ? '<i class="hdot"></i>' : "";
+    if (x.hlavni) {   // hlavní karta: bílá s barevnou hlavičkou (varianta AC2)
+      var b = (x.bt ? '<a class="p" href="' + esc(x.bt.href) + '" target="_blank" rel="noopener">' + esc(x.bt.t) + "</a>" : "") +
+        (x.bt && x.share ? '<button type="button" class="s" data-share="' + esc(x.share) + '">Sdílet</button>' :   // max. 2 tlačítka; detail otevře i název
+          '<button type="button" class="' + (x.bt ? "s" : "p") + '" data-act="' + esc(x.act) + '">Podrobnosti</button>');
+      return '<div class="hhero ' + x.cls + '"' + st + '><div class="hh-top">' + SVG(x.ic, 16, ton[0], 2.3) + dot + "<span>" + esc(x.lab || "") + "</span>" +
+        (x.meta ? '<span class="m">' + esc(x.meta) + "</span>" : "") + '</div><div class="hh-b"><button type="button" class="hh-tx" data-act="' + esc(x.act) + '"><span class="hh-t">' + esc(x.t) + '</span><span class="hh-s">' + esc(x.s) + '</span></button><div class="hh-bt">' + b + "</div></div></div>";
+    }
+    var obsah = '<span class="hi">' + SVG(x.ic, 20, ton[0], 2.1) + '</span><span class="grow">' + (x.lab ? '<span class="hl">' + dot + esc(x.lab) + "</span>" : "") +
+      '<span class="ht">' + esc(x.t) + '</span><span class="hs">' + esc(x.s) + "</span></span>";
+    if (x.skryt) return '<div class="hal ' + x.cls + '"' + st + '><button type="button" class="hal-in" data-act="' + esc(x.act) + '">' + obsah + '</button><button type="button" class="hx" data-skryt="' + esc(x.skryt) + '" aria-label="Skrýt">' + SVG('<path d="M18 6 6 18M6 6l12 12"/>', 16, "#5f636c", 2.4) + "</button></div>";
+    return '<button type="button" class="hal ' + x.cls + '"' + st + ' data-act="' + esc(x.act) + '">' + obsah + SVG(I_CHEV, 18, "#9a9ea7", 2.4) + "</button>";
+  }
+  function halPrazdna(ic, fg, tint, lab, t, s) {
+    return '<div class="hal hal-e" style="--fg:' + fg + ";--tint:" + tint + '"><span class="hi">' + SVG(ic, 20, fg, 2.4) + '</span><span class="grow">' + (lab ? '<span class="hl">' + lab + "</span>" : "") +
+      '<span class="ht">' + t + '</span><span class="hs">' + s + "</span></span></div>";
   }
   function domuDnes(a) {
     var r = [], ted = new Date(), dnes = akDen(ted), r0 = results(a);
@@ -2960,8 +2996,8 @@
       al.slice(0, state.domuVse ? al.length : DOMU_MAX).forEach(function (x) { h += domuAlert(x); });
       if (al.length > DOMU_MAX && !state.domuVse) h += '<button type="button" class="btn-link" id="domuvic" style="align-self:flex-start">Další upozornění (' + (al.length - DOMU_MAX) + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     } else {
-      h += '<div class="hok">' + SVG('<path d="M20 6 9 17l-5-5"/>', 22, "#1f4d36", 2.6) + "<span><b>U vás je klid</b><span>" +
-        (st === "ok" ? "Žádná odstávka vody ani blokové čištění ve vaší ulici." : "Žádné blokové čištění ani uzavírka u vás. Stav vody se teď nepodařilo ověřit.") + "</span></span></div>";
+      h += halPrazdna('<path d="M20 6 9 17l-5-5"/>', "#2f7a4a", "#e6f1e9", "Vše v pořádku", "U vás je klid",
+        st === "ok" ? "Žádná odstávka vody ani blokové čištění ve vaší ulici." : "Žádné blokové čištění ani uzavírka u vás. Stav vody se teď nepodařilo ověřit.");
     }
     h += adrJinde();
     var dn = domuDnes(a);
@@ -2969,7 +3005,7 @@
     if (dn.length) h += '<div class="hday">' + dn.map(function (x) {
       return '<button type="button" class="hrw" data-act="' + esc(x.act) + '"><span class="hw">' + esc(x.h || (x.w === "dnes" ? "Dnes" : "Zítra")) + "<small>" + (x.h ? x.w : "") + '</small></span><span class="grow"><span class="hn">' + esc(x.n) + '</span><span class="hm">' + esc(x.m) + "</span></span></button>";
     }).join("") + "</div>";
-    else h += '<div class="card-dashed row"><div class="grow"><div class="note" style="margin:0">Dnes ani zítra se u vás nic neplánuje – užijte si klid. Víc akcí najdete v kalendáři.</div></div></div>';
+    else h += halPrazdna('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', "#6f41bc", "#f0ebff", "", "Dnes a zítra nic", "U vás se nic neplánuje – užijte si klid.");
     // rozcestník
     var uz = uzavirkyPro(a), uzb = uz.filter(function (x) { return probiha(x.x) && x.d != null; })[0];
     var r0 = results(a), kont = r0.near[0];
@@ -3147,6 +3183,7 @@
     if (sq) sq.addEventListener("input", function () { state.skQ = sq.value; document.getElementById("sklist").innerHTML = skolyListHtml(); app.querySelectorAll("#sklist [data-sk]").forEach(function (b) { b.addEventListener("click", function () { openSkola(b.getAttribute("data-sk")); }); }); });
     app.querySelectorAll("[data-nav]").forEach(function (b) { b.addEventListener("click", function () { prepniTab(b.getAttribute("data-nav")); }); });
     app.querySelectorAll("[data-act]").forEach(function (b) { b.addEventListener("click", function () { domuAkce(b.getAttribute("data-act")); }); });
+    app.querySelectorAll("[data-skryt]").forEach(function (b) { b.addEventListener("click", function () { skryj(b.getAttribute("data-skryt")); render(); }); });
     app.querySelectorAll("[data-voda]").forEach(function (b) { b.addEventListener("click", function () { openVoda(b.getAttribute("data-voda")); }); });
     app.querySelectorAll("[data-share]").forEach(function (b) { b.addEventListener("click", function () { var p = b.getAttribute("data-share").split(":"); sdilej(p[0], p.slice(1).join(":")); }); });
     var uvg = document.getElementById("uvgo");
