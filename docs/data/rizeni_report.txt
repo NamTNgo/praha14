@@ -1,5 +1,7 @@
-Praha 9: na desce 62 vyhlášek
-Praha 14: vyhlášek odboru výstavby 2
-nových stavebních vyhlášek ke zpracování: 1
-  + [oop] blokové čištění na komunikacích ve správě MČ (podzim) - OOP · Komunikace · Modrého 1107/5 (adresa)
-záměrů v datech: 9 (s polohou 8), dopravních opatření: 4
+Praha 9: na desce 64 vyhlášek
+Praha 14: vyhlášek odboru výstavby 4
+nových stavebních vyhlášek ke zpracování: 3
+  + [oop] Návrh OOP - Výstavba dobíjecích stanic OBI Prosek · Komunikace · prosek (ku)
+  + [rozhodnuto] Revitalizace BD Bryksova č.p. 941, Černý Most, Praha · Bytový dům · Bryksova 941/33 (adresa)
+  + [rozhodnuto] Revitalizace BD Vašátkova č.p. 1029-1035, Černý Most, Praha · Bytový dům · Vašátkova 1029/17 (adresa)
+záměrů v datech: 11 (s polohou 10), dopravních opatření: 5
