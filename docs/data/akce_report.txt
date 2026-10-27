@@ -1,17 +1,13 @@
-p9: 5 akcí
-p14: 15 akcí
-mkp: 74 akcí
+p9: 6 akcí
+p14: 16 akcí
+mkp: 70 akcí
 
-celkem 91 akcí; kategorie: {'sport': 4, 'vzd': 13, 'vys': 7, 'deti': 41, 'sen': 16, 'kult': 9, 'sous': 1}
-s fotkou: 87, se souřadnicemi: 88, zdarma: 77, zrušeno: 0
+celkem 89 akcí; kategorie: {'sport': 4, 'vzd': 12, 'vys': 7, 'sen': 15, 'kult': 11, 'deti': 39, 'sous': 1}
+s fotkou: 85, se souřadnicemi: 85, zdarma: 73, zrušeno: 0
   [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
-  [mkp deti] 2026-10-27T09:00 → 2026-10-27T13:00 | Konzultace s mediátorkou | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp sen] 2026-10-27T10:00 → 2026-10-27T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp deti] 2026-10-27T16:00 → 2026-10-27T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
-  [mkp vzd] 2026-10-27T16:00 → 2026-10-27T18:30 | Kurz fermentace | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-10-29T10:00 → 2026-10-29T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-10-29T14:00 → 2026-10-29T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [p9 kult] 2026-10-31T11:00 → 2026-10-31T17:00 | Pink Fest - Trocha prevence, trocha magie | Restaurace Podviňák |  📷
@@ -69,10 +65,12 @@ s fotkou: 87, se souřadnicemi: 88, zdarma: 77, zrušeno: 0
   [mkp deti] 2026-11-19T17:00 → 2026-11-19T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sport] 2026-11-19T17:30 → 2026-11-19T19:00 | Meditace v knihovně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp kult] 2026-11-20T14:00 → 2026-11-20T15:30 | Konverzační klub češtiny | Knihovna Černý Most | Bobkova 534/47 📷
+  [p14 kult] 2026-11-22T15:00 → 2026-11-22T15:00 | Vánoční zdobení H55 | H55 | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-24T15:00 → 2026-11-24T16:00 | Knihovna kouzel s kouzelníkem Filipem Stružkou | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-24T16:00 → 2026-11-24T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-24T16:00 → 2026-11-24T17:00 | Autorské čtení s Petrem Čepkem | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-11-24T17:00 → 2026-11-24T18:00 | Pohádková babička na Proseku | Knihovna Prosek | Měšická 806/3 📷
+  [p9 kult] 2026-11-25T12:00 → 2026-11-25T16:00 | Den prevence - listopad |  |  📷
   [mkp deti] 2026-11-25T15:00 → 2026-11-25T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-11-25T16:00 → 2026-11-25T18:00 | Hrací odpoledne | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-26T10:00 → 2026-11-26T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
