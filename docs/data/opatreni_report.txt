@@ -1,4 +1,5 @@
 Praha 9: opatření na desce 10
-Praha 14: přechodných úprav provozu na desce 1
-nové: Smržových blokové čištění (podzim) - OOP · 2026-11-05–2026-11-05 · Smržových · realizace kompletního úklidu pozemní komunikace vč
-výstup: 9 platných opatření
+Praha 14: přechodných úprav provozu na desce 3
+nové: 732, Opatření obecné povahy - přechodné úpravy provozu v ul. · 2026-11-08–2026-12-12 · Ocelkova · opravy mostu X527 – běžná údržba
+nové: 733, Opatření obecné povahy - přechodné úpravy provozu v ul. · 2026-11-02–2026-12-18 · Bryksova, Mansfeldova · rekonstrukce křižovatky
+výstup: 11 platných opatření
