@@ -696,3 +696,13 @@ div.okli{cursor:default}
 .hh-bt a,.hh-bt button{font:inherit;font-size:13.5px;font-weight:800;border:none;border-radius:999px;padding:10px 15px;min-height:40px;display:inline-flex;align-items:center;cursor:pointer;text-decoration:none}
 .hh-bt .p{background:var(--fg);color:#fff}
 .hh-bt .s{background:var(--tint);color:var(--fg)}
+
+/* sjednocení: informační a prázdné karty = stejná bílá karta jako hlášky (DESIGN.md – Hláška) */
+.card-dashed .badge,.vkarta .badge,.card.klid .badge{width:42px;height:42px;border-radius:50%}
+.card-dashed .badge{background:#f2f3f6!important}
+.card-dashed .badge svg{stroke:#5b5e66}
+.card-dashed .t1,.vkarta .t1,.card.klid .t1{font-size:15px;font-weight:800;line-height:1.25}
+.card-dashed .note,.card.klid>.grow>.note{font-size:13px;font-weight:600;color:var(--muted);line-height:1.35}
+.card-dashed.row:not(.top){align-items:center}
+.vkarta.now,.vkarta.plan{background:#fff}
+.akempty>svg:first-child{box-sizing:content-box;width:22px;height:22px;padding:10px;border-radius:50%;background:var(--brand-tint);stroke:var(--brand)}
