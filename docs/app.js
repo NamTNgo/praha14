@@ -586,7 +586,7 @@
       "</div>" + SVG(I_CHEV, 18, "#7c808a", 2.4) + "</button>";
   }
   function skolyBody(a) {
-    if (!data.skoly) return '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="t1">Seznam škol se připravuje</div><div class="note" style="margin-top:2px">Data z rejstříku škol se právě doplňují. Zkuste to prosím později.</div></div></div>';
+    if (!data.skoly) return vypadek("Školy se nepodařilo načíst", "Rejstřík škol MŠMT právě neodpovídá. Zkuste to prosím za pár minut.", "skoly", [["https://rejstriky.msmt.cz/rejskoly/", "Rejstřík škol"]]);
     var near = skNear(a);
     var h = filterBar() + '<div class="list"><div class="label">V okruhu 1 km od adresy · ' + near.length + "</div>";
     if (!near.length) h += '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="t1">V okruhu 1 km nic nenajdeme</div><div class="note" style="margin-top:2px">Zkuste jiný filtr nebo celý seznam.</div></div></div>';
@@ -820,17 +820,21 @@
       "Rozpis TSK pro Prahu " + c.mc, c.src, "Celý rozpis (PDF)");
   }
   var I_CLOUDX = '<path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 10 4 4 0 0 1 18 18z"/><path d="m4 4 16 16"/>';
-  function vypadek(t, s, id, url, ut) {
+  // výpadek dat v sekci: odkazy = [[url, text], …] na náhradní zdroj; klíč = co znovu stáhnout (VYP_ZDROJ)
+  function vypadek(t, s, klic, odkazy) {
     return '<div class="dempty"><span class="dei">' + SVG(I_CLOUDX, 30, "#6f41bc", 2) + '</span><div class="det">' + t + '</div><div class="des">' + s + "</div>" +
-      '<div class="deb"><button type="button" class="btn" id="' + id + '">Zkusit znovu</button>' + (url ? '<a class="detx" href="' + url + '" target="_blank" rel="noopener">' + ut + " " + SVG(I_EXT, 13, "currentColor", 2.5) + "</a>" : "") + "</div></div>";
+      '<div class="deb"><button type="button" class="btn" data-znovu="' + klic + '">Zkusit znovu</button>' + (odkazy && odkazy.length > 1 ? "</div><div class=\"deb\" style=\"margin-top:4px\">" : "") + (odkazy || []).map(function (o) {
+        return '<a class="detx" href="' + o[0] + '" target="_blank" rel="noopener">' + o[1] + " " + SVG(I_EXT, 13, "currentColor", 2.5) + "</a>";
+      }).join("") + "</div></div>";
   }
+  var VYP_ZDROJ = { doprava: "doprava", skoly: "skoly", doktori: "doktori", akce: "akce", stavby: "stavby" };
   // "Vašátkova" -> "ve Vašátkově" se neobejde bez skloňování; raději ulici necháme v 1. pádě
   function sklon(u) { return "ulici " + u; }
 
   function dopravaBody(a) {
     var c = cisteniPro(a), uz = uzavirkyPro(a), pi = pidPro(a), h = "";
     if (!data.doprava) {   // výpadek dat: centrovaný stav (DESIGN.md – Výpadek dat), parkování má vlastní zdroj a zůstává
-      return vypadek("Dopravu se nepodařilo načíst", "Zdroj dat TSK a NDIC právě neodpovídá. Zkuste to prosím za pár minut.", "dopznovu", "https://www.dopravniinfo.cz/", "Živá mapa") + parkovaniKarta(a);
+      return vypadek("Dopravu se nepodařilo načíst", "Zdroj dat TSK a NDIC právě neodpovídá. Zkuste to prosím za pár minut.", "doprava", [["https://www.dopravniinfo.cz/", "Živá mapa"]]) + parkovaniKarta(a);
     }
     if (!c && !uz.length && !pi.v.length && !nehodyPro(a).length) {
       h += '<div class="card row top klid"><span class="badge" style="background:#e6f1e9">' +
@@ -994,7 +998,7 @@
   }
   var DK_NEAR = 5;    // v okolí je lékařů klidně přes sto, seznam v okolí proto krátíme
   function doktoriBody(a) {
-    if (!data.doktori) return '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="t1">Seznam lékařů se připravuje</div><div class="note" style="margin-top:2px">Data z NRPZS se právě doplňují. Zkuste to prosím později.</div></div></div>';
+    if (!data.doktori) return vypadek("Lékaře se nepodařilo načíst", "Národní registr poskytovatelů zdravotních služeb právě neodpovídá. Zkuste to prosím za pár minut.", "doktori", [["https://nrpzs.uzis.cz/", "Registr lékařů"]]);
     var near = dkNear(a), vic = near.length > DK_NEAR;
     var h = dkFilterBar() + '<div class="list"><div class="label">' +
       (vic ? "Nejbližší z " + near.length + " v okruhu 1 km" : "V okruhu 1 km od adresy · " + near.length) + "</div>";
@@ -1194,10 +1198,7 @@
     return h;
   }
   function akNic() {
-    return '<div class="card-dashed akempty">' + SVG('<path d="M3 3l18 18"/><path d="M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.6M15 10.3a10 10 0 0 1 4 2.6M12 20h.01"/>', 28, "#686c76", 2) +
-      '<div class="t1">Akce se teď nepodařilo načíst</div><div class="note">Zkuste to za chvíli. Mezitím najdete akce přímo v kalendářích městských částí.</div>' +
-      '<div class="dlinks"><a class="btn-ext" href="' + AK_SRC.p9[2] + '" target="_blank" rel="noopener">Kalendář Prahy 9 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
-      '<a class="btn-ext" href="' + AK_SRC.p14[2] + '" target="_blank" rel="noopener">Kalendář Prahy 14 ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a></div></div>";
+    return vypadek("Akce se nepodařilo načíst", "Kalendáře městských částí a knihovny právě neodpovídají. Zkuste to prosím za pár minut.", "akce", [[AK_SRC.p9[2], "Kalendář P9"], [AK_SRC.p14[2], "Kalendář P14"]]);
   }
   function akTypy() {
     var pritomne = {};
@@ -1710,7 +1711,7 @@
   }
   function stStav() {
     var d = data.stavby;
-    if (!d || !d.projekty) return '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(I_JERAB, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Seznam staveb se nepodařilo načíst</div><div class="note" style="margin-top:2px">Zkuste to prosím později.</div></div></div>';
+    if (!d || !d.projekty) return vypadek("Stavby se nepodařilo načíst", "Databáze Praha zítra (CAMP) právě neodpovídá. Zkuste to prosím za pár minut.", "stavby", [["https://praha.camp/praha-zitra", "Praha zítra"]]);
     if (d.ok === false) return '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(I_JERAB, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Seznam staveb může být starší</div><div class="note" style="margin-top:2px">Databázi CAMP se teď nepodařilo načíst, ukazujeme poslední známý stav. Stavby se mění pomalu, údaje nejspíš pořád platí.</div></div></div>';
     return "";
   }
@@ -3360,12 +3361,14 @@
       if (state.adrRen != null) { av.list[state.adrRen] = x; } else { av.list.push(x); av.akt = av.list.length - 1; }
       adrUloz(av); state.address = av.list[av.akt]; state.adrNova = null; state.adrRen = null; state.tab = "domu"; render(); window.scrollTo(0, 0);
     });
-    var dz = document.getElementById("dopznovu");
-    if (dz) dz.addEventListener("click", function () {
-      dz.disabled = true; dz.textContent = "Načítám…";
-      getJSON("data/doprava.json").then(function (j) { data.doprava = j; render(); })
-        .catch(function () { toast("Pořád to nejde. Zkuste to prosím za pár minut."); dz.disabled = false; dz.textContent = "Zkusit znovu"; });
-    });
+    app.querySelectorAll("[data-znovu]").forEach(function (b) { b.addEventListener("click", function () {
+      var k = b.getAttribute("data-znovu");
+      b.disabled = true; b.textContent = "Načítám…";
+      getJSON("data/" + VYP_ZDROJ[k] + ".json").then(function (j) {
+        if (k === "skoly" && j) j.forEach(function (x, i) { if (!x.id) x.id = "i" + i; if (data.skolyWeb && data.skolyWeb[x.id]) x.w = data.skolyWeb[x.id]; });
+        data[k] = j; render();
+      }).catch(function () { toast("Pořád to nejde. Zkuste to prosím za pár minut."); b.disabled = false; b.textContent = "Zkusit znovu"; });
+    }); });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
   }
