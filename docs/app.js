@@ -2069,7 +2069,7 @@
       "Elektřina u vás pojede bez přerušení.";
     return '<div class="card-dashed row top"><span class="badge" style="background:#ececef">' + SVG(I_POWER, 18, "#5b5e66") + '</span><div class="grow"><div class="t1">Elektřina</div>' +
       '<div class="note" style="margin-top:2px">' + txt + " Oznámení PREdistribuce hlídáme za vás.</div>" +
-      (okoli.length ? '<div class="links"><button type="button" class="link" data-el="' + okoli[0].u.id + '">Nejbližší vypnutí ' + SVG(I_CHEV, 12, "currentColor", 2.6) + "</button></div>" : "") + "</div></div>";
+      (okoli.length ? '<div class="links"><button type="button" class="link" data-lkic="el" data-el="' + okoli[0].u.id + '">Nejbližší vypnutí' + (elUlice(okoli[0].u)[0] ? " · " + esc(elUlice(okoli[0].u)[0]) : "") + "</button></div>" : "") + "</div></div>";
   }
   function viewElDetail(u) {
     var a = state.address, ted = new Date(), x = elDalsi(u, ted) || { den: u.dny[0], od: elDen(u.dny[0]) }, f = elFaze(x, ted), moje = a ? elTyka(u, a) : false;
@@ -2810,7 +2810,7 @@
   }
   // ---- skupiny odkazů (DESIGN.md 7): v kartách řádky, v detailu pilulky ----
   var LK_IK = { pdf: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>', map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
-    doc: '<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>', web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>' };
+    doc: '<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>', el: '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>', web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>' };
   var LK_KRATCE = [[/^Otevřít v Google Mapách$/, "Google Mapy"], [/^Otevřít na mapě PVK$/, "Mapa PVK"], [/^(Vyhláška|Oznámení|Opatření) na úřední desce.*$/, "$1"], [/^Dokumenty na portálu EIA$/, "Dokumenty EIA"],
     [/^(Foto a popis|Zpráva) na webu policie$/, "Web policie"], [/^Oznámení MČ Praha \d+$/, "Oznámení MČ"], [/^Harmonogram (.*) \(PDF\)$/, "$1"]];
   function lkDruh(t) { return /PDF/i.test(t) ? "pdf" : /mapě|mapa|Mapy|Google/i.test(t) ? "map" : /vyhláš|desce|Oznámení|Opatření|Dokument/i.test(t) ? "doc" : "web"; }
@@ -2821,12 +2821,12 @@
   function odkazyUprav() {
     app.querySelectorAll(".links").forEach(function (L) {
       var a = [].slice.call(L.children);
-      if (!a.length || a.some(function (x) { return x.tagName !== "A"; })) return;   // v kartách vždy řádky, i jediný odkaz
+      if (!a.length || a.some(function (x) { return x.tagName !== "A" && x.tagName !== "BUTTON"; })) return;   // v kartách vždy řádky, i jediný odkaz; tlačítko uvnitř aplikace = šipka ›
       lkMapaPrvni(L, a); L.className = "lk-rows";
       a.forEach(function (x) {
-        var t = x.textContent.trim(), k = lkDruh(t);
+        var t = x.textContent.trim(), uvnitr = x.tagName === "BUTTON", k = uvnitr ? (x.getAttribute("data-lkic") || "web") : lkDruh(t);
         x.className = "lk-row";
-        x.innerHTML = '<span class="lk-ic">' + SVG(LK_IK[k], 18, "currentColor", 2.1) + '</span><span class="grow">' + esc(t.replace(/\s*\(PDF\)$/i, "")) + (k === "pdf" ? ' <span class="lk-pdf">PDF</span>' : "") + "</span>" + SVG(ARROW, 13, "currentColor", 2.4);
+        x.innerHTML = '<span class="lk-ic">' + SVG(LK_IK[k], 18, "currentColor", 2.1) + '</span><span class="grow">' + esc(t.replace(/\s*\(PDF\)$/i, "")) + (k === "pdf" ? ' <span class="lk-pdf">PDF</span>' : "") + "</span>" + (uvnitr ? SVG(I_CHEV, 16, "currentColor", 2.6) : SVG(ARROW, 13, "currentColor", 2.4));
       });
     });
     var rodice = [];
