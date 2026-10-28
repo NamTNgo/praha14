@@ -2154,7 +2154,7 @@
     var poz = state.zavPoz;
     return h + '<div class="card dcard"><div class="dtitle">Kde</div><div class="zavkde">' + SVG(PIN, 18, "var(--green)", 2.2) +
       '<span class="grow"><b>' + (poz ? "Vaše aktuální poloha" : "U adresy " + esc(a.label)) + "</b></span></div>" +
-      (navigator.geolocation ? '<button type="button" class="link" id="zavpoz" style="margin-top:6px">' + (poz ? "Použít adresu " + esc(a.label) : "Použít mou aktuální polohu") + "</button>" : "") + "</div>" +
+      (navigator.geolocation ? '<button type="button" class="link btn-sec" id="zavpoz" style="margin-top:6px">' + (poz ? "Použít adresu " + esc(a.label) : "Použít mou aktuální polohu") + "</button>" : "") + "</div>" +
       '<div class="card dcard"><div class="dtitle">Co přesně</div><textarea id="zavtxt" class="zavtxt" rows="4" placeholder="' + esc(z.p) + '">' + esc(state.zavTxt || "") + "</textarea>" +
       '<div class="note" style="margin-top:8px">Fotku přiložíte v e-mailu.</div></div>' +
       '<button type="button" class="btn zavbtn" id="zavsend">' + SVG(I_MAIL, 18, "#fff", 2.2) + "Odeslat úřadu</button>" +
