@@ -1280,8 +1280,8 @@
     var h = '<div class="card-dashed akempty">' + SVG('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', 28, "#686c76", 2) +
       '<div class="t1">' + kdy + co + " nic nemáme</div>";
     if (nej) h += '<div class="note">Nejbližší je ' + DNY_CELE[akD(nej.od).getDay()] + " " + akDatumTxt(akD(nej.od)) + ".</div>";
-    h += '<div class="dlinks">' + (nej && (state.akF !== "vse" || state.akDay) ? '<button type="button" class="btn akbtn" data-akday="' + akIso(akDen(akD(nej.od) < akDen(ted) ? ted : akD(nej.od))) + '">Zobrazit nejbližší</button>' : "") +
-      (vsech ? '<button type="button" class="btn-ext akbtn2" data-akk="all">Všechny akce (' + vsech + ")</button>" : "") + "</div></div>";
+    h += '<div class="dlinks">' + (nej && (state.akF !== "vse" || state.akDay) ? '<button type="button" class="akbtn" data-akday="' + akIso(akDen(akD(nej.od) < akDen(ted) ? ted : akD(nej.od))) + '">Zobrazit nejbližší</button>' : "") +
+      (vsech ? '<button type="button" class="akbtn2" data-akk="all">Všechny akce (' + vsech + ")</button>" : "") + "</div></div>";
     return h;
   }
   function akceBody() {
@@ -1328,15 +1328,19 @@
       '<div class="body" style="padding-bottom:28px">' + (rows ? '<div class="card akblist">' + rows + "</div>" :
         '<div class="card-dashed akempty"><div class="t1">Teď nic neprobíhá</div></div>') + "</div>" + FOOT_AK;
   }
-  function akIcs(a) {
-    function f(s) { return s.replace(/[-:]/g, "") + (s.length === 10 ? "" : "00"); }
-    var cd = a.od.length === 10, kon = cd ? akIso(akKonec(a)) : (a.do !== a.od ? a.do : akIso(akKonec(a)) + "T" + ("0" + akKonec(a).getHours()).slice(-2) + ":" + ("0" + akKonec(a).getMinutes()).slice(-2));
-    var t = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//pod-okny//akce//CS", "BEGIN:VEVENT", "UID:" + a.id + "@pod-okny",
-      (cd ? "DTSTART;VALUE=DATE:" : "DTSTART;TZID=Europe/Prague:") + f(a.od),
-      (cd ? "DTEND;VALUE=DATE:" : "DTEND;TZID=Europe/Prague:") + f(kon),
-      "SUMMARY:" + a.t.replace(/[,;]/g, "\\$&"), "LOCATION:" + akMisto(a).replace(/ · [\d,]+ k?m$/, "").replace(/[,;]/g, "\\$&"),
-      "URL:" + a.u, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
-    return "data:text/calendar;charset=utf-8," + encodeURIComponent(t);
+  function akIcs(a) {   // parametry pro /ics na API (časy v UTC, celodenní akce jako datum)
+    function z(d) { return d.toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z"; }
+    var cd = a.od.length === 10, k = akKonec(a), od, dd;
+    if (cd) { od = a.od.replace(/-/g, ""); dd = akIso(k).replace(/-/g, ""); }
+    else { od = z(akD(a.od)); dd = z(k); }
+    return "od=" + od + "&do=" + dd + "&t=" + encodeURIComponent(a.t) + "&m=" + encodeURIComponent(akMisto(a).replace(/ · [\d,]+ k?m$/, "")) +
+      "&u=" + encodeURIComponent(a.u || "") + "&id=" + encodeURIComponent(a.id);
+  }
+  function akIcsOtevri(par) {
+    umtUrl().then(function (u) {
+      if (u) { location.href = u + "/ics?" + par; return; }
+      toast("Kalendář se teď nepodařilo připravit. Zkuste to prosím za chvíli.");
+    }).catch(function () { toast("Kalendář se teď nepodařilo připravit. Zkuste to prosím za chvíli."); });
   }
   function viewAkceDetail(a) {
     var ted = new Date(), s = akD(a.od), cas = akCasTxt(a);
@@ -1358,7 +1362,7 @@
       akFoto(a, "akhero") +
       (a.pop ? '<div class="card dcard"><div class="dtitle">O akci</div><div class="akpop">' + esc(a.pop) + "</div></div>" : "") +
       dcard("Podrobnosti", pod) +
-      (a.z ? "" : '<a class="btn akcal" href="' + akIcs(a) + '" download="akce.ics">' + SVG('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M12 13v5M9.5 15.5h5"/>', 16, "currentColor", 2.2) + "Přidat do kalendáře</a>") +
+      (a.z ? "" : '<button type="button" class="btn akcal" data-ics="' + esc(akIcs(a)) + '">' + SVG('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M12 13v5M9.5 15.5h5"/>', 16, "currentColor", 2.2) + "Přidat do kalendáře</button>") +
       '<div class="note">Zdroj: ' + AK_SRC[a.src][0] + ". Termín se může změnit, před návštěvou ho ověřte na webu akce.</div>" +
       "</div>" + FOOT_AK;
   }
@@ -3201,6 +3205,7 @@
     if (sq) sq.addEventListener("input", function () { state.skQ = sq.value; document.getElementById("sklist").innerHTML = skolyListHtml(); app.querySelectorAll("#sklist [data-sk]").forEach(function (b) { b.addEventListener("click", function () { openSkola(b.getAttribute("data-sk")); }); }); });
     app.querySelectorAll("[data-nav]").forEach(function (b) { b.addEventListener("click", function () { prepniTab(b.getAttribute("data-nav")); }); });
     app.querySelectorAll("[data-act]").forEach(function (b) { b.addEventListener("click", function () { domuAkce(b.getAttribute("data-act")); }); });
+    app.querySelectorAll("[data-ics]").forEach(function (b) { b.addEventListener("click", function () { akIcsOtevri(b.getAttribute("data-ics")); }); });
     app.querySelectorAll("[data-skryt]").forEach(function (b) { b.addEventListener("click", function () { skryj(b.getAttribute("data-skryt")); render(); }); });
     app.querySelectorAll("[data-voda]").forEach(function (b) { b.addEventListener("click", function () { openVoda(b.getAttribute("data-voda")); }); });
     app.querySelectorAll("[data-share]").forEach(function (b) { b.addEventListener("click", function () { var p = b.getAttribute("data-share").split(":"); sdilej(p[0], p.slice(1).join(":")); }); });

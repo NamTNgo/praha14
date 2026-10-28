@@ -88,6 +88,21 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: cors });
     const url = new URL(request.url);
     const json = (x, st) => new Response(JSON.stringify(x), { status: st || 200, headers: { ...cors, "Content-Type": "application/json", "Cache-Control": "no-store" } });
+    // „Přidat do kalendáře“: bezstavový převod parametrů na .ics (iPhone soubor z data: URL neotevře, z odpovědi serveru ano)
+    if (url.pathname === "/ics" && request.method === "GET") {
+      const q = url.searchParams, cas = /^\d{8}(T\d{6}Z)?$/;
+      const od = q.get("od") || "", dd = q.get("do") || "";
+      if (!cas.test(od) || !cas.test(dd) || od.length !== dd.length) return json({ chyba: "vstup" }, 400);
+      const txt = (s, n) => String(s || "").slice(0, n).replace(/[\r\n]+/g, " ").replace(/([\\,;])/g, "\\$1");
+      const odkaz = /^https?:\/\/[^\s]{1,400}$/.test(q.get("u") || "") ? q.get("u") : "";
+      const den = od.length === 8;
+      const now = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+      const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Pod okny//Akce//CS", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "BEGIN:VEVENT",
+        "UID:" + txt(q.get("id"), 80).replace(/[^\w.-]/g, "") + "@pod-okny", "DTSTAMP:" + now,
+        (den ? "DTSTART;VALUE=DATE:" : "DTSTART:") + od, (den ? "DTEND;VALUE=DATE:" : "DTEND:") + dd,
+        "SUMMARY:" + txt(q.get("t"), 200), "LOCATION:" + txt(q.get("m"), 200)].concat(odkaz ? ["URL:" + odkaz, "DESCRIPTION:" + txt(odkaz, 400)] : [], ["END:VEVENT", "END:VCALENDAR"]).join("\r\n");
+      return new Response(ics + "\r\n", { headers: { "Content-Type": "text/calendar; charset=utf-8", "Content-Disposition": 'attachment; filename="akce.ics"', "Cache-Control": "no-store" } });
+    }
     const stub = env.HLASY.get(env.HLASY.idFromName("vse"));
     const platne = (k) => /^(voda|el):[\w-]{1,40}$/.test(k);
     const okD = (d) => /^[\w-]{8,64}$/.test(d || "");

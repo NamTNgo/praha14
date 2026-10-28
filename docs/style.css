@@ -235,12 +235,13 @@ button.link { border:none; font-family:inherit; cursor:pointer; }
 .akempty { padding:22px 18px; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
 .akempty .note { margin:0; font-size:14px; }
 .akempty .dlinks { margin-top:6px; }
-.akbtn { margin:0; border-radius:20px; padding:11px 16px; font-size:14px; }
-.akbtn2 { border:none; cursor:pointer; font-family:inherit; font-size:14px; }
+/* v kartě: hlavní akce tónovaná, druhá textová (DESIGN.md – Tlačítka v kartě) */
+.akbtn { margin:0; border:none; cursor:pointer; font:inherit; font-size:14px; font-weight:800; border-radius:999px; padding:11px 16px; min-height:44px; background:var(--brand-tint); color:var(--brand); }
+.akbtn2 { margin:0; border:none; cursor:pointer; font:inherit; font-size:14px; font-weight:800; background:none; color:var(--brand); padding:11px 8px; min-height:44px; }
 .akkdy { font-size:15.5px; font-weight:700; color:var(--green); }
 .akhero { width:100%; max-height:260px; border-radius:18px; object-fit:cover; display:block; background:#eceef2; }
 .akpop { font-size:15px; line-height:1.55; white-space:pre-line; overflow-wrap:anywhere; }
-.akcal { display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; border-radius:16px; padding:15px; min-height:48px; margin:0; }
+.akcal { width:100%; border:none; cursor:pointer; font:inherit; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; border-radius:16px; padding:15px; min-height:48px; margin:0; }
 /* Akce: proužek dní a kalendář */
 .akprouzek { display:flex; flex-direction:column; gap:8px; margin-bottom:-4px; }
 .akprhl { display:flex; justify-content:space-between; align-items:center; padding:0 0 0 4px; min-height:44px; }  /* „Dnes“ (44 px) se objevuje při posunu proužku – výška řádku se nesmí měnit */
