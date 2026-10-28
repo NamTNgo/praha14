@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 45760190 B za 1 s (pokus 1)
-DATEX: 5642 situačních záznamů -> 7 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5428 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 53 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 39), ('publicevent', 26), ('conditions', 20), ('authorityoperation', 19), ('environmentalobstruction', 13), ('carparks', 13), ('nonweatherrelatedroadconditions', 4), ('weatherrelatedroadconditions', 4), ('disturbanceactivity', 4), ('roadsideservicedisruption', 3), ('equipmentorsystemfault', 2), ('generalinstructionormessagetoroadusers', 1)]
+DATEX: staženo 42072494 B za 2 s (pokus 1)
+DATEX: 5476 situačních záznamů -> 7 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 5271 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 53 prošlé
+  jiné druhy událostí: [('publicevent', 31), ('abnormaltraffic', 31), ('conditions', 23), ('environmentalobstruction', 13), ('carparks', 13), ('authorityoperation', 11), ('nonweatherrelatedroadconditions', 4), ('weatherrelatedroadconditions', 4), ('disturbanceactivity', 3), ('roadsideservicedisruption', 2), ('poorenvironmentconditions', 2), ('generalinstructionormessagetoroadusers', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -17,7 +17,7 @@ uzavírky P14 strana 1: 15 bloků
 sloučení: 7 z NDIC + 6 z aktualit MČ (1 duplicit zahozeno)
 uzavirky: 13 záznamů
 zastavky: 260 záznamů
-výluky PID: 2 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 7 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "high", "display_type": "inline", "text": "Havárie inženýrských sítí - přerušen provoz TRAM v obratišti Zvonařka. Více na www.DPP.cz.", "text_en": "Infrastructure network failure - no TRAM service at Zvonařka turning loop. More at www.DPP.cz.", "related_stops": [{"id": "U209Z1P", "name": "Jiřího z Poděbrad", "platform_code": "A"}, {"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}, {"id": "U400Z4P", "name": "Muzeum", "platform_code": "D"}, {"id": "U515Z1P", "name": "Olšanské hřbitovy", "platform_code": "A"}], "valid_from": "2026-10-17T20:55:00+02:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "c59e1287-1b58-4be0-8613-69a99b3ebd8b"}
+    {"priority": "normal", "display_type": "inline", "text": "Provoz TRAM v úseku Otakarova - I. P. Pavlova do 1. 11. přerušen. TRAM 6 vedena odklonem přes Albertov. Do zastávky I. P. Pavlova využijte TRAM 11 v protisměru.", "text_en": "No tram service between Otakarova and I. P. Pavlova until 1 Nov. Tram 6 is diverted via Albertov. To I. P. Pavlova stop use tram 11 from opposite direction.", "related_stops": [{"id": "U463Z51P", "name": "Nádraží Vršovice", "platform_code": "Z1"}, {"id": "U508Z1P", "name": "Bohemians", "platform_code": "A"}, {"id": "U463Z1P", "name": "Nádraží Vršovice", "platform_code": "A"}], "valid_from": "2026-10-28T04:30:00+01:00", "valid_to": "2026-11-01T23:59:00+01:00", "repeat": {"time_start": "04:30:00", "time_end": "23:59:00"}, "id": "80b3bbc7-d59d-477c-88c5-584351643076"}
 pid: 0 záznamů
