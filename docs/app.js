@@ -819,15 +819,18 @@
       '<div class="hnote">zákaz zastavení, vozidla se odtahují na náklady majitele</div></div>',
       "Rozpis TSK pro Prahu " + c.mc, c.src, "Celý rozpis (PDF)");
   }
+  var I_CLOUDX = '<path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 10 4 4 0 0 1 18 18z"/><path d="m4 4 16 16"/>';
+  function vypadek(t, s, id, url, ut) {
+    return '<div class="dempty"><span class="dei">' + SVG(I_CLOUDX, 30, "#6f41bc", 2) + '</span><div class="det">' + t + '</div><div class="des">' + s + "</div>" +
+      '<div class="deb"><button type="button" class="btn" id="' + id + '">Zkusit znovu</button>' + (url ? '<a class="detx" href="' + url + '" target="_blank" rel="noopener">' + ut + " " + SVG(I_EXT, 13, "currentColor", 2.5) + "</a>" : "") + "</div></div>";
+  }
   // "Vašátkova" -> "ve Vašátkově" se neobejde bez skloňování; raději ulici necháme v 1. pádě
   function sklon(u) { return "ulici " + u; }
 
   function dopravaBody(a) {
     var c = cisteniPro(a), uz = uzavirkyPro(a), pi = pidPro(a), h = "";
-    if (!data.doprava) {
-      return '<div class="card-dashed row top"><span class="badge" style="background:#eceef2">' + SVG(I_INFO, 18, "#686c76") +
-        '</span><div class="grow"><div class="t1">Dopravní omezení se připravují</div>' +
-        '<div class="note" style="margin-top:2px">Data se právě doplňují. Zkuste to prosím později.</div></div></div>';
+    if (!data.doprava) {   // výpadek dat: centrovaný stav (DESIGN.md – Výpadek dat), parkování má vlastní zdroj a zůstává
+      return vypadek("Dopravu se nepodařilo načíst", "Zdroj dat TSK a NDIC právě neodpovídá. Zkuste to prosím za pár minut.", "dopznovu", "https://www.dopravniinfo.cz/", "Živá mapa") + parkovaniKarta(a);
     }
     if (!c && !uz.length && !pi.v.length && !nehodyPro(a).length) {
       h += '<div class="card row top klid"><span class="badge" style="background:#e6f1e9">' +
@@ -3356,6 +3359,12 @@
       x.nazev = state.adrNazev || "Adresa"; x.upoz = up ? up.checked : true;
       if (state.adrRen != null) { av.list[state.adrRen] = x; } else { av.list.push(x); av.akt = av.list.length - 1; }
       adrUloz(av); state.address = av.list[av.akt]; state.adrNova = null; state.adrRen = null; state.tab = "domu"; render(); window.scrollTo(0, 0);
+    });
+    var dz = document.getElementById("dopznovu");
+    if (dz) dz.addEventListener("click", function () {
+      dz.disabled = true; dz.textContent = "Načítám…";
+      getJSON("data/doprava.json").then(function (j) { data.doprava = j; render(); })
+        .catch(function () { toast("Pořád to nejde. Zkuste to prosím za pár minut."); dz.disabled = false; dz.textContent = "Zkusit znovu"; });
     });
     var r = document.getElementById("retry");
     if (r) r.addEventListener("click", boot);
