@@ -62,6 +62,20 @@ def text(h):
     return re.sub(r"\n{2,}", "\n", t).strip()
 
 
+# zbytky z webů (MKP: „Obrázek“, „Další termíny“ + výpis dalších akcí, štítky) – v popisu akce nemají co dělat
+POP_STOP = re.compile(r"^(Obrázek|Další termíny|Další akce|Podobné akce|Mohlo by vás zajímat|Související akce|Sdílet|Sdílejte)$", re.I)
+POP_TAG = re.compile(r"^(Vstupné|Zdarma|Kurz|Setkání|Hry|Vzdělání|Přednáška|Workshop|Výstava|Koncert|Pro (děti|dospělé|seniory|mládež|rodiče a děti|rodiny)[^.]{0,30}?,?|\d{1,2}\. \d{1,2}\. \d{4} \(\w{2}\),? [\d:–-]+)$")
+def cist_popis(t):
+    rad = [r.strip() for r in (t or "").split("\n")]
+    for i, r in enumerate(rad):
+        if POP_STOP.match(r):
+            rad = rad[:i]
+            break
+    while rad and (not rad[-1] or POP_TAG.match(rad[-1])):
+        rad.pop()
+    return "\n".join(rad).strip()
+
+
 def zkrat(t, n=1400):
     t = (t or "").strip()
     if len(t) <= n:
@@ -159,7 +173,7 @@ def akce(src, id_, t, od, do, celyden, url, misto="", adresa_text="", popis="", 
     r = {
         "id": src + "-" + str(id_), "src": src, "t": t, "od": od, "do": do, "cd": bool(celyden),
         "m": (misto[:1].upper() + misto[1:]) if misto else "", "a": (a[0] if a else (adresa_text or "")).strip(" ,"),
-        "lat": lat, "lon": lon, "mc": mc, "u": url, "img": img or "", "pop": zkrat(popis),
+        "lat": lat, "lon": lon, "mc": mc, "u": url, "img": img or "", "pop": zkrat(cist_popis(popis)),
     }
     r.update(priznaky(t, popis, kw.get("cena", "")))
     if kw.get("cena"):
