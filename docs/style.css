@@ -744,3 +744,9 @@ button.lk-row:last-child{border-bottom:none}
 .input{padding-left:16px}
 .input-wrap:has(>svg) .input{padding-left:46px}
 .toast{text-align:left}
+/* prázdný stav (DESIGN.md – Prázdný stav): stejná centrovaná karta jako výpadek dat, akce tónovaná nebo textová */
+.dbtn{font:inherit;font-size:14.5px;font-weight:700;color:var(--brand);background:var(--brand-tint);border:none;border-radius:12px;padding:13px 18px;min-height:44px;cursor:pointer}
+.dbtn:active{background:#e4dcf7}
+button.detx{font:inherit;font-size:14.5px;font-weight:700;background:none;border:none;cursor:pointer}
+.mapavyp{padding:64px 16px 0}
+.list .dempty,.body .dempty{margin-top:4px}

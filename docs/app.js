@@ -3,6 +3,15 @@
   var RADIUS = 1000;
   var KEY = "praha14.address";
   var app = document.getElementById("app");
+  app.addEventListener("click", function (e) {   // akce v prázdných stavech (DESIGN.md – Prázdný stav)
+    var b = e.target.closest && e.target.closest("[data-qclr],[data-frst],[data-okvse],[data-mapaznovu],[data-mapaseznam]");
+    if (!b) return;
+    if (b.hasAttribute("data-qclr")) { state[b.getAttribute("data-qclr") + "Q"] = ""; render(); return; }
+    if (b.hasAttribute("data-frst")) { var d = FB[b.getAttribute("data-frst")]; state[d.f] = "all"; state[d.m] = "all"; d.x.forEach(function (x) { state[x[2]] = "all"; }); fZmena(); return; }
+    if (b.hasAttribute("data-okvse")) { state.okSet = []; state.mapaPohled = null; prepniTab(okTab(state.okPohled)); return; }
+    if (b.hasAttribute("data-mapaznovu")) { mapaLib = null; render(); return; }
+    if (b.hasAttribute("data-mapaseznam")) { state.okPohled = "seznam"; prepniTab(okTab("seznam")); }
+  });
   var data = null;       // {stations, addresses}
   var state = { address: null, query: "", tab: "domu", okSet: [], okPohled: "mapa", vodaSel: null, patSel: null, vodaZ: null, stView: "list", stHist: [], stSel: null, stF: "all", stM: "all", stVse: {}, domuVse: false, skF: "all", skZ: "all", skM: "all", skView: "list", skHist: [], skSel: null, skQ: "", sheet: null, spadVse: false, dopVse: false,
     dkView: "list", dkHist: [], dkSel: null, dkF: "all", dkM: "all", dkQ: "",
@@ -589,15 +598,14 @@
     if (!data.skoly) return vypadek("Školy se nepodařilo načíst", "Rejstřík škol MŠMT právě neodpovídá. Zkuste to prosím za pár minut.", "skoly", [["https://rejstriky.msmt.cz/rejskoly/", "Rejstřík škol"]]);
     var near = skNear(a);
     var h = filterBar() + '<div class="list"><div class="label">V okruhu 1 km od adresy · ' + near.length + "</div>";
-    if (!near.length) h += '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="t1">V okruhu 1 km nic nenajdeme</div><div class="note" style="margin-top:2px">Zkuste jiný filtr nebo celý seznam.</div></div></div>';
+    if (!near.length) h += prazdno(I_OKIK, "Do 1 km nic nenajdeme", "Zkuste jiný filtr nebo celý seznam. Celý seznam Prahy 9 a 14 je pod tímto.");
     near.forEach(function (x) { h += skolaCard(x.s, x.d, x.p); });
     h += "</div>" + '<button type="button" class="btn-link" id="skfull">Celý seznam Prahy 9 a 14 (' + data.skoly.length + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     return h;
   }
   function skolyListHtml() {
     var r = skFull();
-    return '<div class="label">Nalezeno: ' + r.length + "</div>" + (r.length ? r.map(function (s) { return skolaCard(s); }).join("") :
-      '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="t1">Nic jsme nenašli</div><div class="note" style="margin-top:2px">Zkuste jiný název, ulici nebo filtr.</div></div></div>');
+    return r.length ? '<div class="label">Nalezeno: ' + r.length + "</div>" + r.map(function (s) { return skolaCard(s); }).join("") : hledaniNic("sk", "Zkuste jiný název nebo ulici.");
   }
   function viewSkolyFull() {
     return '<div class="head"><button type="button" class="btn-edit" id="skback" style="align-self:flex-start">' + SVG('<path d="m15 6-6 6 6 6"/>', 14, "currentColor", 2.4) + "Zpět</button>" +
@@ -827,6 +835,17 @@
         return '<a class="detx" href="' + o[0] + '" target="_blank" rel="noopener">' + o[1] + " " + SVG(I_EXT, 13, "currentColor", 2.5) + "</a>";
       }).join("") + "</div></div>";
   }
+  // prázdný výsledek (DESIGN.md – Prázdný stav): centrovaná karta, ikona v kruhu, nadpis, věta, akce
+  var I_LUPA = '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', I_OKIK = '<path d="M20 6 9 17l-5-5"/>';
+  function prazdno(ic, t, s, akce) {
+    return '<div class="dempty"><span class="dei">' + SVG(ic, 30, "#6f41bc", 2) + '</span><div class="det">' + t + '</div><div class="des">' + s + "</div>" +
+      (akce ? '<div class="deb">' + akce + "</div>" : "") + "</div>";
+  }
+  function hledaniNic(k, rada) {   // k = "dk" | "sk"
+    var q = (state[k + "Q"] || "").trim(), d = FB[k], filtr = d && (state[d.f] !== "all" || state[d.m] !== "all" || d.x.some(function (x) { return state[x[2]] !== "all"; }));
+    return prazdno(I_LUPA, q ? "Pro „" + esc(q) + "“ nic nemáme" : "Nic jsme nenašli", rada,
+      (q ? '<button type="button" class="dbtn" data-qclr="' + k + '">Vymazat hledání</button>' : "") + (filtr ? '<button type="button" class="detx" data-frst="' + k + '">Zrušit filtry</button>' : ""));
+  }
   var VYP_ZDROJ = { doprava: "doprava", skoly: "skoly", doktori: "doktori", akce: "akce", stavby: "stavby" };
   // "Vašátkova" -> "ve Vašátkově" se neobejde bez skloňování; raději ulici necháme v 1. pádě
   function sklon(u) { return "ulici " + u; }
@@ -993,7 +1012,7 @@
   function dkFilterBar() { return fBar("dk"); }
   function dkListHtml() {
     var r = dkFull();
-    if (!r.length) return '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="t1">Nic jsme nenašli</div><div class="note" style="margin-top:2px">Zkuste jiný obor, jméno nebo ulici.</div></div></div>';
+    if (!r.length) return hledaniNic("dk", "Zkuste jiné jméno, obor nebo ulici.");
     return r.map(function (s) { return doktorCard(s, null); }).join("");
   }
   var DK_NEAR = 5;    // v okolí je lékařů klidně přes sto, seznam v okolí proto krátíme
@@ -1002,7 +1021,7 @@
     var near = dkNear(a), vic = near.length > DK_NEAR;
     var h = dkFilterBar() + '<div class="list"><div class="label">' +
       (vic ? "Nejbližší z " + near.length + " v okruhu 1 km" : "V okruhu 1 km od adresy · " + near.length) + "</div>";
-    if (!near.length) h += '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="t1">V okruhu 1 km nic nenajdeme</div><div class="note" style="margin-top:2px">Zkuste jiný obor nebo celý seznam.</div></div></div>';
+    if (!near.length) h += prazdno(I_OKIK, "Do 1 km nic nenajdeme", "Zkuste jiný obor nebo celý seznam. Celý seznam Prahy 9 a 14 je pod tímto.");
     near.slice(0, DK_NEAR).forEach(function (x) { h += doktorCard(x.s, x.d); });
     h += "</div>" + '<button type="button" class="btn-link" id="dkfull">Celý seznam Prahy 9 a 14 (' + data.doktori.length + ")" + SVG(I_CHEV, 14, "currentColor", 2.4) + "</button>";
     return h;
@@ -2537,7 +2556,8 @@
   function okListBody(a) {
     var f = mapaVyber(), xs = mapaPolozky(a, f).map(function (x) { x.d = dist(a.lat, a.lon, x.lat, x.lon); return x; }).sort(function (p, q) { return p.d - q.d; });
     var nazvy = { vse: "V okolí", doprava: "Doprava v okolí", voda: "Voda a proud v okolí", akce: "Akce v okolí", kont: "Kontejnery do 1 km" };
-    if (!xs.length) return '<div class="card-dashed row top">' + dashI() + '<div class="grow"><div class="note" style="margin:0">' + ((state.okSet || []).length === 1 && MAPA_PRAZDNO[state.okSet[0]] || "V okolí teď nic z vybraného není.") + "</div></div></div>";
+    if (!xs.length) { var jen = (state.okSet || []).length === 1 ? state.okSet[0] : "";
+      return prazdno(I_OKIK, OK_KLID[jen] || "Tady teď nic není", MAPA_PRAZDNO[jen] || "V okolí teď nic z vybraného není.", '<button type="button" class="detx" data-okvse>Zobrazit vše v okolí</button>'); }
     return '<div class="list"><div class="label">' + ((state.okSet || []).length === 1 && nazvy[state.okSet[0]] || ((state.okSet || []).length ? "Vybrané v okolí" : "V okolí")) + " · " + xs.length + "</div>" + xs.slice(0, 40).map(function (x) {
       var vnitrek = '<span class="badge" style="background:' + x.soft + '">' + SVG(x.ic, 18, x.bg, 2.2) + '</span><span class="grow"><span class="t1" style="display:block">' + esc(x.t) +
         (x.tag ? ' <span class="mktag ' + x.tag[0] + '">' + esc(x.tag[1]) + "</span>" : "") + '</span><span class="t3" style="display:block">' + esc(x.s.split("\n")[0]) + "</span></span>";
@@ -2633,7 +2653,8 @@
   // filtry mapy fungují jako zaškrtávátka; „Vše“ = všechno kromě kontejnerů
   var MAPA_VSE = ["doprava", "voda", "stavby", "akce"];
   function mapaVyber() { return state.okSet && state.okSet.length ? state.okSet : MAPA_VSE; }
-  var MAPA_PRAZDNO = { akce: "V okolí teď žádné akce nejsou.", doprava: "V okolí teď žádné uzavírky ani nehody nejsou.", voda: "V okolí teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery.", lekari: "Do 1 km nejsou žádní lékaři.", skoly: "Do 1 km nejsou žádné školy." };
+  var OK_KLID = { voda: "V okolí je klid", doprava: "V okolí je klid", akce: "Žádné akce v okolí", stavby: "Žádné stavby v okolí", kont: "Žádné kontejnery v okolí", lekari: "Žádní lékaři v okolí", skoly: "Žádné školy v okolí" };
+  var MAPA_PRAZDNO = { akce: "V okolí teď žádné akce nejsou. Další najdete v kalendáři akcí.", doprava: "Do 1 km teď nejsou žádné uzavírky ani nehody.", voda: "Do 1 km teď není žádná odstávka vody ani vypnutí proudu.", stavby: "V okolí nejsou žádné stavby.", kont: "Do 1 km nejsou žádné kontejnery.", lekari: "Do 1 km nejsou žádní lékaři.", skoly: "Do 1 km nejsou žádné školy." };
   function mapaView(a) {
     void a;
     return '<div class="mapawrap"><div id="mapa" class="mapa"></div>' + okKatChips("chip", "okkat okkat-mapa") + '<div id="mapakarta"></div><div id="mapaprazdno"></div></div>';
@@ -2693,7 +2714,7 @@
       if (pr) pr.innerHTML = pol.length ? "" : '<div class="mprazdno">' + (MAPA_PRAZDNO[f.length === 1 ? f[0] : ""] || "V okolí teď nic z vybraného není.") + "</div>";
     }).catch(function (chyba) {
       try { console.error("mapa:", chyba && chyba.stack || chyba); } catch (e) {}
-      var e2 = document.getElementById("mapa"); if (e2) e2.innerHTML = '<div class="mprazdno" style="position:static;margin:40px 20px">Mapu se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.</div>';
+      var e2 = document.getElementById("mapa"); if (e2) e2.innerHTML = '<div class="mapavyp">' + prazdno(I_CLOUDX, "Mapu se nepodařilo načíst", "Mapové podklady se nenačetly. Zkontrolujte připojení.", '<button type="button" class="btn" data-mapaznovu>Zkusit znovu</button><button type="button" class="detx" data-mapaseznam>Zobrazit seznam</button>') + "</div>";
     });
   }
   function openEl(id) {
