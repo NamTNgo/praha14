@@ -2216,11 +2216,10 @@
     return zavHlav("Participativní rozpočet").replace('<div class="eyebrow">Nahlásit</div>', '<div class="eyebrow">Zapojte se · Praha 14</div>') +
       '<div class="ptext" style="font-size:15px">Navrhněte, co by se mělo v okolí zlepšit – lavičky, zeleň, hřiště, komunitní akce. Nejlepší nápady vyberou v hlasování sami obyvatelé a městská část je zaplatí.</div>' +
       '<a class="btn zavbtn" href="' + cta[1] + '" target="_blank" rel="noopener">' + esc(cta[0]) + " " + SVG(I_EXT, 14, "#fff", 2.4) + "</a>" +
-      '<a class="btn-ext" style="align-self:center" href="' + PAR_WEB + '/zasady" target="_blank" rel="noopener">Pravidla a příklady projektů ' + SVG(I_EXT, 12, "currentColor", 2.4) + "</a>" +
       '<div class="card dcard"><div class="dtitle">Jak to probíhá</div>' + PAR.map(function (x) {
         var on = x.k === k;
         return '<div class="parf' + (on ? " on" : "") + '"><i></i><div><div class="pn">' + esc(x.n) + (on ? ' <span class="parted">teď</span>' : "") + '</div><div class="pt">' + esc(x.t) + "</div></div></div>";
-      }).join("") + "</div>" +
+      }).join("") + '<div class="links"><a href="' + PAR_WEB + '/zasady" target="_blank" rel="noopener">Pravidla a příklady projektů</a></div></div>' +   // vedlejší odkaz = řádek odkazu (DESIGN.md)
       '<div class="note">Až začne hlasování, připomeneme ho tady i na Domů.</div></div>';
   }
   // ---- „U mě taky“: anonymní potvrzení probíhajícího výpadku sousedy (API na Cloudflare, adresa v data/api.json) ----
@@ -2817,7 +2816,7 @@
     doc: '<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>', el: '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>', web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>' };
   var LK_KRATCE = [[/^Otevřít v Google Mapách$/, "Google Mapy"], [/^Otevřít na mapě PVK$/, "Mapa PVK"], [/^(Vyhláška|Oznámení|Opatření) na úřední desce.*$/, "$1"], [/^Dokumenty na portálu EIA$/, "Dokumenty EIA"],
     [/^(Foto a popis|Zpráva) na webu policie$/, "Web policie"], [/^Oznámení MČ Praha \d+$/, "Oznámení MČ"], [/^Harmonogram (.*) \(PDF\)$/, "$1"]];
-  function lkDruh(t) { return /PDF/i.test(t) ? "pdf" : /mapě|mapa|Mapy|Google/i.test(t) ? "map" : /vyhláš|desce|Oznámení|Opatření|Dokument/i.test(t) ? "doc" : "web"; }
+  function lkDruh(t) { return /PDF/i.test(t) ? "pdf" : /mapě|mapa|Mapy|Google/i.test(t) ? "map" : /vyhláš|desce|Oznámení|Opatření|Dokument|Pravidla/i.test(t) ? "doc" : "web"; }
   function lkKratce(t) { for (var i = 0; i < LK_KRATCE.length; i++) if (LK_KRATCE[i][0].test(t)) return t.replace(LK_KRATCE[i][0], LK_KRATCE[i][1]); return t; }
   function lkMapaPrvni(L, a) {
     for (var i = 1; i < a.length; i++) if (lkDruh(a[i].textContent) === "map") { L.insertBefore(a[i], a[0]); a.unshift(a.splice(i, 1)[0]); break; }
