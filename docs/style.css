@@ -740,3 +740,7 @@ button.lk-row:last-child{border-bottom:none}
 .deb{display:flex;gap:6px;margin-top:18px;align-items:center;flex-wrap:wrap;justify-content:center}
 .deb .btn{margin:0}
 .detx{display:inline-flex;gap:5px;align-items:center;color:var(--brand);font-weight:700;font-size:14.5px;padding:12px 10px;min-height:44px;text-decoration:none}
+/* pole bez ikony mají normální odsazení; ikonu vlevo má jen pole v .input-wrap s SVG */
+.input{padding-left:16px}
+.input-wrap:has(>svg) .input{padding-left:46px}
+.toast{text-align:left}
