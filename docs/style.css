@@ -714,3 +714,15 @@ div.okli{cursor:default}
 .vyvb button:active{background:var(--brand-tint)}
 button.lk-row{width:100%;background:none;border:none;border-bottom:1px solid var(--line);border-radius:0;font:inherit;font-weight:600;font-size:14.5px;text-align:left;padding:0;margin:0;cursor:pointer;color:var(--ink)}
 button.lk-row:last-child{border-bottom:none}
+
+/* jednotná tloušťka písma v celé aplikaci (DESIGN.md – Typografie): názvy 800, doplňující text 500, delší text 400 */
+.t1,.ht,.hh-t,.hn,.tydt,.cl,.cn,.stn,.akt,.akrowt,.hname,.vt,.pn,.nrow .t1,.vkarta .t1,.card.klid .t1,.card-dashed .t1,.u-t,.dhead .t1{font-weight:800!important}
+.note,.akm,.cm,.t2,.t3,.stm,.hs,.hh-s,.hm,.tyds,.sta,.ts,.vs,.skadr,.dnote,.hnote,.hdate,.pt,.tydr,.hrw .hw small,.card small,.card-dashed small,.hday small,.tyd small,.akrow small,.u-s{font-weight:500!important}
+.ptext,.ntext,.sub,.center p{font-weight:400!important}
+.eyebrow,.dtitle,.shtitle,.hl,.akk,.akfree{font-weight:800!important}
+.akday>span>span,.stsec>span,.foot,.dl,.vtime .s,.sled div,.sled .grow,.hint .s,span.s{font-weight:500!important}
+.lk-row .grow,.hlink,.dd span,.fopt .grow{font-weight:700!important}
+.tv{font-weight:800!important}
+.sub,.sp .s,.s{font-weight:400}
+.akday span{font-weight:500!important}
+.zpr>span{font-weight:700!important}

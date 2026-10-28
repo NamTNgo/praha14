@@ -105,10 +105,14 @@ Pravidlo pro nová místa: **ovládá to člověk nebo to ukazuje „tady jste /
 |---|---|---|
 | Adresa v hlavičce | 22 px / 800 | jen hlavička (beze změny) |
 | Nadpis sekce (`.hsec b`, `.label`) | 19 px / 700, `letter-spacing:-.02em` | „Upozornění pro vaši adresu“, „Dnes a zítra“, „Voda, elektřina a teplo“ |
-| Název v kartě (`.t1`, `.ht`, `.hn`) | 15 px / 700–800 | první řádek karty |
-| Text | 14 px / 600 | hodnota, čas, adresa |
-| Popis (`.hs`, `.hm`, `.note`) | 12,5–13 px / 400–600, `--muted` | vysvětlení |
-| Eyebrow / zdroj (`.eyebrow`, `.t3`) | 11,5–12 px, `--faint` | nad adresou, „Ověřeno dnes…“ |
+| Název v kartě (`.t1`, `.ht`, `.hn`, `.akt`, `.cn`…) | 15–15,5 px / **800** | první řádek karty – vždy 800 |
+| Doplňující text (`.t2`, `.akm`, `.cm`, `small` v kartě) | 12–14 px / **500** | hodnota, čas, adresa, vzdálenost |
+| Popis (`.hs`, `.hm`, `.note`, `.dnote`) | 12,5–13 px / **500**, `--muted` | vysvětlení pod názvem |
+| Delší text (`.ptext`, `.ntext`, popis akce) | 14,5–15 px / **400** | odstavce |
+| Eyebrow / štítek (`.eyebrow`, `.dtitle`, `.hl`) | 11,5–12 px / **800**, verzálky | nad názvem, nadpis bloku v detailu |
+| Zdroj (`.t3`, patička) | 11–12 px / 500, `--faint` | „Ověřeno dnes…“ |
+
+Tloušťky jsou jen čtyři: **800** názvy a štítky, **700** nadpisy sekcí a tlačítka, **500** doplňující text a popisy, **400** delší odstavce. Jiné řezy se nepoužívají.
 
 **Rozhodovací logika:**
 1. Odpovídá text na „co se děje na mé adrese“? → název v kartě (15/700). Jinak popis.
