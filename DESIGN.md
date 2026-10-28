@@ -148,7 +148,7 @@ Tloušťky jsou jen čtyři: **800** názvy a štítky, **700** nadpisy sekcí a
 | rozcestník do oblastí | **Dlaždice** `.htiles` / `.htile` | Mřížka 2×2 dole na Domů. Ikona v `--brand`, název, hodnota, podtext. Jinam nepřesouvat. |
 | ukázat stavby kolem | **Karusel staveb** `.hcar` / `.hcc` | Obrázek je obsah, ne dekorace. |
 | primární akce (mapa, web, odeslat) | **Tlačítko** `.link`, `.btn-ext` | Pilulka s jemným svislým přechodem `#7b4fd0 → #6237b0` (bílý text 5,4–7,8 : 1), **bez stínu**, ikona šipky ven u externích odkazů. Max. 2 vedle sebe, plné nejvýš jedno. |
-| zrušit výběr ve filtru | **Zrušit výběr** `.shreset` | Sekundární tlačítko vedle hlavního „Zobrazit …“: stejná výška a zaoblení, pozadí `--brand-tint`, text `--brand` 700. Když není nic vybráno, šedé `#f0f1f4` s textem `#a9adb6`. Nikdy podtržený text. |
+| zrušit výběr ve filtru | **Zrušit výběr** `.shreset` | Textové tlačítko vedle hlavního „Zobrazit …“ (jako Podrobnosti / Sdílet): bez pozadí a bez podtržení, text `--brand` 700, dotyková plocha 44 px. Když není nic vybráno, text šedý `#a9adb6`. |
 | vedlejší akce vedle hlavní (Změnit adresu, Přejmenovat) | **Sekundární tlačítko** `.btn-ext.btn-sec` | Pilulka, `--brand-tint` pozadí, text `--brand`. Když je víc akcí vedle sebe, plná je nejvýš jedna – ostatní sekundární. |
 | odebrat / smazat | **Destruktivní tlačítko** `.btn-danger-ic` (ikona koše, kruh 44 px) nebo `.btn-danger` (pilulka s textem) | `--danger` na `--danger-tint`. Vždy **poslední** v řádku/skupině (`margin-left:auto`), ikonková varianta vždy s `aria-label` („Odebrat adresu Domov“). Nikdy plná červená, nikdy jako hlavní akce. Akce bez potvrzení musí jít snadno zopakovat/vrátit. |
 | vedlejší akce v nadpisu sekce | **Odkaz sekce** `.hlink` | Bílá pilulka, text `--brand`. |

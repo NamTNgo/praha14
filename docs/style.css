@@ -726,8 +726,8 @@ button.lk-row:last-child{border-bottom:none}
 .sub,.sp .s,.s{font-weight:400}
 .akday span{font-weight:500!important}
 .zpr>span{font-weight:700!important}
-/* Zrušit výběr = sekundární tlačítko (tónované), stejná výška a tvar jako hlavní „Zobrazit …“ */
+/* Zrušit výběr = textové tlačítko (jako Podrobnosti / Sdílet), bez pozadí a podtržení */
 .shfoot .shgo,.shfoot .shreset{align-self:stretch}
-.shreset{color:var(--brand);background:var(--brand-tint);text-decoration:none;border-radius:12px;padding:13px 18px;font-size:14.5px;font-weight:700;flex:none}
-.shreset:active{background:#e4dcf7}
-.shreset:disabled{opacity:1;color:#a9adb6;background:#f0f1f4}
+.shreset{color:var(--brand);background:none;text-decoration:none;border-radius:12px;padding:13px 10px;font-size:14.5px;font-weight:700;flex:none}
+.shreset:active{background:var(--brand-tint)}
+.shreset:disabled{opacity:1;color:#a9adb6;background:none}
