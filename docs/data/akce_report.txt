@@ -1,15 +1,13 @@
 p9: 12 akcí
 p14: 16 akcí
-mkp: 70 akcí
+mkp: 68 akcí
 
-celkem 94 akcí; kategorie: {'sport': 4, 'vzd': 16, 'vys': 7, 'sen': 15, 'kult': 12, 'deti': 39, 'sous': 1}
-s fotkou: 90, se souřadnicemi: 90, zdarma: 78, zrušeno: 0
+celkem 92 akcí; kategorie: {'sport': 4, 'vzd': 16, 'vys': 7, 'kult': 12, 'deti': 39, 'sen': 13, 'sous': 1}
+s fotkou: 88, se souřadnicemi: 88, zdarma: 76, zrušeno: 0
   [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
-  [mkp sen] 2026-10-29T10:00 → 2026-10-29T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp sen] 2026-10-29T14:00 → 2026-10-29T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [p9 kult] 2026-10-31T11:00 → 2026-10-31T17:00 | Pink Fest - Trocha prevence, trocha magie | Restaurace Podviňák |  📷
   [mkp deti] 2026-10-31T13:00 → 2026-10-31T16:00 | Divadlo Kamishibai | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 deti] 2026-11-01T17:00 → 2026-11-01T17:00 | Halloweenská stezka | Dětské hřiště Kyjská (křižovat | Kyjská 264/24 📷
