@@ -1,3 +1,3 @@
 Praha 9: oznámení PRE na desce 8
-Praha 14: oznámení PRE na desce 7
+Praha 14: oznámení PRE na desce 6
 výstup: 13 plánovaných přerušení v Praze 9/14
