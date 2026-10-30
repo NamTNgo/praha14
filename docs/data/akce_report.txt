@@ -1,9 +1,9 @@
 p9: 12 akcí
 p14: 16 akcí
-mkp: 69 akcí
+mkp: 83 akcí
 
-celkem 93 akcí; kategorie: {'sport': 4, 'vzd': 16, 'vys': 7, 'kult': 12, 'deti': 40, 'sen': 13, 'sous': 1}
-s fotkou: 89, se souřadnicemi: 89, zdarma: 77, zrušeno: 0
+celkem 107 akcí; kategorie: {'sport': 4, 'vzd': 22, 'vys': 7, 'kult': 14, 'deti': 45, 'sen': 13, 'sous': 1, 'zdr': 1}
+s fotkou: 103, se souřadnicemi: 103, zdarma: 91, zrušeno: 0
   [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
@@ -31,7 +31,9 @@ s fotkou: 89, se souřadnicemi: 89, zdarma: 77, zrušeno: 0
   [mkp kult] 2026-11-06T14:00 → 2026-11-06T15:30 | Konverzační klub češtiny | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 sport] 2026-11-07T09:00 → 2026-11-07T09:00 | Turnaj ve stolním tenisu |  | Hloubětínská 80/32
   [p14 sous] 2026-11-07T15:00 → 2026-11-07T15:00 | Svatomartinské slavnosti | KD Kyje | Šimanovská 📷
+  [mkp zdr] 2026-11-07T16:00 → 2026-11-07T18:00 | Klub zdraví | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-11-07T19:00 → 2026-11-08T09:00 | Unikněte Andersenovi | Knihovna Vysočany | Zbuzkova 285/34 📷
+  [mkp vzd] 2026-11-09T15:15 → 2026-11-09T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-11-09T17:00 → 2026-11-09T18:30 | Ostrovy v laguně | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-10T10:00 → 2026-11-10T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp kult] 2026-11-10T15:00 → 2026-11-10T16:00 | Maturitní čajovna: Karel Čapek | Knihovna Vysočany | Zbuzkova 285/34 📷
@@ -55,6 +57,7 @@ s fotkou: 89, se souřadnicemi: 89, zdarma: 77, zrušeno: 0
   [p14 deti] 2026-11-14T15:00 → 2026-11-14T15:00 | Divadlo pro batolata: Pomerančová lodička – Festival Kyjské  | KD Kyje | Šimanovská 📷
   [p14 deti] 2026-11-14T19:00 → 2026-11-14T19:00 | Divadelní pohádka: Lakomá Barka – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
   [p14 deti] 2026-11-15T15:00 → 2026-11-15T15:00 | Divadelní pohádka: Zlatovláska – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
+  [mkp vzd] 2026-11-16T15:15 → 2026-11-16T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-11-17T16:00 → 2026-11-17T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [p14 vys] 2026-11-18T14:00 → 2026-11-27 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [mkp deti] 2026-11-18T15:00 → 2026-11-18T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
@@ -67,6 +70,7 @@ s fotkou: 89, se souřadnicemi: 89, zdarma: 77, zrušeno: 0
   [mkp sport] 2026-11-19T17:30 → 2026-11-19T19:00 | Meditace v knihovně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp kult] 2026-11-20T14:00 → 2026-11-20T15:30 | Konverzační klub češtiny | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 kult] 2026-11-22T15:00 → 2026-11-22T15:00 | Vánoční zdobení H55 | H55 | Hloubětínská 1138/5 📷
+  [mkp vzd] 2026-11-23T15:15 → 2026-11-23T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-11-24T15:00 → 2026-11-24T16:00 | Knihovna kouzel s kouzelníkem Filipem Stružkou | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-24T16:00 → 2026-11-24T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-24T16:00 → 2026-11-24T17:00 | Autorské čtení s Petrem Čepkem | Knihovna Černý Most | Bobkova 534/47 📷
@@ -85,15 +89,25 @@ s fotkou: 89, se souřadnicemi: 89, zdarma: 77, zrušeno: 0
   [mkp sen] 2026-11-27T14:00 → 2026-11-27T15:30 | Přírodní klimatizace města | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 deti] 2026-11-28T11:00 → 2026-11-28T11:00 | Mikulášská nadílka v KD Kyje 28. 11. 2026 v 11.00 hodin | KD Kyje | Šimanovská 47
   [p14 deti] 2026-11-28T14:00 → 2026-11-28T14:00 | Mikulášská nadílka v KD Kyje 28. 11. 2026 ve 14.00 hodin | KD Kyje | Šimanovská 47
+  [mkp vzd] 2026-11-30T15:15 → 2026-11-30T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-01T16:00 → 2026-12-01T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp sen] 2026-12-03T14:00 → 2026-12-03T16:00 | Digitální poradna v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
+  [mkp deti] 2026-12-03T17:00 → 2026-12-03T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-12-04T17:00 → 2026-12-04T19:00 | Háčkování a pletení pro začátečníky | Knihovna Černý Most | Bobkova 534/47 📷
+  [mkp vzd] 2026-12-07T15:15 → 2026-12-07T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
+  [mkp kult] 2026-12-08T15:00 → 2026-12-08T16:00 | Maturitní čajovna: Franz Kafka | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-08T16:00 → 2026-12-08T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [p14 vys] 2026-12-09T18:30 → 2026-12-09T18:30 | Koncert v Galerii 14 – 9. 12. 2026 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
+  [mkp deti] 2026-12-09T19:00 → 2026-12-09T20:00 | Kvízový večer | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-10T15:10 → 2026-12-10T16:10 | Doučování na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
+  [mkp deti] 2026-12-10T17:00 → 2026-12-10T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sen] 2026-12-11T16:30 → 2026-12-11T17:30 | Digitální bezpečnost | Knihovna Hloubětín | Hloubětínská 1138/5 📷
+  [mkp kult] 2026-12-11T18:00 → 2026-12-11T19:00 | Studentský kvíz | Knihovna Vysočany | Zbuzkova 285/34 📷
+  [mkp vzd] 2026-12-14T15:15 → 2026-12-14T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
+  [mkp deti] 2026-12-14T16:00 → 2026-12-14T18:00 | Kouzlení s provázkem | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-15T16:00 → 2026-12-15T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp sen] 2026-12-17T10:00 → 2026-12-17T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-12-17T16:00 → 2026-12-17T17:00 | Povídání o létání | Knihovna Hloubětín | Hloubětínská 1138/5 📷
+  [mkp deti] 2026-12-17T17:00 → 2026-12-17T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-22T16:00 → 2026-12-22T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-29T16:00 → 2026-12-29T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
