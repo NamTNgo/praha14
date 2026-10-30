@@ -1,9 +1,9 @@
 p9: 12 akcí
 p14: 16 akcí
-mkp: 68 akcí
+mkp: 69 akcí
 
-celkem 92 akcí; kategorie: {'sport': 4, 'vzd': 16, 'vys': 7, 'kult': 12, 'deti': 39, 'sen': 13, 'sous': 1}
-s fotkou: 88, se souřadnicemi: 88, zdarma: 76, zrušeno: 0
+celkem 93 akcí; kategorie: {'sport': 4, 'vzd': 16, 'vys': 7, 'kult': 12, 'deti': 40, 'sen': 13, 'sous': 1}
+s fotkou: 89, se souřadnicemi: 89, zdarma: 77, zrušeno: 0
   [p9 sport] 2026-04-01 → 2026-10-31 | Otevřená školní hřiště pro veřejnost 2026 |  |  📷
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
@@ -96,3 +96,4 @@ s fotkou: 88, se souřadnicemi: 88, zdarma: 76, zrušeno: 0
   [mkp sen] 2026-12-17T10:00 → 2026-12-17T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-12-17T16:00 → 2026-12-17T17:00 | Povídání o létání | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-22T16:00 → 2026-12-22T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
+  [mkp deti] 2026-12-29T16:00 → 2026-12-29T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
