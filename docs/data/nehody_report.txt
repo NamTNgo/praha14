@@ -1,2 +1,2 @@
-DATEX: staženo 38631089 B za 3 s (pokus 1)
-nehody SELHALY: no element found: line 1274, column 1468284
+DATEX: staženo 38691890 B za 3 s (pokus 1)
+nehody SELHALY: unclosed token: line 1274, column 1529157
