@@ -1,5 +1,5 @@
 událostí PVK celkem: 33, v Praze 9/14: 4 (probíhá 0, plánované 4), náhradních zásobování: 0
-  planovana 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Nad Mazankou 33
+  planovana 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Pod vodárenskou věží 20
   planovana 2026-11-03T08:00 – 2026-11-03T11:00  1 adres  Pod plynojemem 164
   planovana 2026-11-03T09:00 – 2026-11-03T12:00  2 adres  Národních hrdinů 891
-  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 22
+  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 32
