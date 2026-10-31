@@ -1,3 +1,3 @@
-projektů v databázi CAMP: 1288
-novostavby.com nedostupné (štítky prodeje vynechány): HTTP Error 404: Not Found
-v okolí Prahy 9 a 14: 461 ({'stavi': 156, 'povoluje': 61, 'planuje': 153, 'hotovo': 91}); doplněno popisů: 2; obrázky: {'foto': 405, 'žádný': 36, 'plan': 20}
+projektů v databázi CAMP: 1297
+novostavby.com nedostupné (štítky prodeje vynechány): HTTP Error 403: Forbidden
+v okolí Prahy 9 a 14: 464 ({'stavi': 157, 'povoluje': 62, 'planuje': 153, 'hotovo': 92}); doplněno popisů: 4; obrázky: {'foto': 408, 'žádný': 36, 'plan': 20}
