@@ -15,4 +15,3 @@ kandidátů: 18
   PHA1280 Energetické centrum Malešice · Závěry zjišťovacího řízení · Hrdlořezy, Kyje
   PHA1284 Recyklační středisko Hloubětín - EcoVera · Ukončeno z jiných důvodů · Hloubětín
   PHA1294 Košinka II · Nepodléhá dalšímu posuzování · Libeň
-  ! detail PLK1923 <urlopen error timed out>
