@@ -1,4 +1,5 @@
-Praha 9: na desce 56 vyhlášek
-Praha 14: vyhlášek odboru výstavby 4
-nových stavebních vyhlášek ke zpracování: 0
-záměrů v datech: 11 (s polohou 10), dopravních opatření: 5
+Praha 9: na desce 54 vyhlášek
+Praha 14: vyhlášek odboru výstavby 5
+nových stavebních vyhlášek ke zpracování: 1
+  + [rozhodnuto] Ocelkova, Praha 9 · Sítě a přípojky · ulice Lipnická (ulice)
+záměrů v datech: 12 (s polohou 11), dopravních opatření: 5
