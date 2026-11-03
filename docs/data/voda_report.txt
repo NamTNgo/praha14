@@ -1,7 +1,8 @@
-událostí PVK celkem: 40, v Praze 9/14: 6 (probíhá 3, plánované 3), náhradních zásobování: 10
-  probiha 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Lhotákova 16
+událostí PVK celkem: 41, v Praze 9/14: 7 (probíhá 4, plánované 3), náhradních zásobování: 10
+  probiha 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Na štěpnici 3
   probiha 2026-11-03T08:00 – 2026-11-03T11:00  1 adres  Pod plynojemem 164
   probiha 2026-11-03T09:00 – 2026-11-03T12:00  2 adres  Národních hrdinů 891
-  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Chládkova 4
-  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 5
-  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Počernická 21
+  probiha 2026-11-03T11:44 – 2026-11-04T15:00  1 adres  
+  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Dubského 21
+  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 11
+  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Slunečná 5
