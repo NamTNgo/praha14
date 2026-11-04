@@ -1,6 +1,6 @@
 událostí PVK celkem: 40, v Praze 9/14: 5 (probíhá 2, plánované 3), náhradních zásobování: 0
-  probiha 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Davídkova 86
+  probiha 2026-11-03T08:00 – 2026-11-03T20:00  382 adres  Za vodárnou 36
   probiha 2026-11-03T11:44 – 2026-11-04T15:00  1 adres  
-  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 24
-  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 5
-  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Počernická 5
+  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Dubského 30
+  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 2
+  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Počernická 19
