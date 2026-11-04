@@ -1,4 +1,5 @@
-Praha 9: na desce 57 vyhlášek
-Praha 14: vyhlášek odboru výstavby 5
-nových stavebních vyhlášek ke zpracování: 0
-záměrů v datech: 13 (s polohou 12), dopravních opatření: 5
+Praha 9: na desce 61 vyhlášek
+Praha 14: vyhlášek odboru výstavby 6
+nových stavebních vyhlášek ke zpracování: 1
+  + [zahajeno] Zateplení a stavební úpravy BD Vašátkova č.p. 1028 · Zateplení · Vašátkova 1028/19 (adresa)
+záměrů v datech: 14 (s polohou 13), dopravních opatření: 5
