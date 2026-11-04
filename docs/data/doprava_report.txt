@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 37626706 B za 1 s (pokus 1)
-DATEX: 4567 situačních záznamů -> 7 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4399 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 49 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 36), ('publicevent', 21), ('carparks', 13), ('environmentalobstruction', 11), ('conditions', 10), ('authorityoperation', 9), ('roadsideservicedisruption', 2), ('equipmentorsystemfault', 2), ('generalinstructionormessagetoroadusers', 1), ('disturbanceactivity', 1)]
+DATEX: staženo 39616880 B za 1 s (pokus 1)
+DATEX: 4602 situačních záznamů -> 6 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4413 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 50 prošlé
+  jiné druhy událostí: [('abnormaltraffic', 41), ('publicevent', 22), ('conditions', 21), ('carparks', 13), ('environmentalobstruction', 11), ('authorityoperation', 10), ('equipmentorsystemfault', 3), ('disturbanceactivity', 3), ('roadsideservicedisruption', 2), ('generalinstructionormessagetoroadusers', 1), ('nonweatherrelatedroadconditions', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -14,10 +14,10 @@ uzavírky P9 strana 2: 12 bloků
 uzavírky P9 strana 3: 5 bloků
 uzavírky P14 strana 1: 7 bloků
 uzavírky P14 strana 1: 15 bloků
-sloučení: 7 z NDIC + 5 z aktualit MČ (1 duplicit zahozeno)
-uzavirky: 12 záznamů
+sloučení: 6 z NDIC + 5 z aktualit MČ (1 duplicit zahozeno)
+uzavirky: 11 záznamů
 zastavky: 260 záznamů
 výluky PID: 6 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "normal", "display_type": "inline", "text": "V souvislosti s konáním několika veřejných shromáždění a následných pochodů může docházet k  omezení provozu MHD v širším centru Prahy. \nPro cestování v centru města doporučujeme využít linky metra.", "text_en": "Due to several public gatherings and subsequent marches, public transport service in the wider centre of Prague may be limited. Metro lines are recommended for travel within the city centre.", "related_stops": [{"id": "U203Z1P", "name": "Jindřišská", "platform_code": "A"}, {"id": "U203Z2P", "name": "Jindřišská", "platform_code": "B"}, {"id": "U237Z4P", "name": "Moráň", "platform_code": "F"}, {"id": "U237Z2P", "name": "Karlovo náměstí", "platform_code": "B"}, {"id": "U209Z1P", "name": "Jiřího z Poděbrad", "platform_code": "A"}, {"id": "U237Z5P", "name": "Palackého náměstí", "platform_code": "L"}, {"id": "U385Z1P", "name": "Pankrác", "platform_code": "F"}, {"id": "U385Z11P", "name": "Pankrác", "platform_code": "A"}, {"id": "U385Z2P", "name": "Pankrác", "platform_code": "G"}, {"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}, {"id": "U400Z2P", "name": "Muzeum", "platform_code": "B"}, {"id": "U400Z4P", "name": 
+    {"priority": "normal", "display_type": "inline", "text": "Náhradní doprava za vlaky xS4 odjíždí ze stanoviště H (jako pravidelné linky 340 a 350 do Roztok)", "text_en": "Bus replacement service for xS4 trains departs from stand H (as regular bus lines 340 and 350 to Roztoky).", "related_stops": [{"id": "U321Z6P", "name": "Dejvická", "platform_code": "C"}, {"id": "U321Z7P", "name": "Dejvická", "platform_code": "D"}, {"id": "U321Z7", "name": "Dejvická", "platform_code": "D"}], "valid_from": "2026-11-04T13:10:00+01:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "cb57edfc-ff24-435f-bd14-c6dd5f53ec58"}
 pid: 0 záznamů
