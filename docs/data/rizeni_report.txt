@@ -1,4 +1,6 @@
-Praha 9: na desce 64 vyhlášek
-Praha 14: vyhlášek odboru výstavby 6
-nových stavebních vyhlášek ke zpracování: 0
-záměrů v datech: 14 (s polohou 13), dopravních opatření: 5
+Praha 9: na desce 67 vyhlášek
+Praha 14: vyhlášek odboru výstavby 7
+nových stavebních vyhlášek ke zpracování: 2
+  + [jes] Přístavba venkovního výtahu, Matějkova 1935/12 · Přístavba · Matějkova 1935/12 (adresa)
+  + [zahajeno] Revitalizace lodžií a zateplení JV fasády BD Breitcetlova · Zateplení · ulice Breitcetlova (ulice)
+záměrů v datech: 16 (s polohou 15), dopravních opatření: 5
