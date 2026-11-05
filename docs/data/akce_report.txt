@@ -1,15 +1,14 @@
-p9: 12 akcí
-p14: 16 akcí
-mkp: 95 akcí
+p9: 11 akcí
+p14: 21 akcí
+mkp: 94 akcí
 
-celkem 119 akcí; kategorie: {'vzd': 23, 'vys': 6, 'kult': 16, 'sen': 17, 'deti': 51, 'sport': 3, 'sous': 1, 'zdr': 2}
-s fotkou: 115, se souřadnicemi: 115, zdarma: 102, zrušeno: 0
+celkem 119 akcí; kategorie: {'vzd': 23, 'vys': 6, 'kult': 17, 'sen': 16, 'deti': 51, 'sport': 3, 'sous': 1, 'zdr': 2}
+s fotkou: 114, se souřadnicemi: 115, zdarma: 101, zrušeno: 0
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [p9 vzd] 2026-11-04T17:00 → 2026-11-25T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
-  [mkp sen] 2026-11-05T09:00 → 2026-11-05T13:00 | Jak na chytrý telefon a tablet – aplikace a jak na ně | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-05T14:00 → 2026-11-05T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-05T14:00 → 2026-11-05T16:00 | Data státu pro každého | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [p14 vys] 2026-11-05T14:00 → 2026-11-12 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
@@ -30,6 +29,7 @@ s fotkou: 115, se souřadnicemi: 115, zdarma: 102, zrušeno: 0
   [mkp kult] 2026-11-10T17:00 → 2026-11-10T18:00 | Autorské čtení s Denisou Sobolovou | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-11-10T17:00 → 2026-11-10T18:00 | Živá příroda Namibie | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-11-11T15:00 → 2026-11-11T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
+  [p14 kult] 2026-11-11T17:00 → 2026-11-11T17:00 | Jak se změní železnice v Praze? Přijďte diskutovat | KD Kyje | Šimanovská 47
   [p9 vzd] 2026-11-11T17:00 → 2026-11-11T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p14 vys] 2026-11-11T18:30 → 2026-11-11T18:30 | Koncert komorní hudby v Galerii 14 – 11. 11. 2026 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [mkp deti] 2026-11-11T19:00 → 2026-11-11T20:00 | Kvízový večer | Knihovna Vysočany | Zbuzkova 285/34 📷
