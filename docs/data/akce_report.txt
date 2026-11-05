@@ -1,21 +1,17 @@
 p9: 11 akcí
 p14: 21 akcí
-mkp: 94 akcí
+mkp: 87 akcí
 
-celkem 119 akcí; kategorie: {'vzd': 23, 'vys': 6, 'kult': 17, 'sen': 16, 'deti': 51, 'sport': 3, 'sous': 1, 'zdr': 2}
-s fotkou: 114, se souřadnicemi: 115, zdarma: 101, zrušeno: 0
+celkem 115 akcí; kategorie: {'vzd': 24, 'vys': 6, 'kult': 17, 'sport': 3, 'sous': 1, 'zdr': 2, 'deti': 49, 'sen': 13}
+s fotkou: 110, se souřadnicemi: 111, zdarma: 95, zrušeno: 0
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-14 → 2026-11-05 | VIII. Salon Prahy 9 | Galerie 9 | Sokolovská 324 📷
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [p9 vzd] 2026-11-04T17:00 → 2026-11-25T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
-  [mkp sen] 2026-11-05T14:00 → 2026-11-05T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp sen] 2026-11-05T14:00 → 2026-11-05T16:00 | Data státu pro každého | Knihovna Hloubětín | Hloubětínská 1138/5 📷
+  [p14 vzd] 2026-11-05T14:00 → 2026-11-05T14:00 | Data státu pro každého – workshop |  | Hloubětínská 1138/5 📷
   [p14 vys] 2026-11-05T14:00 → 2026-11-12 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
-  [mkp deti] 2026-11-05T15:15 → 2026-11-05T16:15 | Doučování ve Vysočanech | Knihovna Vysočany | Zbuzkova 285/34 📷
-  [mkp sen] 2026-11-05T16:30 → 2026-11-05T17:30 | WhatsApp na Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
-  [mkp vzd] 2026-11-05T17:00 → 2026-11-05T19:00 | Zdraví v éře umělé inteligence | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp deti] 2026-11-05T17:00 → 2026-11-05T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
+  [p14 vzd] 2026-11-05T16:30 → 2026-11-05T16:30 | WhatsApp |  | Hloubětínská 1138/5 📷
   [mkp kult] 2026-11-06T14:00 → 2026-11-06T15:30 | Konverzační klub češtiny | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 sport] 2026-11-07T09:00 → 2026-11-07T09:00 | Turnaj ve stolním tenisu |  | Hloubětínská 80/32
   [p14 sous] 2026-11-07T15:00 → 2026-11-07T15:00 | Svatomartinské slavnosti | KD Kyje | Šimanovská 📷
