@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 40115750 B za 1 s (pokus 1)
-DATEX: 4681 situačních záznamů -> 6 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4513 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 51 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 27), ('publicevent', 21), ('conditions', 14), ('carparks', 13), ('environmentalobstruction', 11), ('authorityoperation', 11), ('equipmentorsystemfault', 3), ('roadsideservicedisruption', 2), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1), ('nonweatherrelatedroadconditions', 1)]
+DATEX: staženo 40655589 B za 2 s (pokus 1)
+DATEX: 4740 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4567 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 50 prošlé
+  jiné druhy událostí: [('abnormaltraffic', 22), ('conditions', 21), ('publicevent', 21), ('carparks', 13), ('authorityoperation', 12), ('environmentalobstruction', 11), ('equipmentorsystemfault', 4), ('roadsideservicedisruption', 2), ('generalinstructionormessagetoroadusers', 1), ('nonweatherrelatedroadconditions', 1), ('disturbanceactivity', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -14,10 +14,10 @@ uzavírky P9 strana 2: 12 bloků
 uzavírky P9 strana 3: 5 bloků
 uzavírky P14 strana 1: 7 bloků
 uzavírky P14 strana 1: 15 bloků
-sloučení: 6 z NDIC + 5 z aktualit MČ (1 duplicit zahozeno)
-uzavirky: 11 záznamů
+sloučení: 8 z NDIC + 5 z aktualit MČ (1 duplicit zahozeno)
+uzavirky: 13 záznamů
 zastavky: 260 záznamů
-výluky PID: 5 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 6 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
     {"priority": "normal", "display_type": "inline", "text": "Do odvolání je přerušen provoz TRAM v obratišti Zvonařka. Linka 13 je odkloněna na Náměstí Bratří Synků.", "text_en": "Until further notice no tram service at Zvonařka stop. Tram line 13 is diverted to Náměstí Bratří Synků stop.", "related_stops": [{"id": "U400Z4P", "name": "Muzeum", "platform_code": "D"}, {"id": "U400Z1P", "name": "Muzeum", "platform_code": "A"}], "valid_from": "2026-11-02T04:00:00+01:00", "valid_to": "2026-12-01T01:00:00+01:00", "repeat": {"time_start": null, "time_end": null}, "id": "76e0883c-f71e-4e29-b3a8-e2881c8bc7eb"}
 pid: 0 záznamů
