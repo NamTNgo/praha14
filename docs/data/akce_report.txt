@@ -1,9 +1,9 @@
 p9: 10 akcí
 p14: 19 akcí
-mkp: 91 akcí
+mkp: 90 akcí
 
-celkem 117 akcí; kategorie: {'vzd': 22, 'vys': 6, 'kult': 16, 'sport': 3, 'sous': 1, 'zdr': 2, 'deti': 54, 'sen': 13}
-s fotkou: 112, se souřadnicemi: 113, zdarma: 99, zrušeno: 0
+celkem 116 akcí; kategorie: {'vzd': 22, 'vys': 6, 'kult': 16, 'sport': 3, 'sous': 1, 'deti': 54, 'sen': 13, 'zdr': 1}
+s fotkou: 111, se souřadnicemi: 112, zdarma: 98, zrušeno: 0
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
@@ -11,7 +11,6 @@ s fotkou: 112, se souřadnicemi: 113, zdarma: 99, zrušeno: 0
   [p14 vys] 2026-11-05T14:00 → 2026-11-12 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [p14 sport] 2026-11-07T09:00 → 2026-11-07T09:00 | Turnaj ve stolním tenisu |  | Hloubětínská 80/32
   [p14 sous] 2026-11-07T15:00 → 2026-11-07T15:00 | Svatomartinské slavnosti | KD Kyje | Šimanovská 📷
-  [mkp zdr] 2026-11-07T16:00 → 2026-11-07T18:00 | Klub zdraví | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-11-07T19:00 → 2026-11-08T09:00 | Unikněte Andersenovi | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-11-09T15:15 → 2026-11-09T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-11-09T17:00 → 2026-11-09T18:30 | Ostrovy v laguně | Knihovna Černý Most | Bobkova 534/47 📷
