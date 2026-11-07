@@ -1,4 +1,4 @@
 událostí PVK celkem: 35, v Praze 9/14: 3 (probíhá 0, plánované 3), náhradních zásobování: 0
-  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Chládkova 4
-  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  
-  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Slunečná 5
+  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 17
+  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 11
+  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Počernická 15
