@@ -1,17 +1,14 @@
 p9: 10 akcí
-p14: 19 akcí
-mkp: 90 akcí
+p14: 18 akcí
+mkp: 88 akcí
 
-celkem 116 akcí; kategorie: {'vzd': 22, 'vys': 6, 'kult': 16, 'sport': 3, 'sous': 1, 'deti': 54, 'sen': 13, 'zdr': 1}
-s fotkou: 111, se souřadnicemi: 112, zdarma: 98, zrušeno: 0
+celkem 114 akcí; kategorie: {'vzd': 22, 'vys': 7, 'kult': 16, 'sen': 13, 'deti': 53, 'sport': 2, 'zdr': 1}
+s fotkou: 110, se souřadnicemi: 110, zdarma: 97, zrušeno: 0
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [p9 vzd] 2026-11-04T17:00 → 2026-11-25T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p14 vys] 2026-11-05T14:00 → 2026-11-12 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
-  [p14 sport] 2026-11-07T09:00 → 2026-11-07T09:00 | Turnaj ve stolním tenisu |  | Hloubětínská 80/32
-  [p14 sous] 2026-11-07T15:00 → 2026-11-07T15:00 | Svatomartinské slavnosti | KD Kyje | Šimanovská 📷
-  [mkp deti] 2026-11-07T19:00 → 2026-11-08T09:00 | Unikněte Andersenovi | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-11-09T15:15 → 2026-11-09T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp vzd] 2026-11-09T17:00 → 2026-11-09T18:30 | Ostrovy v laguně | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-10T10:00 → 2026-11-10T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
@@ -120,3 +117,4 @@ s fotkou: 111, se souřadnicemi: 112, zdarma: 98, zrušeno: 0
   [mkp deti] 2026-12-29T16:00 → 2026-12-29T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-30T15:00 → 2026-12-30T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [p14 vys] 2027-01-06T18:30 → 2027-01-06T18:30 | Vernisáž výstavy v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
+  [p14 vys] 2027-01-07T14:00 → 2027-01-28 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
