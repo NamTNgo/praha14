@@ -1,21 +1,19 @@
 p9: 10 akcí
 p14: 19 akcí
-mkp: 88 akcí
+mkp: 86 akcí
 
-celkem 115 akcí; kategorie: {'vzd': 22, 'vys': 7, 'kult': 17, 'sen': 13, 'deti': 53, 'sport': 2, 'zdr': 1}
-s fotkou: 110, se souřadnicemi: 111, zdarma: 97, zrušeno: 0
+celkem 113 akcí; kategorie: {'vzd': 20, 'vys': 7, 'kult': 17, 'sen': 13, 'deti': 53, 'sport': 2, 'zdr': 1}
+s fotkou: 108, se souřadnicemi: 109, zdarma: 95, zrušeno: 1
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [p9 vzd] 2026-11-04T17:00 → 2026-11-25T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p14 vys] 2026-11-05T14:00 → 2026-11-12 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
-  [mkp vzd] 2026-11-09T15:15 → 2026-11-09T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
-  [mkp vzd] 2026-11-09T17:00 → 2026-11-09T18:30 | Ostrovy v laguně | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-10T10:00 → 2026-11-10T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp kult] 2026-11-10T15:00 → 2026-11-10T16:00 | Maturitní čajovna: Karel Čapek | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-11-10T16:00 → 2026-11-10T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-10T16:30 → 2026-11-10T18:30 | Doučování na Černém Mostě II | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp kult] 2026-11-10T17:00 → 2026-11-10T18:00 | Autorské čtení s Denisou Sobolovou | Knihovna Černý Most | Bobkova 534/47 📷
+  [mkp kult] 2026-11-10T17:00 → 2026-11-10T18:00 | Autorské čtení s Denisou Sobolovou: zrušeno | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-11-10T17:00 → 2026-11-10T18:00 | Živá příroda Namibie | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-11-11T15:00 → 2026-11-11T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [p14 kult] 2026-11-11T17:00 → 2026-11-11T17:00 | Jak se změní železnice v Praze? Přijďte diskutovat | KD Kyje | Šimanovská 47
