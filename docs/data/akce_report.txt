@@ -1,9 +1,9 @@
 p9: 10 akcí
-p14: 18 akcí
+p14: 19 akcí
 mkp: 88 akcí
 
-celkem 114 akcí; kategorie: {'vzd': 22, 'vys': 7, 'kult': 16, 'sen': 13, 'deti': 53, 'sport': 2, 'zdr': 1}
-s fotkou: 110, se souřadnicemi: 110, zdarma: 97, zrušeno: 0
+celkem 115 akcí; kategorie: {'vzd': 22, 'vys': 7, 'kult': 17, 'sen': 13, 'deti': 53, 'sport': 2, 'zdr': 1}
+s fotkou: 110, se souřadnicemi: 111, zdarma: 97, zrušeno: 0
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
@@ -107,6 +107,7 @@ s fotkou: 110, se souřadnicemi: 110, zdarma: 97, zrušeno: 0
   [mkp deti] 2026-12-15T17:00 → 2026-12-15T18:00 | Pohádková babička na Proseku | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-12-16T15:00 → 2026-12-16T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-12-16T16:00 → 2026-12-16T18:00 | Hrací odpoledne – Harry Potter | Knihovna Černý Most | Bobkova 534/47 📷
+  [p14 kult] 2026-12-16T18:00 → 2026-12-16T18:00 | Na hravé struně Vánoc | SŠ podnikání a gastronomie | Za černým mostem 362/3
   [mkp sen] 2026-12-17T10:00 → 2026-12-17T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-12-17T16:00 → 2026-12-17T17:00 | Povídání o létání | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-17T17:00 → 2026-12-17T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
