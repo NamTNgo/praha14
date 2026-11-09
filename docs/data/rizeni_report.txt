@@ -1,4 +1,5 @@
-Praha 9: na desce 68 vyhlášek
+Praha 9: na desce 69 vyhlášek
 Praha 14: vyhlášek odboru výstavby 7
-nových stavebních vyhlášek ke zpracování: 0
+nových stavebních vyhlášek ke zpracování: 1
+  + [oop] OOP K moravině, Sokolovská, U Skládky - stavba MOCCA · Komunikace · ulice K Moravině (ulice)
 záměrů v datech: 17 (s polohou 16), dopravních opatření: 5
