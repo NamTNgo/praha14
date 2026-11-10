@@ -1,4 +1,5 @@
-Praha 9: opatření na desce 8
+Praha 9: opatření na desce 9
 Praha 14: přechodných úprav provozu na desce 10
-nové: OOP K moravině, Sokolovská, U Skládky - stavba MOCCA · 2026-11-09–2026-11-09 · K Moravině, Sokolovská, U skládky · 
-výstup: 8 platných opatření
+nové: Na Břehu - OOP (jeřáb pro demontáž technologie) · None–None · Na břehu · 
+nové: NN1922 (Na Vyhlídce) - OOP (vyparkování po dobu výstavby BD  · 2027-01-01–2027-10-31 · Na vyhlídce · zajištění vjezdu a výjezdu vozidel stavby na stave
+výstup: 9 platných opatření
