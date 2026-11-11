@@ -1,3 +1,5 @@
-Praha 9: oznámení PRE na desce 7
+Praha 9: oznámení PRE na desce 8
 Praha 14: oznámení PRE na desce 2
-výstup: 7 plánovaných přerušení v Praze 9/14
+nové: Predistribuce, a.s., oznámení o přerušení dodávky elektřiny
+    dny ? 08:00–16:00 · adres 2 · ulic bez čísla Vysočany
+výstup: 3 plánovaných přerušení v Praze 9/14
