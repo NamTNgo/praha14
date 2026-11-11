@@ -1,9 +1,9 @@
-p9: 15 akcí
+p9: 17 akcí
 p14: 18 akcí
-mkp: 80 akcí
+mkp: 78 akcí
 
-celkem 112 akcí; kategorie: {'vzd': 19, 'vys': 8, 'kult': 15, 'sen': 17, 'deti': 50, 'sport': 2, 'zdr': 1}
-s fotkou: 107, se souřadnicemi: 108, zdarma: 90, zrušeno: 1
+celkem 112 akcí; kategorie: {'vzd': 20, 'vys': 8, 'kult': 15, 'sen': 17, 'deti': 49, 'sport': 2, 'zdr': 1}
+s fotkou: 107, se souřadnicemi: 107, zdarma: 88, zrušeno: 1
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
@@ -11,11 +11,9 @@ s fotkou: 107, se souřadnicemi: 108, zdarma: 90, zrušeno: 1
   [p14 vys] 2026-11-05T14:00 → 2026-11-12 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [p9 vys] 2026-11-10 → 2026-12-10 | T. svatošová - Aequilibrium | Galerie 9 | Sokolovská 324 📷
   [p9 sen] 2026-11-10T14:00 → 2026-12-03T14:00 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
-  [mkp deti] 2026-11-11T15:00 → 2026-11-11T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [p14 kult] 2026-11-11T17:00 → 2026-11-11T17:00 | Jak se změní železnice v Praze? Přijďte diskutovat | KD Kyje | Šimanovská 47
   [p9 vzd] 2026-11-11T17:00 → 2026-11-11T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p14 vys] 2026-11-11T18:30 → 2026-11-11T18:30 | Koncert komorní hudby v Galerii 14 – 11. 11. 2026 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
-  [mkp deti] 2026-11-11T19:00 → 2026-11-11T20:00 | Kvízový večer | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sen] 2026-11-12T14:00 → 2026-11-12T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-11-12T15:10 → 2026-11-12T16:10 | Doučování na Černém Mostě I | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-11-12T15:15 → 2026-11-12T16:15 | Doučování ve Vysočanech | Knihovna Vysočany | Zbuzkova 285/34 📷
@@ -30,6 +28,7 @@ s fotkou: 107, se souřadnicemi: 108, zdarma: 90, zrušeno: 1
   [p14 deti] 2026-11-14T15:00 → 2026-11-14T15:00 | Divadlo pro batolata: Pomerančová lodička – Festival Kyjské  | KD Kyje | Šimanovská 📷
   [p14 deti] 2026-11-14T19:00 → 2026-11-14T19:00 | Divadelní pohádka: Lakomá Barka – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
   [p14 deti] 2026-11-15T15:00 → 2026-11-15T15:00 | Divadelní pohádka: Zlatovláska – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
+  [p9 deti] 2026-11-15T15:00 → 2026-11-15T17:00 | Skrz na skrz / Neděle pro rodiny s dětmi |  | Kolbenova 923/34a 📷
   [mkp vzd] 2026-11-16T15:15 → 2026-11-16T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-11-17T16:00 → 2026-11-17T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [p14 vys] 2026-11-18T14:00 → 2026-11-27 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
@@ -54,6 +53,7 @@ s fotkou: 107, se souřadnicemi: 108, zdarma: 90, zrušeno: 1
   [mkp deti] 2026-11-25T15:00 → 2026-11-25T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-11-25T16:00 → 2026-11-25T18:00 | Hrací odpoledne | Knihovna Černý Most | Bobkova 534/47 📷
   [p9 vzd] 2026-11-25T17:00 → 2026-11-25T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
+  [p9 vzd] 2026-11-25T18:00 → 2026-11-25T20:00 | přednáška Elišky Fulínové Vítejte v antropocénu! / Mimo obra |  |  📷
   [mkp sen] 2026-11-26T10:00 → 2026-11-26T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-11-26T14:00 → 2026-11-26T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [p9 sen] 2026-11-26T14:00 → 2026-11-26T15:30 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
