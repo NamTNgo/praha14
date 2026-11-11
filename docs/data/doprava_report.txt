@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 37780696 B za 1 s (pokus 1)
-DATEX: 4558 situačních záznamů -> 6 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4330 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 51 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 40), ('publicevent', 35), ('conditions', 27), ('authorityoperation', 21), ('carparks', 13), ('environmentalobstruction', 11), ('weatherrelatedroadconditions', 6), ('nonweatherrelatedroadconditions', 4), ('equipmentorsystemfault', 3), ('roadsideservicedisruption', 2), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1)]
+DATEX: staženo 36515096 B za 1 s (pokus 1)
+DATEX: 4545 situačních záznamů -> 7 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4314 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 53 prošlé
+  jiné druhy událostí: [('abnormaltraffic', 41), ('conditions', 35), ('publicevent', 34), ('authorityoperation', 14), ('carparks', 13), ('environmentalobstruction', 11), ('nonweatherrelatedroadconditions', 4), ('equipmentorsystemfault', 3), ('disturbanceactivity', 3), ('roadsideservicedisruption', 2), ('weatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -11,13 +11,13 @@ DATEX: 4558 situačních záznamů -> 6 prací/uzavírek + 0 nehod pro P9/14; za
 cisteni: 0 záznamů
 uzavírky P9 strana 1: 12 bloků
 uzavírky P9 strana 2: 12 bloků
-uzavírky P9 strana 3: 5 bloků
+uzavírky P9 strana 3: 1 bloků
 uzavírky P14 strana 1: 7 bloků
 uzavírky P14 strana 1: 15 bloků
-sloučení: 6 z NDIC + 7 z aktualit MČ (0 duplicit zahozeno)
-uzavirky: 13 záznamů
+sloučení: 7 z NDIC + 8 z aktualit MČ (0 duplicit zahozeno)
+uzavirky: 15 záznamů
 zastavky: 260 záznamů
-výluky PID: 7 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 5 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
     {"priority": "normal", "display_type": "general", "text": "Zastávka dočasně přemístěna o 170 m proti směru jízdy, resp. pro část spojů do obratiště.", "text_en": "The stop temporarily moved 170 m against the direction of travel, respectively for some services to the terminus.", "related_stops": [{"id": "U97Z3P", "name": "Dolní Počernice", "platform_code": "C"}], "valid_from": "2026-11-08T21:00:00+01:00", "valid_to": "2026-11-22T23:59:00+01:00", "repeat": {"time_start": null, "time_end": null}, "id": "1911bbaa-b337-47f8-a211-4624ac8ff708"}
 pid: 1 záznamů
