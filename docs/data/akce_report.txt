@@ -1,9 +1,9 @@
-p9: 16 akcí
+p9: 25 akcí
 p14: 16 akcí
-mkp: 78 akcí
+mkp: 70 akcí
 
-celkem 109 akcí; kategorie: {'vzd': 19, 'vys': 7, 'kult': 14, 'sen': 17, 'deti': 49, 'sport': 2, 'zdr': 1}
-s fotkou: 105, se souřadnicemi: 104, zdarma: 87, zrušeno: 1
+celkem 109 akcí; kategorie: {'vzd': 18, 'vys': 7, 'kult': 20, 'sen': 16, 'deti': 46, 'sport': 1, 'zdr': 1}
+s fotkou: 105, se souřadnicemi: 97, zdarma: 79, zrušeno: 1
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
@@ -11,13 +11,6 @@ s fotkou: 105, se souřadnicemi: 104, zdarma: 87, zrušeno: 1
   [p14 vys] 2026-11-05T14:00 → 2026-11-12 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [p9 vys] 2026-11-10 → 2026-12-10 | T. svatošová - Aequilibrium | Galerie 9 | Sokolovská 324 📷
   [p9 sen] 2026-11-10T14:00 → 2026-12-03T14:00 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
-  [mkp sen] 2026-11-12T14:00 → 2026-11-12T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp deti] 2026-11-12T15:10 → 2026-11-12T16:10 | Doučování na Černém Mostě I | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp deti] 2026-11-12T15:15 → 2026-11-12T16:15 | Doučování ve Vysočanech | Knihovna Vysočany | Zbuzkova 285/34 📷
-  [mkp vzd] 2026-11-12T17:00 → 2026-11-12T18:30 | Dentosofie: zuby jako psychoemocionální obraz člověka | Knihovna Prosek | Měšická 806/3 📷
-  [mkp kult] 2026-11-12T17:00 → 2026-11-12T18:00 | Hudebně-literární posezení se Zbyňkem Zemanem | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp deti] 2026-11-12T17:00 → 2026-11-12T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
-  [mkp sport] 2026-11-12T17:30 → 2026-11-12T19:00 | Meditace v knihovně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-11-13T16:30 → 2026-11-13T18:00 | Strašidelné příběhy | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-11-13T17:00 → 2026-11-13T19:00 | Háčkování a pletení pro začátečníky | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp kult] 2026-11-13T18:00 → 2026-11-13T19:00 | Studentský kvíz | Knihovna Vysočany | Zbuzkova 285/34 📷
@@ -27,7 +20,6 @@ s fotkou: 105, se souřadnicemi: 104, zdarma: 87, zrušeno: 1
   [p14 deti] 2026-11-15T15:00 → 2026-11-15T15:00 | Divadelní pohádka: Zlatovláska – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
   [p9 deti] 2026-11-15T15:00 → 2026-11-15T17:00 | Skrz na skrz / Neděle pro rodiny s dětmi |  | Kolbenova 923/34a 📷
   [mkp vzd] 2026-11-16T15:15 → 2026-11-16T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
-  [mkp deti] 2026-11-17T16:00 → 2026-11-17T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [p14 vys] 2026-11-18T14:00 → 2026-11-27 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [mkp deti] 2026-11-18T15:00 → 2026-11-18T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [p9 vzd] 2026-11-18T17:00 → 2026-11-18T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
@@ -65,6 +57,7 @@ s fotkou: 105, se souřadnicemi: 104, zdarma: 87, zrušeno: 1
   [p14 zdr] 2026-11-29T15:00 → 2026-11-29T15:00 | Kníraté odpoledne | H55 | Hloubětínská 1138/5 📷
   [mkp vzd] 2026-11-30T15:15 → 2026-11-30T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-01T16:00 → 2026-12-01T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
+  [p9 kult] 2026-12-01T17:00 → 2026-12-21T10:00 | VÁNOCE 2026 na Praze 9 |  |  📷
   [p9 sen] 2026-12-02T14:00 → 2026-12-02T15:30 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
   [mkp deti] 2026-12-02T15:00 → 2026-12-02T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-12-02T16:00 → 2026-12-02T18:00 | Vánoční ozdoby | Knihovna Černý Most | Bobkova 534/47 📷
@@ -77,12 +70,15 @@ s fotkou: 105, se souřadnicemi: 104, zdarma: 87, zrušeno: 1
   [mkp sen] 2026-12-03T17:30 → 2026-12-03T18:30 | Vernisáž výstavy Tvorba, která spojuje | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-12-04T17:00 → 2026-12-04T19:00 | Háčkování a pletení pro začátečníky | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-12-05T11:00 → 2026-12-05T12:00 | O třech bratrech a obřisku | Knihovna Černý Most | Bobkova 534/47 📷
+  [p9 deti] 2026-12-05T15:30 → 2026-12-05T18:30 | Mikulášská nadílka v restauraci Podviňák |  | Kovanecká 2507/34 📷
+  [p9 kult] 2026-12-05T15:30 → 2026-12-05T18:30 | VÁNOCE 2026 na Praze 9 |  |  📷
   [mkp vzd] 2026-12-07T15:15 → 2026-12-07T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sen] 2026-12-08T10:00 → 2026-12-08T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp kult] 2026-12-08T15:00 → 2026-12-08T16:00 | Maturitní čajovna: Franz Kafka | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-08T16:00 → 2026-12-08T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-08T16:30 → 2026-12-08T18:30 | Doučování na Černém Mostě II | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-12-09T15:00 → 2026-12-09T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
+  [p9 kult] 2026-12-09T16:00 → 2026-12-09T19:00 | VÁNOCE 2026 na Praze 9 |  |  📷
   [p14 vys] 2026-12-09T18:30 → 2026-12-09T18:30 | Koncert v Galerii 14 – 9. 12. 2026 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [mkp deti] 2026-12-09T19:00 → 2026-12-09T20:00 | Kvízový večer | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sen] 2026-12-10T14:00 → 2026-12-10T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
@@ -93,9 +89,11 @@ s fotkou: 105, se souřadnicemi: 104, zdarma: 87, zrušeno: 1
   [mkp deti] 2026-12-10T17:00 → 2026-12-10T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sen] 2026-12-11T16:30 → 2026-12-11T17:30 | Digitální bezpečnost | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp kult] 2026-12-11T18:00 → 2026-12-11T19:00 | Studentský kvíz | Knihovna Vysočany | Zbuzkova 285/34 📷
+  [p9 kult] 2026-12-12T13:00 → 2026-12-12T17:00 | VÁNOCE 2026 na Praze 9 |  |  📷
   [mkp kult] 2026-12-12T15:30 → 2026-12-12T16:30 | Vánoční rozjímání | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-12-14T15:15 → 2026-12-14T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp deti] 2026-12-14T16:00 → 2026-12-14T18:00 | Kouzlení s provázkem | Knihovna Vysočany | Zbuzkova 285/34 📷
+  [p9 kult] 2026-12-14T17:00 → 2026-12-14T20:00 | VÁNOCE 2026 na Praze 9 |  |  📷
   [mkp deti] 2026-12-15T16:00 → 2026-12-15T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-15T16:30 → 2026-12-15T18:30 | Doučování na Černém Mostě II | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-12-15T17:00 → 2026-12-15T18:00 | Pohádková babička na Proseku | Knihovna Prosek | Měšická 806/3 📷
@@ -106,6 +104,8 @@ s fotkou: 105, se souřadnicemi: 104, zdarma: 87, zrušeno: 1
   [mkp vzd] 2026-12-17T16:00 → 2026-12-17T17:00 | Povídání o létání | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-17T17:00 → 2026-12-17T18:00 | Čtvrtek s pohádkou | Knihovna Vysočany | Zbuzkova 285/34 📷
   [p9 kult] 2026-12-19 → 2026-12-19 | Muzika Špalíček Praha - předvánoční koncert |  |  📷
+  [p9 kult] 2026-12-19T16:00 → 2026-12-19T20:00 | VÁNOCE 2026 na Praze 9 |  |  📷
+  [p9 kult] 2026-12-21T10:00 → 2026-12-21T12:00 | VÁNOCE 2026 na Praze 9 |  |  📷
   [mkp deti] 2026-12-22T16:00 → 2026-12-22T16:45 | Angličtina v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [mkp deti] 2026-12-22T16:30 → 2026-12-22T18:30 | Doučování na Černém Mostě II | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-12-23T15:00 → 2026-12-23T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
