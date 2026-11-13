@@ -1,4 +1,5 @@
-Praha 9: na desce 75 vyhlášek
+Praha 9: na desce 78 vyhlášek
 Praha 14: vyhlášek odboru výstavby 5
-nových stavebních vyhlášek ke zpracování: 0
-záměrů v datech: 20 (s polohou 19), dopravních opatření: 5
+nových stavebních vyhlášek ke zpracování: 1
+  + [jes] Rozšíření parkoviště pro osobní vozy garáže Klíčov · Komunikace · vysocany (ku)
+záměrů v datech: 21 (s polohou 20), dopravních opatření: 5
