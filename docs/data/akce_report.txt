@@ -1,18 +1,15 @@
 p9: 25 akcí
 p14: 16 akcí
-mkp: 71 akcí
+mkp: 68 akcí
 
-celkem 110 akcí; kategorie: {'vzd': 18, 'vys': 6, 'kult': 20, 'sen': 16, 'deti': 48, 'sport': 1, 'zdr': 1}
-s fotkou: 106, se souřadnicemi: 98, zdarma: 80, zrušeno: 1
+celkem 107 akcí; kategorie: {'vzd': 17, 'vys': 6, 'kult': 19, 'sen': 16, 'deti': 47, 'sport': 1, 'zdr': 1}
+s fotkou: 103, se souřadnicemi: 95, zdarma: 77, zrušeno: 1
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [p9 vzd] 2026-11-04T17:00 → 2026-11-25T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p9 vys] 2026-11-10 → 2026-12-10 | T. svatošová - Aequilibrium | Galerie 9 | Sokolovská 324 📷
   [p9 sen] 2026-11-10T14:00 → 2026-12-03T14:00 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
-  [mkp deti] 2026-11-13T16:30 → 2026-11-13T18:00 | Strašidelné příběhy | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp vzd] 2026-11-13T17:00 → 2026-11-13T19:00 | Háčkování a pletení pro začátečníky | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp kult] 2026-11-13T18:00 → 2026-11-13T19:00 | Studentský kvíz | Knihovna Vysočany | Zbuzkova 285/34 📷
   [p14 kult] 2026-11-13T19:00 → 2026-11-13T19:00 | Alleluja, svatá Nituš! – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
   [p14 deti] 2026-11-14T15:00 → 2026-11-14T15:00 | Divadlo pro batolata: Pomerančová lodička – Festival Kyjské  | KD Kyje | Šimanovská 📷
   [p14 deti] 2026-11-14T19:00 → 2026-11-14T19:00 | Divadelní pohádka: Lakomá Barka – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
