@@ -1,3 +1,3 @@
-projektů v databázi CAMP: 1307
+projektů v databázi CAMP: 1308
 novostavby.com nedostupné (štítky prodeje vynechány): HTTP Error 403: Forbidden
-v okolí Prahy 9 a 14: 470 ({'stavi': 162, 'povoluje': 64, 'planuje': 150, 'hotovo': 94}); doplněno popisů: 0; obrázky: {'foto': 414, 'žádný': 36, 'plan': 20}
+v okolí Prahy 9 a 14: 470 ({'stavi': 163, 'povoluje': 64, 'planuje': 149, 'hotovo': 94}); doplněno popisů: 1; obrázky: {'foto': 414, 'žádný': 36, 'plan': 20}
