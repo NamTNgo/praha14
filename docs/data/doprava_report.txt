@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 38984941 B za 1 s (pokus 1)
-DATEX: 4710 situačních záznamů -> 10 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4488 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 55 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 36), ('publicevent', 31), ('conditions', 28), ('carparks', 13), ('authorityoperation', 12), ('environmentalobstruction', 11), ('equipmentorsystemfault', 4), ('roadsideservicedisruption', 3), ('poorenvironmentconditions', 3), ('nonweatherrelatedroadconditions', 2), ('', 2), ('generalinstructionormessagetoroadusers', 1)]
+DATEX: staženo 34455676 B za 1 s (pokus 1)
+DATEX: 4440 situačních záznamů -> 10 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4241 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 54 prošlé
+  jiné druhy událostí: [('publicevent', 32), ('conditions', 27), ('abnormaltraffic', 22), ('carparks', 13), ('environmentalobstruction', 11), ('authorityoperation', 10), ('equipmentorsystemfault', 4), ('roadsideservicedisruption', 2), ('generalinstructionormessagetoroadusers', 1), ('disturbanceactivity', 1), ('nonweatherrelatedroadconditions', 1), ('poorenvironmentconditions', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -17,7 +17,7 @@ uzavírky P14 strana 1: 15 bloků
 sloučení: 10 z NDIC + 6 z aktualit MČ (1 duplicit zahozeno)
 uzavirky: 16 záznamů
 zastavky: 260 záznamů
-výluky PID: 2 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 4 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "normal", "display_type": "general", "text": "Zastávka dočasně přemístěna o 170 m proti směru jízdy, resp. pro část spojů do obratiště.", "text_en": "The stop temporarily moved 170 m against the direction of travel, respectively for some services to the terminus.", "related_stops": [{"id": "U97Z3P", "name": "Dolní Počernice", "platform_code": "C"}], "valid_from": "2026-11-08T21:00:00+01:00", "valid_to": "2026-11-22T23:59:00+01:00", "repeat": {"time_start": null, "time_end": null}, "id": "1911bbaa-b337-47f8-a211-4624ac8ff708"}
+    {"priority": "normal", "display_type": "general", "text": "Provoz TRAM v úseku Sídliště Řepy – Anděl je do cca 17:20 hod. obousměrně přerušen. Náhradní BUS X10 odjíždí ze zastávky v ul. Vrchlického (přístup ul. Mahenovou).", "text_en": "No tram service between Sídliště Řepy and Anděl until approx. 5:20 PM. Replacement bus X10 leaves from stop located in Vrchlického street (accessible by Mahenova street).", "related_stops": [{"id": "U805Z1P", "name": "U Zvonu", "platform_code": "A"}], "valid_from": "2026-11-14T09:50:00+01:00", "valid_to": "2026-11-14T17:15:00+01:00", "repeat": {"time_start": null, "time_end": null}, "id": "9a871d28-aaf8-4f60-945d-4784a3a835c5"}
 pid: 1 záznamů
