@@ -1,17 +1,15 @@
-p9: 25 akcí
+p9: 24 akcí
 p14: 13 akcí
 mkp: 68 akcí
 
-celkem 104 akcí; kategorie: {'vzd': 17, 'vys': 6, 'kult': 18, 'sen': 16, 'deti': 45, 'sport': 1, 'zdr': 1}
-s fotkou: 100, se souřadnicemi: 92, zdarma: 77, zrušeno: 1
+celkem 103 akcí; kategorie: {'vzd': 17, 'vys': 6, 'kult': 18, 'sen': 16, 'deti': 44, 'sport': 1, 'zdr': 1}
+s fotkou: 99, se souřadnicemi: 91, zdarma: 78, zrušeno: 1
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [p9 vzd] 2026-11-04T17:00 → 2026-11-25T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p9 vys] 2026-11-10 → 2026-12-10 | T. svatošová - Aequilibrium | Galerie 9 | Sokolovská 324 📷
   [p9 sen] 2026-11-10T14:00 → 2026-12-03T14:00 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
-  [p14 deti] 2026-11-15T15:00 → 2026-11-15T15:00 | Divadelní pohádka: Zlatovláska – Festival Kyjské kukátko | KD Kyje | Šimanovská 📷
-  [p9 deti] 2026-11-15T15:00 → 2026-11-15T17:00 | Skrz na skrz / Neděle pro rodiny s dětmi |  | Kolbenova 923/34a 📷
   [mkp vzd] 2026-11-16T15:15 → 2026-11-16T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [p14 vys] 2026-11-18T14:00 → 2026-11-27 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [mkp deti] 2026-11-18T15:00 → 2026-11-18T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
@@ -66,6 +64,7 @@ s fotkou: 100, se souřadnicemi: 92, zdarma: 77, zrušeno: 1
   [mkp deti] 2026-12-05T11:00 → 2026-12-05T12:00 | O třech bratrech a obřisku | Knihovna Černý Most | Bobkova 534/47 📷
   [p9 deti] 2026-12-05T15:30 → 2026-12-05T18:30 | Mikulášská nadílka v restauraci Podviňák |  | Kovanecká 2507/34 📷
   [p9 kult] 2026-12-05T15:30 → 2026-12-05T18:30 | VÁNOCE 2026 na Praze 9 |  |  📷
+  [p14 deti] 2026-12-05T16:00 → 2026-12-05T16:00 | Mikuláš v H55 | H55 | Hloubětínská 1138/5 📷
   [mkp vzd] 2026-12-07T15:15 → 2026-12-07T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sen] 2026-12-08T10:00 → 2026-12-08T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp kult] 2026-12-08T15:00 → 2026-12-08T16:00 | Maturitní čajovna: Franz Kafka | Knihovna Vysočany | Zbuzkova 285/34 📷
