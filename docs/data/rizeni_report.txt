@@ -1,6 +1,4 @@
 Praha 9: na desce 77 vyhlášek
 Praha 14: vyhlášek odboru výstavby 5
-nových stavebních vyhlášek ke zpracování: 2
-  + [jes] Přístavba výtahu Novovysočanská 502/14 · Přístavba · Novovysočanská 502/14 (adresa)
-  + [jes] Vestavba výtahu, Bohušovická 541/8 · Výtah · Bohušovická 541/8 (adresa)
+nových stavebních vyhlášek ke zpracování: 0
 záměrů v datech: 23 (s polohou 22), dopravních opatření: 4
