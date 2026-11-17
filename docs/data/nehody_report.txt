@@ -1,3 +1,2 @@
-DATEX: staženo 31034607 B za 1 s (pokus 1)
-DATEX: 4022 situačních záznamů -> 10 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 3855 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 53 prošlé
-  jiné druhy událostí: [('publicevent', 22), ('abnormaltraffic', 18), ('carparks', 13), ('environmentalobstruction', 12), ('conditions', 11), ('authorityoperation', 8), ('equipmentorsystemfault', 3), ('roadsideservicedisruption', 2), ('nonweatherrelatedroadconditions', 2), ('poorenvironmentconditions', 2), ('generalinstructionormessagetoroadusers', 1), ('disturbanceactivity', 1)]
+DATEX: staženo 31186717 B za 1 s (pokus 1)
+nehody SELHALY: no element found: line 1218, column 2849754
