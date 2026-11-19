@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 34121902 B za 1 s (pokus 1)
-DATEX: 4248 situačních záznamů -> 9 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4048 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 51 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 34), ('conditions', 28), ('publicevent', 23), ('environmentalobstruction', 13), ('authorityoperation', 13), ('carparks', 13), ('disturbanceactivity', 2), ('nonweatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1), ('roadsideservicedisruption', 1), ('equipmentorsystemfault', 1), ('weatherrelatedroadconditions', 1)]
+DATEX: staženo 32476598 B za 1 s (pokus 1)
+DATEX: 4232 situačních záznamů -> 9 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4042 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 50 prošlé
+  jiné druhy událostí: [('abnormaltraffic', 35), ('publicevent', 29), ('conditions', 21), ('carparks', 13), ('environmentalobstruction', 11), ('authorityoperation', 9), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1), ('roadsideservicedisruption', 1), ('equipmentorsystemfault', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
