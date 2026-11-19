@@ -1,4 +1,4 @@
-p9: 31 akcí
+p9: 30 akcí
 p14: 15 akcí
 mkp: 67 akcí
 
