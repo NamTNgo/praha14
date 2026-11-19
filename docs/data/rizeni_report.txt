@@ -1,4 +1,5 @@
-Praha 9: na desce 73 vyhlášek
+Praha 9: na desce 77 vyhlášek
 Praha 14: vyhlášek odboru výstavby 4
-nových stavebních vyhlášek ke zpracování: 0
+nových stavebních vyhlášek ke zpracování: 1
+  + [rozhodnuto] Chodník podél ulice Mezitraťová · Chodník · ulice Mezitraťová (ulice)
 záměrů v datech: 23 (s polohou 22), dopravních opatření: 3
