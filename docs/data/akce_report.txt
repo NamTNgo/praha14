@@ -1,9 +1,9 @@
 p9: 30 akcí
 p14: 14 akcí
-mkp: 61 akcí
+mkp: 60 akcí
 
-celkem 103 akcí; kategorie: {'vzd': 16, 'vys': 6, 'kult': 19, 'sen': 17, 'deti': 44, 'zdr': 1}
-s fotkou: 99, se souřadnicemi: 88, zdarma: 74, zrušeno: 2
+celkem 102 akcí; kategorie: {'vzd': 16, 'vys': 6, 'kult': 18, 'sen': 17, 'deti': 44, 'zdr': 1}
+s fotkou: 98, se souřadnicemi: 87, zdarma: 73, zrušeno: 2
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
@@ -11,7 +11,6 @@ s fotkou: 99, se souřadnicemi: 88, zdarma: 74, zrušeno: 2
   [p9 sen] 2026-11-10T14:00 → 2026-12-03T14:00 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
   [p14 vys] 2026-11-18T14:00 → 2026-11-27 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
   [p9 vzd] 2026-11-18T17:00 → 2026-12-16T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
-  [mkp kult] 2026-11-20T14:00 → 2026-11-20T15:30 | Konverzační klub češtiny | Knihovna Černý Most | Bobkova 534/47 📷
   [p14 kult] 2026-11-22T15:00 → 2026-11-22T15:00 | Vánoční zdobení H55 | H55 | Hloubětínská 1138/5 📷
   [mkp vzd] 2026-11-23T15:15 → 2026-11-23T16:15 | Doučování angličtiny | Knihovna Vysočany | Zbuzkova 285/34 📷
   [mkp sen] 2026-11-24T10:00 → 2026-11-24T12:00 | Seniorská setkání: karetní hry | Knihovna Černý Most | Bobkova 534/47 📷
