@@ -1,4 +1,4 @@
-kandidátů: 18
+kandidátů: 17
   MZP530 Soubor staveb č. 0081 MO Pelc-Tyrolka – U Kříže, č. 0094 MO  · Nepodléhá dalšímu posuzování · Hrdlořezy, Libeň, Vysočany
   OV1246 V205/206 – přestavba na 400 kV · Stanovisko · Hostavice, Hrdlořezy, Kyje
   OV1281 Rekonstrukce úseku odbočka Rokytka – Praha-Holešovice (mimo) · Nepodléhá dalšímu posuzování · Libeň
@@ -8,7 +8,6 @@ kandidátů: 18
   PHA1020 Obchodní a administrativní centrum Poděbradská, k.ú. Vysočan · Nepodléhá dalšímu posuzování · Vysočany
   PHA1187 "Zahradní čtvrť Robotnice, Horní Počernice" · Stanovisko · Černý Most
   PHA1224 Obalovna živičných směsí DaZ · Stanovisko · Kyje
-  PHA1227 Elektrifikace linky č. 201 · Ukončeno z jiných důvodů · Hloubětín, Kyje, Libeň, Prosek, Střížkov, Černý Most
   PHA1239 Elektrifikace linky č. 201 (leden 2025) · Nepodléhá dalšímu posuzování · Hloubětín, Kyje, Libeň, Prosek, Střížkov, Černý Most
   PHA1243 Stavba č. 46338 Hloubětínský tunel · Nepodléhá dalšímu posuzování · Hloubětín
   PHA1278 Výroba filamentů do 3D tiskáren Prusa - navýšení kapacity vý · Nepodléhá dalšímu posuzování · Libeň
