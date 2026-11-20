@@ -1,4 +1,5 @@
-Praha 9: na desce 69 vyhlášek
-Praha 14: vyhlášek odboru výstavby 4
-nových stavebních vyhlášek ke zpracování: 0
+Praha 9: na desce 78 vyhlášek
+Praha 14: vyhlášek odboru výstavby 3
+nových stavebních vyhlášek ke zpracování: 1
+  + [rozhodnuto] povolení stavby: č.p. 2420 · Nástavba · Ocelářská 2420/2a (adresa)
 záměrů v datech: 23 (s polohou 22), dopravních opatření: 3
