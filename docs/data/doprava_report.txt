@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 35998174 B za 1 s (pokus 1)
-DATEX: 4424 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4195 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 51 prošlé
-  jiné druhy událostí: [('conditions', 53), ('abnormaltraffic', 37), ('publicevent', 32), ('carparks', 13), ('environmentalobstruction', 11), ('authorityoperation', 10), ('nonweatherrelatedroadconditions', 2), ('disturbanceactivity', 2), ('generalinstructionormessagetoroadusers', 1), ('roadsideservicedisruption', 1), ('equipmentorsystemfault', 1)]
+DATEX: staženo 29930216 B za 0 s (pokus 1)
+DATEX: 4072 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 3901 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 51 prošlé
+  jiné druhy událostí: [('publicevent', 31), ('conditions', 20), ('carparks', 13), ('authorityoperation', 12), ('abnormaltraffic', 12), ('environmentalobstruction', 11), ('weatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1), ('roadsideservicedisruption', 1), ('equipmentorsystemfault', 1), ('nonweatherrelatedroadconditions', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -17,7 +17,7 @@ uzavírky P14 strana 1: 15 bloků
 sloučení: 8 z NDIC + 4 z aktualit MČ (1 duplicit zahozeno)
 uzavirky: 12 záznamů
 zastavky: 260 záznamů
-výluky PID: 2 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 7 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "normal", "display_type": "inline", "text": "Od 2. 11. 2026 je zastávka přemístěna o 65 m zpět, pod železniční most.", "text_en": "From November 2, 2026 the stop has been moved 65 m back, under the railway bridge.", "related_stops": [{"id": "U134Z5P", "name": "Nádraží Libeň", "platform_code": "C"}], "valid_from": "2026-11-18T11:50:00+01:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "9e598346-3d3f-4cf4-8bf3-cd1c395493a5"}
+    {"priority": "normal", "display_type": "inline", "text": "PŘERUŠEN PROVOZ TRAM v úseku Albertov - Otakarova. ZAVEDENA NAD X-24. Více na www.dpp.cz", "text_en": "NO TRAM service in Albertov - Otakarova section. REPLACEMENT service X-24 introduced. More at www.dpp.cz", "related_stops": [{"id": "U237Z2P", "name": "Karlovo náměstí", "platform_code": "B"}, {"id": "U724Z2P", "name": "Svatoplukova", "platform_code": "B"}, {"id": "U724Z1P", "name": "Svatoplukova", "platform_code": "A"}, {"id": "U237Z4P", "name": "Moráň", "platform_code": "F"}], "valid_from": "2026-11-21T12:23:00+01:00", "valid_to": null, "repeat": {"time_start": null, "time_end": null}, "id": "d0bf47ef-48e9-498e-b022-e7be6e815110"}
 pid: 2 záznamů
