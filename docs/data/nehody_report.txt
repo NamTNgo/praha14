@@ -1,3 +1,4 @@
-DATEX: staženo 28232079 B za 1 s (pokus 1)
-DATEX: 3920 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 3787 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 51 prošlé
-  jiné druhy událostí: [('publicevent', 27), ('environmentalobstruction', 11), ('authorityoperation', 8), ('conditions', 7), ('abnormaltraffic', 6), ('weatherrelatedroadconditions', 3), ('nonweatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1), ('roadsideservicedisruption', 1), ('equipmentorsystemfault', 1)]
+DATEX: pokus 1 selhal: HTTP Error 500: Internal Server Error
+DATEX: staženo 28180709 B za 1 s (pokus 2)
+DATEX: 3913 situačních záznamů -> 8 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 3784 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 51 prošlé
+  jiné druhy událostí: [('publicevent', 26), ('environmentalobstruction', 11), ('authorityoperation', 8), ('abnormaltraffic', 6), ('conditions', 4), ('weatherrelatedroadconditions', 3), ('nonweatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1), ('roadsideservicedisruption', 1), ('equipmentorsystemfault', 1)]
