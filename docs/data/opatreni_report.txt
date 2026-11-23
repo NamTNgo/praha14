@@ -1,3 +1,4 @@
 Praha 9: opatření na desce 8
-Praha 14: přechodných úprav provozu na desce 6
-výstup: 6 platných opatření
+Praha 14: přechodných úprav provozu na desce 5
+nové: NN3257, NN7674- OOP (Poliklinika Prosek)_výstavba ZZS · 2026-12-01–2027-06-30 · ? · 
+výstup: 4 platných opatření
