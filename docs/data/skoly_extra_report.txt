@@ -1,3 +1,3 @@
-webů: 83 (z toho 27 z OpenStreetMap; OSM objektů s webem: 392 z 1118), načteno: 75
-nalezeno: {"tel": 83, "dod": 20, "zap": 11, "pz": 14, "sk": 44}
+webů: 83 (z toho 27 z OpenStreetMap; OSM objektů s webem: 393 z 1118), načteno: 76
+nalezeno: {"tel": 83, "dod": 21, "zap": 11, "pz": 15, "sk": 44}
 bez webu: 
