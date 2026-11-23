@@ -1,5 +1,4 @@
-událostí PVK celkem: 29, v Praze 9/14: 4 (probíhá 1, plánované 3), náhradních zásobování: 0
-  probiha 2026-11-23T10:39 – 2026-11-23T15:00  4 adres  Ústřední 25
-  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 24
-  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 13
-  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Počernická 23
+událostí PVK celkem: 25, v Praze 9/14: 3 (probíhá 0, plánované 3), náhradních zásobování: 0
+  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Dubského 21
+  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  
+  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Slunečná 8
