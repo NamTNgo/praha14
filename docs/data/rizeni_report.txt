@@ -1,6 +1,4 @@
 Praha 9: na desce 79 vyhlášek
 Praha 14: vyhlášek odboru výstavby 1
-nových stavebních vyhlášek ke zpracování: 2
-  + [oop] NN3257, NN7674- OOP (Poliklinika Prosek)_výstavba ZZS · Komunikace · strizkov (ku)
-  + [jes] Stavební úpravy 2026 a revize PBŘ stavby administrativně skladového objektu, Kolbenova 997/5g · Stavební úpravy · Kolbenova 997/5g (adresa)
+nových stavebních vyhlášek ke zpracování: 0
 záměrů v datech: 24 (s polohou 23), dopravních opatření: 4
