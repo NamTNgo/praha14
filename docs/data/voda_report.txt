@@ -1,6 +1,6 @@
 událostí PVK celkem: 26, v Praze 9/14: 5 (probíhá 2, plánované 3), náhradních zásobování: 0
   probiha 2026-11-24T14:07 – 2026-11-25T14:00  1 adres  Spojovací 44
   probiha 2026-11-24T18:52 – 2026-11-25T15:00  1 adres  Počernická 9
-  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Praha, 28
-  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 3
-  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Slunečná 8
+  planovana 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 13
+  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  
+  planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Počernická 19
