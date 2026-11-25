@@ -1,4 +1,5 @@
-Praha 9: na desce 79 vyhlášek
-Praha 14: vyhlášek odboru výstavby 1
-nových stavebních vyhlášek ke zpracování: 0
-záměrů v datech: 24 (s polohou 23), dopravních opatření: 4
+Praha 9: na desce 78 vyhlášek
+Praha 14: vyhlášek odboru výstavby 2
+nových stavebních vyhlášek ke zpracování: 1
+  + [rozhodnuto] Residenční areál "Kyjský mlýn · Úprava střechy · kyje (ku)
+záměrů v datech: 25 (s polohou 24), dopravních opatření: 4
