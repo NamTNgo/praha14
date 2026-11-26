@@ -1,5 +1,6 @@
-událostí PVK celkem: 22, v Praze 9/14: 4 (probíhá 2, plánované 2), náhradních zásobování: 0
-  probiha 2026-11-26T03:20 – 2026-11-27T06:00  260 adres  Pod Čertovou skalou 5
-  probiha 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 28
-  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  
+událostí PVK celkem: 23, v Praze 9/14: 5 (probíhá 3, plánované 2), náhradních zásobování: 0
+  probiha 2026-11-26T03:20 – 2026-11-27T06:00  260 adres  Karla Hlaváčka 7
+  probiha 2026-11-26T08:00 – 2026-11-26T15:00  21 adres  Kaňkova 20
+  probiha 2026-11-26T21:02 – 2026-11-27T15:00  2 adres  Pod Krocínkou 18
+  planovana 2026-12-01T08:00 – 2026-12-01T14:00  22 adres  Vitíkova 13
   planovana 2026-12-02T08:00 – 2026-12-02T15:00  16 adres  Počernická 19
