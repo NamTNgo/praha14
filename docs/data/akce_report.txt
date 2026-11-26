@@ -1,21 +1,15 @@
-p9: 32 akcí
+p9: 29 akcí
 p14: 13 akcí
-mkp: 52 akcí
+mkp: 50 akcí
 
-celkem 94 akcí; kategorie: {'vzd': 15, 'vys': 7, 'kult': 17, 'sen': 17, 'deti': 37, 'zdr': 1}
-s fotkou: 90, se souřadnicemi: 77, zdarma: 63, zrušeno: 1
+celkem 88 akcí; kategorie: {'vzd': 12, 'vys': 7, 'kult': 16, 'sen': 15, 'deti': 37, 'zdr': 1}
+s fotkou: 84, se souřadnicemi: 73, zdarma: 59, zrušeno: 1
   [p14 vzd] 2026-09-22T16:00 → 2027-06-29 | Angličtina v knihovně |  | Hloubětínská 1138/5
   [p9 vys] 2026-10-20 → 2026-11-29 | Diviš - Štědrý | Galerie Beseder | Lihovarská 12 📷
   [p9 kult] 2026-11-04 → 2026-11-27 | Plzeňka U Brabců |  |  📷
   [p9 vys] 2026-11-10 → 2026-12-10 | T. svatošová - Aequilibrium | Galerie 9 | Sokolovská 324 📷
   [p9 sen] 2026-11-10T14:00 → 2026-12-03T14:00 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
   [p14 vys] 2026-11-18T14:00 → 2026-11-27 | Výstava v Galerii 14 | Galerie 14 | 11, nám. Plukovníka Vlčka 686, 198 00 Pr 📷
-  [p9 vzd] 2026-11-18T17:00 → 2026-12-16T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
-  [p9 kult] 2026-11-25T12:00 → 2026-11-25T16:00 | Den prevence - listopad |  |  📷
-  [p9 vzd] 2026-11-25T17:00 → 2026-11-25T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
-  [p9 vzd] 2026-11-25T18:00 → 2026-11-25T20:00 | přednáška Elišky Fulínové Vítejte v antropocénu! / Mimo obra |  |  📷
-  [mkp sen] 2026-11-26T10:00 → 2026-11-26T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
-  [mkp sen] 2026-11-26T14:00 → 2026-11-26T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [p9 sen] 2026-11-26T14:00 → 2026-11-26T15:30 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
   [mkp deti] 2026-11-26T15:10 → 2026-11-26T16:10 | Doučování na Černém Mostě I | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp deti] 2026-11-26T15:15 → 2026-11-26T16:15 | Doučování ve Vysočanech | Knihovna Vysočany | Zbuzkova 285/34 📷
@@ -36,7 +30,7 @@ s fotkou: 90, se souřadnicemi: 77, zdarma: 63, zrušeno: 1
   [p9 sen] 2026-12-02T14:00 → 2026-12-03T14:00 | Vánoce pro seniory - vystoupení v Divadle Gong |  |  📷
   [mkp deti] 2026-12-02T15:00 → 2026-12-02T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-12-02T16:00 → 2026-12-02T18:00 | Vánoční ozdoby | Knihovna Černý Most | Bobkova 534/47 📷
-  [p9 vzd] 2026-12-02T17:00 → 2026-12-02T21:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
+  [p9 vzd] 2026-12-02T17:00 → 2026-12-16T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [mkp sen] 2026-12-03T14:00 → 2026-12-03T15:00 | Cvičení na židlích se sdílením zkušeností | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp sen] 2026-12-03T14:00 → 2026-12-03T16:00 | Digitální poradna v Hloubětíně | Knihovna Hloubětín | Hloubětínská 1138/5 📷
   [p9 sen] 2026-12-03T14:00 → 2026-12-03T15:30 | Vysočanská V - "Véčka" akce pro seniory |  | Sokolovská 14/324 📷
@@ -83,7 +77,7 @@ s fotkou: 90, se souřadnicemi: 77, zdarma: 63, zrušeno: 1
   [mkp deti] 2026-12-15T17:00 → 2026-12-15T18:00 | Pohádková babička na Proseku | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-12-16T15:00 → 2026-12-16T19:00 | Dračí hlídka | Knihovna Prosek | Měšická 806/3 📷
   [mkp deti] 2026-12-16T16:00 → 2026-12-16T18:00 | Hrací odpoledne – Harry Potter | Knihovna Černý Most | Bobkova 534/47 📷
-  [p9 vzd] 2026-12-16T17:00 → 2026-12-16T19:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
+  [p9 vzd] 2026-12-16T17:00 → 2026-12-16T17:00 | Kreativní dílna v Galerii 9 |  | Sokolovská 324/14 📷
   [p14 kult] 2026-12-16T18:00 → 2026-12-16T18:00 | Na hravé struně Vánoc | SŠ podnikání a gastronomie | Za černým mostem 362/3
   [mkp sen] 2026-12-17T10:00 → 2026-12-17T12:00 | Digitální poradna na Černém Mostě | Knihovna Černý Most | Bobkova 534/47 📷
   [mkp vzd] 2026-12-17T16:00 → 2026-12-17T17:00 | Povídání o létání | Knihovna Hloubětín | Hloubětínská 1138/5 📷
