@@ -1,5 +1,5 @@
-Praha 9: na desce 78 vyhlášek
+Praha 9: na desce 76 vyhlášek
 Praha 14: vyhlášek odboru výstavby 2
 nových stavebních vyhlášek ke zpracování: 1
-  + [rozhodnuto] Residenční areál "Kyjský mlýn · Úprava střechy · kyje (ku)
-záměrů v datech: 25 (s polohou 24), dopravních opatření: 4
+  + [info] OOP_přechodná úprava_novostavba polyfunkčního objektu Horní Hrdlořezská · Stavební úpravy · ulice Horní Hrdlořezská (ulice)
+záměrů v datech: 26 (s polohou 25), dopravních opatření: 3
