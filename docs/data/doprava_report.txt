@@ -1,7 +1,7 @@
 ulic z RÚIAN: 506
-DATEX: staženo 33044089 B za 1 s (pokus 1)
-DATEX: 4289 situačních záznamů -> 7 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 4061 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 48 prošlé
-  jiné druhy událostí: [('abnormaltraffic', 42), ('publicevent', 37), ('conditions', 33), ('environmentalobstruction', 14), ('weatherrelatedroadconditions', 13), ('carparks', 13), ('authorityoperation', 10), ('nonweatherrelatedroadconditions', 3), ('generalinstructionormessagetoroadusers', 2), ('disturbanceactivity', 1)]
+DATEX: staženo 33234521 B za 1 s (pokus 1)
+DATEX: 4125 situačních záznamů -> 7 prací/uzavírek + 0 nehod pro P9/14; zahozeno: 3933 jiná část, 0 mimo souřadnice, 0 bez souřadnic, 48 prošlé
+  jiné druhy událostí: [('publicevent', 36), ('weatherrelatedroadconditions', 24), ('conditions', 23), ('environmentalobstruction', 13), ('carparks', 13), ('abnormaltraffic', 12), ('authorityoperation', 8), ('nonweatherrelatedroadconditions', 2), ('generalinstructionormessagetoroadusers', 1)]
 čištění P14: 1 PDF na https://www.praha14.cz/urad-mestske-casti/blokove-cisteni-ulic/
   https://www.praha14.cz/app/uploads/sites/2/2026/10/TSK.pdf -> 9908 znaků textu
   bloků: 20, budoucích záznamů: 0
@@ -17,7 +17,7 @@ uzavírky P14 strana 1: 15 bloků
 sloučení: 7 z NDIC + 4 z aktualit MČ (0 duplicit zahozeno)
 uzavirky: 11 záznamů
 zastavky: 260 záznamů
-výluky PID: 2 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
+výluky PID: 4 položek, klíče první: ['display_type', 'id', 'priority', 'related_stops', 'repeat', 'text', 'text_en', 'valid_from', 'valid_to']
   UKÁZKA:
-    {"priority": "normal", "display_type": "inline", "text": "Do 0:15 h dne 28.11. je zastávka přemístěna o 65 m zpět, pod železniční most.", "text_en": "Until 0:15 AM on November 28, 2026 this stop will be relocated 65 m back, under the railway bridge.", "related_stops": [{"id": "U134Z5P", "name": "Nádraží Libeň", "platform_code": "C"}], "valid_from": "2026-11-18T11:50:00+01:00", "valid_to": "2026-11-28T00:15:00+01:00", "repeat": {"time_start": null, "time_end": null}, "id": "9e598346-3d3f-4cf4-8bf3-cd1c395493a5"}
-pid: 1 záznamů
+    {"priority": "normal", "display_type": "general", "text": "Provoz TRAM v úseku Vozovna Žižkov - Palmovka do 15:30 hod. přerušen.  Zastávka náhradních BUS X9 a X31 je v ul. Na Vápence.", "text_en": "No tram service between Vozovna Žižkov and Palmovka. The stop for replacement buses X9 and X31 is located in Na Vápence street.", "related_stops": [{"id": "U837Z1P", "name": "Vozovna Žižkov", "platform_code": "A"}], "valid_from": "2026-11-28T08:50:00+01:00", "valid_to": "2026-11-28T15:25:00+01:00", "repeat": {"time_start": null, "time_end": null}, "id": "06a038ed-07db-4148-bfde-d9a5883128fe"}
+pid: 3 záznamů
